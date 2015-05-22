@@ -1,0 +1,24 @@
+{
+  "name": "mrfusion",
+  "version": "0.0.1",
+  "description": "Fueling your React/Fluxible Validation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeffhandley/mrfusion.git"
+  },
+  "keywords": [
+    "react",
+    "fluxible",
+    "validation"
+  ],
+  "author": "Jeff Handley <jeff@jeffhandley.com>",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/jeffhandley/mrfusion/issues"
+  },
+  "homepage": "https://github.com/jeffhandley/mrfusion"
+}
