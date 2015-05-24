@@ -4,6 +4,7 @@ var ApplicationStore = require('../stores/ApplicationStore');
 
 class Html extends React.Component {
     render() {
+        console.log('Html', 'this.props.context.validate', this.props.context.validate);
         return (
             <html>
             <head>
@@ -21,5 +22,9 @@ class Html extends React.Component {
         );
     }
 }
+
+Html.contextTypes = {
+    validate: React.PropTypes.func.isRequired
+};
 
 module.exports = Html;

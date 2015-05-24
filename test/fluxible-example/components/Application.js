@@ -11,7 +11,11 @@ import { handleHistory } from 'fluxible-router';
 
 // @TODO Upgrade to ES6 class when RouterMixin is replaced
 var Application = React.createClass({
+    propTypes: {
+        context: React.PropTypes.object.isRequired
+    },
     render: function () {
+        console.log('Application', 'this.props.context.validate', this.props.context.validate);
         var Handler = this.props.currentRoute.get('handler');
 
         return (
