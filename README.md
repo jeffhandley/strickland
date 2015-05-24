@@ -1,2 +1,2 @@
-# mrfusion
-Fueling your React/Fluxible Validation
+# strickland
+Enforcing the rules of your React/Fluxible application

@@ -12,6 +12,6 @@ console.log('FirstName/Required ("Jeff"):', instance.__validators[0].validateVal
 console.log('FirstName/Required (""):', instance.__validators[0].validateValue(""))
 
 console.log('FirstName/Required (Current Value = "' + instance.firstName + '"', instance.__validators[0].validate())
-    instance.firstName = "Jeff"
+instance.firstName = "Jeff"
 console.log('FirstName/Required (Current Value = "' + instance.firstName + '"', instance.__validators[0].validate())
-    
+
