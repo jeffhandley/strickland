@@ -1,15 +1,14 @@
 'use strict';
 var React = require('react');
+var ChangeTitleForm = require('./ChangeTitleForm');
 
 class Home extends React.Component {
     render() {
-        console.log('Home', 'this.context', this.context);
-        console.log('Home', 'this.props.context', this.props.context);
-
         return (
             <div>
                 <h2>Home</h2>
                 <p>Welcome to the site!</p>
+                <ChangeTitleForm />
             </div>
         );
     }

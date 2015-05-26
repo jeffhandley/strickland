@@ -15,7 +15,6 @@ var Application = React.createClass({
         context: React.PropTypes.object.isRequired
     },
     render: function () {
-        console.log('Application', 'this.props.context.validate', this.props.context.validate);
         var Handler = this.props.currentRoute.get('handler');
 
         return (
@@ -35,15 +34,20 @@ var Application = React.createClass({
     }
 });
 
-export default handleHistory(provideContext(connectToStores(
-    Application,
-    [ApplicationStore],
+var storesConnected = connectToStores(Application, [ApplicationStore],
     function (stores, props) {
         var appStore = stores.ApplicationStore;
+
         return {
             currentPageName: appStore.getCurrentPageName(),
             pageTitle: appStore.getPageTitle(),
             pages: appStore.getPages()
         };
     }
-)));
+);
+
+var contextProvided = provideContext(storesConnected, {
+    validate: React.PropTypes.func.isRequired
+});
+
+export default handleHistory(contextProvided);

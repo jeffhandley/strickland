@@ -4,13 +4,16 @@ import routesConfig from '../configs/routes';
 class ApplicationStore extends BaseStore {
     constructor(dispatcher) {
         super(dispatcher);
+        this.context = this.getContext();
         this.currentPageName = null;
         this.currentPage = null;
         this.pages = routesConfig;
         this.pageTitle = '';
     }
     handlePageTitle(data) {
+        this.context.validate(data.pageTitle);
         this.pageTitle = data.pageTitle;
+        this.emitChange();
     }
     getCurrentPageName() {
         return this.currentPageName;

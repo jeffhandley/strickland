@@ -9,30 +9,7 @@ const app = new Fluxible({
     component: Application
 });
 
-app.plug({
-    name: 'strickland',
-    plugContext: function (options) {
-        return {
-            plugComponentContext(componentContext) {
-                componentContext.validate = function() {
-                    console.log('componentContext.validate');
-                };
-            },
-
-            plugActionContext(actionContext) {
-                actionContext.validate = function() {
-                    console.log('actionContext.validate');
-                };
-            },
-
-            plugStoreContext(storeContext) {
-                storeContext.validate = function() {
-                    console.log('storeContext.validate');
-                };
-            }
-        };
-    }
-});
+app.plug(require('../../src/strickland-plugin'));
 
 // register routes
 var MyRouteStore = RouteStore.withStaticRoutes(routes);
