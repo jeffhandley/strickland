@@ -1,5 +1,6 @@
 import BaseStore from 'fluxible/addons/BaseStore';
 import routesConfig from '../configs/routes';
+import Validator from '../../../src/StoreValidator';
 
 class ApplicationStore extends BaseStore {
     constructor(dispatcher) {
@@ -9,6 +10,16 @@ class ApplicationStore extends BaseStore {
         this.currentPage = null;
         this.pages = routesConfig;
         this.pageTitle = '';
+
+        this.validate = {
+            handlePageTitle: {
+                params: [
+                    [
+                        require('../../../src/validators/Required')
+                    ]
+                ]
+            }
+        };
     }
     handlePageTitle(data) {
         this.context.validate(data.pageTitle);
