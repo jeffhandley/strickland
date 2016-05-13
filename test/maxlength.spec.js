@@ -3,13 +3,15 @@ import maxlength from '../src/maxlength';
 
 describe('maxlength', () => {
     describe('recognizes empty values as valid', () => {
+        const validate = maxlength(1);
+
         [
             { value: null, testName: 'null' },
             { value: false, testName: false },
             { value: '', testName: 'empty string' }
         ].forEach(({ value, testName }) => {
             it(`(${testName})`, () => {
-                const result = maxlength(value);
+                const result = validate(value);
                 expect(result.isValid).toBe(true);
             });
         });
@@ -25,7 +27,8 @@ describe('maxlength', () => {
             { max: 2, value: [ 0 ], testName: '[0]' }
         ].forEach(({ max, value, testName }) => {
             it(`max: ${max}; value: ${testName}`, () => {
-                const result = maxlength(value, max);
+                const validate = maxlength(max);
+                const result = validate(value);
                 expect(result.isValid).toBe(true);
             });
         });
@@ -39,7 +42,8 @@ describe('maxlength', () => {
             { max: 2, value: [ 0, 1, 2 ], testName: '[0, 1, 2]' }
         ].forEach(({ max, value, testName }) => {
             it(`max: ${max}; value: ${testName}`, () => {
-                const result = maxlength(value, max);
+                const validate = maxlength(max);
+                const result = validate(value);
                 expect(result.isValid).toBe(false);
             });
         });
@@ -47,24 +51,28 @@ describe('maxlength', () => {
 
     describe('message', () => {
         it('defaults to "At most ${max} characters"', () => {
-            const result = maxlength('a', 4);
+            const validate = maxlength(4);
+            const result = validate();
             expect(result.message).toBe('At most 4 characters');
         });
 
         it('can be overridden through props as the 3rd argument', () => {
-            const result = maxlength('a', 4, { message: 'Overridden' });
+            const validate = maxlength(4, { message: 'Overridden' })
+            const result = validate();
             expect(result.message).toBe('Overridden');
         });
 
         it('can be overridden through props as the 2nd argument', () => {
-            const result = maxlength('a', { max: 4, message: 'Overridden' });
+            const validate = maxlength({ max: 4, message: 'Overridden' });
+            const result = validate();
             expect(result.message).toBe('Overridden');
         });
     });
 
     describe('props', () => {
         it('flow through', () => {
-            const result = maxlength('a', { errorLevel: 10 });
+            const validate = maxlength('a', { errorLevel: 10 });
+            const result = validate();
             expect(result.errorLevel).toBe(10);
         });
     });

@@ -1,7 +1,7 @@
 import ValidationResult from './ValidationResult';
 import { isObject } from 'lodash';
 
-export default function maxvalue(value, max = 0, props = {}) {
+export default function maxvalue(max = 0, props = {}) {
     if (isObject(max)) {
         props = max;
         max = props.max;
@@ -9,6 +9,8 @@ export default function maxvalue(value, max = 0, props = {}) {
 
     props.message = props.message || `At most ${max}`;
 
-    const isValid = !value || value <= max;
-    return new ValidationResult(isValid, props);
+    return (value) => {
+        const isValid = !value || value <= max;
+        return new ValidationResult(isValid, props);
+    };
 }

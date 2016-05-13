@@ -3,13 +3,15 @@ import minlength from '../src/minlength';
 
 describe('minlength', () => {
     describe('recognizes empty values as valid', () => {
+        const validate = minlength(1);
+
         [
             { value: null, testName: 'null' },
             { value: false, testName: false },
             { value: '', testName: 'empty string' }
         ].forEach(({ value, testName }) => {
             it(`(${testName})`, () => {
-                const result = minlength(value);
+                const result = validate(value);
                 expect(result.isValid).toBe(true);
             });
         });
@@ -25,7 +27,8 @@ describe('minlength', () => {
             { min: 2, value: [ 0, 1, 2 ], testName: '[0, 1, 2]' }
         ].forEach(({ min, value, testName }) => {
             it(`min: ${min}; value: ${testName}`, () => {
-                const result = minlength(value, min);
+                const validate = minlength(min);
+                const result = validate(value);
                 expect(result.isValid).toBe(true);
             });
         });
@@ -39,7 +42,8 @@ describe('minlength', () => {
             { min: 3, value: [ 0, 1 ], testName: '[0, 1]' }
         ].forEach(({ min, value, testName }) => {
             it(`min: ${min}; value: ${testName}`, () => {
-                const result = minlength(value, min);
+                const validate = minlength(min);
+                const result = validate(value);
                 expect(result.isValid).toBe(false);
             });
         });
@@ -47,24 +51,28 @@ describe('minlength', () => {
 
     describe('message', () => {
         it('defaults to "At least ${min} characters"', () => {
-            const result = minlength('a', 4);
+            const validate = minlength(4);
+            const result = validate('a');
             expect(result.message).toBe('At least 4 characters');
         });
 
         it('can be overridden through props as the 3rd argument', () => {
-            const result = minlength('a', 4, { message: 'Overridden' });
+            const validate = minlength(4, { message: 'Overridden' });
+            const result = validate('a');
             expect(result.message).toBe('Overridden');
         });
 
         it('can be overridden through props as the 2nd argument', () => {
-            const result = minlength('a', { min: 4, message: 'Overridden' });
+            const validate = minlength({ min: 4, message: 'Overridden' });
+            const result = validate('a');
             expect(result.message).toBe('Overridden');
         });
     });
 
     describe('props', () => {
         it('flow through', () => {
-            const result = minlength('a', { errorLevel: 10 });
+            const validate = minlength({ errorLevel: 10 });
+            const result = validate('a');
             expect(result.errorLevel).toBe(10);
         });
     });
