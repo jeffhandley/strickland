@@ -1,7 +1,7 @@
 import { isObject } from 'lodash';
 
 class ValidationResult {
-    constructor (isValid, message, props) {
+    constructor(isValid, message, props) {
         if (isObject(message)) {
             props = message;
             message = props.message;
