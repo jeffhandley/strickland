@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run lint && babel src -d lib",
     "lint": "eslint src/** test/**",
-    "test": "mocha --compilers js:babel-register"
+    "test": "mocha --compilers js:babel-register --recursive"
   },
   "repository": {
     "type": "git",
