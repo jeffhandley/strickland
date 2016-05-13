@@ -34,12 +34,7 @@ describe('required', () => {
             expect(result.message).toBe('Required');
         });
 
-        it('can be overridden through the 2nd argument', () => {
-            const result = required(true, 'Overridden');
-            expect(result.message).toBe('Overridden');
-        });
-
-        it('can be overridden through props as the 2nd argument', () => {
+        it('can be overridden through props', () => {
             const result = required(true, { message: 'Overridden' });
             expect(result.message).toBe('Overridden');
         });

@@ -8,29 +8,10 @@ describe('ValidationResult', () => {
             expect(result.isValid).toBe(true);
         });
 
-        it('sets the message property', () => {
-            const result = new ValidationResult(true, 'message property is set');
-            expect(result.message).toBe('message property is set');
-        });
-
         it('sets props', () => {
             const props = { errorLevel: 10 };
-            const result = new ValidationResult(false, null, props);
+            const result = new ValidationResult(false, props);
             expect(result.errorLevel).toBe(10);
-        });
-
-        describe('with props as the 2nd argument', () => {
-            it('sets message', () => {
-                const props = { message: 'from props' };
-                const result = new ValidationResult(false, props);
-                expect(result.message).toBe('from props');
-            });
-
-            it('sets props', () => {
-                const props = { errorLevel: 10 };
-                const result = new ValidationResult(false, props);
-                expect(result.errorLevel).toBe(10);
-            });
         });
 
         describe('with props as the 1st argument', () => {
@@ -38,12 +19,6 @@ describe('ValidationResult', () => {
                 const props = { isValid: true };
                 const result = new ValidationResult(props);
                 expect(result.isValid).toBe(true);
-            });
-
-            it('sets message', () => {
-                const props = { message: 'from props' };
-                const result = new ValidationResult(props);
-                expect(result.message).toBe('from props');
             });
 
             it('sets props', () => {
