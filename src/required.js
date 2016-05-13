@@ -1,9 +1,7 @@
 import ValidationResult from './ValidationResult';
 
-export const message = 'Required';
-
-export default function(value, props = {}) {
-    props.message = props.message || message;
+export default function required(value, props = {}) {
+    props.message = props.message || 'Required';
 
     const isValid = !!value;
     return new ValidationResult(isValid, props);

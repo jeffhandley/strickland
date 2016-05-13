@@ -29,7 +29,7 @@ describe('required', () => {
     });
 
     describe('message', () => {
-        it('defaults to Required', () => {
+        it('defaults to "Required"', () => {
             const result = required(true);
             expect(result.message).toBe('Required');
         });
