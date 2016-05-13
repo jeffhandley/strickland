@@ -1,14 +1,14 @@
 {
   "name": "mrfusion",
   "version": "0.0.1",
-  "description": "Fueling your React/Fluxible Validation",
+  "description": "JavaScript data validation. Ideal for univeral React applications that use Flux, Redux, or similar patterns.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jeffhandley/mrfusion.git"
+    "url": "https://github.com/jeffhandley/strickland.git"
   },
   "keywords": [
     "react",
@@ -16,9 +16,9 @@
     "validation"
   ],
   "author": "Jeff Handley <jeff@jeffhandley.com>",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/jeffhandley/mrfusion/issues"
+    "url": "https://github.com/jeffhandley/strickland/issues"
   },
-  "homepage": "https://github.com/jeffhandley/mrfusion"
+  "homepage": "https://github.com/jeffhandley/strickland"
 }
