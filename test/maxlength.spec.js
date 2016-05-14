@@ -56,14 +56,8 @@ describe('maxlength', () => {
             expect(result.message).toBe('At most 4 characters');
         });
 
-        it('can be overridden through props as the 3rd argument', () => {
+        it('can be overridden through props', () => {
             const validate = maxlength(4, { message: 'Overridden' })
-            const result = validate();
-            expect(result.message).toBe('Overridden');
-        });
-
-        it('can be overridden through props as the 2nd argument', () => {
-            const validate = maxlength({ max: 4, message: 'Overridden' });
             const result = validate();
             expect(result.message).toBe('Overridden');
         });

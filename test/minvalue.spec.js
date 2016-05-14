@@ -56,14 +56,8 @@ describe('minvalue', () => {
             expect(result.message).toBe('At least 4');
         });
 
-        it('can be overridden through props as the 3rd argument', () => {
+        it('can be overridden through props', () => {
             const validate = minvalue(4, { message: 'Overridden' });
-            const result = validate('a');
-            expect(result.message).toBe('Overridden');
-        });
-
-        it('can be overridden through props as the 2nd argument', () => {
-            const validate = minvalue({ min: 4, message: 'Overridden' });
             const result = validate('a');
             expect(result.message).toBe('Overridden');
         });
@@ -71,7 +65,7 @@ describe('minvalue', () => {
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = minvalue({ errorLevel: 10 });
+            const validate = minvalue('a', { errorLevel: 10 });
             const result = validate('a');
             expect(result.errorLevel).toBe(10);
         });

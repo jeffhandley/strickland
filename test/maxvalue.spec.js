@@ -56,14 +56,8 @@ describe('maxvalue', () => {
             expect(result.message).toBe('At most 4');
         });
 
-        it('can be overridden through props as the 3rd argument', () => {
+        it('can be overridden through props', () => {
             const validate = maxvalue(4, { message: 'Overridden' });
-            const result = validate('a');
-            expect(result.message).toBe('Overridden');
-        });
-
-        it('can be overridden through props as the 2nd argument', () => {
-            const validate = maxvalue({ max: 4, message: 'Overridden' });
             const result = validate('a');
             expect(result.message).toBe('Overridden');
         });
@@ -71,7 +65,7 @@ describe('maxvalue', () => {
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = maxvalue({ errorLevel: 10 });
+            const validate = maxvalue('a', { errorLevel: 10 });
             const result = validate('a');
             expect(result.errorLevel).toBe(10);
         });
