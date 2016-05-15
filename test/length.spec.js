@@ -43,6 +43,19 @@ describe('length', () => {
         });
     });
 
+    describe('treats falsy lengths as valid', () => {
+        const validate = length(1);
+        let notDefined;
+
+        [ notDefined, null, false, 0, '' ]
+        .forEach((value) => {
+            it(JSON.stringify(value), () => {
+                const result = validate({ length: value });
+                expect(result.isValid).toBe(true);
+            });
+        });
+    });
+
     describe('uses only a min as an exact length', () => {
         describe('for strings', () => {
             [
@@ -74,7 +87,6 @@ describe('length', () => {
 
         describe('for objects', () => {
             [
-                { min: 2, value: { }, isValid: false },
                 { min: 2, value: { length: 1 }, isValid: false },
                 { min: 2, value: { length: 2 }, isValid: true },
                 { min: 2, value: { length: 3 }, isValid: false }
@@ -121,7 +133,6 @@ describe('length', () => {
 
         describe('for objects', () => {
             [
-                { min: 2, max: 3, value: { }, isValid: false },
                 { min: 2, max: 3, value: { length: 1 }, isValid: false },
                 { min: 2, max: 3, value: { length: 2 }, isValid: true },
                 { min: 2, max: 3, value: { length: 3 }, isValid: true },

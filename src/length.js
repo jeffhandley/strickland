@@ -15,7 +15,7 @@ export default function length(min = 0, max = 0, props) {
     }
 
     return validator(
-        (value) => gte(value.length, min) && lte(value.length, max),
+        (value) => !value.length || (gte(value.length, min) && lte(value.length, max)),
         props
     );
 }
