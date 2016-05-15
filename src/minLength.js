@@ -1,7 +1,8 @@
 import validator from './validator';
 import { gte } from 'lodash';
 
-export default function minlengthValidator(max = 0, props = {}) {
+export default function minLengthValidator(max = 0, props) {
+    props = props || {};
     props.message = props.message || `Length no less than ${max}`;
 
     return validator(

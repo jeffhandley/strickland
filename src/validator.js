@@ -1,6 +1,7 @@
 import ValidationResult from './ValidationResult';
 
-export default function validator(validate, props = {}) {
+export default function validator(validate, props) {
+    props = props || {};
     props.message = props.message || 'Invalid';
 
     return (value) => {

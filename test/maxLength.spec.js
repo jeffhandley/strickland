@@ -1,16 +1,16 @@
 import expect from 'expect';
-import { maxlength } from '../src';
+import { maxLength } from '../src';
 
-describe('maxlength', () => {
+describe('maxLength', () => {
     describe('message', () => {
         it('defaults to "Length no more than ${max}"', () => {
-            const validate = maxlength(2);
+            const validate = maxLength(2);
             const result = validate('ab');
             expect(result.message).toBe('Length no more than 2');
         });
 
         it('can be overridden through props', () => {
-            const validate = maxlength(2, { message: 'Overridden' });
+            const validate = maxLength(2, { message: 'Overridden' });
             const result = validate('ab');
             expect(result.message).toBe('Overridden');
         });
@@ -18,14 +18,14 @@ describe('maxlength', () => {
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = maxlength(2, { errorLevel: 10 });
+            const validate = maxLength(2, { errorLevel: 10 });
             const result = validate('ab');
             expect(result.errorLevel).toBe(10);
         });
     });
 
     describe('treats falsy values as valid', () => {
-        const validate = maxlength(1);
+        const validate = maxLength(1);
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
@@ -38,7 +38,7 @@ describe('maxlength', () => {
     });
 
     describe('treats falsy lengths as valid', () => {
-        const validate = maxlength(1);
+        const validate = maxLength(1);
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
@@ -58,7 +58,7 @@ describe('maxlength', () => {
                 { max: 2, value: 'abc', isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = maxlength(test.max);
+                    const validate = maxLength(test.max);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -72,7 +72,7 @@ describe('maxlength', () => {
                 { max: 2, value: [ 'a', 'b', 'c' ], isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = maxlength(test.max);
+                    const validate = maxLength(test.max);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -86,7 +86,7 @@ describe('maxlength', () => {
                 { max: 2, value: { length: 3 }, isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = maxlength(test.max);
+                    const validate = maxLength(test.max);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });

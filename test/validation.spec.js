@@ -1,13 +1,13 @@
 import expect from 'expect';
-import { maxlength, maxvalue, minlength, minvalue, required, validation } from '../src';
+import { maxLength, maxValue, minLength, minValue, required, validation } from '../src';
 
 describe('validation', () => {
     const validators = [
         required({ message: 'required-validator' }),
-        minlength(2, { message: 'minlength-validator' }),
-        maxlength(2, { message: 'maxlength-validator' }),
-        minvalue('aa', { message: 'minvalue-validator' }),
-        maxvalue('bb', { message: 'maxvalue-validator' })
+        minLength(2, { message: 'minLength-validator' }),
+        maxLength(2, { message: 'maxLength-validator' }),
+        minValue('aa', { message: 'minValue-validator' }),
+        maxValue('bb', { message: 'maxValue-validator' })
     ];
 
     describe('isValid', () => {
@@ -43,7 +43,7 @@ describe('validation', () => {
             });
 
             it('has the message from the validator that failed', () => {
-                expect(results[0].message).toBe('maxvalue-validator');
+                expect(results[0].message).toBe('maxValue-validator');
             });
         });
 
@@ -56,7 +56,7 @@ describe('validation', () => {
 
             it('has the messages from the validators that failed', () => {
                 const messages = results.map((result) => result.message);
-                expect(messages).toEqual([ 'maxlength-validator', 'maxvalue-validator' ]);
+                expect(messages).toEqual([ 'maxLength-validator', 'maxValue-validator' ]);
             });
         });
     });
@@ -77,10 +77,10 @@ describe('validation', () => {
 
                 expect(details).toEqual([
                     { isValid: false, message: 'required-validator' },
-                    { isValid: true, message: 'minlength-validator' },
-                    { isValid: true, message: 'maxlength-validator' },
-                    { isValid: true, message: 'minvalue-validator' },
-                    { isValid: true, message: 'maxvalue-validator' }
+                    { isValid: true, message: 'minLength-validator' },
+                    { isValid: true, message: 'maxLength-validator' },
+                    { isValid: true, message: 'minValue-validator' },
+                    { isValid: true, message: 'maxValue-validator' }
                 ]);
             });
         });
@@ -100,10 +100,10 @@ describe('validation', () => {
 
                 expect(details).toEqual([
                     { isValid: true, message: 'required-validator' },
-                    { isValid: true, message: 'minlength-validator' },
-                    { isValid: true, message: 'maxlength-validator' },
-                    { isValid: true, message: 'minvalue-validator' },
-                    { isValid: false, message: 'maxvalue-validator' }
+                    { isValid: true, message: 'minLength-validator' },
+                    { isValid: true, message: 'maxLength-validator' },
+                    { isValid: true, message: 'minValue-validator' },
+                    { isValid: false, message: 'maxValue-validator' }
                 ]);
             });
         });
@@ -123,10 +123,10 @@ describe('validation', () => {
 
                 expect(details).toEqual([
                     { isValid: true, message: 'required-validator' },
-                    { isValid: true, message: 'minlength-validator' },
-                    { isValid: false, message: 'maxlength-validator' },
-                    { isValid: true, message: 'minvalue-validator' },
-                    { isValid: false, message: 'maxvalue-validator' }
+                    { isValid: true, message: 'minLength-validator' },
+                    { isValid: false, message: 'maxLength-validator' },
+                    { isValid: true, message: 'minValue-validator' },
+                    { isValid: false, message: 'maxValue-validator' }
                 ]);
             });
         });

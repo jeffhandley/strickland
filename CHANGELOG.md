@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.0.5
+Validator renames for min/max validators.
+
+* minvalue renamed to minValue
+* maxvalue renamed to maxValue
+* minlength renamed to minLength
+* maxLength renamed to maxLength
+
 ## 0.0.4
 API and implementation changes for length and value validators.
 

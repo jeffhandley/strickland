@@ -1,7 +1,8 @@
 import validator from './validator';
 import { lte } from 'lodash';
 
-export default function maxvalueValidator(max = 0, props = {}) {
+export default function maxValueValidator(max = 0, props) {
+    props = props || {};
     props.message = props.message || `At most ${max}`;
 
     return validator(

@@ -1,16 +1,16 @@
 import expect from 'expect';
-import { minlength } from '../src';
+import { minLength } from '../src';
 
-describe('minlength', () => {
+describe('minLength', () => {
     describe('message', () => {
         it('defaults to "Length no less than ${min}"', () => {
-            const validate = minlength(2);
+            const validate = minLength(2);
             const result = validate('ab');
             expect(result.message).toBe('Length no less than 2');
         });
 
         it('can be overridden through props', () => {
-            const validate = minlength(2, { message: 'Overridden' });
+            const validate = minLength(2, { message: 'Overridden' });
             const result = validate('ab');
             expect(result.message).toBe('Overridden');
         });
@@ -18,14 +18,14 @@ describe('minlength', () => {
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = minlength(2, { errorLevel: 10 });
+            const validate = minLength(2, { errorLevel: 10 });
             const result = validate('ab');
             expect(result.errorLevel).toBe(10);
         });
     });
 
     describe('treats falsy values as valid', () => {
-        const validate = minlength(1);
+        const validate = minLength(1);
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
@@ -38,7 +38,7 @@ describe('minlength', () => {
     });
 
     describe('treats falsy lengths as valid', () => {
-        const validate = minlength(1);
+        const validate = minLength(1);
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
@@ -58,7 +58,7 @@ describe('minlength', () => {
                 { min: 2, value: 'abc', isValid: true }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = minlength(test.min);
+                    const validate = minLength(test.min);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -72,7 +72,7 @@ describe('minlength', () => {
                 { min: 2, value: [ 'a', 'b', 'c' ], isValid: true }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = minlength(test.min);
+                    const validate = minLength(test.min);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -86,7 +86,7 @@ describe('minlength', () => {
                 { min: 2, value: { length: 3 }, isValid: true }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = minlength(test.min);
+                    const validate = minLength(test.min);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });

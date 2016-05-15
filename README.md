@@ -51,10 +51,10 @@ Succeeds when a number, string, or date is either an exact value or within a ran
 * If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly to be valid
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 
-#### minvalue(min, props)
+#### minValue(min, props)
 Succeeds when a number, string, or date is at least the specified min.
 
-#### maxvalue(max, props)
+#### maxValue(max, props)
 Succeeds when a number, string, or date is at most the specified min.
 
 #### length(min, max, props)
@@ -63,9 +63,9 @@ Succceds when the length property of a string, array, or object is either an exa
 * If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly to be valid
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 
-#### minlength(min, props)
+#### minLength(min, props)
 Succeeds when the length property of a string, array, or object is at least the specified min.
 
-#### maxlength(max, props)
+#### maxLength(max, props)
 Succeeds when the length property of a string, array, or object is at most the specified max.
 
