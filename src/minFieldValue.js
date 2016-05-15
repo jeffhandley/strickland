@@ -1,12 +1,16 @@
-import validator from './validator';
+import validator, { isIgnored } from './validator';
 import { gte } from 'lodash';
 
 export default function minFieldValueValidator(field, max = 0, props) {
-    props = props || {};
+    props = Object.assign({}, props);
     props.message = props.message || `${field} no less than ${max}`;
 
+    props.isIgnored = (value) => {
+        return isIgnored(value) || isIgnored(value[field]);
+    };
+
     return validator(
-        (value) => !value[field] || gte(value[field], max),
+        (value) => gte(value[field], max),
         props
     );
 }

@@ -1,8 +1,8 @@
-import validator from './validator';
+import validator, { isIgnored } from './validator';
 import { lte, gte } from 'lodash';
 
 export default function fieldValueValidator(field, min = 0, max = min, props) {
-    props = props || {};
+    props = Object.assign({}, props);
 
     if (lte(max, min)) {
         max = min;
@@ -14,8 +14,12 @@ export default function fieldValueValidator(field, min = 0, max = min, props) {
         props.message = props.message || `${field} must be between ${min} and ${max}`;
     }
 
+    props.isIgnored = (value) => {
+        return isIgnored(value) || isIgnored(value[field]);
+    };
+
     return validator(
-        (value) => !value[field] || (gte(value[field], min) && lte(value[field], max)),
+        (value) => (gte(value[field], min) && lte(value[field], max)),
         props
     );
 }

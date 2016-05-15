@@ -2,7 +2,7 @@ import validator from './validator';
 import { lte, gte } from 'lodash';
 
 export default function valueValidator(min = 0, max = min, props) {
-    props = props || {};
+    props = Object.assign({}, props);
 
     if (lte(max, min)) {
         max = min;

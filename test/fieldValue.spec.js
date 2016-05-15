@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { fieldValue } from '../src';
 
 describe('fieldValue', () => {
@@ -33,6 +34,20 @@ describe('fieldValue', () => {
             const validate = fieldValue('field', 2, 3, null);
             const result = validate({ field: 2 });
             expect(result.message).toExist();
+        });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                fieldValue('field', 2, 3, props);
+            });
+
+            it('during validation', () => {
+                const validate = fieldValue('field', 2, 3, props);
+                validate(2);
+            });
         });
     });
 

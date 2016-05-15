@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { maxFieldValue } from '../src';
 
 describe('maxFieldValue', () => {
@@ -28,6 +29,20 @@ describe('maxFieldValue', () => {
             const result = validate({ field: 2 });
             expect(result.message).toExist();
         });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                maxFieldValue('field', 2, props);
+            });
+
+            it('during validation', () => {
+                const validate = maxFieldValue('field', 2, props);
+                validate(2);
+            });
+        });
     });
 
     describe('treats falsy values as valid', () => {
@@ -55,10 +70,17 @@ describe('maxFieldValue', () => {
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
-        .forEach((value) => {
-            it(JSON.stringify(value), () => {
-                const result = validate({ field: value });
-                expect(result.isValid).toBe(true);
+        .forEach((test) => {
+            describe(JSON.stringify(test), () => {
+                const result = validate({ field: test });
+
+                it('setting isValid to true', () => {
+                    expect(result.isValid).toBe(true);
+                });
+
+                it('setting isIgnored to true', () => {
+                    expect(result.isIgnored).toBe(true);
+                });
             });
         });
     });

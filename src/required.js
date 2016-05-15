@@ -1,7 +1,7 @@
 import ValidationResult from './ValidationResult';
 
 export default function requiredValidator(props) {
-    props = props || {};
+    props = Object.assign({}, props);
     props.message = props.message || 'Required';
 
     // Since validator only performs validation for truthy values,

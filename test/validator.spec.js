@@ -1,32 +1,115 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { validator } from '../src';
 
 describe('validator', () => {
-    describe('for empty values', () => {
-        [
-            { value: null, testName: 'null' },
-            { value: false, testName: false },
-            { value: '', testName: 'empty string' }
-        ].forEach(({ value, testName }) => {
-            it(`it recognizes the value (${testName}) as valid`, () => {
-                const validate = validator(() => false);
+    describe('message', () => {
+        const validationFunction = () => false;
 
-                const result = validate(value);
-                expect(result.isValid).toBe(true);
+        it('defaults to "Invalid"', () => {
+            const validate = validator(validationFunction);
+            const result = validate('a');
+            expect(result.message).toBe('Invalid');
+        });
+
+        it('can be overridden through props', () => {
+            const validate = validator(validationFunction, { message: 'Overridden' });
+            const result = validate('a');
+            expect(result.message).toBe('Overridden');
+        });
+    });
+
+    describe('props', () => {
+        it('flow through', () => {
+            const validate = validator(() => false, { errorLevel: 10 });
+            const result = validate('a');
+            expect(result.errorLevel).toBe(10);
+        });
+
+        it('guards against null', () => {
+            const validate = validator(() => false, null);
+            const result = validate({ field: 2 });
+            expect(result.message).toExist();
+        });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                validator(() => false, props);
             });
 
-            it(`it does not call the validate function for value (${testName})`, () => {
-                let called = false;
+            it('during validation', () => {
+                const validate = validator(() => false, props);
+                validate('a');
+            });
+        });
+    });
 
-                const validationFunction = () => {
-                    called = true;
-                };
+    describe('ignores values', () => {
+        it('ignoring falsy values by default', () => {
+            const validate = validator(() => false);
+            let notDefined;
 
-                const validate = validator(validationFunction);
-                validate(value);
+            [ notDefined, null, false, 0, '' ]
+            .forEach((test) => {
+                describe(JSON.stringify(test), () => {
+                    const result = validate(test);
 
-                expect(called).toBe(false);
-            })
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
+
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
+
+                    it('and does not call the validation function', () => {
+                        let called = false;
+
+                        const validationFunction = () => {
+                            called = true;
+                        };
+
+                        const validateWithCallTracking = validator(validationFunction);
+                        validateWithCallTracking(test);
+
+                        expect(called).toBe(false);
+                    });
+                });
+            });
+        });
+
+        describe('using a custom isIgnored prop', () => {
+            [ true, () => true ]
+            .forEach((isIgnored) => {
+                describe('with a value of true', () => {
+                    const validate = validator(() => false, { isIgnored });
+                    const result = validate(false);
+
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
+
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
+
+                    it('and does not call the validation function', () => {
+                        let called = false;
+
+                        const validationFunction = () => {
+                            called = true;
+                        };
+
+                        const validateWithCallTracking = validator(validationFunction, { isIgnored });
+                        validateWithCallTracking(true);
+
+                        expect(called).toBe(false);
+                    });
+                });
+            });
         });
     });
 
@@ -42,6 +125,14 @@ describe('validator', () => {
             validate(4);
 
             expect(validatedValue).toBe(4);
+        });
+
+        it('and sets isIgnored to false', () => {
+            const validationFunction = () => false;
+            const validate = validator(validationFunction);
+            const result = validate(true);
+
+            expect(result.isIgnored).toBe(false);
         });
 
         it('and can set isValid to false', () => {
@@ -73,7 +164,7 @@ describe('validator', () => {
             expect(validatedProps).toInclude(props);
         });
 
-        it('but does not let the function mutate the props', () => {
+        it('and does not let the function mutate the props', () => {
             const validationFunction = (value, props) => {
                 props.mutated = true;
             };
@@ -98,30 +189,6 @@ describe('validator', () => {
             validate(true);
 
             expect(mutated).toNotExist();
-        });
-    });
-
-    describe('message', () => {
-        const validationFunction = () => false;
-
-        it('defaults to "Invalid"', () => {
-            const validate = validator(validationFunction);
-            const result = validate('a');
-            expect(result.message).toBe('Invalid');
-        });
-
-        it('can be overridden through props', () => {
-            const validate = validator(validationFunction, { message: 'Overridden' });
-            const result = validate('a');
-            expect(result.message).toBe('Overridden');
-        });
-    });
-
-    describe('props', () => {
-        it('flow through', () => {
-            const validate = validator(() => false, { errorLevel: 10 });
-            const result = validate('a');
-            expect(result.errorLevel).toBe(10);
         });
     });
 });

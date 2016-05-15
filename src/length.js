@@ -2,7 +2,7 @@ import fieldValue from './fieldValue';
 import { lte } from 'lodash';
 
 export default function lengthValidator(min = 0, max = min, props) {
-    props = props || {};
+    props = Object.assign({}, props);
 
     if (lte(max, min)) {
         max = min;

@@ -2,7 +2,7 @@ import validator from './validator';
 import { lte } from 'lodash';
 
 export default function maxValueValidator(max = 0, props) {
-    props = props || {};
+    props = Object.assign({}, props);
     props.message = props.message || `No more than ${max}`;
 
     return validator(

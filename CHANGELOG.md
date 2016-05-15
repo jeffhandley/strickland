@@ -1,21 +1,20 @@
 # Change Log
 
-### 0.0.6
-Added field validators and updated min/max validator messages.
-
-* fieldValue for validating a field's value is either exact or within a range
-    * fieldValue(field, exactly) validates an exact value for the field
-    * fieldValue(field, min, max) validates the field is within a range
-* minFieldValue for validating a field's value is at least the min
-* maxFieldValue for validating a field's value is at most the max
-
 ## 0.0.5
 Validator renames for min/max validators.
+Added field validators and updated min/max validator messages.
+Added an isIgnored property for validator to override the decision for ignoring values; ValidationResult instances then get an isIgnored property to surface whether or not the validator was ignored.
+Prevent mutation of props passed to validators.
 
 * minvalue renamed to minValue
 * maxvalue renamed to maxValue
 * minlength renamed to minLength
 * maxLength renamed to maxLength
+* fieldValue for validating a field's value is either exact or within a range
+    * fieldValue(field, exactly) validates an exact value for the field
+    * fieldValue(field, min, max) validates the field is within a range
+* minFieldValue for validating a field's value is at least the min
+* maxFieldValue for validating a field's value is at most the max
 
 ## 0.0.4
 API and implementation changes for length and value validators.

@@ -19,9 +19,15 @@ The class that represents a result, valid or invalid.  All validators return a V
 * isValid
 
 #### Extensibility
-Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties:
+Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the prop to the validator.
 
 * message
+    * The message associated with the validator, describing the rules
+* isIgnored
+    * A Boolean indicating if the validator was ignored during validation
+    * Can be overidden with two different signatures
+        * A function, accepting the value being validated
+        * Another truthy value, forcing the validator to always be ignored
 
 ### validation
 Collection of functions for executing validators.

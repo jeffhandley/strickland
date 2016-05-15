@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { minValue } from '../src';
 
 describe('minValue', () => {
@@ -27,6 +28,20 @@ describe('minValue', () => {
             const validate = minValue(2, null);
             const result = validate(2);
             expect(result.message).toExist();
+        });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                minValue(2, 3, props);
+            });
+
+            it('during validation', () => {
+                const validate = minValue(2, 3, props);
+                validate(2);
+            });
         });
     });
 

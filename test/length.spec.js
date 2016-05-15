@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { length } from '../src';
 
 describe('length', () => {
@@ -33,6 +34,20 @@ describe('length', () => {
             const validate = length(2, 3, null);
             const result = validate('ab');
             expect(result.message).toExist();
+        });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                length(2, 3, props);
+            });
+
+            it('during validation', () => {
+                const validate = length(2, 3, props);
+                validate('ab');
+            });
         });
     });
 

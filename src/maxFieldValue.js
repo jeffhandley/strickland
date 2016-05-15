@@ -1,12 +1,16 @@
-import validator from './validator';
+import validator, { isIgnored } from './validator';
 import { lte } from 'lodash';
 
 export default function maxFieldValueValidator(field, max = 0, props) {
-    props = props || {};
+    props = Object.assign({}, props);
     props.message = props.message || `${field} no more than ${max}`;
 
+    props.isIgnored = (value) => {
+        return isIgnored(value) || isIgnored(value[field]);
+    };
+
     return validator(
-        (value) => !value[field] || lte(value[field], max),
+        (value) => lte(value[field], max),
         props
     );
 }

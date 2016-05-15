@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import { maxValue } from '../src';
 
 describe('maxValue', () => {
@@ -27,6 +28,20 @@ describe('maxValue', () => {
             const validate = maxValue(2, null);
             const result = validate(2);
             expect(result.message).toExist();
+        });
+
+        describe('do not get mutated', () => {
+            const props = { errorLevel: 10 };
+            deepFreeze(props);
+
+            it('during creation', () => {
+                maxValue(2, 3, props);
+            });
+
+            it('during validation', () => {
+                const validate = maxValue(2, 3, props);
+                validate(2);
+            });
         });
     });
 
