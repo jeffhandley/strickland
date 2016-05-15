@@ -28,6 +28,12 @@ describe('fieldValue', () => {
             const result = validate({ field: 2 });
             expect(result.errorLevel).toBe(10);
         });
+
+        it('guards against null', () => {
+            const validate = fieldValue('field', 2, 3, null);
+            const result = validate({ field: 2 });
+            expect(result.message).toExist();
+        });
     });
 
     describe('treats falsy values as valid', () => {

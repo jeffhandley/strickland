@@ -22,6 +22,12 @@ describe('minFieldValue', () => {
             const result = validate({ number: 2 });
             expect(result.errorLevel).toBe(10);
         });
+
+        it('guards against null', () => {
+            const validate = minFieldValue('field', 2, null);
+            const result = validate({ field: 2 });
+            expect(result.message).toExist();
+        });
     });
 
     describe('treats falsy values as valid', () => {

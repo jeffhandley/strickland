@@ -5,13 +5,13 @@ describe('maxValue', () => {
     describe('message', () => {
         it('defaults to "No more than ${max}"', () => {
             const validate = maxValue(2);
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.message).toBe('No more than 2');
         });
 
         it('can be overridden through props', () => {
             const validate = maxValue(2, { message: 'Overridden' });
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.message).toBe('Overridden');
         });
     });
@@ -19,8 +19,14 @@ describe('maxValue', () => {
     describe('props', () => {
         it('flow through', () => {
             const validate = maxValue(2, { errorLevel: 10 });
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.errorLevel).toBe(10);
+        });
+
+        it('guards against null', () => {
+            const validate = maxValue(2, null);
+            const result = validate(2);
+            expect(result.message).toExist();
         });
     });
 

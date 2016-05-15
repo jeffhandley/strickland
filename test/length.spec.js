@@ -28,6 +28,12 @@ describe('length', () => {
             const result = validate('ab');
             expect(result.errorLevel).toBe(10);
         });
+
+        it('guards against null', () => {
+            const validate = length(2, 3, null);
+            const result = validate('ab');
+            expect(result.message).toExist();
+        });
     });
 
     describe('treats falsy values as valid', () => {

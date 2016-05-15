@@ -22,6 +22,12 @@ describe('required', () => {
             const result = validate('ab');
             expect(result.errorLevel).toBe(10);
         });
+
+        it('guards against null', () => {
+            const validate = required(null);
+            const result = validate('ab');
+            expect(result.message).toExist();
+        });
     });
 
     describe('treats falsy values as invalid', () => {

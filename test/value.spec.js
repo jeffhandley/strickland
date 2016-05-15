@@ -5,19 +5,19 @@ describe('value', () => {
     describe('message', () => {
         it('defaults to "Exactly ${exactly}" for an exact value', () => {
             const validate = value(2);
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.message).toBe('Exactly 2');
         });
 
         it('defaults to "Between ${min} and ${max}" for a range', () => {
             const validate = value(2, 3);
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.message).toBe('Between 2 and 3');
         });
 
         it('can be overridden through props', () => {
             const validate = value(2, 3, { message: 'Overridden' });
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.message).toBe('Overridden');
         });
     });
@@ -25,8 +25,14 @@ describe('value', () => {
     describe('props', () => {
         it('flow through', () => {
             const validate = value(2, 3, { errorLevel: 10 });
-            const result = validate('ab');
+            const result = validate(2);
             expect(result.errorLevel).toBe(10);
+        });
+
+        it('guards against null', () => {
+            const validate = value(2, 3, null);
+            const result = validate(2);
+            expect(result.message).toExist();
         });
     });
 

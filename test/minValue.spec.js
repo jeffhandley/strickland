@@ -22,6 +22,12 @@ describe('minValue', () => {
             const result = validate('ab');
             expect(result.errorLevel).toBe(10);
         });
+
+        it('guards against null', () => {
+            const validate = minValue(2, null);
+            const result = validate(2);
+            expect(result.message).toExist();
+        });
     });
 
     describe('treats falsy values as valid', () => {
