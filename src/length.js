@@ -1,10 +1,10 @@
-import validator from './validator';
-import { lte, gte } from 'lodash';
+import fieldValue from './fieldValue';
+import { lte } from 'lodash';
 
 export default function lengthValidator(min = 0, max = min, props) {
     props = props || {};
 
-    if (max < min) {
+    if (lte(max, min)) {
         max = min;
     }
 
@@ -14,8 +14,5 @@ export default function lengthValidator(min = 0, max = min, props) {
         props.message = props.message || `Length between ${min} and ${max}`;
     }
 
-    return validator(
-        (value) => !value.length || (gte(value.length, min) && lte(value.length, max)),
-        props
-    );
+    return fieldValue('length', min, max, props);
 }
