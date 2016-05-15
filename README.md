@@ -45,27 +45,27 @@ The validation function is only called if the value is truthy.
 Succeeds for truthy values and fails on falsy values.
 The only validator to fail on falsy values.
 
-#### length(min, max, props)
-The length property of a string, array, or object is either an exact value or within a range.
-
-* If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly to be valid
-* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
-
-#### minlength(min, props)
-The length property of a string, array, or object is not less than the specified min.
-
-#### maxlength(max, props)
-The length property of a string, array, or object is not more than the specified max.
-
 #### value(min, max, props)
-A number, string, or date is either an exact value or within a range.
+Succeeds when a number, string, or date is either an exact value or within a range.
 
 * If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly to be valid
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 
 #### minvalue(min, props)
-A number, string, or date is not less than the specified min.
+Succeeds when a number, string, or date is at least the specified min.
 
 #### maxvalue(max, props)
-A number, string, or date is not more than the specified max.
+Succeeds when a number, string, or date is at most the specified min.
+
+#### length(min, max, props)
+Succceds when the length property of a string, array, or object is either an exact value or within a range.
+
+* If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly to be valid
+* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
+
+#### minlength(min, props)
+Succeeds when the length property of a string, array, or object is at least the specified min.
+
+#### maxlength(max, props)
+Succeeds when the length property of a string, array, or object is at most the specified max.
 
