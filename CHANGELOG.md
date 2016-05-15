@@ -8,7 +8,7 @@ The class that represents a result, valid or invalid.  All validators return a V
 
 #### Properties
 
-* isValid (Boolean)
+* isValid
 
 #### Extensibility
 Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties:
@@ -46,5 +46,5 @@ Validate that a value is within the expected range
 * maxvalue(max, props)
 * exactvalue(value, props)
 
-#### custom(validateFunction, props)
+#### custom(validationFunction, props)
 Validate a value using a custom validation function
