@@ -2,72 +2,95 @@ import expect from 'expect';
 import { minlength } from '../src';
 
 describe('minlength', () => {
-    describe('recognizes empty values as valid', () => {
-        const validate = minlength(1);
-
-        [
-            { value: null, testName: 'null' },
-            { value: false, testName: false },
-            { value: '', testName: 'empty string' }
-        ].forEach(({ value, testName }) => {
-            it(`(${testName})`, () => {
-                const result = validate(value);
-                expect(result.isValid).toBe(true);
-            });
-        });
-    });
-
-    describe('recognizes values at least as long as min as valid', () => {
-        [
-            { min: 1, value: 'a', testName: 'a' },
-            { min: 2, value: 'ab', testName: 'ab' },
-            { min: 2, value: 'abc', testName: 'abc' },
-            { min: 1, value: [ 0 ], testName: '[0]' },
-            { min: 2, value: [ 0, 1 ], testName: '[0, 1]' },
-            { min: 2, value: [ 0, 1, 2 ], testName: '[0, 1, 2]' }
-        ].forEach(({ min, value, testName }) => {
-            it(`min: ${min}; value: ${testName}`, () => {
-                const validate = minlength(min);
-                const result = validate(value);
-                expect(result.isValid).toBe(true);
-            });
-        });
-    });
-
-    describe('recognizes values shorter than min as invalid', () => {
-        [
-            { min: 2, value: 'a', testName: 'a' },
-            { min: 3, value: 'ab', testName: 'ab' },
-            { min: 2, value: [ 0 ], testName: '[0]' },
-            { min: 3, value: [ 0, 1 ], testName: '[0, 1]' }
-        ].forEach(({ min, value, testName }) => {
-            it(`min: ${min}; value: ${testName}`, () => {
-                const validate = minlength(min);
-                const result = validate(value);
-                expect(result.isValid).toBe(false);
-            });
-        });
-    });
-
     describe('message', () => {
-        it('defaults to "At least ${min} characters"', () => {
-            const validate = minlength(4);
-            const result = validate('a');
-            expect(result.message).toBe('At least 4 characters');
+        it('defaults to "Length no less than ${min}"', () => {
+            const validate = minlength(2);
+            const result = validate('ab');
+            expect(result.message).toBe('Length no less than 2');
         });
 
         it('can be overridden through props', () => {
-            const validate = minlength(4, { message: 'Overridden' });
-            const result = validate('a');
+            const validate = minlength(2, { message: 'Overridden' });
+            const result = validate('ab');
             expect(result.message).toBe('Overridden');
         });
     });
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = minlength(4, { errorLevel: 10 });
-            const result = validate('a');
+            const validate = minlength(2, { errorLevel: 10 });
+            const result = validate('ab');
             expect(result.errorLevel).toBe(10);
+        });
+    });
+
+    describe('treats falsy values as valid', () => {
+        const validate = minlength(1);
+        let notDefined;
+
+        [ notDefined, null, false, 0, '' ]
+        .forEach((value) => {
+            it(JSON.stringify(value), () => {
+                const result = validate(value);
+                expect(result.isValid).toBe(true);
+            });
+        });
+    });
+
+    describe('treats falsy lengths as valid', () => {
+        const validate = minlength(1);
+        let notDefined;
+
+        [ notDefined, null, false, 0, '' ]
+        .forEach((value) => {
+            it(JSON.stringify(value), () => {
+                const result = validate({ length: value });
+                expect(result.isValid).toBe(true);
+            });
+        });
+    });
+
+    describe('validates length', () => {
+        describe('for strings', () => {
+            [
+                { min: 2, value: 'a', isValid: false },
+                { min: 2, value: 'ab', isValid: true },
+                { min: 2, value: 'abc', isValid: true }
+            ].forEach((test) => {
+                it(JSON.stringify(test), () => {
+                    const validate = minlength(test.min);
+                    const result = validate(test.value);
+                    expect(result.isValid).toBe(test.isValid);
+                });
+            });
+        });
+
+        describe('for arrays', () => {
+            [
+                { min: 2, value: [ 'a' ], isValid: false },
+                { min: 2, value: [ 'a', 'b' ], isValid: true },
+                { min: 2, value: [ 'a', 'b', 'c' ], isValid: true }
+            ].forEach((test) => {
+                it(JSON.stringify(test), () => {
+                    const validate = minlength(test.min);
+                    const result = validate(test.value);
+                    expect(result.isValid).toBe(test.isValid);
+                });
+            });
+        });
+
+        describe('for objects', () => {
+            [
+                { min: 2, value: { length: 1 }, isValid: false },
+                { min: 2, value: { length: 2 }, isValid: true },
+                { min: 2, value: { length: 3 }, isValid: true }
+            ].forEach((test) => {
+                it(JSON.stringify(test), () => {
+                    const validate = minlength(test.min);
+                    const result = validate(test.value);
+                    expect(result.isValid).toBe(test.isValid);
+                });
+            });
         });
     });
 });
