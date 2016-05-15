@@ -10,3 +10,5 @@ export { default as minLength } from './minLength';
 export { default as maxLength } from './maxLength';
 
 export { default as fieldValue } from './fieldValue';
+export { default as maxFieldValue } from './maxFieldValue';
+export { default as minFieldValue } from './minFieldValue';

@@ -3,10 +3,10 @@ import { minLength } from '../src';
 
 describe('minLength', () => {
     describe('message', () => {
-        it('defaults to "Length no less than ${min}"', () => {
+        it('defaults to "Length of at least ${min}"', () => {
             const validate = minLength(2);
             const result = validate('ab');
-            expect(result.message).toBe('Length no less than 2');
+            expect(result.message).toBe('Length of at least 2');
         });
 
         it('can be overridden through props', () => {
