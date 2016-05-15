@@ -1,12 +1,8 @@
-import validator from './validator';
-import { gte } from 'lodash';
+import minFieldValue from './minFieldValue';
 
-export default function minLengthValidator(max = 0, props) {
+export default function minLengthValidator(min = 0, props) {
     props = props || {};
-    props.message = props.message || `Length of at least ${max}`;
+    props.message = props.message || `Length of at least ${min}`;
 
-    return validator(
-        (value) => !value.length || gte(value.length, max),
-        props
-    );
+    return minFieldValue('length', min, props);
 }
