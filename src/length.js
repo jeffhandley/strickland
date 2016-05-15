@@ -1,7 +1,7 @@
 import validator from './validator';
 import { lte, gte } from 'lodash';
 
-export default function length(min = 0, max = 0, props) {
+export default function lengthValidator(min = 0, max = min, props) {
     props = props || {};
 
     if (max < min) {

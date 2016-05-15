@@ -56,15 +56,15 @@ describe('length', () => {
         });
     });
 
-    describe('uses only a min as an exact length', () => {
+    describe('uses a single argument as an exact length', () => {
         describe('for strings', () => {
             [
-                { min: 2, value: 'a', isValid: false },
-                { min: 2, value: 'ab', isValid: true },
-                { min: 2, value: 'abc', isValid: false }
+                { exactly: 2, value: 'a', isValid: false },
+                { exactly: 2, value: 'ab', isValid: true },
+                { exactly: 2, value: 'abc', isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = length(test.min);
+                    const validate = length(test.exactly);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -73,12 +73,12 @@ describe('length', () => {
 
         describe('for arrays', () => {
             [
-                { min: 2, value: [ 'a' ], isValid: false },
-                { min: 2, value: [ 'a', 'b' ], isValid: true },
-                { min: 2, value: [ 'a', 'b', 'c' ], isValid: false }
+                { exactly: 2, value: [ 'a' ], isValid: false },
+                { exactly: 2, value: [ 'a', 'b' ], isValid: true },
+                { exactly: 2, value: [ 'a', 'b', 'c' ], isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = length(test.min);
+                    const validate = length(test.exactly);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });
@@ -87,12 +87,12 @@ describe('length', () => {
 
         describe('for objects', () => {
             [
-                { min: 2, value: { length: 1 }, isValid: false },
-                { min: 2, value: { length: 2 }, isValid: true },
-                { min: 2, value: { length: 3 }, isValid: false }
+                { exactly: 2, value: { length: 1 }, isValid: false },
+                { exactly: 2, value: { length: 2 }, isValid: true },
+                { exactly: 2, value: { length: 3 }, isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = length(test.min);
+                    const validate = length(test.exactly);
                     const result = validate(test.value);
                     expect(result.isValid).toBe(test.isValid);
                 });

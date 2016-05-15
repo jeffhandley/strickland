@@ -1,11 +1,14 @@
 # Change Log
 
 ## 0.0.4
-API and implementation changes for length validators.
+API and implementation changes for length and value validators.
 
-* exactlength was removed
-    * length was created as its replacement
-    * length supports either an exact length or a length range
+* exactvalue was replaced with value
+    * value(exact) validates an exact value
+    * value(min, max) validates a value range
+* exactlength was replaced with length
+    * length(exact) validates an exact length
+    * length(min, max) validates a length range
 * length, minlenth, and maxlength will now succeed if the value's length property is falsy
 
 ## 0.0.3
