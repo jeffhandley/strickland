@@ -1,11 +1,13 @@
 # Change Log
 
 ### 0.0.6
-Added field validators.
+Added field validators and updated min/max validator messages.
 
 * fieldValue for validating a field's value is either exact or within a range
     * fieldValue(field, exactly) validates an exact value for the field
     * fieldValue(field, min, max) validates the field is within a range
+* minFieldValue for validating a field's value is at least the min
+* maxFieldValue for validating a field's value is at most the max
 
 ## 0.0.5
 Validator renames for min/max validators.

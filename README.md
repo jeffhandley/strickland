@@ -76,3 +76,12 @@ Succeeds when the specified field (number, string, or date) is either an exact v
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 * Succeeds if the object provided is falsy
 * Succeeds if the specified field of the object is falsy
+
+#### minFieldValue(field, min, props)
+Succeeds when the specified field (number, string, or date) is at least the specified min.
+
+#### maxValue(max, props)
+Succeeds when the specified field (number, string, or date) is at most the specified min.
+
+* Succeeds if the object provided is falsy
+* Succeeds if the specified field of the object is falsy
