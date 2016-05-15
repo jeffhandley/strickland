@@ -1,10 +1,11 @@
-import ValidationResult from './ValidationResult';
+import validator from './validator';
+import { isEqual } from 'lodash';
 
 export default function exactlength(length = 0, props = {}) {
     props.message = props.message || `Exactly ${length} characters`;
 
-    return (value) => {
-        const isValid = !value || value.length === length;
-        return new ValidationResult(isValid, props);
-    };
+    return validator(
+        (value) => isEqual(value.length, length),
+        props
+    );
 }

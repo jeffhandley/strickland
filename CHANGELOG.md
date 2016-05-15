@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.0.3
+API and implementation changes to adopt a base validator.
+
+* custom was renamed to validator
+* validator is valid for falsy values
+* All validators except for required use validator for their implementations
+* required is the only validator that should validate that a value is provided
+* Every validator can be used on optional data unless paired with a required validator
+
+## 0.0.2
+Minor refactoring of validation functions
+
 ## 0.0.1
 Initial publication
 

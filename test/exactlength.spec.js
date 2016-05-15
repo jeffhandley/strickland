@@ -1,5 +1,5 @@
 import expect from 'expect';
-import exactlength from '../src/exactlength';
+import { exactlength } from '../src';
 
 describe('exactlength', () => {
     describe('recognizes empty values as valid', () => {

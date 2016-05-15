@@ -1,5 +1,5 @@
 import expect from 'expect';
-import maxvalue from '../src/maxvalue';
+import { maxvalue } from '../src';
 
 describe('maxvalue', () => {
     describe('recognizes empty values as valid', () => {

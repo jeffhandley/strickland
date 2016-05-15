@@ -1,5 +1,5 @@
 import expect from 'expect';
-import required from '../src/required';
+import { required } from '../src';
 
 describe('required', () => {
     describe('recognizes truthy values as valid', () => {

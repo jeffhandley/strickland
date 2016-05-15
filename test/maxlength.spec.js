@@ -1,5 +1,5 @@
 import expect from 'expect';
-import maxlength from '../src/maxlength';
+import { maxlength } from '../src';
 
 describe('maxlength', () => {
     describe('recognizes empty values as valid', () => {

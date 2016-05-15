@@ -1,5 +1,5 @@
 import expect from 'expect';
-import exactvalue from '../src/exactvalue';
+import { exactvalue } from '../src';
 
 describe('exactvalue', () => {
     describe('recognizes empty values as valid', () => {

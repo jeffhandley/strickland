@@ -1,5 +1,5 @@
 import expect from 'expect';
-import minvalue from '../src/minvalue';
+import { minvalue } from '../src';
 
 describe('minvalue', () => {
     describe('recognizes empty values as valid', () => {

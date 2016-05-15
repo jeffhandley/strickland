@@ -1,5 +1,5 @@
 import expect from 'expect';
-import ValidationResult from '../src/ValidationResult';
+import { ValidationResult } from '../src';
 
 describe('ValidationResult', () => {
     describe('constructor', () => {

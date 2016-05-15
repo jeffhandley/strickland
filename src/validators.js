@@ -1,3 +1,4 @@
+export { default as validator } from './validator';
 export { default as exactlength } from './exactlength';
 export { default as exactvalue } from './exactvalue';
 export { default as maxlength } from './maxlength';

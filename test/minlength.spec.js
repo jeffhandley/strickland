@@ -1,5 +1,5 @@
 import expect from 'expect';
-import minlength from '../src/minlength';
+import { minlength } from '../src';
 
 describe('minlength', () => {
     describe('recognizes empty values as valid', () => {

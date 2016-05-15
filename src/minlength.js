@@ -1,10 +1,11 @@
-import ValidationResult from './ValidationResult';
+import validator from './validator';
+import { gte } from 'lodash';
 
 export default function minlength(min = 0, props = {}) {
     props.message = props.message || `At least ${min} characters`;
 
-    return (value) => {
-        const isValid = !value || value.length >= min;
-        return new ValidationResult(isValid, props);
-    };
+    return validator(
+        (value) => gte(value.length, min),
+        props
+    );
 }

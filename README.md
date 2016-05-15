@@ -37,6 +37,9 @@ Collection of functions for executing validators.
 
 ### Validators
 
+#### validator(validationFunction, props)
+Validate a value using a custom validation function
+
 #### required(props)
 The only validator to fail on falsy values
 
@@ -54,5 +57,3 @@ Validate that a value is within the expected range
 * maxvalue(max, props)
 * exactvalue(value, props)
 
-#### custom(validationFunction, props)
-Validate a value using a custom validation function
