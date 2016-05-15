@@ -1,15 +1,7 @@
-# strickland
-JavaScript data validation. Ideal for universal React applications that use Flux, Redux, or similar patterns.
+# Change Log
 
-Strickland is a unique and robust approach to validating data in JavaScript.
-
-* It is *NOT* a type system and it does not interfere with how you create and manage data
-* Instead, validation rules are defined separately and run against the data
-* While strickland can be used within the UI layer (including React components), it is not limited to use within UI
-* Universal applications can share validators across both client-side and server-side validation
-* With its extensibility, strickland supports complex scenarios in large line-of-business applications
-
-## API
+## 0.0.1
+Initial publication
 
 ### ValidationResult
 The class that represents a result, valid or invalid.  All validators return a ValidationResult.
