@@ -42,9 +42,16 @@ describe('value', () => {
 
         [ notDefined, null, false, 0, '' ]
         .forEach((test) => {
-            it(JSON.stringify(test), () => {
+            describe(JSON.stringify(test), () => {
                 const result = validate(test);
-                expect(result.isValid).toBe(true);
+
+                it('setting isValid to true', () => {
+                    expect(result.isValid).toBe(true);
+                });
+
+                it('setting isIgnored to true', () => {
+                    expect(result.isIgnored).toBe(true);
+                });
             });
         });
     });

@@ -70,7 +70,7 @@ describe('validator', () => {
             const validate = validator(validationFunction, props);
             validate(true);
 
-            expect(validatedProps).toEqual(props);
+            expect(validatedProps).toInclude(props);
         });
 
         it('but does not let the function mutate the props', () => {

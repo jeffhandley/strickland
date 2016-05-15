@@ -35,10 +35,17 @@ describe('maxFieldValue', () => {
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
-        .forEach((value) => {
-            it(JSON.stringify(value), () => {
-                const result = validate(value);
-                expect(result.isValid).toBe(true);
+        .forEach((test) => {
+            describe(JSON.stringify(test), () => {
+                const result = validate(test);
+
+                it('setting isValid to true', () => {
+                    expect(result.isValid).toBe(true);
+                });
+
+                it('setting isIgnored to true', () => {
+                    expect(result.isIgnored).toBe(true);
+                });
             });
         });
     });
