@@ -48,7 +48,7 @@ The only validator to fail on falsy values.
 #### value(min, max, props)
 Succeeds when a number, string, or date is either an exact value or within a range.
 
-* If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly to be valid
+* If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 
 #### minValue(min, props)
@@ -58,9 +58,9 @@ Succeeds when a number, string, or date is at least the specified min.
 Succeeds when a number, string, or date is at most the specified min.
 
 #### length(min, max, props)
-Succceds when the length property of a string, array, or object is either an exact value or within a range.
+Succeeds when the length property of a string, array, or object is either an exact value or within a range.
 
-* If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly to be valid
+* If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
 
 #### minLength(min, props)
@@ -69,3 +69,10 @@ Succeeds when the length property of a string, array, or object is at least the 
 #### maxLength(max, props)
 Succeeds when the length property of a string, array, or object is at most the specified max.
 
+#### fieldValue(field, min, max, props)
+Succeeds when the specified field (number, string, or date) is either an exact value or withing a range.
+
+* If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly
+* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
+* Succeeds if the object provided is falsy
+* Succeeds if the specified field of the object is falsy

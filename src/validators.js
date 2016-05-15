@@ -8,3 +8,5 @@ export { default as maxValue } from './maxValue';
 export { default as length } from './length';
 export { default as minLength } from './minLength';
 export { default as maxLength } from './maxLength';
+
+export { default as fieldValue } from './fieldValue';

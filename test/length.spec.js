@@ -3,7 +3,7 @@ import { length } from '../src';
 
 describe('length', () => {
     describe('message', () => {
-        it('defaults to "Length of ${min}" for an exact length', () => {
+        it('defaults to "Length of ${exactly}" for an exact length', () => {
             const validate = length(2);
             const result = validate('ab');
             expect(result.message).toBe('Length of 2');

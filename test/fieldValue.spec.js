@@ -1,43 +1,56 @@
 import expect from 'expect';
-import { value } from '../src';
+import { fieldValue } from '../src';
 
-describe('value', () => {
+describe('fieldValue', () => {
     describe('message', () => {
-        it('defaults to "Exactly ${exactly}" for an exact value', () => {
-            const validate = value(2);
-            const result = validate('ab');
-            expect(result.message).toBe('Exactly 2');
+        it('defaults to "${field} must be ${exactly}" for an exact fieldValue', () => {
+            const validate = fieldValue('field', 2);
+            const result = validate({ field: 2 });
+            expect(result.message).toBe('field must be 2');
         });
 
-        it('defaults to "Between ${min} and ${max}" for a range', () => {
-            const validate = value(2, 3);
-            const result = validate('ab');
-            expect(result.message).toBe('Between 2 and 3');
+        it('defaults to "${field} must be between ${min} and ${max}" for a range', () => {
+            const validate = fieldValue('field', 2, 3);
+            const result = validate({ field: 2 });
+            expect(result.message).toBe('field must be between 2 and 3');
         });
 
         it('can be overridden through props', () => {
-            const validate = value(2, 3, { message: 'Overridden' });
-            const result = validate('ab');
+            const validate = fieldValue('field', 2, 3, { message: 'Overridden' });
+            const result = validate({ field: 2 });
             expect(result.message).toBe('Overridden');
         });
     });
 
     describe('props', () => {
         it('flow through', () => {
-            const validate = value(2, 3, { errorLevel: 10 });
-            const result = validate('ab');
+            const validate = fieldValue('field', 2, 3, { errorLevel: 10 });
+            const result = validate({ field: 2 });
             expect(result.errorLevel).toBe(10);
         });
     });
 
     describe('treats falsy values as valid', () => {
-        const validate = value(1);
+        const validate = fieldValue('field', 1);
         let notDefined;
 
         [ notDefined, null, false, 0, '' ]
-        .forEach((test) => {
-            it(JSON.stringify(test), () => {
-                const result = validate(test);
+        .forEach((value) => {
+            it(JSON.stringify(value), () => {
+                const result = validate(value);
+                expect(result.isValid).toBe(true);
+            });
+        });
+    });
+
+    describe('treats falsy field values as valid', () => {
+        const validate = fieldValue('field', 1);
+        let notDefined;
+
+        [ notDefined, null, false, 0, '' ]
+        .forEach((value) => {
+            it(JSON.stringify(value), () => {
+                const result = validate({ field: value });
                 expect(result.isValid).toBe(true);
             });
         });
@@ -51,8 +64,8 @@ describe('value', () => {
                 { exactly: 2, value: 3, isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
+                    const validate = fieldValue('number', test.exactly);
+                    const result = validate({ number: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });
@@ -65,8 +78,8 @@ describe('value', () => {
                 { exactly: 'b', value: 'c', isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
+                    const validate = fieldValue('string', test.exactly);
+                    const result = validate({ string: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });
@@ -79,8 +92,8 @@ describe('value', () => {
                 { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 14), isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
+                    const validate = fieldValue('date', test.exactly);
+                    const result = validate({ date: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });
@@ -96,8 +109,8 @@ describe('value', () => {
                 { min: 2, max: 3, value: 4, isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.min, test.max);
-                    const result = validate(test.value);
+                    const validate = fieldValue('number', test.min, test.max);
+                    const result = validate({ number: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });
@@ -111,8 +124,8 @@ describe('value', () => {
                 { min: 'b', max: 'c', value: 'd', isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.min, test.max);
-                    const result = validate(test.value);
+                    const validate = fieldValue('string', test.min, test.max);
+                    const result = validate({ string: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });
@@ -126,8 +139,8 @@ describe('value', () => {
                 { min: new Date(2016, 4, 13), max: new Date(2016, 4, 14), value: new Date(2016, 4, 15), isValid: false }
             ].forEach((test) => {
                 it(JSON.stringify(test), () => {
-                    const validate = value(test.min, test.max);
-                    const result = validate(test.value);
+                    const validate = fieldValue('date', test.min, test.max);
+                    const result = validate({ date: test.value });
                     expect(result.isValid).toBe(test.isValid);
                 });
             });

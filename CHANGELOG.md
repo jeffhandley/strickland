@@ -1,5 +1,12 @@
 # Change Log
 
+### 0.0.6
+Added field validators.
+
+* fieldValue for validating a field's value is either exact or within a range
+    * fieldValue(field, exactly) validates an exact value for the field
+    * fieldValue(field, min, max) validates the field is within a range
+
 ## 0.0.5
 Validator renames for min/max validators.
 
@@ -12,10 +19,10 @@ Validator renames for min/max validators.
 API and implementation changes for length and value validators.
 
 * exactvalue was replaced with value
-    * value(exact) validates an exact value
+    * value(exactly) validates an exact value
     * value(min, max) validates a value range
 * exactlength was replaced with length
-    * length(exact) validates an exact length
+    * length(exactly) validates an exact length
     * length(min, max) validates a length range
 * length, minlenth, and maxlength will now succeed if the value's length property is falsy
 
