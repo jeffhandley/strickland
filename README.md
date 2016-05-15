@@ -38,10 +38,12 @@ Collection of functions for executing validators.
 ### Validators
 
 #### validator(validationFunction, props)
-Validate a value using a custom validation function
+Validate a value using a validation function.
+The validation function is only called if the value is truthy.
 
 #### required(props)
-The only validator to fail on falsy values
+Succeeds for truthy values and fails on falsy values.
+The only validator to fail on falsy values.
 
 #### Length Validators
 Validate the length of a string, array, or any object with a length property
