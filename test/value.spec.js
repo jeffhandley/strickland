@@ -51,65 +51,44 @@ describe('value', () => {
         });
     });
 
-    describe('treats falsy values as valid', () => {
-        const validate = value(1);
-        let notDefined;
+    describe('ignores values', () => {
+        describe('ignoring falsy values by default', () => {
+            const validate = value(1);
+            let notDefined;
 
-        [ notDefined, null, false, 0, '' ]
-        .forEach((test) => {
-            describe(JSON.stringify(test), () => {
-                const result = validate(test);
+            [ notDefined, null, false, 0, '' ]
+            .forEach((test) => {
+                describe(JSON.stringify(test), () => {
+                    const result = validate(test);
 
-                it('setting isValid to true', () => {
-                    expect(result.isValid).toBe(true);
-                });
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
 
-                it('setting isIgnored to true', () => {
-                    expect(result.isIgnored).toBe(true);
-                });
-            });
-        });
-    });
-
-    describe('uses a single argument as an exact value', () => {
-        describe('for numbers', () => {
-            [
-                { exactly: 2, value: 1, isValid: false },
-                { exactly: 2, value: 2, isValid: true },
-                { exactly: 2, value: 3, isValid: false }
-            ].forEach((test) => {
-                it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
-                    expect(result.isValid).toBe(test.isValid);
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
                 });
             });
         });
 
-        describe('for strings', () => {
+        describe('using a custom isIgnored prop', () => {
             [
-                { exactly: 'b', value: 'a', isValid: false },
-                { exactly: 'b', value: 'b', isValid: true },
-                { exactly: 'b', value: 'c', isValid: false }
-            ].forEach((test) => {
-                it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
-                    expect(result.isValid).toBe(test.isValid);
-                });
-            });
-        });
+                { isIgnored: true, name: 'as true' },
+                { isIgnored: (val) => (val === 4), name: 'as a function returning true' }
+            ]
+            .forEach((test) => {
+                describe(test.name, () => {
+                    const validate = value(1, 2, { isIgnored: test.isIgnored });
+                    const result = validate(4);
 
-        describe('for dates', () => {
-            [
-                { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 12), isValid: false },
-                { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 13), isValid: true },
-                { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 14), isValid: false }
-            ].forEach((test) => {
-                it(JSON.stringify(test), () => {
-                    const validate = value(test.exactly);
-                    const result = validate(test.value);
-                    expect(result.isValid).toBe(test.isValid);
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
+
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
                 });
             });
         });

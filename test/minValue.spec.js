@@ -45,21 +45,44 @@ describe('minValue', () => {
         });
     });
 
-    describe('treats falsy values as valid', () => {
-        const validate = minValue(1);
-        let notDefined;
+    describe('ignores values', () => {
+        describe('ignoring falsy values by default', () => {
+            const validate = minValue(1);
+            let notDefined;
 
-        [ notDefined, null, false, 0, '' ]
-        .forEach((test) => {
-            describe(JSON.stringify(test), () => {
-                const result = validate(test);
+            [ notDefined, null, false, 0, '' ]
+            .forEach((test) => {
+                describe(JSON.stringify(test), () => {
+                    const result = validate(test);
 
-                it('setting isValid to true', () => {
-                    expect(result.isValid).toBe(true);
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
+
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
                 });
+            });
+        });
 
-                it('setting isIgnored to true', () => {
-                    expect(result.isIgnored).toBe(true);
+        describe('using a custom isIgnored prop', () => {
+            [
+                { isIgnored: true, name: 'as true' },
+                { isIgnored: (val) => (val === 4), name: 'as a function returning true' }
+            ]
+            .forEach((test) => {
+                describe(test.name, () => {
+                    const validate = minValue(2, { isIgnored: test.isIgnored });
+                    const result = validate(4);
+
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
+
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
                 });
             });
         });
