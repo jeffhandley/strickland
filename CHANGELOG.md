@@ -17,11 +17,9 @@ Added field validators and updated min/max validator messages.
 
 Added an isIgnored property for validator to override the decision for ignoring values; ValidationResult instances then get an isIgnored property to indicate whether or not the validator was ignored.
 
-Utilize isIgnored so that required can use validator.
-
 Prevent mutation of props passed to validators.
 
-Change behavior of required and how empty values are identified.
+Utilize isIgnored so that required can use validator.  Change behavior of required and how empty values are identified.
 
 * required now treats empty arrays and objects as invalid
     * All other validators check the result of required to determine if the value should be ignored
