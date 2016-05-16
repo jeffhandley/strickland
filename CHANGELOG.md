@@ -5,6 +5,8 @@ Validator parameters flow through to the results, allowing results to be associa
 
 Respect a fieldName property for field validators, using it within the message.
 
+Add a validator property onto results, indicating which validator function was used to get the result.
+
 ## 0.0.5
 Validator renames for min/max validators.
 
