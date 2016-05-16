@@ -1,7 +1,9 @@
 # Change Log
 
 ## 0.0.6
+Validator parameters flow through to the results, allowing results to be associated back with the fields and validators.
 
+Respect a fieldName property for field validators, using it within the message.
 
 ## 0.0.5
 Validator renames for min/max validators.
