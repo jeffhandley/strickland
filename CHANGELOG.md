@@ -2,21 +2,27 @@
 
 ## 0.0.5
 Validator renames for min/max validators.
-Added field validators and updated min/max validator messages.
-Added an isIgnored property for validator to override the decision for ignoring values; ValidationResult instances then get an isIgnored property to surface whether or not the validator was ignored.
-Utilize isIgnored so that required can use validator.
-Prevent mutation of props passed to validators.
-Change behavior of required and how empty values are identified.
 
 * minvalue renamed to minValue
 * maxvalue renamed to maxValue
 * minlength renamed to minLength
 * maxLength renamed to maxLength
+
+Added field validators and updated min/max validator messages.
 * fieldValue for validating a field's value is either exact or within a range
     * fieldValue(field, exactly) validates an exact value for the field
     * fieldValue(field, min, max) validates the field is within a range
 * minFieldValue for validating a field's value is at least the min
 * maxFieldValue for validating a field's value is at most the max
+
+Added an isIgnored property for validator to override the decision for ignoring values; ValidationResult instances then get an isIgnored property to indicate whether or not the validator was ignored.
+
+Utilize isIgnored so that required can use validator.
+
+Prevent mutation of props passed to validators.
+
+Change behavior of required and how empty values are identified.
+
 * required now treats empty arrays and objects as invalid
     * All other validators check the result of required to determine if the value should be ignored
 
