@@ -97,6 +97,7 @@ describe('length', () => {
     describe('uses a single argument as an exact length', () => {
         describe('for strings', () => {
             [
+                { exactly: 2, value: '', isValid: true },
                 { exactly: 2, value: 'a', isValid: false },
                 { exactly: 2, value: 'ab', isValid: true },
                 { exactly: 2, value: 'abc', isValid: false }
@@ -111,6 +112,7 @@ describe('length', () => {
 
         describe('for arrays', () => {
             [
+                { exactly: 2, value: [ ], isValid: true },
                 { exactly: 2, value: [ 'a' ], isValid: false },
                 { exactly: 2, value: [ 'a', 'b' ], isValid: true },
                 { exactly: 2, value: [ 'a', 'b', 'c' ], isValid: false }
@@ -125,6 +127,7 @@ describe('length', () => {
 
         describe('for objects', () => {
             [
+                { exactly: 2, value: { length: 0 }, isValid: false },
                 { exactly: 2, value: { length: 1 }, isValid: false },
                 { exactly: 2, value: { length: 2 }, isValid: true },
                 { exactly: 2, value: { length: 3 }, isValid: false }
@@ -141,6 +144,7 @@ describe('length', () => {
     describe('uses a min/max pair as a length range', () => {
         describe('for strings', () => {
             [
+                { min: 2, max: 3, value: '', isValid: true },
                 { min: 2, max: 3, value: 'a', isValid: false },
                 { min: 2, max: 3, value: 'ab', isValid: true },
                 { min: 2, max: 3, value: 'abc', isValid: true },
@@ -156,6 +160,7 @@ describe('length', () => {
 
         describe('for arrays', () => {
             [
+                { min: 2, max: 3, value: [ ], isValid: true },
                 { min: 2, max: 3, value: [ 'a' ], isValid: false },
                 { min: 2, max: 3, value: [ 'a', 'b' ], isValid: true },
                 { min: 2, max: 3, value: [ 'a', 'b', 'c' ], isValid: true },
@@ -171,6 +176,7 @@ describe('length', () => {
 
         describe('for objects', () => {
             [
+                { min: 2, max: 3, value: { length: 0 }, isValid: false },
                 { min: 2, max: 3, value: { length: 1 }, isValid: false },
                 { min: 2, max: 3, value: { length: 2 }, isValid: true },
                 { min: 2, max: 3, value: { length: 3 }, isValid: true },

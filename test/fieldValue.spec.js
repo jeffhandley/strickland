@@ -97,6 +97,7 @@ describe('fieldValue', () => {
     describe('uses a single argument as an exact value', () => {
         describe('for numbers', () => {
             [
+                { exactly: 2, value: 0, isValid: false },
                 { exactly: 2, value: 1, isValid: false },
                 { exactly: 2, value: 2, isValid: true },
                 { exactly: 2, value: 3, isValid: false }
@@ -111,6 +112,7 @@ describe('fieldValue', () => {
 
         describe('for strings', () => {
             [
+                { exactly: 'b', value: '', isValid: false },
                 { exactly: 'b', value: 'a', isValid: false },
                 { exactly: 'b', value: 'b', isValid: true },
                 { exactly: 'b', value: 'c', isValid: false }
@@ -125,6 +127,7 @@ describe('fieldValue', () => {
 
         describe('for dates', () => {
             [
+                { exactly: new Date(2016, 4, 13), value: new Date(0), isValid: false },
                 { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 12), isValid: false },
                 { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 13), isValid: true },
                 { exactly: new Date(2016, 4, 13), value: new Date(2016, 4, 14), isValid: false }
@@ -141,6 +144,7 @@ describe('fieldValue', () => {
     describe('uses a min/max pair as a value range', () => {
         describe('for numbers', () => {
             [
+                { min: 2, max: 3, value: 0, isValid: false },
                 { min: 2, max: 3, value: 1, isValid: false },
                 { min: 2, max: 3, value: 2, isValid: true },
                 { min: 2, max: 3, value: 3, isValid: true },
@@ -156,6 +160,7 @@ describe('fieldValue', () => {
 
         describe('for strings', () => {
             [
+                { min: 'b', max: 'c', value: '', isValid: false },
                 { min: 'b', max: 'c', value: 'a', isValid: false },
                 { min: 'b', max: 'c', value: 'b', isValid: true },
                 { min: 'b', max: 'c', value: 'c', isValid: true },
@@ -171,6 +176,7 @@ describe('fieldValue', () => {
 
         describe('for dates', () => {
             [
+                { min: new Date(2016, 4, 13), max: new Date(2016, 4, 14), value: new Date(0), isValid: false },
                 { min: new Date(2016, 4, 13), max: new Date(2016, 4, 14), value: new Date(2016, 4, 12), isValid: false },
                 { min: new Date(2016, 4, 13), max: new Date(2016, 4, 14), value: new Date(2016, 4, 13), isValid: true },
                 { min: new Date(2016, 4, 13), max: new Date(2016, 4, 14), value: new Date(2016, 4, 14), isValid: true },

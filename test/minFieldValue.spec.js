@@ -91,6 +91,7 @@ describe('minFieldValue', () => {
     describe('validates field values', () => {
         describe('for numbers', () => {
             [
+                { min: 2, value: 0, isValid: false },
                 { min: 2, value: 1, isValid: false },
                 { min: 2, value: 2, isValid: true },
                 { min: 2, value: 3, isValid: true }
@@ -105,6 +106,7 @@ describe('minFieldValue', () => {
 
         describe('for strings', () => {
             [
+                { min: 'b', value: '', isValid: false },
                 { min: 'b', value: 'a', isValid: false },
                 { min: 'b', value: 'b', isValid: true },
                 { min: 'b', value: 'c', isValid: true }
@@ -119,6 +121,7 @@ describe('minFieldValue', () => {
 
         describe('for dates', () => {
             [
+                { min: new Date(2016, 4, 13), value: new Date(0), isValid: false },
                 { min: new Date(2016, 4, 13), value: new Date(2016, 4, 12), isValid: false },
                 { min: new Date(2016, 4, 13), value: new Date(2016, 4, 13), isValid: true },
                 { min: new Date(2016, 4, 13), value: new Date(2016, 4, 14), isValid: true }

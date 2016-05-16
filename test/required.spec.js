@@ -91,7 +91,7 @@ describe('required', () => {
     describe('treats non-empty values as valid', () => {
         const validate = required();
 
-        [ true, 1, 'a', [ 1 ], { field: 1 }, new Date() ]
+        [ true, 1, 'a', [ 0 ], { field: null }, new Date() ]
         .forEach((test) => {
             it(JSON.stringify(test), () => {
                 const result = validate(test);

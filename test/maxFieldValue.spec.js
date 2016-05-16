@@ -91,6 +91,7 @@ describe('maxFieldValue', () => {
     describe('validates field values', () => {
         describe('for numbers', () => {
             [
+                { max: 2, value: 0, isValid: true },
                 { max: 2, value: 1, isValid: true },
                 { max: 2, value: 2, isValid: true },
                 { max: 2, value: 3, isValid: false }
@@ -105,6 +106,7 @@ describe('maxFieldValue', () => {
 
         describe('for strings', () => {
             [
+                { max: 'b', value: '', isValid: true },
                 { max: 'b', value: 'a', isValid: true },
                 { max: 'b', value: 'b', isValid: true },
                 { max: 'b', value: 'c', isValid: false }
@@ -119,6 +121,7 @@ describe('maxFieldValue', () => {
 
         describe('for dates', () => {
             [
+                { max: new Date(2016, 4, 13), value: new Date(0), isValid: true },
                 { max: new Date(2016, 4, 13), value: new Date(2016, 4, 12), isValid: true },
                 { max: new Date(2016, 4, 13), value: new Date(2016, 4, 13), isValid: true },
                 { max: new Date(2016, 4, 13), value: new Date(2016, 4, 14), isValid: false }

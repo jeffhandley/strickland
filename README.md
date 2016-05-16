@@ -19,15 +19,15 @@ The class that represents a result, valid or invalid.  All validators return a V
 * isValid
 
 #### Extensibility
-Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the prop to the validator.
+Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the property to the validator.
 
 * message
     * The message associated with the validator, describing the rules
 * isIgnored
     * A Boolean indicating if the validator was ignored during validation
     * Can be overidden with two different signatures
-        * A function, accepting the value being validated
-        * Another truthy value, forcing the validator to always be ignored
+        * A function, accepting the value being validated, returning a truthy value to ignore the validator
+        * A truthy value, forcing the validator to always be ignored
 
 ### validation
 Collection of functions for executing validators.
@@ -48,8 +48,26 @@ Validate a value using a validation function.
 The validation function is only called if the value is truthy.
 
 #### required(props)
-Succeeds for truthy values and fails on falsy values.
-The only validator to fail on falsy values.
+Succeeds for non-empty values and fails on empty values.
+The only validator to fail on empty values.
+
+Empty values include:
+
+* false
+* 0
+* ''
+* [ ]
+* { }
+* new Date(0)
+
+Non-empty values include:
+
+* true
+* 1
+* 'a'
+* [ 0 ]
+* { field: null }
+* new Date()
 
 #### value(min, max, props)
 Succeeds when a number, string, or date is either an exact value or within a range.
@@ -80,14 +98,17 @@ Succeeds when the specified field (number, string, or date) is either an exact v
 
 * If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly
 * If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
-* Succeeds if the object provided is falsy
-* Succeeds if the specified field of the object is falsy
+* Succeeds if the object provided is empty
+* Fails if the specified field is empty and a value is expected
 
 #### minFieldValue(field, min, props)
 Succeeds when the specified field (number, string, or date) is at least the specified min.
 
-#### maxValue(max, props)
+* Succeeds if the object provided is empty
+* Fails if the specified field is empty and a value is expected
+
+#### maxFieldValue(max, props)
 Succeeds when the specified field (number, string, or date) is at most the specified min.
 
-* Succeeds if the object provided is falsy
-* Succeeds if the specified field of the object is falsy
+* Succeeds if the object provided is empty
+* Fails if the specified field is empty
