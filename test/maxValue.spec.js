@@ -48,6 +48,10 @@ describe('maxValue', () => {
             const validate = maxValue(2);
             const result = validate(2);
 
+            it('validator', () => {
+                expect(result.validator).toBe(maxValue);
+            });
+
             it('max', () => {
                 expect(result.max).toBe(2);
             });

@@ -6,8 +6,12 @@ export default function fieldValueValidator(field, min = 0, max = min, props) {
         max = min;
     }
 
-    props = Object.assign({}, props, { field, min, max });
-    props.fieldName = props.fieldName || field;
+    // field, min, and max cannot be overridden; other props can
+    props = Object.assign(
+        { validator: fieldValueValidator, fieldName: field },
+        props,
+        { field, min, max }
+    );
 
     if (min === max) {
         props.message = props.message || `${props.fieldName} must be ${min}`;

@@ -4,11 +4,16 @@ import { isArray, isObject, isDate, isEmpty, isEqual } from 'lodash';
 const emptyDate = new Date(0);
 
 export default function requiredValidator(props) {
-    props = Object.assign({}, props);
-    props.message = props.message || 'Required';
+    props = Object.assign(
+        {
+            validator: requiredValidator,
+            message: 'Required',
 
-    // The required validator doesn't ignore any values by default
-    props.isIgnored = props.isIgnored || (() => false);
+            // The required validator doesn't ignore any values by default
+            isIgnored: () => false
+        },
+        props
+    );
 
     const isValid = (value) => {
         if (isArray(value)) {

@@ -48,6 +48,10 @@ describe('minLength', () => {
             const validate = minLength(2);
             const result = validate('ab');
 
+            it('validator', () => {
+                expect(result.validator).toBe(minLength);
+            });
+
             it('min', () => {
                 expect(result.min).toBe(2);
             });

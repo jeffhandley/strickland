@@ -60,6 +60,10 @@ describe('fieldValue', () => {
             const validate = fieldValue('first', 2, 3);
             const result = validate({ first: 1 });
 
+            it('validator', () => {
+                expect(result.validator).toBe(fieldValue);
+            });
+
             it('field', () => {
                 expect(result.field).toBe('first');
             });

@@ -43,6 +43,15 @@ describe('required', () => {
                 validate('ab');
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = required(2);
+            const result = validate(2);
+
+            it('validator', () => {
+                expect(result.validator).toBe(required);
+            });
+        });
     });
 
     describe('ignoring values', () => {

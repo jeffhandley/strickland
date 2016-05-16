@@ -21,6 +21,8 @@ The class that represents a result, valid or invalid.  All validators return a V
 #### Extensibility
 Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the property to the validator.
 
+* validator
+    * The function used as the validator
 * message
     * The message associated with the validator, describing the rules
 * isIgnored
@@ -28,6 +30,9 @@ Custom properties provided to validators flow through onto the ValidationResult.
     * Can be overidden with two different signatures
         * A function, accepting the value being validated, returning a truthy value to ignore the validator
         * A truthy value, forcing the validator to always be ignored
+* All of the arguments provided to the validator
+    * field and fieldName get set for field-level validators
+    * min and max get set for length and value validators along with the min/max validators
 
 ### validation
 Collection of functions for executing validators.

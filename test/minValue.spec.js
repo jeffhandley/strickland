@@ -48,6 +48,10 @@ describe('minValue', () => {
             const validate = minValue(2);
             const result = validate(2);
 
+            it('validator', () => {
+                expect(result.validator).toBe(minValue);
+            });
+
             it('min', () => {
                 expect(result.min).toBe(2);
             });

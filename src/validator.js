@@ -21,9 +21,14 @@ function isIgnoredWrapper(ignore, value) {
 }
 
 export default function validator(validate, props) {
-    props = Object.assign({}, props);
-    props.message = props.message || 'Invalid';
-    props.isIgnored = props.isIgnored || isIgnored;
+    props = Object.assign(
+        {
+            validator,
+            message: 'Invalid',
+            isIgnored
+        },
+        props
+    );
 
     return (value) => {
         // Create a fresh props object for the result

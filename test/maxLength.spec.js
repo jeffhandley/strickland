@@ -48,6 +48,10 @@ describe('maxLength', () => {
             const validate = maxLength(2);
             const result = validate('ab');
 
+            it('validator', () => {
+                expect(result.validator).toBe(maxLength);
+            });
+
             it('max', () => {
                 expect(result.max).toBe(2);
             });

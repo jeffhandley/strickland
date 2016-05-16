@@ -1,8 +1,13 @@
 import minFieldValue from './minFieldValue';
 
 export default function minLengthValidator(min = 0, props) {
-    props = Object.assign({}, props);
-    props.message = props.message || `Length of at least ${min}`;
+    props = Object.assign(
+        {
+            validator: minLengthValidator,
+            message: `Length of at least ${min}`
+        },
+        props
+    );
 
     return minFieldValue('length', min, props);
 }

@@ -45,6 +45,15 @@ describe('validator', () => {
                 validate('a');
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = validator(() => false);
+            const result = validate(2);
+
+            it('validator', () => {
+                expect(result.validator).toBe(validator);
+            });
+        });
     });
 
     describe('ignores values', () => {

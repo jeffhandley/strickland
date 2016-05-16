@@ -6,7 +6,16 @@ export default function valueValidator(min = 0, max = min, props) {
         max = min;
     }
 
-    props = Object.assign({}, props, { min, max });
+    props = Object.assign(
+        {
+            validator: valueValidator
+        },
+        props,
+        {
+            min,
+            max
+        }
+    );
 
     if (min === max) {
         props.message = props.message || `Exactly ${min}`;

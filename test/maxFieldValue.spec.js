@@ -54,6 +54,10 @@ describe('maxFieldValue', () => {
             const validate = maxFieldValue('first', 2);
             const result = validate({ first: 1 });
 
+            it('validator', () => {
+                expect(result.validator).toBe(maxFieldValue);
+            });
+
             it('field', () => {
                 expect(result.field).toBe('first');
             });

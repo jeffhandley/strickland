@@ -6,7 +6,7 @@ export default function lengthValidator(min = 0, max = min, props) {
         max = min;
     }
 
-    props = Object.assign({}, props);
+    props = Object.assign({ validator: lengthValidator }, props);
 
     if (min === max) {
         props.message = props.message || `Length of ${min}`;
