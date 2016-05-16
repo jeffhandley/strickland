@@ -1,5 +1,5 @@
 import expect from 'expect';
-import { maxLength, maxValue, minLength, minValue, required, validation } from '../src';
+import { maxLength, maxValue, minLength, minValue, required, validation, fieldValue } from '../src';
 
 describe('validation', () => {
     const validators = [

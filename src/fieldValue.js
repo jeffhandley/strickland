@@ -2,16 +2,17 @@ import validator from './validator';
 import { lte, gte } from 'lodash';
 
 export default function fieldValueValidator(field, min = 0, max = min, props) {
-    props = Object.assign({}, props);
-
     if (lte(max, min)) {
         max = min;
     }
 
+    props = Object.assign({}, props, { field, min, max });
+    props.fieldName = props.fieldName || field;
+
     if (min === max) {
-        props.message = props.message || `${field} must be ${min}`;
+        props.message = props.message || `${props.fieldName} must be ${min}`;
     } else {
-        props.message = props.message || `${field} must be between ${min} and ${max}`;
+        props.message = props.message || `${props.fieldName} must be between ${min} and ${max}`;
     }
 
     return validator(

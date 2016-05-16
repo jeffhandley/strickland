@@ -49,6 +49,19 @@ describe('length', () => {
                 validate('ab');
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = length(2, 3);
+            const result = validate('ab');
+
+            it('min', () => {
+                expect(result.min).toBe(2);
+            });
+
+            it('max', () => {
+                expect(result.max).toBe(3);
+            });
+        });
     });
 
     describe('ignores values', () => {

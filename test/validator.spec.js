@@ -48,7 +48,7 @@ describe('validator', () => {
     });
 
     describe('ignores values', () => {
-        it('ignoring falsy values by default', () => {
+        it('ignoring empty values by default', () => {
             const validate = validator(() => false);
             let notDefined;
 

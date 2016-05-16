@@ -4,10 +4,16 @@ import { minFieldValue } from '../src';
 
 describe('minFieldValue', () => {
     describe('message', () => {
-        it('defaults to "${field} no less than ${min}"', () => {
+        it('defaults to "${field} must be no less than ${min}"', () => {
             const validate = minFieldValue('number', 2);
             const result = validate({ number: 2 });
-            expect(result.message).toBe('number no less than 2');
+            expect(result.message).toBe('number must be no less than 2');
+        });
+
+        it('respects the fieldName prop', () => {
+            const validate = minFieldValue('field', 2, { fieldName: 'Field Name' });
+            const result = validate({ field: 2 });
+            expect(result.message).toBe('Field Name must be no less than 2');
         });
 
         it('can be overridden through props', () => {
@@ -41,6 +47,23 @@ describe('minFieldValue', () => {
             it('during validation', () => {
                 const validate = minFieldValue('field', 2, props);
                 validate(2);
+            });
+        });
+
+        describe('get populated with validator properties', () => {
+            const validate = minFieldValue('first', 2);
+            const result = validate({ first: 1 });
+
+            it('field', () => {
+                expect(result.field).toBe('first');
+            });
+
+            it('fieldName', () => {
+                expect(result.fieldName).toBe('first');
+            });
+
+            it('min', () => {
+                expect(result.min).toBe(2);
             });
         });
     });

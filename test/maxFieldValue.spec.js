@@ -4,10 +4,16 @@ import { maxFieldValue } from '../src';
 
 describe('maxFieldValue', () => {
     describe('message', () => {
-        it('defaults to "${field} no more than ${max}"', () => {
+        it('defaults to "${field} must be no more than ${max}"', () => {
             const validate = maxFieldValue('number', 2);
             const result = validate({ number: 2 });
-            expect(result.message).toBe('number no more than 2');
+            expect(result.message).toBe('number must be no more than 2');
+        });
+
+        it('respects the fieldName prop', () => {
+            const validate = maxFieldValue('field', 2, { fieldName: 'Field Name' });
+            const result = validate({ field: 2 });
+            expect(result.message).toBe('Field Name must be no more than 2');
         });
 
         it('can be overridden through props', () => {
@@ -41,6 +47,23 @@ describe('maxFieldValue', () => {
             it('during validation', () => {
                 const validate = maxFieldValue('field', 2, props);
                 validate(2);
+            });
+        });
+
+        describe('get populated with validator properties', () => {
+            const validate = maxFieldValue('first', 2);
+            const result = validate({ first: 1 });
+
+            it('field', () => {
+                expect(result.field).toBe('first');
+            });
+
+            it('fieldName', () => {
+                expect(result.fieldName).toBe('first');
+            });
+
+            it('max', () => {
+                expect(result.max).toBe(2);
             });
         });
     });

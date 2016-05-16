@@ -43,6 +43,15 @@ describe('maxValue', () => {
                 validate(2);
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = maxValue(2);
+            const result = validate(2);
+
+            it('max', () => {
+                expect(result.max).toBe(2);
+            });
+        });
     });
 
     describe('ignores values', () => {

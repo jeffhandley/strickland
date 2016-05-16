@@ -43,6 +43,15 @@ describe('minValue', () => {
                 validate(2);
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = minValue(2);
+            const result = validate(2);
+
+            it('min', () => {
+                expect(result.min).toBe(2);
+            });
+        });
     });
 
     describe('ignores values', () => {

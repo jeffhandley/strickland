@@ -43,6 +43,15 @@ describe('minLength', () => {
                 validate('ab');
             });
         });
+
+        describe('get populated with validator properties', () => {
+            const validate = minLength(2);
+            const result = validate('ab');
+
+            it('min', () => {
+                expect(result.min).toBe(2);
+            });
+        });
     });
 
     describe('ignores values', () => {

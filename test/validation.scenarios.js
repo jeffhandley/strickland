@@ -528,5 +528,25 @@ describe('scenarios', () => {
                 });
             });
         });
+
+        it('messages can be associated with their fields', () => {
+            const validators = [
+                fieldValue('first', 2, 2, { fieldName: '1st' }),
+                fieldValue('second', 3, 4, { fieldName: '2nd' })
+            ];
+
+            const results = validation.getResults({ first: 2, second: 2 }, validators);
+            const mapped = results.map((result) => ({
+                field: result.field,
+                fieldName: result.fieldName,
+                message: result.message,
+                isValid: result.isValid
+            }));
+
+            expect(mapped).toEqual([
+                { field: 'first', fieldName: '1st', message: '1st must be 2', isValid: true },
+                { field: 'second', fieldName: '2nd', message: '2nd must be between 3 and 4', isValid: false }
+            ]);
+        });
     });
 });

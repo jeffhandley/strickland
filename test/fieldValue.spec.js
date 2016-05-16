@@ -16,6 +16,12 @@ describe('fieldValue', () => {
             expect(result.message).toBe('field must be between 2 and 3');
         });
 
+        it('respects the fieldName prop', () => {
+            const validate = fieldValue('field', 2, 3, { fieldName: 'Field Name' });
+            const result = validate({ field: 2 });
+            expect(result.message).toBe('Field Name must be between 2 and 3');
+        });
+
         it('can be overridden through props', () => {
             const validate = fieldValue('field', 2, 3, { message: 'Overridden' });
             const result = validate({ field: 2 });
@@ -47,6 +53,27 @@ describe('fieldValue', () => {
             it('during validation', () => {
                 const validate = fieldValue('field', 2, 3, props);
                 validate(2);
+            });
+        });
+
+        describe('get populated with validator properties', () => {
+            const validate = fieldValue('first', 2, 3);
+            const result = validate({ first: 1 });
+
+            it('field', () => {
+                expect(result.field).toBe('first');
+            });
+
+            it('fieldName', () => {
+                expect(result.fieldName).toBe('first');
+            });
+
+            it('min', () => {
+                expect(result.min).toBe(2);
+            });
+
+            it('max', () => {
+                expect(result.max).toBe(3);
             });
         });
     });

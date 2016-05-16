@@ -2,11 +2,11 @@ import validator from './validator';
 import { lte, gte } from 'lodash';
 
 export default function valueValidator(min = 0, max = min, props) {
-    props = Object.assign({}, props);
-
     if (lte(max, min)) {
         max = min;
     }
+
+    props = Object.assign({}, props, { min, max });
 
     if (min === max) {
         props.message = props.message || `Exactly ${min}`;
