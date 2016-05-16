@@ -14,9 +14,9 @@ export default function fieldValueValidator(field, min = 0, max = min, props) {
         props.message = props.message || `${field} must be between ${min} and ${max}`;
     }
 
-    props.isIgnored = (value) => {
+    props.isIgnored = props.isIgnored || ((value) => {
         return isIgnored(value) || isIgnored(value[field]);
-    };
+    });
 
     return validator(
         (value) => (gte(value[field], min) && lte(value[field], max)),

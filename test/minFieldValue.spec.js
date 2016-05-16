@@ -45,41 +45,58 @@ describe('minFieldValue', () => {
         });
     });
 
-    describe('treats falsy values as valid', () => {
-        const validate = minFieldValue('field', 1);
-        let notDefined;
+    describe('ignores values', () => {
+        describe('ignoring falsy values by default', () => {
+            const validate = minFieldValue('field', 1);
+            let notDefined;
 
-        [ notDefined, null, false, 0, '' ]
-        .forEach((test) => {
-            describe(JSON.stringify(test), () => {
-                const result = validate(test);
+            [ notDefined, null, false, 0, '' ]
+            .forEach((test) => {
+                describe(JSON.stringify(test), () => {
+                    describe('as the value', () => {
+                        const result = validate(test);
 
-                it('setting isValid to true', () => {
-                    expect(result.isValid).toBe(true);
-                });
+                        it('setting isValid to true', () => {
+                            expect(result.isValid).toBe(true);
+                        });
 
-                it('setting isIgnored to true', () => {
-                    expect(result.isIgnored).toBe(true);
+                        it('setting isIgnored to true', () => {
+                            expect(result.isIgnored).toBe(true);
+                        });
+                    });
+
+                    describe('as the field value', () => {
+                        const result = validate({ field: test });
+
+                        it('setting isValid to true', () => {
+                            expect(result.isValid).toBe(true);
+                        });
+
+                        it('setting isIgnored to true', () => {
+                            expect(result.isIgnored).toBe(true);
+                        });
+                    });
                 });
             });
         });
-    });
 
-    describe('treats falsy fields as valid', () => {
-        const validate = minFieldValue('field', 1);
-        let notDefined;
+        describe('using a custom isIgnored prop', () => {
+            [
+                { isIgnored: true, name: 'as true' },
+                { isIgnored: (value) => (value.field === 1), name: 'as a function returning true' }
+            ]
+            .forEach((test) => {
+                describe(test.name, () => {
+                    const validate = minFieldValue('field', 4, { isIgnored: test.isIgnored });
+                    const result = validate({ field: 1 });
 
-        [ notDefined, null, false, 0, '' ]
-        .forEach((test) => {
-            describe(JSON.stringify(test), () => {
-                const result = validate({ field: test });
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
+                    });
 
-                it('setting isValid to true', () => {
-                    expect(result.isValid).toBe(true);
-                });
-
-                it('setting isIgnored to true', () => {
-                    expect(result.isIgnored).toBe(true);
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
+                    });
                 });
             });
         });
