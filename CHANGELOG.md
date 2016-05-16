@@ -4,6 +4,7 @@
 Validator renames for min/max validators.
 Added field validators and updated min/max validator messages.
 Added an isIgnored property for validator to override the decision for ignoring values; ValidationResult instances then get an isIgnored property to surface whether or not the validator was ignored.
+Utilize isIgnored so that required can use validator.
 Prevent mutation of props passed to validators.
 
 * minvalue renamed to minValue
