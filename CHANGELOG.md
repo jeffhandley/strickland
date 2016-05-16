@@ -7,6 +7,8 @@ Respect a fieldName property for field validators, using it within the message.
 
 Add a validator property onto results, indicating which validator function was used to get the result.
 
+Added object validation support to validation.getResults, validation.getErrors, and validation.isValid.
+
 ## 0.0.5
 Validator renames for min/max validators.
 

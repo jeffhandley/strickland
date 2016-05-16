@@ -549,4 +549,27 @@ describe('scenarios', () => {
             ]);
         });
     });
+
+    describe('for objects', () => {
+        describe('validators can be configured into objects', () => {
+            const validators = {
+                first: [ required(), minLength(2), maxLength(10) ],
+                middle: [ maxLength(1) ],
+                last: [ required(), value('A', 'Z') ],
+                address: {
+                    state: [ required(), length(2) ]
+                }
+            };
+
+            it('and validated against a valid object', () => {
+                const isValid = validation.isValid({ first: 'Jeff', last: 'H', address: { state: 'WA' } }, validators);
+                expect(isValid).toBe(true);
+            });
+
+            it('and validated against an invalid object', () => {
+                const isValid = validation.isValid({ first: '', middle: 'Jeff', last: 'h' }, validators);
+                expect(isValid).toBe(false);
+            });
+        });
+    });
 });

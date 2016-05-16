@@ -38,10 +38,12 @@ Custom properties provided to validators flow through onto the ValidationResult.
 Collection of functions for executing validators.
 
 * getResults(value, validators)
-    * Returns an array of ValidationResult instances
+    * If given an array of validators, returns an array of ValidationResult instances
+    * If given an object with validator arrays as properties, returns an object of the same shape with arrays of ValidationResult instances
     * Includes both valid and invalid results
 * getErrors(value, validators)
-    * Returns an array of ValidationResult instances
+    * If given an array of validators, returns an array of ValidationResult instances
+    * If given an object with validator arrays as properties, returns an object of the same shape with arrays of ValidationResult instances
     * Includes only invalid results
 * isValid(value, validators)
     * Returns true when all validators are valid

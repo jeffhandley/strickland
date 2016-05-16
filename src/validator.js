@@ -32,7 +32,7 @@ export default function validator(validate, props) {
 
     return (value) => {
         // Create a fresh props object for the result
-        const resultProps = Object.assign({ }, props);
+        const resultProps = Object.assign({ }, props, { value });
 
         // See if the value should be ignored
         resultProps.isIgnored = isIgnoredWrapper(props.isIgnored, value);
