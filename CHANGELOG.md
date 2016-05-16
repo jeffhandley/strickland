@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.6
+
+
 ## 0.0.5
 Validator renames for min/max validators.
 
