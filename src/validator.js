@@ -1,11 +1,14 @@
 import ValidationResult from './ValidationResult';
+import required from './required';
+import { isValid } from './validation';
 import { isFunction } from 'lodash';
 
+const requiredValidator = required();
+
 export function isIgnored(value) {
-    // Only perform validation when the value is truthy
-    // Consumers rely on required() to enforce required fields
-    // All other validators succeed with no value to allow optional fields
-    return !value
+    // If a value doesn't pass the required validator, then it is ignored
+    // The required validator is the only one that fails for empty values
+    return !isValid(value, [ requiredValidator ]);
 }
 
 function isIgnoredWrapper(ignore, value) {
@@ -29,7 +32,7 @@ export default function validator(validate, props) {
         // See if the value should be ignored
         resultProps.isIgnored = isIgnoredWrapper(props.isIgnored, value);
 
-        const isValid = resultProps.isIgnored || validate(value, resultProps);
-        return new ValidationResult(isValid, resultProps);
+        const resultIsValid = resultProps.isIgnored || validate(value, resultProps);
+        return new ValidationResult(resultIsValid, resultProps);
     };
 }

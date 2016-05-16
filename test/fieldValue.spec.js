@@ -59,28 +59,14 @@ describe('fieldValue', () => {
             [ notDefined, null, false, 0, '' ]
             .forEach((test) => {
                 describe(JSON.stringify(test), () => {
-                    describe('as the value', () => {
-                        const result = validate(test);
+                    const result = validate(test);
 
-                        it('setting isValid to true', () => {
-                            expect(result.isValid).toBe(true);
-                        });
-
-                        it('setting isIgnored to true', () => {
-                            expect(result.isIgnored).toBe(true);
-                        });
+                    it('setting isValid to true', () => {
+                        expect(result.isValid).toBe(true);
                     });
 
-                    describe('as the field value', () => {
-                        const result = validate({ field: test });
-
-                        it('setting isValid to true', () => {
-                            expect(result.isValid).toBe(true);
-                        });
-
-                        it('setting isIgnored to true', () => {
-                            expect(result.isIgnored).toBe(true);
-                        });
+                    it('setting isIgnored to true', () => {
+                        expect(result.isIgnored).toBe(true);
                     });
                 });
             });

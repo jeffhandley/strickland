@@ -88,14 +88,26 @@ describe('required', () => {
         });
     });
 
-    describe('treats truthy values as valid', () => {
+    describe('treats non-empty values as valid', () => {
         const validate = required();
 
-        [ true, 1, 'a', [ ], { } ]
+        [ true, 1, 'a', [ 1 ], { field: 1 }, new Date() ]
         .forEach((test) => {
             it(JSON.stringify(test), () => {
                 const result = validate(test);
                 expect(result.isValid).toBe(true);
+            });
+        });
+    });
+
+    describe('treats empty values as not valid', () => {
+        const validate = required();
+
+        [ false, 0, '', [ ], { }, new Date(0) ]
+        .forEach((test) => {
+            it(JSON.stringify(test), () => {
+                const result = validate(test);
+                expect(result.isValid).toBe(false);
             });
         });
     });
