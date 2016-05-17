@@ -19,10 +19,8 @@ The class that represents a result, valid or invalid.  All validators return a V
 * isValid
 
 #### Extensibility
-Custom properties provided to validators flow through onto the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the property to the validator.
+Custom properties provided to validators flow through to the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the property to the validator.
 
-* validator
-    * The function used as the validator
 * message
     * The message associated with the validator, describing the rules
 * isIgnored
@@ -33,17 +31,19 @@ Custom properties provided to validators flow through onto the ValidationResult.
 * All of the arguments provided to the validator
     * field and fieldName get set for field-level validators
     * min and max get set for length and value validators along with the min/max validators
+* validator
+    * The validator type this result originated from
 
 ### validation
 Collection of functions for executing validators.
 
 * getResults(value, validators)
-    * If given an array of validators, returns an array of ValidationResult instances
-    * If given an object with validator arrays as properties, returns an object of the same shape with arrays of ValidationResult instances
+    * Given an array of validators, returns an array of ValidationResult instances
+    * Given an object with arrays of validators as properties, returns an object of the same shape with arrays of ValidationResult instances
     * Includes both valid and invalid results
 * getErrors(value, validators)
-    * If given an array of validators, returns an array of ValidationResult instances
-    * If given an object with validator arrays as properties, returns an object of the same shape with arrays of ValidationResult instances
+    * Given an array of validators, returns an array of ValidationResult instances
+    * Given an object with arrays of validators as properties, returns an object of the same shape with arrays of ValidationResult instances
     * Includes only invalid results
 * isValid(value, validators)
     * Returns true when all validators are valid
@@ -51,12 +51,10 @@ Collection of functions for executing validators.
 ### Validators
 
 #### validator(validationFunction, props)
-Validate a value using a validation function.
-The validation function is only called if the value is truthy.
+Validate a value using a validation function.  By default, all empty values are ignored.
 
 #### required(props)
-Succeeds for non-empty values and fails on empty values.
-The only validator to fail on empty values.
+Succeeds for non-empty values and fails on empty values.  Does not ignore any values.  In any validation system, required field validation should be the only validation that fails on empty values.
 
 Empty values include:
 
