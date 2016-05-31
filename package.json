@@ -1,6 +1,6 @@
 {
   "name": "strickland",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "JavaScript data validation. Ideal for universal React applications that use Flux, Redux, or similar patterns.",
   "main": "./lib/index.js",
   "files": [
@@ -10,8 +10,7 @@
     "clean": "rm -rf lib",
     "build": "npm run lint && npm test && babel src -d lib",
     "lint": "eslint src/** test/**",
-    "test": "mocha --compilers js:babel-register --recursive",
-    "prepublish": "npm run build"
+    "test": "mocha --compilers js:babel-register --recursive"
   },
   "repository": {
     "type": "git",

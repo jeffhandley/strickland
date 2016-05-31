@@ -1,5 +1,7 @@
-export * from './validators';
-export { default as ValidationResult } from './ValidationResult';
-
+import { default as ValidationResult } from './ValidationResult';
 import * as validation from './validation';
-export { validation };
+import * as validators from './validators';
+
+export default { ...validators, ValidationResult, validation, validators };
+export { ValidationResult, validation, validators };
+export * from './validators';

@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.0.7
+Update the export approach to make it easier to import for a variety of use cases.
+
+* import strickland from 'strickland';
+** { ValidationResult, validation, validators, ...validators }
+* import * as strickland from 'strickland';
+** { ValidationResult, validation, validators, ...validators }
+* import { ValidationResult, validation, validators, required }
+
+Also removed the prepublish script so that it wouldn't run build/tests during install.
+
 ## 0.0.6
 Validator parameters flow through to the results, allowing results to be associated back with the fields and validators.
 
