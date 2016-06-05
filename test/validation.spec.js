@@ -1,5 +1,6 @@
 import expect from 'expect';
-import { maxLength, maxValue, minLength, minValue, required, validation } from '../src';
+import { maxLength, maxValue, minLength, minValue, required, validator, validation, ValidationResult } from '../src';
+import { mapValues } from 'lodash';
 
 describe('validation', () => {
     const validators = [
@@ -323,6 +324,18 @@ describe('validation', () => {
             it('includes errors for all invalid validators', () => {
                 expect(result.errors.length).toBe(2);
             });
+
+            it('only executes each validator once', () => {
+                let validationCalls = 0;
+
+                const countingValidator = validator(() => {
+                    validationCalls++;
+                    return true;
+                });
+
+                validation.validate('aa', [ countingValidator ]);
+                expect(validationCalls).toBe(1);
+            });
         });
 
         describe('for a validation object', () => {
@@ -368,6 +381,117 @@ describe('validation', () => {
                     expect(actual).toEqual(expected);
                 });
             });
+
+            it('only executes each validator once', () => {
+                let validationCalls = 0;
+
+                const countingValidator = validator(() => {
+                    validationCalls++;
+                    return true;
+                });
+
+                validation.validate({ field: 'aa' }, { field: [ countingValidator ] });
+                expect(validationCalls).toBe(1);
+            });
+        });
+    });
+
+    describe('getErrorsFromResults', () => {
+        const results = [
+            new ValidationResult(false, { key: 'InvalidResult-1' }),
+            new ValidationResult(true, { key: 'ValidResult-1' }),
+            new ValidationResult(false, { key: 'InvalidResult-2' }),
+            new ValidationResult(true, { key: 'ValidResult-2' })
+        ];
+
+        it('gets errors from an array of results', () => {
+            const expected = [
+                'InvalidResult-1',
+                'InvalidResult-2'
+            ];
+
+            const actual = validation.getErrorsFromResults(results).map((error) => error.key);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('gets errors from an object of results', () => {
+            const objectResults = {
+                first: results.map((result) => ({ ...result, field: 'first' })),
+                second: results.map((result) => ({ ...result, field: 'second' })),
+                nested: {
+                    field: results.map((result) => ({ ...result, field: 'nested.field' }))
+                }
+            };
+
+            const expected = {
+                first: [ 'first-InvalidResult-1', 'first-InvalidResult-2' ],
+                second: [ 'second-InvalidResult-1', 'second-InvalidResult-2' ],
+                nested: {
+                    field: [ 'nested.field-InvalidResult-1', 'nested.field-InvalidResult-2' ]
+                }
+            };
+
+            const actual = validation.getErrorsFromResults(objectResults);
+            const actualMapped = {
+                first: actual.first.map((error) => 'first-' + error.key),
+                second: actual.second.map((error) => 'second-' + error.key),
+                nested: {
+                    field: actual.nested.field.map((error) => 'nested.field-' + error.key)
+                }
+            };
+
+            expect(actualMapped).toEqual(expected);
+        });
+    });
+
+    describe('isValidFromResults', () => {
+        const invalidResults = [
+            new ValidationResult(false, { key: 'InvalidResult-1' }),
+            new ValidationResult(true, { key: 'ValidResult-1' }),
+            new ValidationResult(false, { key: 'InvalidResult-2' }),
+            new ValidationResult(true, { key: 'ValidResult-2' })
+        ];
+
+        const validResults = [
+            new ValidationResult(true, { key: 'ValidResult-1' }),
+            new ValidationResult(true, { key: 'ValidResult-2' })
+        ];
+
+        it('detects invalid results from arrays of results', () => {
+            const actual = validation.isValidFromResults(invalidResults);
+            expect(actual).toBe(false);
+        });
+
+        it('detects invalid results from objects of results', () => {
+            const objectResults = {
+                first: validResults,
+                second: validResults,
+                nested: {
+                    field: invalidResults
+                }
+            };
+
+            const actual = validation.isValidFromResults(objectResults);
+            expect(actual).toBe(false);
+        });
+
+        it('detects valid results from arrays of results', () => {
+            const actual = validation.isValidFromResults(validResults);
+            expect(actual).toBe(true);
+        });
+
+        it('detects valid results from objects of results', () => {
+            const objectResults = {
+                first: validResults,
+                second: validResults,
+                nested: {
+                    field: validResults
+                }
+            };
+
+            const actual = validation.isValidFromResults(objectResults);
+            expect(actual).toBe(true);
         });
     });
 });

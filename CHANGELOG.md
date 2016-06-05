@@ -1,11 +1,20 @@
 # Change Log
 
 ## 0.0.8
-Add a new validation.validate function that returns a structured object with:
+Add a new validation.validate(value, validators) function that returns a structured object with:
 
 * results
 * errors
 * isValid
+
+If the validators argument is an object, then an object with the same structure will be returned, where each field will be an object with results, errors, and isValid.
+
+To support this, these functions are also exported:
+
+* getErrorsFromResults(results)
+** Returns either an array of errors or an object with errors
+* isValidFromResults(results)
+** Returns a boolean indicating if all results are valid
 
 ## 0.0.7
 Update the export approach to make it easier to import for a variety of use cases.
