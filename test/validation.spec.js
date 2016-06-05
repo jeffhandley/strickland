@@ -1,6 +1,5 @@
 import expect from 'expect';
 import { maxLength, maxValue, minLength, minValue, required, validator, validation, ValidationResult } from '../src';
-import { mapValues } from 'lodash';
 
 describe('validation', () => {
     const validators = [
