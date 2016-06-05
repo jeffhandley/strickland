@@ -1,5 +1,26 @@
 import { every, filter, isArray, isObject, mapValues, keys } from 'lodash';
 
+export function validate(value, validators) {
+    if (isArray(validators)) {
+        return {
+            isValid: isValid(value, validators),
+            results: getResults(value, validators),
+            errors: getErrors(value, validators)
+        };
+    } else if (isObject(validators)) {
+        return mapValues(
+            validators,
+            (fieldValidators, field) => validate(value && value[field], fieldValidators)
+        );
+    } else {
+        return {
+            isValid: true,
+            results: [],
+            errors: []
+        };
+    }
+}
+
 export function getResults(value, validators, invalidOnly) {
     if (isArray(validators)) {
         const results = validators.map((validator) => validator(value));

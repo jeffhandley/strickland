@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.0.8
+Add a new validation.validate function that returns a structured object with:
+
+* results
+* errors
+* isValid
+
 ## 0.0.7
 Update the export approach to make it easier to import for a variety of use cases.
 

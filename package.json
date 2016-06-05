@@ -1,6 +1,6 @@
 {
   "name": "strickland",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "JavaScript data validation. Ideal for universal React applications that use Flux, Redux, or similar patterns.",
   "main": "./lib/index.js",
   "files": [

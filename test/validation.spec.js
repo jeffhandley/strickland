@@ -302,4 +302,72 @@ describe('validation', () => {
             });
         });
     });
+
+
+    describe('validate', () => {
+        describe('for arrays of validators', () => {
+            const result = validation.validate('ccc', validators);
+
+            it('returns an object with isValid, results, and errors', () => {
+                expect(result).toIncludeKeys([ 'isValid', 'results', 'errors' ]);
+            });
+
+            it('sets isValid to false when there are errors', () => {
+                expect(result.isValid).toEqual(false);
+            });
+
+            it('includes results for every validator', () => {
+                expect(result.results.length).toBe(validators.length);
+            });
+
+            it('includes errors for all invalid validators', () => {
+                expect(result.errors.length).toBe(2);
+            });
+        });
+
+        describe('for a validation object', () => {
+            const result = validation.validate(
+                { first: 'ab', second: 'bcd', third: 'not validated' },
+                objectValidators
+            );
+
+            it('with validated properties', () => {
+                expect(result).toIncludeKeys([ 'first', 'second', 'nested' ]);
+            });
+
+            it('without any unvalidated properties', () => {
+                expect(result).toExcludeKey('third');
+            });
+
+            describe('with results on validated properties', () => {
+                it('and isValid, results, and errors for each', () => {
+                    const expected = {
+                        first: { isValid: true, resultsLength: objectValidators.first.length, errorsLength: 0 },
+                        second: { isValid: false, resultsLength: objectValidators.second.length, errorsLength: 2 },
+                        nested: {
+                            field: { isValid: false, resultsLength: objectValidators.nested.field.length, errorsLength: 1 }
+                        }
+                    };
+
+                    function mapResult(resultField) {
+                        return {
+                            isValid: resultField.isValid,
+                            resultsLength: resultField.results.length,
+                            errorsLength: resultField.errors.length
+                        };
+                    }
+
+                    const actual = {
+                        first: mapResult(result.first),
+                        second: mapResult(result.second),
+                        nested: {
+                            field: mapResult(result.nested.field)
+                        }
+                    };
+
+                    expect(actual).toEqual(expected);
+                });
+            });
+        });
+    });
 });
