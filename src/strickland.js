@@ -20,6 +20,10 @@ function convertResult(result) {
     if (typeof result === 'boolean') {
         return convertBooleanResult(result);
     }
+
+    if (typeof result === 'string') {
+        return convertStringResult(result);
+    }
 }
 
 function convertBooleanResult(result) {
@@ -28,4 +32,8 @@ function convertBooleanResult(result) {
     }
 
     return INVALID_DEFAULT;
+}
+
+function convertStringResult(result) {
+    return result;
 }

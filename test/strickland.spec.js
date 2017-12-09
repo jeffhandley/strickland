@@ -80,5 +80,29 @@ describe('strickland', () => {
                 expect(isValid(result)).toBe(false);
             });
         });
+
+        describe('returning a string', () => {
+            it('returns invalid result', () => {
+                function rules() {
+                    return 'That is not valid';
+                }
+
+                const data = {first: 'Jeff'};
+
+                const result = strickland(rules, data);
+                expect(isValid(result)).toBe(false);
+            });
+
+            it ('returns the string', () => {
+                function rules() {
+                    return 'That is not valid';
+                }
+
+                const data = {first: 'Jeff'};
+
+                const result = strickland(rules, data);
+                expect(result).toEqual('That is not valid');
+            });
+        });
     });
 });
