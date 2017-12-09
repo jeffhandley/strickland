@@ -82,6 +82,17 @@ describe('strickland', () => {
         });
 
         describe('returning a string', () => {
+            it ('returns the string', () => {
+                function rules() {
+                    return 'That is not valid';
+                }
+
+                const data = {first: 'Jeff'};
+
+                const result = strickland(rules, data);
+                expect(result).toEqual('That is not valid');
+            });
+
             it('returns invalid result', () => {
                 function rules() {
                     return 'That is not valid';
@@ -92,16 +103,53 @@ describe('strickland', () => {
                 const result = strickland(rules, data);
                 expect(isValid(result)).toBe(false);
             });
+        });
 
-            it ('returns the string', () => {
+        describe('returning an object', () => {
+            it('returns the object', () => {
+                const ruleResult = {
+                    message: 'That is not valid'
+                };
+
                 function rules() {
-                    return 'That is not valid';
+                    return ruleResult
                 }
 
                 const data = {first: 'Jeff'};
 
                 const result = strickland(rules, data);
-                expect(result).toEqual('That is not valid');
+                expect(result).toEqual(ruleResult);
+            });
+
+            it('returns invalid result if the object is not marked as valid', () => {
+                const ruleResult = {
+                    message: 'That is not valid'
+                };
+
+                function rules() {
+                    return ruleResult
+                }
+
+                const data = {first: 'Jeff'};
+
+                const result = strickland(rules, data);
+                expect(isValid(result)).toBe(false);
+            });
+
+            it('returns valid result if the object is marked as valid', () => {
+                const ruleResult = {
+                    message: 'That is not valid',
+                    isValid: true
+                };
+
+                function rules() {
+                    return ruleResult
+                }
+
+                const data = {first: 'Jeff'};
+
+                const result = strickland(rules, data);
+                expect(isValid(result)).toBe(true);
             });
         });
     });

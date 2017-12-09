@@ -2,7 +2,19 @@ const VALID = [];
 const INVALID_DEFAULT = 'Invalid';
 
 export function isValid(result) {
-    return (result === VALID);
+    if (result === VALID) {
+        return true;
+    }
+
+    if (typeof result === 'object') {
+        return isValidObjectResult(result);
+    }
+
+    return false;
+}
+
+function isValidObjectResult(result) {
+    return !!result.isValid;
 }
 
 export default function strickland(rules, data) {
@@ -24,6 +36,10 @@ function convertResult(result) {
     if (typeof result === 'string') {
         return convertStringResult(result);
     }
+
+    if (typeof result === 'object') {
+        return convertObjectResult(result);
+    }
 }
 
 function convertBooleanResult(result) {
@@ -35,5 +51,9 @@ function convertBooleanResult(result) {
 }
 
 function convertStringResult(result) {
+    return result;
+}
+
+function convertObjectResult(result) {
     return result;
 }
