@@ -2,23 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="1.0.0"></a>
-# [1.0.0](https://github.com/jeffhandley/strickland/compare/0.0.8...1.0.0) (2017-12-09)
-
-
-### Features
-
-* starting over with fresh approach ([601d926](https://github.com/jeffhandley/strickland/commit/601d926))
-
-
-### BREAKING CHANGES
-
-* redefining the API
-
-
-
-# Change Log
-
 ## 0.0.8
 Add a new validation.validate(value, validators) function that returns a structured object with:
 
