@@ -1,8 +1,5 @@
-const VALID = [];
-const INVALID_DEFAULT = 'Invalid';
-
 export function isValid(result) {
-    if (result === VALID) {
+    if (result === true) {
         return true;
     }
 
@@ -18,12 +15,13 @@ function isValidObjectResult(result) {
 }
 
 export default function strickland(rules, data) {
-    let result = VALID;
+    let result = true;
 
     if (typeof rules === 'function') {
-        const rulesResult = rules(data);
-        result = convertResult(rulesResult);
+        result = rules(data);
     }
+
+    result = convertResult(result);
 
     return result;
 }
@@ -43,11 +41,9 @@ function convertResult(result) {
 }
 
 function convertBooleanResult(result) {
-    if (result === true) {
-        return VALID;
-    }
-
-    return INVALID_DEFAULT;
+    return {
+        isValid: !!result
+    };
 }
 
 function convertStringResult(result) {
