@@ -6,27 +6,32 @@ export default function required(props) {
     return function validate(value) {
         let isValid = true;
 
-        if (value === null || value === notDefined) {
-            isValid = false;
-        } else if (typeof value === 'string') {
-            if (props.trim !== false) {
-                if (typeof props.trim === 'function') {
-                    value = props.trim(value);
-                } else {
-                    value = value.trim();
-                }
-            }
+        const parse = typeof props.parseValue === 'function' ?
+            props.parseValue : parseValue;
 
-            isValid = !!value.length;
-        } else if (typeof value === 'boolean') {
-            // By supporting required on boolean values where false is invalid
-            // we open up scenarios for required checkboxes
-            isValid = value;
+        const parsedValue = parse(value);
+
+        if (parsedValue === null || parsedValue === notDefined) {
+            isValid = false;
+        } else if (typeof parsedValue === 'string') {
+            isValid = !!parsedValue.length;
+        } else if (typeof parsedValue === 'boolean') {
+            isValid = parsedValue;
         }
 
         return {
             ...props,
-            isValid
+            isValid,
+            value,
+            parsedValue
         };
     }
+}
+
+function parseValue(value) {
+    if (typeof value === 'string') {
+        return value.trim();
+    }
+
+    return value;
 }

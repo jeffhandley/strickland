@@ -116,7 +116,7 @@ describe('validate', () => {
                 expect(isValid(result)).toBe(false);
             });
 
-            it('returns an object with an isValid prop set to false if the object does not specify isValid', () => {
+            it('returns an object with isValid = false if the object does not specify isValid', () => {
                 const ruleResult = {
                     message: 'That is not valid'
                 };
@@ -145,7 +145,7 @@ describe('validate', () => {
                 });
             });
 
-            it('returns an object with an isValid prop set to true if the object has isValid set to a truthy value other than true', () => {
+            it('returns an object with isValid = true if the object has isValid set to a truthy value other than true', () => {
                 const ruleResult = {
                     message: 'That is not valid',
                     isValid: 'Yep'
@@ -169,7 +169,7 @@ describe('validate', () => {
                 expect(isValid(result)).toBe(false);
             });
 
-            it('returns an object with an isValid prop set to false if the object has isValid set to a falsy value other than false', () => {
+            it('returns an object with isValid = false if the object has isValid set to a falsy value other than false', () => {
                 const ruleResult = {
                     message: 'That is not valid',
                     isValid: 0
