@@ -1,54 +1,36 @@
 import expect from 'expect';
-import strickland, {isValid} from '../src/strickland';
+import validate, {isValid} from '../src/strickland';
 
-describe('strickland', () => {
+describe('validate', () => {
     describe('with rules: null', () => {
         describe('returns valid result', () => {
             it('for data: null', () => {
-                const rules = null;
-                const data = null;
-
-                const result = strickland(rules, data);
+                const result = validate(null, null);
                 expect(isValid(result)).toBe(true);
             });
 
             it('for data: object', () => {
-                const rules = null;
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(null, {prop: 'value'});
                 expect(isValid(result)).toBe(true);
             });
 
             it('for data: string', () => {
-                const rules = null;
-                const data = 'Jeff';
-
-                const result = strickland(rules, data);
+                const result = validate(null, 'Jeff');
                 expect(isValid(result)).toBe(true);
             });
 
             it('for data: number', () => {
-                const rules = null;
-                const data = 34;
-
-                const result = strickland(rules, data);
+                const result = validate(null, 34);
                 expect(isValid(result)).toBe(true);
             });
 
             it('for data: true', () => {
-                const rules = null;
-                const data = true;
-
-                const result = strickland(rules, data);
+                const result = validate(null, true);
                 expect(isValid(result)).toBe(true);
             });
 
             it('for data: false', () => {
-                const rules = null;
-                const data = false;
-
-                const result = strickland(rules, data);
+                const result = validate(null, false);
                 expect(isValid(result)).toBe(true);
             });
         });
@@ -56,63 +38,45 @@ describe('strickland', () => {
 
     describe('with rules function', () => {
         describe('returning true', () => {
+            const rules = () => true;
+
             it('returns valid result', () => {
-                function rules() {
-                    return true;
-                }
-
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(isValid(result)).toBe(true);
             });
         });
 
         describe('returning false', () => {
+            const rules = () => false;
+
             it('returns invalid result', () => {
-                function rules() {
-                    return false;
-                }
-
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(isValid(result)).toBe(false);
             });
         });
 
         describe('returning a string', () => {
-            it ('returns the string as the result message', () => {
-                function rules() {
-                    return 'That is not valid';
-                }
+            describe('that is not empty', () => {
+                const rules = () => 'That is not valid';
 
-                const data = {first: 'Jeff'};
+                it ('returns the string as the result message', () => {
+                    const result = validate(rules, {prop: 'value'});
+                    expect(result.message).toEqual('That is not valid');
+                });
 
-                const result = strickland(rules, data);
-                expect(result.message).toEqual('That is not valid');
+                it('returns invalid result', () => {
+                    const result = validate(rules, {prop: 'value'});
+                    expect(isValid(result)).toBe(false);
+                });
             });
 
-            it('returns invalid result if the string is not empty', () => {
-                function rules() {
-                    return 'That is not valid';
-                }
+            describe('that is empty', () => {
+                const rules = () => '';
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
-                expect(isValid(result)).toBe(false);
-            });
-
-            it('returns a valid result if the string is empty', () => {
-                function rules() {
-                    return '';
-                }
-
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
-                expect(isValid(result)).toBe(true);
+                it('returns a valid result ', () => {
+                    const result = validate(rules, {prop: 'value'});
+                    expect(isValid(result)).toBe(true);
+                });
             });
         });
 
@@ -123,13 +87,10 @@ describe('strickland', () => {
                     customProp: 'This is a custom property'
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
+                const result = validate(rules, {prop: 'value'});
 
-                const result = strickland(rules, data);
                 const resultProps = {
                     message: result.message,
                     customProp: result.customProp
@@ -143,13 +104,9 @@ describe('strickland', () => {
                     message: 'That is not valid'
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(isValid(result)).toBe(false);
             });
 
@@ -158,46 +115,29 @@ describe('strickland', () => {
                     message: 'That is not valid'
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(result.isValid).toBe(false);
             });
 
-            it('returns valid result if the object is marked as valid', () => {
+            describe('with isValid set to true', () => {
                 const ruleResult = {
                     message: 'That is not valid',
                     isValid: true
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
+                it('returns valid result', () => {
+                    const result = validate(rules, {prop: 'value'});
+                    expect(isValid(result)).toBe(true);
+                });
 
-                const result = strickland(rules, data);
-                expect(isValid(result)).toBe(true);
-            });
-
-            it('returns an object with an isValid prop set to true if the object has isValid set to true', () => {
-                const ruleResult = {
-                    message: 'That is not valid',
-                    isValid: true
-                };
-
-                function rules() {
-                    return ruleResult;
-                }
-
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
-                expect(result.isValid).toBe(true);
+                it('returns an object with an isValid prop set to true', () => {
+                    const result = validate(rules, {prop: 'value'});
+                    expect(result.isValid).toBe(true);
+                });
             });
 
             it('returns an object with an isValid prop set to true if the object has isValid set to a truthy value other than true', () => {
@@ -206,13 +146,9 @@ describe('strickland', () => {
                     isValid: 'Yep'
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(result.isValid).toBe(true);
             });
 
@@ -222,13 +158,9 @@ describe('strickland', () => {
                     isValid: false
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(isValid(result)).toBe(false);
             });
 
@@ -238,13 +170,9 @@ describe('strickland', () => {
                     isValid: 0
                 };
 
-                function rules() {
-                    return ruleResult;
-                }
+                const rules = () => ruleResult;
 
-                const data = {first: 'Jeff'};
-
-                const result = strickland(rules, data);
+                const result = validate(rules, {prop: 'value'});
                 expect(result.isValid).toBe(false);
             });
         });
