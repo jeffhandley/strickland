@@ -51,9 +51,17 @@ function convertBooleanResult(result) {
 }
 
 function convertStringResult(result) {
-    return result;
+    // If the string is empty, then there is no error message
+    // and therefore the result is valid
+    return {
+        message: result,
+        isValid: !result
+    };
 }
 
 function convertObjectResult(result) {
-    return result;
+    return {
+        ...result,
+        isValid: !!result.isValid
+    };
 }
