@@ -1,3 +1,5 @@
+import {parseString} from './string';
+
 let notDefined;
 
 export default function required(props) {
@@ -7,7 +9,7 @@ export default function required(props) {
         let isValid = true;
 
         const parse = typeof props.parseValue === 'function' ?
-            props.parseValue : parseValue;
+            props.parseValue : parseString;
 
         const parsedValue = parse(value);
 
@@ -26,12 +28,4 @@ export default function required(props) {
             parsedValue
         };
     }
-}
-
-function parseValue(value) {
-    if (typeof value === 'string') {
-        return value.trim();
-    }
-
-    return value;
 }
