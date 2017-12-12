@@ -3,7 +3,6 @@ import required from '../src/required';
 
 describe('required', () => {
     describe('validation', () => {
-        // validate without any props
         const validate = required();
 
         it('is not valid for null', () => {
