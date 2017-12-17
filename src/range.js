@@ -2,18 +2,18 @@ import {isValid} from './strickland';
 import min from './min';
 import max from './max';
 
-export default function range(rangeMin, rangeMax, props) {
-    if (typeof rangeMin === 'object') {
-        props = rangeMin;
-    } else if (typeof rangeMax === 'object') {
+export default function range(minValue, maxValue, props) {
+    if (typeof minValue === 'object') {
+        props = minValue;
+    } else if (typeof maxValue === 'object') {
         props = {
-            min: rangeMin,
-            ...rangeMax
+            min: minValue,
+            ...maxValue
         };
     } else {
         props = {
-            min: rangeMin,
-            max: rangeMax,
+            min: minValue,
+            max: maxValue,
             ...props
         };
     };
