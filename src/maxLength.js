@@ -1,11 +1,14 @@
 import {parseString} from './string';
 
-export default function maxLength(props) {
-    if (typeof props !== 'object') {
+export default function maxLength(max, props) {
+    if (typeof max === 'object') {
+        props = max;
+    } else {
         props = {
-            maxLength: props
+            maxLength: max,
+            ...props
         };
-    }
+    };
 
     if (typeof props.maxLength !== 'number') {
         throw 'maxLength must be a number';

@@ -16,12 +16,29 @@ describe('maxValue', () => {
         });
     });
 
-    describe('with a number for props', () => {
-        it('sets the maxValue prop', () => {
-            const validate = maxValue(3);
-            const result = validate(3);
+    describe('with a single props argument', () => {
+        const validate = maxValue({maxValue: 5, message: 'Custom message'});
+        const result = validate(4);
 
-            expect(result.maxValue).toBe(3);
+        it('uses the min prop', () => {
+            expect(result.maxValue).toBe(5);
+        });
+
+        it('retains extra props', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with the first argument as a number and the second as an object', () => {
+        const validate = maxValue(5, {message: 'Custom message'});
+        const result = validate(4);
+
+        it('sets the min prop', () => {
+            expect(result.maxValue).toBe(5);
+        });
+
+        it('retains extra props', () => {
+            expect(result.message).toBe('Custom message');
         });
     });
 

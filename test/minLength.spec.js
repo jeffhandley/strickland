@@ -16,12 +16,29 @@ describe('minLength', () => {
         });
     });
 
-    describe('with a number for props', () => {
-        it('sets the minLength prop', () => {
-            const validate = minLength(3);
-            const result = validate('123');
+    describe('with a single props argument', () => {
+        const validate = minLength({minLength: 3, message: 'Custom message'});
+        const result = validate('123');
 
+        it('uses the min prop', () => {
             expect(result.minLength).toBe(3);
+        });
+
+        it('retains extra props', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with the first argument as a number and the second as an object', () => {
+        const validate = minLength(3, {message: 'Custom message'});
+        const result = validate('123');
+
+        it('sets the min prop', () => {
+            expect(result.minLength).toBe(3);
+        });
+
+        it('retains extra props', () => {
+            expect(result.message).toBe('Custom message');
         });
     });
 

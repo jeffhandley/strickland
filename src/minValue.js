@@ -1,11 +1,14 @@
 import {isFalsyButNotZero, parseNumber} from './number';
 
-export default function minValue(props) {
-    if (typeof props !== 'object') {
+export default function minValue(min, props) {
+    if (typeof min === 'object') {
+        props = min;
+    } else {
         props = {
-            minValue: props
+            minValue: min,
+            ...props
         };
-    }
+    };
 
     if (typeof props.minValue !== 'number') {
         throw 'minValue must be a number';

@@ -1,11 +1,14 @@
 import {isFalsyButNotZero, parseNumber} from './number';
 
-export default function maxValue(props) {
-    if (typeof props !== 'object') {
+export default function maxValue(max, props) {
+    if (typeof max === 'object') {
+        props = max;
+    } else {
         props = {
-            maxValue: props
+            maxValue: max,
+            ...props
         };
-    }
+    };
 
     if (typeof props.maxValue !== 'number') {
         throw 'maxValue must be a number';

@@ -1,11 +1,14 @@
 import {parseString} from './string';
 
-export default function minLength(props) {
-    if (typeof props !== 'object') {
+export default function minLength(min, props) {
+    if (typeof min === 'object') {
+        props = min;
+    } else {
         props = {
-            minLength: props
+            minLength: min,
+            ...props
         };
-    }
+    };
 
     if (typeof props.minLength !== 'number') {
         throw 'minLength must be a number';
