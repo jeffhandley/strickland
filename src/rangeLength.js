@@ -1,4 +1,4 @@
-import {isValid} from './strickland';
+import validate, {isValid} from './strickland';
 import minLength from './minLength';
 import maxLength from './maxLength';
 
@@ -21,7 +21,7 @@ export default function range(minLengthValue, maxLengthValue, props) {
     const validateMin = minLength(props);
     const validateMax = maxLength(props);
 
-    return function validate(value) {
+    function validateRangeLength(value) {
         let result = validateMin(value);
 
         if (isValid(result)) {
@@ -33,8 +33,9 @@ export default function range(minLengthValue, maxLengthValue, props) {
 
         return {
             ...props,
-            ...result,
-            value
+            ...result
         };
     }
+
+    return validate.bind(null, validateRangeLength);
 }

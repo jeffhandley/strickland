@@ -14,19 +14,19 @@ function isValidObjectResult(result) {
     return !!result.isValid;
 }
 
-export default function strickland(rules, data) {
+export default function validate(rules, value) {
     let result = true;
 
     if (typeof rules === 'function') {
-        result = rules(data);
+        result = rules(value);
     }
 
-    result = convertResult(result);
+    result = convertResult(result, value);
 
     return result;
 }
 
-function convertResult(result) {
+function convertResult(result, value) {
     if (typeof result === 'boolean') {
         return convertBooleanResult(result);
     }
@@ -36,7 +36,7 @@ function convertResult(result) {
     }
 
     if (typeof result === 'object') {
-        return convertObjectResult(result);
+        return convertObjectResult(result, value);
     }
 }
 
@@ -55,9 +55,10 @@ function convertStringResult(result) {
     };
 }
 
-function convertObjectResult(result) {
+function convertObjectResult(result, value) {
     return {
         ...result,
-        isValid: !!result.isValid
+        isValid: !!result.isValid,
+        value
     };
 }

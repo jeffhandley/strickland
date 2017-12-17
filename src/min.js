@@ -1,3 +1,4 @@
+import validate from './strickland';
 import {isFalsyButNotZero, parseNumber} from './number';
 
 export default function min(minValue, props) {
@@ -14,7 +15,7 @@ export default function min(minValue, props) {
         throw 'min must be a number';
     }
 
-    return function validate(value) {
+    function validateMin(value) {
         let isValid = true;
 
         const parse = typeof props.parseValue === 'function' ?
@@ -32,8 +33,9 @@ export default function min(minValue, props) {
 
         return {
             ...props,
-            isValid,
-            value
+            isValid
         };
     }
+
+    return validate.bind(null, validateMin);
 }

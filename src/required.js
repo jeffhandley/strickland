@@ -1,3 +1,4 @@
+import validate from './strickland';
 import {parseString} from './string';
 
 let notDefined;
@@ -5,7 +6,7 @@ let notDefined;
 export default function required(props) {
     props = props || {};
 
-    return function validate(value) {
+    function validateRequired(value) {
         let isValid = true;
 
         const parse = typeof props.parseValue === 'function' ?
@@ -24,8 +25,9 @@ export default function required(props) {
         return {
             ...props,
             isValid,
-            value,
             parsedValue
         };
     }
+
+    return validate.bind(null, validateRequired);
 }

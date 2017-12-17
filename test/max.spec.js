@@ -42,6 +42,13 @@ describe('max', () => {
         });
     });
 
+    it('returns the value on the result', () => {
+        const validate = max(5);
+        const result = validate(4);
+
+        expect(result.value).toBe(4);
+    });
+
     describe('validates', () => {
         const validate = max(3);
 

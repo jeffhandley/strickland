@@ -1,3 +1,4 @@
+import validate from './strickland';
 import {parseString} from './string';
 
 export default function minLength(min, props) {
@@ -14,7 +15,7 @@ export default function minLength(min, props) {
         throw 'minLength must be a number';
     }
 
-    return function validate(value) {
+    function validateMinLength(value) {
         let isValid = true;
 
         const parse = typeof props.parseValue === 'function' ?
@@ -32,8 +33,9 @@ export default function minLength(min, props) {
 
         return {
             ...props,
-            isValid,
-            value
+            isValid
         };
     }
+
+    return validate.bind(null, validateMinLength);
 }
