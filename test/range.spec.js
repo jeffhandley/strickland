@@ -29,15 +29,15 @@ describe('range', () => {
     });
 
     describe('with a single props argument', () => {
-        const validate = range({minValue: 3, maxValue:5, message: 'Custom message'});
+        const validate = range({min: 3, max:5, message: 'Custom message'});
         const result = validate(4);
 
         it('uses the min prop', () => {
-            expect(result.minValue).toBe(3);
+            expect(result.min).toBe(3);
         });
 
         it('uses the max prop', () => {
-            expect(result.maxValue).toBe(5);
+            expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
@@ -46,15 +46,15 @@ describe('range', () => {
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = range(3, {maxValue: 5, message: 'Custom message'});
+        const validate = range(3, {max: 5, message: 'Custom message'});
         const result = validate(4);
 
         it('sets the min prop', () => {
-            expect(result.minValue).toBe(3);
+            expect(result.min).toBe(3);
         });
 
         it('uses the max prop', () => {
-            expect(result.maxValue).toBe(5);
+            expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
@@ -67,11 +67,11 @@ describe('range', () => {
         const result = validate(4);
 
         it('sets the min prop', () => {
-            expect(result.minValue).toBe(3);
+            expect(result.min).toBe(3);
         });
 
         it('sets the max prop', () => {
-            expect(result.maxValue).toBe(5);
+            expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
@@ -101,7 +101,7 @@ describe('range', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            it('with the value greater than the maxValue, it is invalid', () => {
+            it('with the value greater than the max, it is invalid', () => {
                 const result = validate(6);
                 expect(result.isValid).toBe(false);
             });
@@ -144,7 +144,7 @@ describe('range', () => {
     });
 
     validates('with numeric arguments', range(3, 5));
-    validates('with a props argument', range({minValue: 3, maxValue: 5}));
-    validates('with a numeric min and props', range(3, {maxValue: 5}));
+    validates('with a props argument', range({min: 3, max: 5}));
+    validates('with a numeric min and props', range(3, {max: 5}));
     validates('with numeric min and max plus props', range(3, 5, {other: 'other'}));
 });

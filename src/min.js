@@ -1,17 +1,17 @@
 import {isFalsyButNotZero, parseNumber} from './number';
 
-export default function minValue(min, props) {
-    if (typeof min === 'object') {
-        props = min;
+export default function min(minValue, props) {
+    if (typeof minValue === 'object') {
+        props = minValue;
     } else {
         props = {
-            minValue: min,
+            min: minValue,
             ...props
         };
     };
 
-    if (typeof props.minValue !== 'number') {
-        throw 'minValue must be a number';
+    if (typeof props.min !== 'number') {
+        throw 'min must be a number';
     }
 
     return function validate(value) {
@@ -26,7 +26,7 @@ export default function minValue(min, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'number') {
             isValid = false;
-        } else if (parsedValue < props.minValue) {
+        } else if (parsedValue < props.min) {
             isValid = false;
         }
 

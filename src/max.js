@@ -1,17 +1,17 @@
 import {isFalsyButNotZero, parseNumber} from './number';
 
-export default function maxValue(max, props) {
-    if (typeof max === 'object') {
-        props = max;
+export default function max(maxValue, props) {
+    if (typeof maxValue === 'object') {
+        props = maxValue;
     } else {
         props = {
-            maxValue: max,
+            max: maxValue,
             ...props
         };
     };
 
-    if (typeof props.maxValue !== 'number') {
-        throw 'maxValue must be a number';
+    if (typeof props.max !== 'number') {
+        throw 'max must be a number';
     }
 
     return function validate(value) {
@@ -26,7 +26,7 @@ export default function maxValue(max, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'number') {
             isValid = false;
-        } else if (parsedValue > props.maxValue) {
+        } else if (parsedValue > props.max) {
             isValid = false;
         }
 

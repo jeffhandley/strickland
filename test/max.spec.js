@@ -1,27 +1,27 @@
 import expect from 'expect';
-import minValue from '../src/minValue';
+import max from '../src/max';
 
-describe('minValue', () => {
+describe('max', () => {
     describe('throws', () => {
         it('when props are not supplied', () => {
-            expect(() => minValue()).toThrow();
+            expect(() => max()).toThrow();
         });
 
         it('when props is a string', () => {
-            expect(() => minValue('123')).toThrow();
+            expect(() => max('123')).toThrow();
         });
 
-        it('when props is an object without a minValue', () => {
-            expect(() => minValue({ min: 123 })).toThrow();
+        it('when props is an object without a max', () => {
+            expect(() => max({ max: 'Custom message' })).toThrow();
         });
     });
 
     describe('with a single props argument', () => {
-        const validate = minValue({minValue: 3, message: 'Custom message'});
+        const validate = max({max: 5, message: 'Custom message'});
         const result = validate(4);
 
         it('uses the min prop', () => {
-            expect(result.minValue).toBe(3);
+            expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
@@ -30,11 +30,11 @@ describe('minValue', () => {
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = minValue(3, {message: 'Custom message'});
+        const validate = max(5, {message: 'Custom message'});
         const result = validate(4);
 
         it('sets the min prop', () => {
-            expect(result.minValue).toBe(3);
+            expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
@@ -43,20 +43,20 @@ describe('minValue', () => {
     });
 
     describe('validates', () => {
-        const validate = minValue(3);
+        const validate = max(3);
 
-        it('with the value equal to the minValue, it is valid', () => {
+        it('with the value equal to the max, it is valid', () => {
             const result = validate(3);
             expect(result.isValid).toBe(true);
         });
 
-        it('with the value greater than the minValue, it is valid', () => {
-            const result = validate(4);
+        it('with the value less than the max, it is valid', () => {
+            const result = validate(2);
             expect(result.isValid).toBe(true);
         });
 
-        it('with the value less than the minValue, it is invalid', () => {
-            const result = validate(2);
+        it('with the value greater than the max, it is invalid', () => {
+            const result = validate(4);
             expect(result.isValid).toBe(false);
         });
 
@@ -70,18 +70,18 @@ describe('minValue', () => {
             expect(result.isValid).toBe(true);
         });
 
-        it('with a string value equal to the minValue, it is valid', () => {
+        it('with a string value equal to the max, it is valid', () => {
             const result = validate('3');
             expect(result.isValid).toBe(true);
         });
 
-        it('with a string value greater than the minValue, it is valid', () => {
-            const result = validate('4');
+        it('with a string value less than the max, it is valid', () => {
+            const result = validate('2');
             expect(result.isValid).toBe(true);
         });
 
-        it('with a string value less than the minValue, it is invalid', () => {
-            const result = validate('2');
+        it('with a string value greater than the max, it is invalid', () => {
+            const result = validate('4');
             expect(result.isValid).toBe(false);
         });
     });
