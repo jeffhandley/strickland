@@ -594,4 +594,116 @@ describe('validate', () => {
             });
         });
     });
+
+    describe('with hybrid object validators', () => {
+        function validateWorkAddress(address) {
+            if (address && address.street && address.street.name) {
+                const message = 'Work address must be on a St.';
+                let isValid = true;
+
+                if (address.street.name.indexOf(' St.') === -1) {
+                    isValid = false;
+                };
+
+                return {
+                    isValid,
+                    message
+                };
+            }
+        }
+
+        const rules = {
+            name: required({message: 'Name is required'}),
+            workAddress: [
+                required({message: 'Work address is required'}),
+                validateWorkAddress,
+                {
+                    street: [
+                        required({message: 'Street is required'}),
+                        {
+                            number: required({message: 'Street number is required'}),
+                            name: required({message: 'Street name is required'})
+                        }
+                    ],
+                    city: required({message: 'City is required'}),
+                    state: required({message: 'State is required'})
+                }
+            ]
+        };
+
+        it('validates top-level object properties', () => {
+            const value = {
+                name: 'Name',
+                workAddress: null
+            };
+
+            const result = validate(rules, value);
+
+            expect(result).toMatchObject({
+                isValid: false,
+                results: {
+                    name: {isValid: true},
+                    workAddress: {
+                        isValid: false,
+                        message: 'Work address is required'
+                    }
+                }
+            });
+        });
+
+        it('validates nested object properties', () => {
+            const value = {
+                name: 'Name',
+                workAddress: {
+                    street: null,
+                    city: '',
+                    state: ''
+                }
+            };
+
+            const result = validate(rules, value);
+
+            expect(result).toMatchObject({
+                results: {
+                    workAddress: {
+                        results: {
+                            street: {
+                                isValid: false,
+                                message: 'Street is required'
+                            },
+                            city: {
+                                isValid: false,
+                                message: 'City is required'
+                            },
+                            state: {
+                                isValid: false,
+                                message: 'State is required'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        it('validates custom validators for objects', () => {
+            const value = {
+                workAddress: {
+                    street: {
+                        name: 'Hollywood Blvd.'
+                    }
+                }
+            };
+
+            const result = validate(rules, value);
+
+            expect(result).toMatchObject({
+                results: {
+                    workAddress: {
+                        isValid: false,
+                        message: 'Work address must be on a St.'
+                    }
+                }
+            });
+        });
+    });
 });
