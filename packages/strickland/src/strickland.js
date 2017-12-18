@@ -20,16 +20,9 @@ export default function validate(rules, value) {
     if (typeof rules === 'function') {
         result = rules(value);
     } else if (Array.isArray(rules)) {
-        for (let i = 0; i < rules.length; i++) {
-            result = {
-                ...result,
-                ...validate(rules[i], value)
-            };
-
-            if (!isValid(result)) {
-                break;
-            }
-        }
+        result = validateRulesArray(rules, value);
+    } else if (typeof rules === 'object') {
+        result = validateRulesObject(rules, value);
     } else {
         throw 'unrecognized validation rules: ' + (typeof rules)
     }
@@ -37,6 +30,38 @@ export default function validate(rules, value) {
     result = convertResult(result, value);
 
     return result;
+}
+
+function validateRulesArray(rules, value) {
+    let result = true;
+
+    for (let i = 0; i < rules.length; i++) {
+        result = {
+            ...result,
+            ...validate(rules[i], value)
+        };
+
+        if (!isValid(result)) {
+            break;
+        }
+    }
+
+    return result;
+}
+
+function validateRulesObject(rules, value) {
+    const props = Object.keys(rules);
+    let results = {};
+
+    for (let i = 0; i < props.length; i++) {
+        results = {
+            ...results,
+            [props[i]]: validate(rules[props[i]], value[props[i]])
+        };
+    }
+
+    // Wrap the results in an object to be nested in the outer result
+    return {results};
 }
 
 function convertResult(result, value) {

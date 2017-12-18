@@ -1,5 +1,7 @@
 import expect from 'expect';
 import validate, {isValid} from '../src/strickland';
+import required from '../src/required';
+import minLength from '../src/minLength';
 
 describe('validate', () => {
     describe('throws', () => {
@@ -17,10 +19,6 @@ describe('validate', () => {
 
         it('with a string rules function', () => {
             expect(() => validate('string')).toThrow();
-        });
-
-        it('with an object rules function', () => {
-            expect(() => validate({prop: 'value'})).toThrow();
         });
     });
 
@@ -243,6 +241,45 @@ describe('validate', () => {
 
             it('does not call the second validator', () => {
                 expect(secondCalled).toBe(false);
+            });
+        });
+    });
+
+    describe('with rules object', () => {
+        describe('where each property defines rules', () => {
+            const rules = {
+                firstName: required(),
+                lastName: [required(), minLength(2)]
+            };
+
+            const value = {
+                firstName: 'First',
+                lastName: 'Last'
+            };
+
+            const result = validate(rules, value);
+
+            it('returns with a results prop', () => {
+                expect(result.results).not.toBeUndefined();
+            });
+
+            it('returns results in the shape of the rules', () => {
+                const keys = Object.keys(result.results);
+                expect(keys).toEqual(['firstName', 'lastName']);
+            });
+
+            it('returns validation results for the rules', () => {
+                expect(result.results).toMatchObject({
+                    firstName: {
+                        isValid: true,
+                        value: 'First'
+                    },
+                    lastName: {
+                        isValid: true,
+                        value: 'Last',
+                        minLength: 2
+                    }
+                });
             });
         });
     });

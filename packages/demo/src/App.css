@@ -25,6 +25,7 @@
 .formfield {
   position: relative;
   width: 200px;
+  margin-left: 520px;
 }
 
 .formfield input {
@@ -69,12 +70,10 @@
 
 .formfield input.validation-valid + label {
   color: #22AA00;
-  font-weight: bold;
 }
 
 .formfield input.validation-invalid + label {
   color: #FF2200;
-  font-weight: bold;
 }
 
 @keyframes App-logo-spin {
