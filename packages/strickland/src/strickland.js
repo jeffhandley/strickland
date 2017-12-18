@@ -11,6 +11,18 @@ export function isValid(result) {
 }
 
 function isValidObjectResult(result) {
+    if (typeof result.results === 'object') {
+        const props = Object.keys(result.results);
+
+        for (let i = 0; i < props.length; i++) {
+            if(!isValid(result.results[props[i]])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     return !!result.isValid;
 }
 
@@ -21,7 +33,7 @@ export default function validate(rules, value) {
         result = rules(value);
     } else if (Array.isArray(rules)) {
         result = validateRulesArray(rules, value);
-    } else if (typeof rules === 'object') {
+    } else if (typeof rules === 'object' && rules) {
         result = validateRulesObject(rules, value);
     } else {
         throw 'unrecognized validation rules: ' + (typeof rules)
@@ -50,18 +62,23 @@ function validateRulesArray(rules, value) {
 }
 
 function validateRulesObject(rules, value) {
-    const props = Object.keys(rules);
-    let results = {};
+    if (typeof value === 'object' && value) {
+        const props = Object.keys(rules);
+        let results = {};
+        let isValid = true;
 
-    for (let i = 0; i < props.length; i++) {
-        results = {
-            ...results,
-            [props[i]]: validate(rules[props[i]], value[props[i]])
-        };
+        for (let i = 0; i < props.length; i++) {
+            results = {
+                ...results,
+                [props[i]]: validate(rules[props[i]], value[props[i]])
+            };
+        }
+
+        // Wrap the results in an object to be nested in the outer result
+        return {results};
     }
 
-    // Wrap the results in an object to be nested in the outer result
-    return {results};
+    return true;
 }
 
 function convertResult(result, value) {
@@ -96,7 +113,7 @@ function convertStringResult(result) {
 function convertObjectResult(result, value) {
     return {
         ...result,
-        isValid: !!result.isValid,
+        isValid: isValid(result),
         value
     };
 }
