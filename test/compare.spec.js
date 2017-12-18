@@ -119,7 +119,7 @@ describe('compare', () => {
     });
 
     describe('with a custom parseValue function', () => {
-        function parseValue(value) {
+        function parseValue() {
             return 34;
         }
 

@@ -9,7 +9,7 @@ export default function maxLength(max, props) {
             maxLength: max,
             ...props
         };
-    };
+    }
 
     if (typeof props.maxLength !== 'number') {
         throw 'maxLength must be a number';
@@ -26,7 +26,7 @@ export default function maxLength(max, props) {
         if (typeof props.parseValue === 'function') {
             parse = props.parseValue;
         } else {
-            parse = (value) => parseString(value, {trim: props.trim});
+            parse = (toParse) => parseString(toParse, {trim: props.trim});
         }
 
         const parsedValue = parse(value);

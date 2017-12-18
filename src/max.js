@@ -9,7 +9,7 @@ export default function max(maxValue, props) {
             max: maxValue,
             ...props
         };
-    };
+    }
 
     if (typeof props.max !== 'number') {
         throw 'max must be a number';

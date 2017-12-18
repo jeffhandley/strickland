@@ -9,7 +9,7 @@ export default function compare(compareValue, props) {
             compare: compareValue,
             ...props
         };
-    };
+    }
 
     if (typeof props.compare === 'undefined') {
         throw 'compare value must be specified';
@@ -26,7 +26,7 @@ export default function compare(compareValue, props) {
         if (typeof props.parseValue === 'function') {
             parse = props.parseValue;
         } else {
-            parse = (value) => parseString(value, {trim: props.trim});
+            parse = (toParse) => parseString(toParse, {trim: props.trim});
         }
 
         const parsedValue = parse(value);

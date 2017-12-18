@@ -42,7 +42,7 @@ module.exports = {
         'react/react-in-jsx-scope': 2,
         'react/self-closing-comp': 2,
         'react/sort-prop-types': 2,
-        'react/wrap-multilines': 2,
+        'react/jsx-wrap-multilines': 2,
 
         'eqeqeq': 2,
         'eol-last': 2,

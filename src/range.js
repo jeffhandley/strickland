@@ -1,4 +1,4 @@
-import validate, {isValid} from './strickland';
+import validate from './strickland';
 import min from './min';
 import max from './max';
 
@@ -16,7 +16,7 @@ export default function range(minValue, maxValue, props) {
             max: maxValue,
             ...props
         };
-    };
+    }
 
     const validateRange = [
         min(props),

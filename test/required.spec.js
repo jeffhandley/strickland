@@ -120,7 +120,7 @@ describe('required', () => {
             }
 
             const validate = required({parseValue});
-            const result = validate('Original');
+            validate('Original');
 
             expect(suppliedValue).toBe('Original');
         });

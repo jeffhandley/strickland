@@ -20,7 +20,7 @@ export default function validate(rules, value) {
     if (typeof rules === 'function') {
         result = rules(value);
     } else if (Array.isArray(rules)) {
-        for (const i in rules) {
+        for (let i = 0; i < rules.length; i++) {
             result = {
                 ...result,
                 ...validate(rules[i], value)

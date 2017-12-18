@@ -29,7 +29,7 @@ describe('rangeLength', () => {
     });
 
     describe('with a single props argument', () => {
-        const validate = rangeLength({minLength: 3, maxLength:5, message: 'Custom message'});
+        const validate = rangeLength({minLength: 3, maxLength: 5, message: 'Custom message'});
         const result = validate('1234');
 
         it('uses the min prop', () => {

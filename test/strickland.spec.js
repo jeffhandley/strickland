@@ -56,7 +56,7 @@ describe('validate', () => {
                 const rules = () => 'That is not valid';
                 const result = validate(rules, 'value');
 
-                it ('returns the string as the result message', () => {
+                it('returns the string as the result message', () => {
                     expect(result.message).toEqual('That is not valid');
                 });
 

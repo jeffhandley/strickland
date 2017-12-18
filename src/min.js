@@ -9,7 +9,7 @@ export default function min(minValue, props) {
             min: minValue,
             ...props
         };
-    };
+    }
 
     if (typeof props.min !== 'number') {
         throw 'min must be a number';
