@@ -2,44 +2,32 @@ import expect from 'expect';
 import validate, {isValid} from '../src/strickland';
 
 describe('validate', () => {
-    describe('with rules: null', () => {
-        describe('returns valid result', () => {
-            it('for data: null', () => {
-                const result = validate(null, null);
-                expect(isValid(result)).toBe(true);
-            });
+    describe('throws', () => {
+        it('with an undefined rules function', () => {
+            expect(() => validate()).toThrow();
+        });
 
-            it('for data: object', () => {
-                const result = validate(null, {prop: 'value'});
-                expect(isValid(result)).toBe(true);
-            });
+        it('with a null rules function', () => {
+            expect(() => validate(null)).toThrow();
+        });
 
-            it('for data: string', () => {
-                const result = validate(null, 'Jeff');
-                expect(isValid(result)).toBe(true);
-            });
+        it('with a numeric rules function', () => {
+            expect(() => validate(1)).toThrow();
+        });
 
-            it('for data: number', () => {
-                const result = validate(null, 34);
-                expect(isValid(result)).toBe(true);
-            });
+        it('with a string rules function', () => {
+            expect(() => validate('string')).toThrow();
+        });
 
-            it('for data: true', () => {
-                const result = validate(null, true);
-                expect(isValid(result)).toBe(true);
-            });
-
-            it('for data: false', () => {
-                const result = validate(null, false);
-                expect(isValid(result)).toBe(true);
-            });
+        it('with an object rules function', () => {
+            expect(() => validate({prop: 'value'})).toThrow();
         });
     });
 
     describe('with rules function', () => {
         describe('returning true', () => {
             const rules = () => true;
-            const result = validate(rules, {prop: 'value'});
+            const result = validate(rules, 'value');
 
             it('returns valid result', () => {
                 expect(isValid(result)).toBe(true);
@@ -52,7 +40,7 @@ describe('validate', () => {
 
         describe('returning false', () => {
             const rules = () => false;
-            const result = validate(rules, {prop: 'value'});
+            const result = validate(rules, 'value');
 
             it('returns invalid result', () => {
                 expect(isValid(result)).toBe(false);
@@ -66,7 +54,7 @@ describe('validate', () => {
         describe('returning a string', () => {
             describe('that is not empty', () => {
                 const rules = () => 'That is not valid';
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 it ('returns the string as the result message', () => {
                     expect(result.message).toEqual('That is not valid');
@@ -79,7 +67,7 @@ describe('validate', () => {
 
             describe('that is empty', () => {
                 const rules = () => '';
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 it('returns a valid result ', () => {
                     expect(isValid(result)).toBe(true);
@@ -95,7 +83,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 const resultProps = {
                     message: result.message,
@@ -111,7 +99,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 expect(isValid(result)).toBe(false);
             });
@@ -122,7 +110,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 expect(result.isValid).toBe(false);
             });
@@ -134,7 +122,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 it('returns valid result', () => {
                     expect(isValid(result)).toBe(true);
@@ -152,7 +140,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 expect(result.isValid).toBe(true);
             });
@@ -164,7 +152,7 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 expect(isValid(result)).toBe(false);
             });
@@ -176,9 +164,85 @@ describe('validate', () => {
                 };
 
                 const rules = () => ruleResult;
-                const result = validate(rules, {prop: 'value'});
+                const result = validate(rules, 'value');
 
                 expect(result.isValid).toBe(false);
+            });
+        });
+    });
+
+    describe('with rules array', () => {
+        describe('with all rules returning valid results', () => {
+            let secondCalled = false;
+
+            const rules = [
+                () => ({
+                    isValid: true,
+                    first: true
+                }),
+                () => {
+                    secondCalled = true;
+
+                    return {
+                        isValid: true,
+                        second: true
+                    };
+                }
+            ];
+
+            const result = validate(rules, 'value');
+
+            it('returns a valid result', () => {
+                expect(isValid(result)).toBe(true);
+            });
+
+            it('includes props from the first validator', () => {
+                expect(result.first).toBe(true);
+            });
+
+            it('includes props from the second validator', () => {
+                expect(result.second).toBe(true);
+            });
+
+            it('calls the second validator', () => {
+                expect(secondCalled).toBe(true);
+            });
+        });
+
+        describe('with the first rule returning an invalid result', () => {
+            let secondCalled = false;
+
+            const rules = [
+                () => ({
+                    isValid: false,
+                    first: true
+                }),
+                () => {
+                    secondCalled = true;
+
+                    return {
+                        isValid: true,
+                        second: false
+                    };
+                }
+            ];
+
+            const result = validate(rules, 'value');
+
+            it('returns an invalid result', () => {
+                expect(isValid(result)).toBe(false);
+            });
+
+            it('includes props from the first validator on the result', () => {
+                expect(result.first).toBe(true);
+            });
+
+            it('does not include props from the second validator', () => {
+                expect(result.second).toBeUndefined();
+            });
+
+            it('does not call the second validator', () => {
+                expect(secondCalled).toBe(false);
             });
         });
     });

@@ -18,24 +18,10 @@ export default function range(minLengthValue, maxLengthValue, props) {
         };
     };
 
-    const validateMin = minLength(props);
-    const validateMax = maxLength(props);
-
-    function validateRangeLength(value) {
-        let result = validateMin(value);
-
-        if (isValid(result)) {
-            result = {
-                ...result,
-                ...validateMax(value)
-            };
-        }
-
-        return {
-            ...props,
-            ...result
-        };
-    }
+    const validateRangeLength = [
+        minLength(props),
+        maxLength(props)
+    ];
 
     return validate.bind(null, validateRangeLength);
 }

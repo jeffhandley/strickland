@@ -19,6 +19,19 @@ export default function validate(rules, value) {
 
     if (typeof rules === 'function') {
         result = rules(value);
+    } else if (Array.isArray(rules)) {
+        for (const i in rules) {
+            result = {
+                ...result,
+                ...validate(rules[i], value)
+            };
+
+            if (!isValid(result)) {
+                break;
+            }
+        }
+    } else {
+        throw 'unrecognized validation rules: ' + (typeof rules)
     }
 
     result = convertResult(result, value);
