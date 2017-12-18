@@ -1,0 +1,83 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.formfield {
+  position: relative;
+  width: 200px;
+}
+
+.formfield input {
+  padding: 20px 4px;
+  margin: 2px;
+  width: 200px;
+  font-size: 18px;
+  border: 0;
+  border-bottom: 1px solid gray;
+}
+
+.formfield input:focus, .formfield input.validation-value {
+  border-bottom: 1px solid transparent;
+}
+
+.formfield input + label {
+  position: absolute;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  padding: 20px 4px 4px 4px;
+  margin: 4px;
+  text-align: left;
+  color: silver;
+  transition: 0.2s;
+}
+
+.formfield input:focus + label, .formfield input.validation-value + label {
+  top: 100%;
+  margin: -20px 0 2px 2px;
+  padding: 2px 4px 4px 4px;
+  font-size: 9px;
+  text-align: left;
+  color: black;
+  border-top: 1px solid gray;
+}
+
+.formfield input:focus + label[data-validation-message]:after, .formfield input.validation-value + label[data-validation-message]:after {
+  content: ": " attr(data-validation-message);
+}
+
+.formfield input.validation-valid + label {
+  color: #22AA00;
+  font-weight: bold;
+}
+
+.formfield input.validation-invalid + label {
+  color: #FF2200;
+  font-weight: bold;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
