@@ -15,11 +15,19 @@ export default function maxLength(max, props) {
         throw 'maxLength must be a number';
     }
 
+    if (props.trim !== false && props.trim !== true) {
+        props.trim = true;
+    }
+
     function validateMaxLength(value) {
         let isValid = true;
+        let parse;
 
-        const parse = typeof props.parseValue === 'function' ?
-            props.parseValue : parseString;
+        if (typeof props.parseValue === 'function') {
+            parse = props.parseValue;
+        } else {
+            parse = (value) => parseString(value, {trim: props.trim});
+        }
 
         const parsedValue = parse(value);
         let length;

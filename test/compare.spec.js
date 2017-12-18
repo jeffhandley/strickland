@@ -139,8 +139,25 @@ describe('compare', () => {
         });
     });
 
-    describe('does not trim', () => {
+    describe('trims by default', () => {
         const validate = compare('  123  ');
+        const result = validate(' 123 ');
+
+        it('the value', () => {
+            expect(result.parsedValue).toBe('123');
+        });
+
+        it('the compare value', () => {
+            expect(result.parsedCompare).toBe('123');
+        });
+
+        it('and allows whitespace differences to be valid', () => {
+            expect(result.isValid).toBe(true);
+        });
+    });
+
+    describe('if specified on props, will not trim', () => {
+        const validate = compare('  123  ', {trim: false});
         const result = validate(' 123 ');
 
         it('the value', () => {

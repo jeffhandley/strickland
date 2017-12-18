@@ -155,4 +155,17 @@ describe('maxLength', () => {
             expect(result.isValid).toBe(true);
         });
     });
+
+    describe('if specified on props, will not trim', () => {
+        const validate = maxLength(3, {trim: false});
+        const result = validate(' 123 ');
+
+        it('the value', () => {
+            expect(result.parsedValue).toBe(' 123 ');
+        });
+
+        it('and causes whitespace to lead to being invalid', () => {
+            expect(result.isValid).toBe(false);
+        });
+    });
 });

@@ -155,4 +155,17 @@ describe('minLength', () => {
             expect(result.isValid).toBe(true);
         });
     });
+
+    describe('if specified on props, will not trim', () => {
+        const validate = minLength(3, {trim: false});
+        const result = validate(' 123 ');
+
+        it('the value', () => {
+            expect(result.parsedValue).toBe(' 123 ');
+        });
+
+        it('and prevents whitespace from leading to being invalid', () => {
+            expect(result.isValid).toBe(true);
+        });
+    });
 });
