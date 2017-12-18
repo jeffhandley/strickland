@@ -22,18 +22,25 @@ export default function minLength(min, props) {
             props.parseValue : parseString;
 
         const parsedValue = parse(value);
+        let length;
+
+        if (typeof parsedValue === 'string') {
+            length = parsedValue.length;
+        }
 
         if (!parsedValue) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'string') {
             isValid = false;
-        } else if (parsedValue.length < props.minLength) {
+        } else if (length < props.minLength) {
             isValid = false;
         }
 
         return {
             ...props,
-            isValid
+            isValid,
+            parsedValue,
+            length
         };
     }
 

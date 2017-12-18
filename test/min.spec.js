@@ -12,7 +12,11 @@ describe('min', () => {
         });
 
         it('when props is an object without a min', () => {
-            expect(() => min({ message: 'Custom message' })).toThrow();
+            expect(() => min({message: 'Custom message'})).toThrow();
+        });
+
+        it('when props is an object with a non-numeric min', () => {
+            expect(() => min({min: 'Custom message'})).toThrow();
         });
     });
 
@@ -39,6 +43,42 @@ describe('min', () => {
 
         it('retains extra props', () => {
             expect(result.message).toBe('Custom message');
+        });
+    });
+
+    it('returns the value on the result', () => {
+        const validate = min(3);
+        const result = validate(4);
+
+        expect(result.value).toBe(4);
+    });
+
+    describe('returns the parsedValue on the result', () => {
+        const validate = min(3);
+
+        it('when the value is a number', () => {
+            const result = validate(4);
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is a string', () => {
+            const result = validate('4');
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is null', () => {
+            const result = validate(null);
+            expect(result.parsedValue).toBe(null);
+        });
+
+        it('when the value is an empty string', () => {
+            const result = validate('');
+            expect(result.parsedValue).toBe('');
+        });
+
+        it('when the value is 0 as a string', () => {
+            const result = validate('0');
+            expect(result.parsedValue).toBe(0);
         });
     });
 

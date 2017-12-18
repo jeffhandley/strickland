@@ -33,7 +33,8 @@ export default function min(minValue, props) {
 
         return {
             ...props,
-            isValid
+            isValid,
+            parsedValue
         };
     }
 

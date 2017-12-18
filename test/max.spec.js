@@ -12,7 +12,11 @@ describe('max', () => {
         });
 
         it('when props is an object without a max', () => {
-            expect(() => max({ max: 'Custom message' })).toThrow();
+            expect(() => max({message: 'Custom message'})).toThrow();
+        });
+
+        it('when props is an object with a non-numeric max', () => {
+            expect(() => max({max: 'Custom message'})).toThrow();
         });
     });
 
@@ -20,7 +24,7 @@ describe('max', () => {
         const validate = max({max: 5, message: 'Custom message'});
         const result = validate(4);
 
-        it('uses the min prop', () => {
+        it('uses the max prop', () => {
             expect(result.max).toBe(5);
         });
 
@@ -47,6 +51,35 @@ describe('max', () => {
         const result = validate(4);
 
         expect(result.value).toBe(4);
+    });
+
+    describe('returns the parsedValue on the result', () => {
+        const validate = max(5);
+
+        it('when the value is a number', () => {
+            const result = validate(4);
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is a string', () => {
+            const result = validate('4');
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is null', () => {
+            const result = validate(null);
+            expect(result.parsedValue).toBe(null);
+        });
+
+        it('when the value is an empty string', () => {
+            const result = validate('');
+            expect(result.parsedValue).toBe('');
+        });
+
+        it('when the value is 0 as a string', () => {
+            const result = validate('0');
+            expect(result.parsedValue).toBe(0);
+        });
     });
 
     describe('validates', () => {

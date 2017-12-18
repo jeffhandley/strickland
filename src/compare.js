@@ -1,38 +1,32 @@
 import validate from './strickland';
 import {parseString} from './string';
 
-export default function maxLength(max, props) {
-    if (typeof max === 'object') {
-        props = max;
+export default function compare(compareValue, props) {
+    if (typeof compareValue === 'object') {
+        props = compareValue;
     } else {
         props = {
-            maxLength: max,
+            compare: compareValue,
             ...props
         };
     };
 
-    if (typeof props.maxLength !== 'number') {
-        throw 'maxLength must be a number';
+    if (typeof props.compare === 'undefined') {
+        throw 'compare value must be specified';
     }
 
-    function validateMaxLength(value) {
+    function validateCompare(value) {
         let isValid = true;
 
         const parse = typeof props.parseValue === 'function' ?
             props.parseValue : parseString;
 
         const parsedValue = parse(value);
-        let length;
-
-        if (typeof parsedValue === 'string') {
-            length = parsedValue.length;
-        }
+        const parsedCompare = parse(props.compare);
 
         if (!parsedValue) {
             // Empty values are always valid except with the required validator
-        } else if (typeof parsedValue !== 'string') {
-            isValid = false;
-        } else if (length > props.maxLength) {
+        } else if (parsedValue !== parsedCompare) {
             isValid = false;
         }
 
@@ -40,9 +34,9 @@ export default function maxLength(max, props) {
             ...props,
             isValid,
             parsedValue,
-            length
+            parsedCompare
         };
     }
 
-    return validate.bind(null, validateMaxLength);
+    return validate.bind(null, validateCompare);
 }

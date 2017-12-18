@@ -79,6 +79,42 @@ describe('range', () => {
         });
     });
 
+    it('returns the value on the result', () => {
+        const validate = range(3, 5);
+        const result = validate(4);
+
+        expect(result.value).toBe(4);
+    });
+
+    describe('returns the parsedValue on the result', () => {
+        const validate = range(3, 5);
+
+        it('when the value is a number', () => {
+            const result = validate(4);
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is a string', () => {
+            const result = validate('4');
+            expect(result.parsedValue).toBe(4);
+        });
+
+        it('when the value is null', () => {
+            const result = validate(null);
+            expect(result.parsedValue).toBe(null);
+        });
+
+        it('when the value is an empty string', () => {
+            const result = validate('');
+            expect(result.parsedValue).toBe('');
+        });
+
+        it('when the value is 0 as a string', () => {
+            const result = validate('0');
+            expect(result.parsedValue).toBe(0);
+        });
+    });
+
     const validates = (description, validate) => describe(description, () => {
         describe('validates', () => {
             it('with the value equal to the min, it is valid', () => {

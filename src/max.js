@@ -33,7 +33,8 @@ export default function max(maxValue, props) {
 
         return {
             ...props,
-            isValid
+            isValid,
+            parsedValue
         };
     }
 

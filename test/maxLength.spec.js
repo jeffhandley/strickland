@@ -42,6 +42,91 @@ describe('maxLength', () => {
         });
     });
 
+    it('returns the value on the result', () => {
+        const validate = maxLength(5);
+        const result = validate('1234');
+
+        expect(result.value).toBe('1234');
+    });
+
+    describe('returns the parsedValue on the result', () => {
+        const validate = maxLength(5);
+
+        it('when the value is a string', () => {
+            const result = validate('1234');
+            expect(result.parsedValue).toBe('1234');
+        });
+
+        it('when the value is null', () => {
+            const result = validate(null);
+            expect(result.parsedValue).toBe('');
+        });
+
+        it('when the value is an empty string', () => {
+            const result = validate('');
+            expect(result.parsedValue).toBe('');
+        });
+
+        it('when the value is 0 as a string', () => {
+            const result = validate('0');
+            expect(result.parsedValue).toBe('0');
+        });
+
+        it('when the value has leading spaces', () => {
+            const result = validate('   1234');
+            expect(result.parsedValue).toBe('1234');
+        });
+
+        it('when the value has trailing spaces', () => {
+            const result = validate('1234   ');
+            expect(result.parsedValue).toBe('1234');
+        });
+
+        it('when the value has leading and trailing spaces', () => {
+            const result = validate('   1234   ');
+            expect(result.parsedValue).toBe('1234');
+        });
+    });
+
+    describe('returns the length on the result', () => {
+        const validate = maxLength(5);
+
+        it('when the value is a string', () => {
+            const result = validate('1234');
+            expect(result.length).toBe(4);
+        });
+
+        it('when the value is null', () => {
+            const result = validate(null);
+            expect(result.length).toBe(0);
+        });
+
+        it('when the value is an empty string', () => {
+            const result = validate('');
+            expect(result.length).toBe(0);
+        });
+
+        it('when the value is 0 as a string', () => {
+            const result = validate('0');
+            expect(result.length).toBe(1);
+        });
+
+        it('when the value has leading spaces', () => {
+            const result = validate('   1234');
+            expect(result.length).toBe(4);
+        });
+
+        it('when the value has trailing spaces', () => {
+            const result = validate('1234   ');
+            expect(result.length).toBe(4);
+        });
+
+        it('when the value has leading and trailing spaces', () => {
+            const result = validate('   1234   ');
+            expect(result.length).toBe(4);
+        });
+    });
+
     describe('validates', () => {
         const validate = maxLength(3);
 
