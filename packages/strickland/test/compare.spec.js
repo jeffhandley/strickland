@@ -172,4 +172,47 @@ describe('compare', () => {
             expect(result.isValid).toBe(false);
         });
     });
+
+    describe('with a function for the compare value', () => {
+        let getValueCalls = 0;
+
+        function getValue() {
+            getValueCalls++;
+            return '  value to compare  ';
+        }
+
+        const validate = compare(getValue);
+        const result = validate(' value to compare ');
+
+        it('calls the function (once) to get the compare value', () => {
+            expect(getValueCalls).toBe(1);
+        });
+
+        it('sets the compare value to the result of the function', () => {
+            expect(result.compare).toBe('  value to compare  ');
+        });
+
+        it('parses the compare value from the function', () => {
+            expect(result.parsedCompare).toBe('value to compare');
+        });
+
+        it('validates against the parsed compare value', () => {
+            expect(result.isValid).toBe(true);
+        });
+
+        it('the function is called each time validation occurs', () => {
+            let calls = 0;
+
+            function getValueOnValidation() {
+                return ++calls;
+            }
+
+            const validateMultipleTimes = compare(getValueOnValidation);
+
+            validateMultipleTimes(1);
+            validateMultipleTimes(2);
+
+            expect(calls).toBe(2);
+        });
+    });
 });

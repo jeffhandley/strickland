@@ -29,8 +29,14 @@ export default function compare(compareValue, props) {
             parse = (toParse) => parseString(toParse, {trim: props.trim});
         }
 
+        let valueToCompare = props.compare;
+
+        if (typeof valueToCompare === 'function') {
+            valueToCompare = valueToCompare();
+        }
+
         const parsedValue = parse(value);
-        const parsedCompare = parse(props.compare);
+        const parsedCompare = parse(valueToCompare);
 
         if (!parsedValue) {
             // Empty values are always valid except with the required validator
@@ -41,6 +47,7 @@ export default function compare(compareValue, props) {
         return {
             ...props,
             isValid,
+            compare: valueToCompare,
             parsedValue,
             parsedCompare
         };
