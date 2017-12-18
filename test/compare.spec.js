@@ -138,4 +138,21 @@ describe('compare', () => {
             expect(result.isValid).toBe(true);
         });
     });
+
+    describe('does not trim', () => {
+        const validate = compare('  123  ');
+        const result = validate(' 123 ');
+
+        it('the value', () => {
+            expect(result.parsedValue).toBe(' 123 ');
+        });
+
+        it('the compare value', () => {
+            expect(result.parsedCompare).toBe('  123  ');
+        });
+
+        it('and causes whitespace differences to be invalid', () => {
+            expect(result.isValid).toBe(false);
+        });
+    });
 });

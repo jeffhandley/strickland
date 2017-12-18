@@ -18,8 +18,13 @@ export default function compare(compareValue, props) {
     function validateCompare(value) {
         let isValid = true;
 
-        const parse = typeof props.parseValue === 'function' ?
-            props.parseValue : parseString;
+        let parse;
+
+        if (typeof props.parseValue === 'function') {
+            parse = props.parseValue;
+        } else {
+            parse = (value) => parseString(value, {trim: false});
+        }
 
         const parsedValue = parse(value);
         const parsedCompare = parse(props.compare);
