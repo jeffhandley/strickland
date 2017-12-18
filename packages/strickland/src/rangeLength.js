@@ -3,15 +3,19 @@ import minLength from './minLength';
 import maxLength from './maxLength';
 
 export default function range(minLengthValue, maxLengthValue, props) {
+    let validateProps;
+
     if (typeof minLengthValue === 'object') {
-        props = minLengthValue;
+        validateProps = {
+            ...minLengthValue
+        };
     } else if (typeof maxLengthValue === 'object') {
-        props = {
+        validateProps = {
             minLength: minLengthValue,
             ...maxLengthValue
         };
     } else {
-        props = {
+        validateProps = {
             minLength: minLengthValue,
             maxLength: maxLengthValue,
             ...props
@@ -19,8 +23,8 @@ export default function range(minLengthValue, maxLengthValue, props) {
     }
 
     const validateRangeLength = [
-        minLength(props),
-        maxLength(props)
+        minLength(validateProps),
+        maxLength(validateProps)
     ];
 
     return validate.bind(null, validateRangeLength);

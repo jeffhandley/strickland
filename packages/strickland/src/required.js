@@ -4,13 +4,15 @@ import {parseString} from './string';
 let notDefined;
 
 export default function required(props) {
-    props = props || {};
+    let validateProps = {
+        ...props
+    };
 
     function validateRequired(value) {
         let isValid = true;
 
-        const parse = typeof props.parseValue === 'function' ?
-            props.parseValue : parseString;
+        const parse = typeof validateProps.parseValue === 'function' ?
+            validateProps.parseValue : parseString;
 
         const parsedValue = parse(value);
 
@@ -23,7 +25,7 @@ export default function required(props) {
         }
 
         return {
-            ...props,
+            ...validateProps,
             isValid,
             parsedValue
         };

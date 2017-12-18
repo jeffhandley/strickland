@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import range from '../src/range';
 
 describe('range', () => {
@@ -183,4 +184,27 @@ describe('range', () => {
     validates('with a props argument', range({min: 3, max: 5}));
     validates('with a numeric min and props', range(3, {max: 5}));
     validates('with numeric min and max plus props', range(3, 5, {other: 'other'}));
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {min: 3, max: 5};
+            deepFreeze(props);
+
+            expect(() => range(props)(4)).not.toThrow();
+        });
+
+        it('when a min value and props are used', () => {
+            const props = {max: 5, message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => range(3, props)(4)).not.toThrow();
+        });
+
+        it('when min and max values and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => range(3, 5, props)(4)).not.toThrow();
+        });
+    });
 });

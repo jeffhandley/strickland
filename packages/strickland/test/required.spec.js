@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import required from '../src/required';
 
 describe('required', () => {
@@ -191,6 +192,15 @@ describe('required', () => {
                 const result = validate('');
                 expect(result.isValid).toBe(true);
             });
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a props argument is used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => required(props)('value')).not.toThrow();
         });
     });
 });

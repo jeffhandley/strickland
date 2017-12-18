@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import minLength from '../src/minLength';
 
 describe('minLength', () => {
@@ -166,6 +167,22 @@ describe('minLength', () => {
 
         it('and prevents whitespace from leading to being invalid', () => {
             expect(result.isValid).toBe(true);
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {minLength: 5};
+            deepFreeze(props);
+
+            expect(() => minLength(props)('12345')).not.toThrow();
+        });
+
+        it('when a minLength value and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => minLength(5, props)('12345')).not.toThrow();
         });
     });
 });

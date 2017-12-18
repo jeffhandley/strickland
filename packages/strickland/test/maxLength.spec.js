@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import maxLength from '../src/maxLength';
 
 describe('maxLength', () => {
@@ -166,6 +167,22 @@ describe('maxLength', () => {
 
         it('and causes whitespace to lead to being invalid', () => {
             expect(result.isValid).toBe(false);
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {maxLength: 5};
+            deepFreeze(props);
+
+            expect(() => maxLength(props)('12345')).not.toThrow();
+        });
+
+        it('when a maxLength value and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => maxLength(5, props)('12345')).not.toThrow();
         });
     });
 });

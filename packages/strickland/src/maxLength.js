@@ -2,31 +2,35 @@ import validate from './strickland';
 import {parseString} from './string';
 
 export default function maxLength(max, props) {
+    let validateProps;
+
     if (typeof max === 'object') {
-        props = max;
+        validateProps = {
+            ...max
+        };
     } else {
-        props = {
+        validateProps = {
             maxLength: max,
             ...props
         };
     }
 
-    if (typeof props.maxLength !== 'number') {
+    if (typeof validateProps.maxLength !== 'number') {
         throw 'maxLength must be a number';
     }
 
-    if (props.trim !== false && props.trim !== true) {
-        props.trim = true;
+    if (validateProps.trim !== false && validateProps.trim !== true) {
+        validateProps.trim = true;
     }
 
     function validateMaxLength(value) {
         let isValid = true;
         let parse;
 
-        if (typeof props.parseValue === 'function') {
-            parse = props.parseValue;
+        if (typeof validateProps.parseValue === 'function') {
+            parse = validateProps.parseValue;
         } else {
-            parse = (toParse) => parseString(toParse, {trim: props.trim});
+            parse = (toParse) => parseString(toParse, {trim: validateProps.trim});
         }
 
         const parsedValue = parse(value);
@@ -40,12 +44,12 @@ export default function maxLength(max, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'string') {
             isValid = false;
-        } else if (length > props.maxLength) {
+        } else if (length > validateProps.maxLength) {
             isValid = false;
         }
 
         return {
-            ...props,
+            ...validateProps,
             isValid,
             parsedValue,
             length

@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import compare from '../src/compare';
 
 describe('compare', () => {
@@ -213,6 +214,22 @@ describe('compare', () => {
             validateMultipleTimes(2);
 
             expect(calls).toBe(2);
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {compare: 5};
+            deepFreeze(props);
+
+            expect(() => compare(props)(5)).not.toThrow();
+        });
+
+        it('when a compare value and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => compare(5, props)(5)).not.toThrow();
         });
     });
 });

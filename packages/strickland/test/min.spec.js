@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import min from '../src/min';
 
 describe('min', () => {
@@ -123,6 +124,22 @@ describe('min', () => {
         it('with a string value less than the min, it is invalid', () => {
             const result = validate('2');
             expect(result.isValid).toBe(false);
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {min: 5};
+            deepFreeze(props);
+
+            expect(() => min(props)(5)).not.toThrow();
+        });
+
+        it('when a min value and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => min(5, props)(5)).not.toThrow();
         });
     });
 });

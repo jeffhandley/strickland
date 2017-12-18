@@ -93,11 +93,6 @@ module.exports = {
         'camelcase': 2
     },
 
-    'ecmaFeatures': {
-        'modules': true,
-        'jsx': true
-    },
-
     'plugins': [
         'react'
     ]

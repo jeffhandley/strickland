@@ -2,34 +2,38 @@ import validate from './strickland';
 import {parseString} from './string';
 
 export default function compare(compareValue, props) {
+    let validateProps;
+
     if (typeof compareValue === 'object') {
-        props = compareValue;
+        validateProps = {
+            ...compareValue
+        };
     } else {
-        props = {
+        validateProps = {
             compare: compareValue,
             ...props
         };
     }
 
-    if (typeof props.compare === 'undefined') {
+    if (typeof validateProps.compare === 'undefined') {
         throw 'compare value must be specified';
     }
 
-    if (props.trim !== false && props.trim !== true) {
-        props.trim = true;
+    if (validateProps.trim !== false && validateProps.trim !== true) {
+        validateProps.trim = true;
     }
 
     function validateCompare(value) {
         let isValid = true;
         let parse;
 
-        if (typeof props.parseValue === 'function') {
-            parse = props.parseValue;
+        if (typeof validateProps.parseValue === 'function') {
+            parse = validateProps.parseValue;
         } else {
-            parse = (toParse) => parseString(toParse, {trim: props.trim});
+            parse = (toParse) => parseString(toParse, {trim: validateProps.trim});
         }
 
-        let valueToCompare = props.compare;
+        let valueToCompare = validateProps.compare;
 
         if (typeof valueToCompare === 'function') {
             valueToCompare = valueToCompare();
@@ -45,7 +49,7 @@ export default function compare(compareValue, props) {
         }
 
         return {
-            ...props,
+            ...validateProps,
             isValid,
             compare: valueToCompare,
             parsedValue,

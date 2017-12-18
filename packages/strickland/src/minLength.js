@@ -2,31 +2,35 @@ import validate from './strickland';
 import {parseString} from './string';
 
 export default function minLength(min, props) {
+    let validateProps;
+
     if (typeof min === 'object') {
-        props = min;
+        validateProps = {
+            ...min
+        };
     } else {
-        props = {
+        validateProps = {
             minLength: min,
             ...props
         };
     }
 
-    if (typeof props.minLength !== 'number') {
+    if (typeof validateProps.minLength !== 'number') {
         throw 'minLength must be a number';
     }
 
-    if (props.trim !== false && props.trim !== true) {
-        props.trim = true;
+    if (validateProps.trim !== false && validateProps.trim !== true) {
+        validateProps.trim = true;
     }
 
     function validateMinLength(value) {
         let isValid = true;
         let parse;
 
-        if (typeof props.parseValue === 'function') {
-            parse = props.parseValue;
+        if (typeof validateProps.parseValue === 'function') {
+            parse = validateProps.parseValue;
         } else {
-            parse = (toParse) => parseString(toParse, {trim: props.trim});
+            parse = (toParse) => parseString(toParse, {trim: validateProps.trim});
         }
 
         const parsedValue = parse(value);
@@ -40,12 +44,12 @@ export default function minLength(min, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'string') {
             isValid = false;
-        } else if (length < props.minLength) {
+        } else if (length < validateProps.minLength) {
             isValid = false;
         }
 
         return {
-            ...props,
+            ...validateProps,
             isValid,
             parsedValue,
             length

@@ -1,4 +1,5 @@
 import expect from 'expect';
+import deepFreeze from 'deep-freeze';
 import max from '../src/max';
 
 describe('max', () => {
@@ -123,6 +124,22 @@ describe('max', () => {
         it('with a string value greater than the max, it is invalid', () => {
             const result = validate('4');
             expect(result.isValid).toBe(false);
+        });
+    });
+
+    describe('does not mutate props', () => {
+        it('when a single props argument is used', () => {
+            const props = {max: 5};
+            deepFreeze(props);
+
+            expect(() => max(props)(5)).not.toThrow();
+        });
+
+        it('when a max value and props are used', () => {
+            const props = {message: 'Custom message'};
+            deepFreeze(props);
+
+            expect(() => max(5, props)(5)).not.toThrow();
         });
     });
 });
