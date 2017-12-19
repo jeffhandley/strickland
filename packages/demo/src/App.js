@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import logo from './logo.svg';
 import './App.css';
-import validate, {isValid} from 'strickland';
-import required from 'strickland/lib/required';
-import minLength from 'strickland/lib/minLength';
-import compare from 'strickland/lib/compare';
+import validate, {isValid, required, minLength, compare} from 'strickland';
 
 function getValidationClassName(form, validation, fieldName) {
     return classnames({
@@ -70,7 +67,7 @@ class App extends Component {
             [fieldName]: value
         };
 
-        if (this.state.validation) {
+        if (this.state.validation && this.state.validation.results) {
             let validation = {
                 ...this.state.validation,
                 results: {
@@ -78,11 +75,11 @@ class App extends Component {
                 }
             };
 
-            if (this.state.validation[fieldName]) {
+            if (validation.results[fieldName]) {
                 validation.results[fieldName] = validate(this.rules[fieldName], value);
             }
 
-            if (fieldName === 'password' && this.state.validation.confirmPassword) {
+            if (fieldName === 'password' && validation.results.confirmPassword) {
                 const validateProps = {compare: value};
                 validation.results.confirmPassword = validate(this.rules.confirmPassword, this.state.form.confirmPassword, validateProps);
             }
@@ -98,7 +95,7 @@ class App extends Component {
 
         const validation = validate(this.rules[fieldName], value);
 
-        if ((this.state.validation && this.state.validation[fieldName]) || isValid(validation)) {
+        if ((this.state.validation && this.state.validation.results && this.state.validation.results[fieldName]) || isValid(validation)) {
             this.setState({
                 form: {
                     ...this.state.form,
