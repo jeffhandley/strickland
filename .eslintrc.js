@@ -27,7 +27,7 @@ module.exports = {
         'strict': [2, 'global'],
         'wrap-iife': [2, 'any'],
         'quotes': [2, 'single'],
-        'jsx-quotes': [ 2, 'prefer-single' ],
+        'jsx-quotes': [ 2, 'prefer-double' ],
         'react/jsx-boolean-value': 2,
         'react/jsx-no-undef': 2,
         'react/jsx-sort-props': 2,

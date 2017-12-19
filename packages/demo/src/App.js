@@ -65,26 +65,28 @@ class App extends Component {
     onFieldChange(fieldName, {target}) {
         const {value} = target;
 
-        if (this.state.validation && this.state.validation[fieldName]) {
-            const validation = validate(this.rules[fieldName], value);
+        let form = {
+            ...this.state.form,
+            [fieldName]: value
+        };
 
-            this.setState({
-                form: {
-                    ...this.state.form,
-                    [fieldName]: value
-                },
-                validation: {
-                    ...this.state.validation,
-                    [fieldName]: isValid(validation) ? validation : this.state.validation[fieldName]
-                }
-            });
+        if (this.state.validation) {
+            let validation = {
+                ...this.state.validation
+            };
+
+            if (this.state.validation[fieldName]) {
+                validation[fieldName] = validate(this.rules[fieldName], value);
+            }
+
+            if (fieldName === 'password' && this.state.validation.confirmPassword) {
+                const validateProps = {compare: value};
+                validation.confirmPassword = validate(this.rules.confirmPassword, this.state.form.confirmPassword, validateProps);
+            }
+
+            this.setState({form, validation});
         } else {
-            this.setState({
-                form: {
-                    ...this.state.form,
-                    [fieldName]: value
-                }
-            });
+            this.setState({form});
         }
     }
 

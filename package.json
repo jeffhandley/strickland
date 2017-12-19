@@ -2,6 +2,7 @@
   "name": "strickland-root",
   "private": true,
   "scripts": {
+    "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"
   },
