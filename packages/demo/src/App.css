@@ -22,10 +22,18 @@
   font-size: large;
 }
 
+.form {
+  width: 200px;
+  margin: 0 auto;
+}
+
+.formactions {
+  margin-top: 20px;
+}
+
 .formfield {
   position: relative;
   width: 200px;
-  margin-left: 520px;
 }
 
 .formfield input {
