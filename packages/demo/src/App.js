@@ -22,6 +22,18 @@ function getValidationMessage(validation, fieldName) {
     return null;
 }
 
+function hasValidationResults(validation, fieldName) {
+    if (validation && validation.results) {
+        if (fieldName) {
+            return !!validation.results[fieldName];
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -53,9 +65,18 @@ class App extends Component {
 
         this.rules = {
             firstName: required({message: 'Required'}),
-            lastName: [required({message: 'Required'}), minLength(2, {message: 'Must have at least 2 characters'})],
-            password: [required({message: 'Required'}), minLength(8, {message: 'Must have at least 8 characters'})],
-            confirmPassword: [required(), compare(() => this.state.form.password, {message: 'Must match password'})]
+            lastName: [
+                required({message: 'Required'}),
+                minLength(2, {message: 'Must have at least 2 characters'})
+            ],
+            password: [
+                required({message: 'Required', trim: false}),
+                minLength(8, {message: 'Must have at least 8 characters', trim: false})
+            ],
+            confirmPassword: [
+                required({message: 'Required', trim: false}),
+                compare(() => this.state.form.password, {message: 'Must match password', trim: false})
+            ]
         };
     }
 
@@ -67,7 +88,7 @@ class App extends Component {
             [fieldName]: value
         };
 
-        if (this.state.validation && this.state.validation.results) {
+        if (hasValidationResults(this.state.validation)) {
             let validation = {
                 ...this.state.validation,
                 results: {
@@ -95,11 +116,16 @@ class App extends Component {
 
         const validation = validate(this.rules[fieldName], value);
 
-        if ((this.state.validation && this.state.validation.results && this.state.validation.results[fieldName]) || isValid(validation)) {
+        // If the field is valid, show validation results on blur
+        // Or, update existing validation results on blur
+        // But don't show initially invalid results on a field on blur
+        if (isValid(validation) || hasValidationResults(fieldName)) {
+            // Once the field is valid or we're rendering validation results
+            // then update the field on blur to reflect the parsed value
             this.setState({
                 form: {
                     ...this.state.form,
-                    [fieldName]: value
+                    [fieldName]: validation.parsedValue
                 },
                 validation: {
                     ...this.state.validation,

@@ -38,7 +38,7 @@ export default function maxLength(max, props) {
             parse = (toParse) => parseString(toParse, {trim: mergedProps.trim});
         }
 
-        const parsedValue = parse(value);
+        const parsedValue = parse(value, mergedProps);
         let length;
 
         if (typeof parsedValue === 'string') {

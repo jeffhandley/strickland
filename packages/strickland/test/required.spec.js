@@ -134,12 +134,21 @@ describe('required', () => {
             expect(result.parsedValue).toBe('Parsed: Value');
         });
 
-        it('bypassing string trimming', () => {
-            const parseValue = (value) => value;
-            const validate = required({parseValue});
+        describe('bypassing string trimming', () => {
+            it('using a custom parseValue function', () => {
+                const parseValue = (value) => value;
+                const validate = required({parseValue});
 
-            const result = validate(' ');
-            expect(result.parsedValue).toBe(' ');
+                const result = validate(' ');
+                expect(result.parsedValue).toBe(' ');
+            });
+
+            it('using a trim prop set to false', () => {
+                const validate = required({trim: false});
+
+                const result = validate(' ');
+                expect(result.parsedValue).toBe(' ');
+            });
         });
 
         describe('converting a value', () => {

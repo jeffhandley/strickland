@@ -30,7 +30,7 @@ export default function max(maxValue, props) {
         const parse = typeof mergedProps.parseValue === 'function' ?
             mergedProps.parseValue : parseNumber;
 
-        const parsedValue = parse(value);
+        const parsedValue = parse(value, mergedProps);
 
         if (isFalsyButNotZero(parsedValue)) {
             // Empty values are always valid except with the required validator

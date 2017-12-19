@@ -19,7 +19,7 @@ export default function required(props) {
         const parse = typeof mergedProps.parseValue === 'function' ?
             mergedProps.parseValue : parseString;
 
-        const parsedValue = parse(value);
+        const parsedValue = parse(value, mergedProps);
 
         if (parsedValue === null || parsedValue === notDefined) {
             isValid = false;

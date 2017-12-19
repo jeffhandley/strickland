@@ -19,10 +19,6 @@ export default function compare(compareValue, props) {
         throw 'compare value must be specified';
     }
 
-    if (validatorProps.trim !== false && validatorProps.trim !== true) {
-        validatorProps.trim = true;
-    }
-
     function validateCompare(value, validateProps) {
         const mergedProps = {
             ...validatorProps,
@@ -30,22 +26,17 @@ export default function compare(compareValue, props) {
         };
 
         let isValid = true;
-        let parse;
-
-        if (typeof mergedProps.parseValue === 'function') {
-            parse = mergedProps.parseValue;
-        } else {
-            parse = (toParse) => parseString(toParse, {trim: mergedProps.trim});
-        }
-
         let valueToCompare = mergedProps.compare;
 
         if (typeof valueToCompare === 'function') {
             valueToCompare = valueToCompare();
         }
 
-        const parsedValue = parse(value);
-        const parsedCompare = parse(valueToCompare);
+        const parse = typeof mergedProps.parseValue === 'function' ?
+            mergedProps.parseValue : parseString;
+
+        const parsedValue = parse(value, mergedProps);
+        const parsedCompare = parse(valueToCompare, mergedProps);
 
         if (!parsedValue) {
             // Empty values are always valid except with the required validator
