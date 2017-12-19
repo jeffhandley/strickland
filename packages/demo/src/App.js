@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import logo from './logo.svg';
 import './App.css';
-import validate, {isValid, required, minLength, compare} from 'strickland';
+import validate, {isValid, composite, required, minLength, compare} from 'strickland';
 
 function getValidationClassName(form, validation, fieldName) {
     return classnames({
@@ -67,18 +67,9 @@ class App extends Component {
 
         this.rules = {
             firstName: required({message: 'Required'}),
-            lastName: [
-                required({message: 'Required'}),
-                minLength(2, {message: 'Must have at least 2 characters'})
-            ],
-            password: [
-                required({message: 'Required', trim: false}),
-                minLength(8, {message: 'Must have at least 8 characters', trim: false})
-            ],
-            confirmPassword: [
-                required({message: 'Required', trim: false}),
-                compare(() => this.state.form.password, {message: 'Must match password', trim: false})
-            ]
+            lastName: composite([required, minLength], {minLength: 2, message: 'Must have at least 2 characters'}),
+            password: composite([required, minLength], {minLength: 8, message: 'Must have at least 8 characters', trim: false}),
+            confirmPassword: composite([required, compare], {compare: () => this.state.form.password, message: 'Must match password', trim: false})
         };
     }
 
