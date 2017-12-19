@@ -4,7 +4,7 @@ export {default as maxLength} from './maxLength';
 export {default as min} from './min';
 export {default as minLength} from './minLength';
 export {default as range} from './range';
-export {default as rangeLength} from './rangeLength';
+export {default as length} from './length';
 export {default as required} from './required';
 export {default as composite} from './composite';
 

@@ -1,36 +1,36 @@
 import expect from 'expect';
 import deepFreeze from 'deep-freeze';
-import rangeLength from '../src/rangeLength';
+import length from '../src/length';
 
-describe('rangeLength', () => {
+describe('length', () => {
     describe('throws', () => {
         it('when props are not supplied', () => {
-            expect(() => rangeLength()).toThrow();
+            expect(() => length()).toThrow();
         });
 
         it('when the min length is a string', () => {
-            expect(() => rangeLength('123', 456)).toThrow();
+            expect(() => length('123', 456)).toThrow();
         });
 
         it('when the max length is a string', () => {
-            expect(() => rangeLength(123, '456')).toThrow();
+            expect(() => length(123, '456')).toThrow();
         });
 
         it('when props is an object without a min or a max', () => {
-            expect(() => rangeLength({})).toThrow();
+            expect(() => length({})).toThrow();
         });
 
         it('when props is an object without a min', () => {
-            expect(() => rangeLength({ maxLength: 456 })).toThrow();
+            expect(() => length({ maxLength: 456 })).toThrow();
         });
 
         it('when props is an object without a max', () => {
-            expect(() => rangeLength({ minLength: 123 })).toThrow();
+            expect(() => length({ minLength: 123 })).toThrow();
         });
     });
 
     describe('with a single props argument', () => {
-        const validate = rangeLength({minLength: 3, maxLength: 5, message: 'Custom message'});
+        const validate = length({minLength: 3, maxLength: 5, message: 'Custom message'});
         const result = validate('1234');
 
         it('uses the min prop', () => {
@@ -47,7 +47,7 @@ describe('rangeLength', () => {
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = rangeLength(3, {maxLength: 5, message: 'Custom message'});
+        const validate = length(3, {maxLength: 5, message: 'Custom message'});
         const result = validate('1234');
 
         it('sets the min prop', () => {
@@ -64,7 +64,7 @@ describe('rangeLength', () => {
     });
 
     describe('with the first and second arguments as numbers and the third as an object', () => {
-        const validate = rangeLength(3, 5, {message: 'Custom message'});
+        const validate = length(3, 5, {message: 'Custom message'});
         const result = validate('1234');
 
         it('sets the min prop', () => {
@@ -81,14 +81,14 @@ describe('rangeLength', () => {
     });
 
     it('returns the value on the result', () => {
-        const validate = rangeLength(3, 5);
+        const validate = length(3, 5);
         const result = validate('1234');
 
         expect(result.value).toBe('1234');
     });
 
     describe('returns the parsedValue on the result', () => {
-        const validate = rangeLength(3, 5);
+        const validate = length(3, 5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -127,7 +127,7 @@ describe('rangeLength', () => {
     });
 
     describe('returns the length on the result', () => {
-        const validate = rangeLength(3, 5);
+        const validate = length(3, 5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -209,15 +209,15 @@ describe('rangeLength', () => {
         });
     });
 
-    validates('with numeric arguments', rangeLength(3, 5));
-    validates('with a props argument', rangeLength({minLength: 3, maxLength: 5}));
-    validates('with a numeric min and props', rangeLength(3, {maxLength: 5}));
-    validates('with numeric min and max plus props', rangeLength(3, 5, {other: 'other'}));
+    validates('with numeric arguments', length(3, 5));
+    validates('with a props argument', length({minLength: 3, maxLength: 5}));
+    validates('with a numeric min and props', length(3, {maxLength: 5}));
+    validates('with numeric min and max plus props', length(3, 5, {other: 'other'}));
 
     describe('with props passed into validation', () => {
         it('allows the minLength value to be specified at time of validation', () => {
             const validatorProps = {minLength: 4, maxLength: 6};
-            const validate = rangeLength(validatorProps);
+            const validate = length(validatorProps);
             const result = validate('123', {minLength: 2});
 
             expect(result).toMatchObject({
@@ -228,7 +228,7 @@ describe('rangeLength', () => {
 
         it('allows the maxLength value to be specified at time of validation', () => {
             const validatorProps = {minLength: 4, maxLength: 6};
-            const validate = rangeLength(validatorProps);
+            const validate = length(validatorProps);
             const result = validate('1234567', {maxLength: 8});
 
             expect(result).toMatchObject({
@@ -243,21 +243,21 @@ describe('rangeLength', () => {
             const props = {minLength: 3, maxLength: 5};
             deepFreeze(props);
 
-            expect(() => rangeLength(props)('1234')).not.toThrow();
+            expect(() => length(props)('1234')).not.toThrow();
         });
 
         it('when a min length and props are used', () => {
             const props = {maxLength: 5, message: 'Custom message'};
             deepFreeze(props);
 
-            expect(() => rangeLength(3, props)('1234')).not.toThrow();
+            expect(() => length(3, props)('1234')).not.toThrow();
         });
 
         it('when min and max values and props are used', () => {
             const props = {message: 'Custom message'};
             deepFreeze(props);
 
-            expect(() => rangeLength(3, 5, props)('1234')).not.toThrow();
+            expect(() => length(3, 5, props)('1234')).not.toThrow();
         });
     });
 });

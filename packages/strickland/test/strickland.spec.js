@@ -1,8 +1,5 @@
 import expect from 'expect';
-import validate, {isValid} from '../src/strickland';
-import required from '../src/required';
-import minLength from '../src/minLength';
-import rangeLength from '../src/rangeLength';
+import validate, {isValid, required, minLength, length} from '../src/strickland';
 
 describe('validate', () => {
     describe('throws', () => {
@@ -305,7 +302,7 @@ describe('validate', () => {
                 homeAddress: {
                     street: required(),
                     city: required(),
-                    state: [required(), rangeLength(2, 2)]
+                    state: [required(), length(2, 2)]
                 },
                 workAddress: {
                     street: {
@@ -313,7 +310,7 @@ describe('validate', () => {
                         name: required()
                     },
                     city: required(),
-                    state: [required(), rangeLength(2, 2)]
+                    state: [required(), length(2, 2)]
                 }
             };
 
@@ -506,7 +503,7 @@ describe('validate', () => {
                 homeAddress: {
                     street: required(),
                     city: required(),
-                    state: [required(), rangeLength(2, 2)]
+                    state: [required(), length(2, 2)]
                 },
                 workAddress: {
                     street: {
@@ -514,7 +511,7 @@ describe('validate', () => {
                         name: required()
                     },
                     city: required(),
-                    state: [required(), rangeLength(2, 2)]
+                    state: [required(), length(2, 2)]
                 }
             };
 
