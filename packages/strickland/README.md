@@ -1,119 +1,169 @@
-# strickland
-JavaScript data validation. Ideal for universal React applications that use Flux, Redux, or similar patterns.
+# Strickland
 
-Strickland is a unique and robust approach to validating data in JavaScript.
+Strickland is a JavaScript validation _framework_. It's pure JavaScript and while it works well
+with React, Redux, or other libraries, Strickland is not coupled to any other library or application
+type.
+
+Strickland is a unique and robust approach to performing validation in JavaScript.
 
 * It is *not* a type system and it does not interfere with how you create and manage data
-* Instead, validation rules are defined separately and run against the data
-* While strickland can be used within the UI layer (including React components), it is not limited to use within UI
+* Instead, validation rules are defined separately from the data
+* While Strickland can be used within the UI layer (including React components), it is not limited to use within UI
 * Universal applications can share validators across both client-side and server-side validation
-* With its extensibility, strickland supports complex scenarios in large line-of-business applications
+* With its extensibility, Strickland supports complex scenarios in large line-of-business applications
 
-## API
+## Validation Patterns
 
-### ValidationResult
-The class that represents a result, valid or invalid.  All validators return a ValidationResult.
+Strickland can validate scalar values or objects. Objects can have nested objects within them and rules
+defined for any part of the shape. Validations rules are defined as simple functions that
+return either boolean values or result objects.
 
-#### Properties
+## Scalar Value Validation
 
-* isValid
+Scalar values can be validated very easily. Validators are defined separately from the data and the
+`validate` function from Strickland will execute the validators.
 
-#### Extensibility
-Custom properties provided to validators flow through to the ValidationResult.  All built-in validators provide the following additional properties, each of which can be overridden by supplying the property to the validator.
+``` jsx
+import validate, {required} from 'strickland';
 
-* message
-    * The message associated with the validator, describing the rules
-* isIgnored
-    * A Boolean indicating if the validator was ignored during validation
-    * Can be overidden with two different signatures
-        * A function, accepting the value being validated, returning a truthy value to ignore the validator
-        * A truthy value, forcing the validator to always be ignored
-* All of the arguments provided to the validator
-    * field and fieldName get set for field-level validators
-    * min and max get set for length and value validators along with the min/max validators
-* validator
-    * The validator type this result originated from
+const name = 'Stanford';
+const rules = required({message: 'Name is required'});
 
-### validation
-Collection of functions for executing validators.
+const result = validate(rules, name);
+// result = {isValid: true, message: 'Name is required', value: 'Stanford', parsedValue: 'Stanford'}
+```
 
-* getResults(value, validators)
-    * Given an array of validators, returns an array of ValidationResult instances
-    * Given an object with arrays of validators as properties, returns an object of the same shape with arrays of ValidationResult instances
-    * Includes both valid and invalid results
-* getErrors(value, validators)
-    * Given an array of validators, returns an array of ValidationResult instances
-    * Given an object with arrays of validators as properties, returns an object of the same shape with arrays of ValidationResult instances
-    * Includes only invalid results
-* isValid(value, validators)
-    * Returns true when all validators are valid
+Multiple validators can be used by simply supplying an array of validator functions.
 
-### Validators
+``` jsx
+import validate, {required, minLength} from 'strickland';
 
-#### validator(validationFunction, props)
-Validate a value using a validation function.  By default, all empty values are ignored.
+const name = '  Stanford  ';
+const rules = [
+    required({message: 'Name is required'}),
+    minLength(10, {message: 'Name must be at least 10 characters'})
+];
 
-#### required(props)
-Succeeds for non-empty values and fails on empty values.  Does not ignore any values.  In any validation system, required field validation should be the only validation that fails on empty values.
+const result = validate(rules, name);
+// result = {isValid: false, message: 'Name must be at least 10 characters', value: '  Stanford  ', parsedValue: 'Stanford'}
+// note that the required and minLength validators trim leading and trailing whitespace by default
+```
 
-Empty values include:
+Validator props are used heavily within Strickland, allowing for flexible and extensible usage composition. The `composite`
+validator is not required for composing validators, but since it applies the supplied props to all validators, it makes
+some scenarios simpler.
 
-* false
-* 0
-* ''
-* [ ]
-* { }
-* new Date(0)
+``` jsx
+import validate, {required, minLength, maxLength, composite} from 'strickland';
 
-Non-empty values include:
+const name = 'Stanford Strickland';
+const rules = composite([required, minLength, maxLength], {
+    message: 'Name must be between 8 and 24 characters'
+});
 
-* true
-* 1
-* 'a'
-* [ 0 ]
-* { field: null }
-* new Date()
+const result = validate(rules, name);
+// result = {isValid: true, message: 'Name must be between 8 and 24 characters', value: 'Stanford Strickland', parsedValue: 'Stanford Strickland'}
+```
 
-#### value(min, max, props)
-Succeeds when a number, string, or date is either an exact value or within a range.
+## Object Validation
 
-* If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly
-* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
+Objects can be validated just as simply as scalar values. Objects are provided as the data and the rules can be either functions
+that validate the object or the rules themselves can be an object with a shape matching the object properties to validate.
 
-#### minValue(min, props)
-Succeeds when a number, string, or date is at least the specified min.
+``` jsx
+import validate, {required, maxLength} from 'strickland';
 
-#### maxValue(max, props)
-Succeeds when a number, string, or date is at most the specified min.
+const person = {
+    first: 'Stanford',
+    last: 'Strickland',
+    title: '',
+    phrase: 'Slacker!'
+};
 
-#### length(min, max, props)
-Succeeds when the length property of a string, array, or object is either an exact value or within a range.
+const rules = {
+    first: required({message: 'First name is required'}),
+    last: required({message: 'Last name is required'}),
+    title: required({message: 'Title is required'}),
+    phrase: maxLength(20, {message: 'Phrase cannot exceed 20 characters'})
+};
 
-* If only a min is provided, or the max provided is less than or equal to the min, the length must match the min exactly
-* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
+const result = validate(rules, person);
 
-#### minLength(min, props)
-Succeeds when the length property of a string, array, or object is at least the specified min.
+/*
+    result = {
+        isValid: false,
+        value: {first: 'Stanford', last: 'Strickland', title: '', phrase: 'Slacker!'},
+        results: {
+            first: {
+                isValid: true,
+                message: 'First name is required',
+                value: 'Stanford',
+                parsedValue: 'Stanford'
+            },
+            last: {
+                isValid: true,
+                message: 'Last name is required',
+                value: 'Strickland',
+                parsedValue: 'Strickland'
+            },
+            title: {
+                isValid: false,
+                message: 'Title is required',
+                value: '',
+                parsedValue: ''
+            },
+            phrase: {
+                isValid: true,
+                maxLength: 20,
+                message: 'Phrase cannot exceed 20 characters',
+                value: 'Slacker!',
+                parsedValue: 'Slacker!'
+            }
+        }
+    }
+*/
+```
 
-#### maxLength(max, props)
-Succeeds when the length property of a string, array, or object is at most the specified max.
+Objects can also be validated using custom validator functions that inspect the entire object. Those functional validators
+can even be composed with object shape validation and arrays of validators.
 
-#### fieldValue(field, min, max, props)
-Succeeds when the specified field (number, string, or date) is either an exact value or withing a range.
+``` jsx
+import validate, {required, maxLength} from 'strickland';
 
-* If only a min is provided, or the max provided is less than or equal to the min, the value must match the min exactly
-* If both a min and max are provided and the max is greater than the min, the length must be within the min/max range
-* Succeeds if the object provided is empty
-* Fails if the specified field is empty and a value is expected
+const person = {
+    first: 'Gerald',
+    last: 'Strickland',
+    title: 'Principal',
+    phrase: 'Slacker!'
+};
 
-#### minFieldValue(field, min, props)
-Succeeds when the specified field (number, string, or date) is at least the specified min.
+function validatePerson(person) {
+    const {first, last, title} = person;
 
-* Succeeds if the object provided is empty
-* Fails if the specified field is empty and a value is expected
+    if (last === 'Strickland' && title === 'Principal') {
+        if (first !== 'Stanford') {
+            return {
+                isValid: false,
+                message: 'Principal Strickland was verified to have the first name of Stanford, despite some references to him as Gerald'
+            };
+        }
+    }
 
-#### maxFieldValue(max, props)
-Succeeds when the specified field (number, string, or date) is at most the specified min.
+    return true;
+}
 
-* Succeeds if the object provided is empty
-* Fails if the specified field is empty
+const rules = [
+    {
+        first: required({message: 'First name is required'}),
+        last: required({message: 'Last name is required'}),
+        title: required({message: 'Title is required'}),
+        phrase: maxLength(20, {message: 'Phrase cannot exceed 20 characters'})
+    },
+    validatePerson
+];
+
+const result = validate(rules, person);
+```
+
+In the above example, the `validatePerson` validator will only be called if the object validation is successful, meaning all fields
+are valid.
