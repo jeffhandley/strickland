@@ -2,35 +2,40 @@ import validate from './strickland';
 import {parseString} from './string';
 
 export default function minLength(min, props) {
-    let validateProps;
+    let validatorProps;
 
     if (typeof min === 'object') {
-        validateProps = {
+        validatorProps = {
             ...min
         };
     } else {
-        validateProps = {
+        validatorProps = {
             minLength: min,
             ...props
         };
     }
 
-    if (typeof validateProps.minLength !== 'number') {
+    if (typeof validatorProps.minLength !== 'number') {
         throw 'minLength must be a number';
     }
 
-    if (validateProps.trim !== false && validateProps.trim !== true) {
-        validateProps.trim = true;
+    if (validatorProps.trim !== false && validatorProps.trim !== true) {
+        validatorProps.trim = true;
     }
 
-    function validateMinLength(value) {
+    function validateMinLength(value, validateProps) {
+        const mergedProps = {
+            ...validatorProps,
+            ...validateProps
+        };
+
         let isValid = true;
         let parse;
 
-        if (typeof validateProps.parseValue === 'function') {
-            parse = validateProps.parseValue;
+        if (typeof mergedProps.parseValue === 'function') {
+            parse = mergedProps.parseValue;
         } else {
-            parse = (toParse) => parseString(toParse, {trim: validateProps.trim});
+            parse = (toParse) => parseString(toParse, {trim: mergedProps.trim});
         }
 
         const parsedValue = parse(value);
@@ -44,12 +49,12 @@ export default function minLength(min, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'string') {
             isValid = false;
-        } else if (length < validateProps.minLength) {
+        } else if (length < mergedProps.minLength) {
             isValid = false;
         }
 
         return {
-            ...validateProps,
+            ...mergedProps,
             isValid,
             parsedValue,
             length

@@ -127,6 +127,19 @@ describe('min', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows the min value to be specified at time of validation', () => {
+            const validatorProps = {min: 6};
+            const validate = min(validatorProps);
+            const result = validate(5, {min: 5});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                min: 5
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {min: 5};

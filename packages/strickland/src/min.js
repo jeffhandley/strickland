@@ -2,28 +2,33 @@ import validate from './strickland';
 import {isFalsyButNotZero, parseNumber} from './number';
 
 export default function min(minValue, props) {
-    let validateProps;
+    let validatorProps;
 
     if (typeof minValue === 'object') {
-        validateProps = {
+        validatorProps = {
             ...minValue
         };
     } else {
-        validateProps = {
+        validatorProps = {
             min: minValue,
             ...props
         };
     }
 
-    if (typeof validateProps.min !== 'number') {
+    if (typeof validatorProps.min !== 'number') {
         throw 'min must be a number';
     }
 
-    function validateMin(value) {
+    function validateMin(value, validateProps) {
+        const mergedProps = {
+            ...validatorProps,
+            ...validateProps
+        };
+
         let isValid = true;
 
-        const parse = typeof validateProps.parseValue === 'function' ?
-            validateProps.parseValue : parseNumber;
+        const parse = typeof mergedProps.parseValue === 'function' ?
+            mergedProps.parseValue : parseNumber;
 
         const parsedValue = parse(value);
 
@@ -31,12 +36,12 @@ export default function min(minValue, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'number') {
             isValid = false;
-        } else if (parsedValue < validateProps.min) {
+        } else if (parsedValue < mergedProps.min) {
             isValid = false;
         }
 
         return {
-            ...validateProps,
+            ...mergedProps,
             isValid,
             parsedValue
         };

@@ -217,6 +217,24 @@ describe('compare', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows the compare value to be specified at time of validation, overriding a compare function', () => {
+            let compareValue = 5;
+
+            const validatorProps = {
+                compare: () => compareValue
+            };
+
+            const validate = compare(validatorProps);
+            const result = validate(6, {compare: 6});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                compare: 6
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {compare: 5};

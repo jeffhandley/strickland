@@ -11,7 +11,8 @@
     "build": "npm run lint && npm test && babel src -d lib",
     "lint": "eslint src/** test/**",
     "test": "mocha --compilers js:babel-register --recursive",
-    "test:watch": "nodemon -e js -x \"npm test\""
+    "test:watch": "nodemon -e js -x \"npm test\"",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",

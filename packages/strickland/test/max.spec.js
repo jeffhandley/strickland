@@ -127,6 +127,19 @@ describe('max', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows the max value to be specified at time of validation', () => {
+            const validatorProps = {max: 5};
+            const validate = max(validatorProps);
+            const result = validate(6, {max: 6});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                max: 6
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {max: 5};

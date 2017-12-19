@@ -195,6 +195,18 @@ describe('required', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows message to be specified at time of validation', () => {
+            const validate = required();
+            const result = validate('', {message: 'The value is required'});
+
+            expect(result).toMatchObject({
+                isValid: false,
+                message: 'The value is required'
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a props argument is used', () => {
             const props = {message: 'Custom message'};

@@ -284,8 +284,8 @@ describe('validate', () => {
             });
 
             it('returns valid results', () => {
-                const result = validate(rules, value);
-                expect(result.isValid).toBe(true);
+                const validResult = validate(rules, value);
+                expect(validResult.isValid).toBe(true);
             });
 
             it('returns invalid results', () => {
@@ -294,8 +294,8 @@ describe('validate', () => {
                     lastName: 'L'
                 };
 
-                const result = validate(rules, invalidValue);
-                expect(result.isValid).toBe(false);
+                const invalidResult = validate(rules, invalidValue);
+                expect(invalidResult.isValid).toBe(false);
             });
         });
 
@@ -599,14 +599,14 @@ describe('validate', () => {
         function validateWorkAddress(address) {
             if (address && address.street && address.street.name) {
                 const message = 'Work address must be on a St.';
-                let isValid = true;
+                let isValidWorkAddress = true;
 
                 if (address.street.name.indexOf(' St.') === -1) {
-                    isValid = false;
-                };
+                    isValidWorkAddress = false;
+                }
 
                 return {
-                    isValid,
+                    isValid: isValidWorkAddress,
                     message
                 };
             }
@@ -703,6 +703,83 @@ describe('validate', () => {
                         message: 'Work address must be on a St.'
                     }
                 }
+            });
+        });
+    });
+
+    describe('with props passed into validation', () => {
+        it('passes those props into a validator function', () => {
+            let validatedProps;
+
+            function validator(value, validateProps) {
+                validatedProps = validateProps;
+            }
+
+            const props = {message: 'validation message'};
+
+            validate(validator, null, props);
+            expect(validatedProps).toMatchObject(props);
+        });
+
+        it('passes those props into each validator in an array', () => {
+            let validatedProps = {
+                first: null,
+                second: null
+            };
+
+            function firstValidator(value, validateProps) {
+                validatedProps.first = validateProps;
+                return true;
+            }
+
+            function secondValidator(value, validateProps) {
+                validatedProps.second = validateProps;
+                return true;
+            }
+
+            const rules = [firstValidator, secondValidator];
+            const props = {message: 'validation message'};
+
+            validate(rules, null, props);
+
+            expect(validatedProps).toMatchObject({
+                first: props,
+                second: props
+            });
+        });
+
+        it('passes those props into each validator on an object', () => {
+            let validatedProps = {
+                first: null,
+                second: null
+            };
+
+            function firstValidator(value, validateProps) {
+                validatedProps.first = validateProps;
+                return true;
+            }
+
+            function secondValidator(value, validateProps) {
+                validatedProps.second = validateProps;
+                return true;
+            }
+
+            const rules = {
+                first: firstValidator,
+                second: secondValidator
+            };
+
+            const props = {message: 'validation message'};
+            const value = {
+                first: 'First',
+                second: 'Second'
+            };
+
+            validate(rules, value, props);
+
+            expect(validatedProps).toMatchObject({
+                first: props,
+                second: props
             });
         });
     });

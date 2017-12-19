@@ -214,6 +214,30 @@ describe('rangeLength', () => {
     validates('with a numeric min and props', rangeLength(3, {maxLength: 5}));
     validates('with numeric min and max plus props', rangeLength(3, 5, {other: 'other'}));
 
+    describe('with props passed into validation', () => {
+        it('allows the minLength value to be specified at time of validation', () => {
+            const validatorProps = {minLength: 4, maxLength: 6};
+            const validate = rangeLength(validatorProps);
+            const result = validate('123', {minLength: 2});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                minLength: 2
+            });
+        });
+
+        it('allows the maxLength value to be specified at time of validation', () => {
+            const validatorProps = {minLength: 4, maxLength: 6};
+            const validate = rangeLength(validatorProps);
+            const result = validate('1234567', {maxLength: 8});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                maxLength: 8
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {minLength: 3, maxLength: 5};

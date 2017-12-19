@@ -170,6 +170,19 @@ describe('minLength', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows the minLength value to be specified at time of validation', () => {
+            const validatorProps = {minLength: 6};
+            const validate = minLength(validatorProps);
+            const result = validate('12345', {minLength: 5});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                minLength: 5
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {minLength: 5};

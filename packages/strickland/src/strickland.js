@@ -15,7 +15,7 @@ function isValidObjectResult(result) {
         const props = Object.keys(result.results);
 
         for (let i = 0; i < props.length; i++) {
-            if(!isValid(result.results[props[i]])) {
+            if (!isValid(result.results[props[i]])) {
                 return false;
             }
         }
@@ -26,15 +26,15 @@ function isValidObjectResult(result) {
     return !!result.isValid;
 }
 
-export default function validate(rules, value) {
+export default function validate(rules, value, validateProps) {
     let result = true;
 
     if (typeof rules === 'function') {
-        result = rules(value);
+        result = rules(value, validateProps);
     } else if (Array.isArray(rules)) {
-        result = validateRulesArray(rules, value);
+        result = validateRulesArray(rules, value, validateProps);
     } else if (typeof rules === 'object' && rules) {
-        result = validateRulesObject(rules, value);
+        result = validateRulesObject(rules, value, validateProps);
     } else {
         throw 'unrecognized validation rules: ' + (typeof rules)
     }
@@ -44,13 +44,13 @@ export default function validate(rules, value) {
     return result;
 }
 
-function validateRulesArray(rules, value) {
+function validateRulesArray(rules, value, validateProps) {
     let result = true;
 
     for (let i = 0; i < rules.length; i++) {
         result = {
             ...result,
-            ...validate(rules[i], value)
+            ...validate(rules[i], value, validateProps)
         };
 
         if (!isValid(result)) {
@@ -61,16 +61,15 @@ function validateRulesArray(rules, value) {
     return result;
 }
 
-function validateRulesObject(rules, value) {
+function validateRulesObject(rules, value, validateProps) {
     if (typeof value === 'object' && value) {
         const props = Object.keys(rules);
         let results = {};
-        let isValid = true;
 
         for (let i = 0; i < props.length; i++) {
             results = {
                 ...results,
-                [props[i]]: validate(rules[props[i]], value[props[i]])
+                [props[i]]: validate(rules[props[i]], value[props[i]], validateProps)
             };
         }
 

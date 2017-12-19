@@ -2,28 +2,33 @@ import validate from './strickland';
 import {isFalsyButNotZero, parseNumber} from './number';
 
 export default function max(maxValue, props) {
-    let validateProps;
+    let validatorProps;
 
     if (typeof maxValue === 'object') {
-        validateProps = {
+        validatorProps = {
             ...maxValue
         };
     } else {
-        validateProps = {
+        validatorProps = {
             max: maxValue,
             ...props
         };
     }
 
-    if (typeof validateProps.max !== 'number') {
+    if (typeof validatorProps.max !== 'number') {
         throw 'max must be a number';
     }
 
-    function validateMax(value) {
+    function validateMax(value, validateProps) {
+        const mergedProps = {
+            ...validatorProps,
+            ...validateProps
+        };
+
         let isValid = true;
 
-        const parse = typeof validateProps.parseValue === 'function' ?
-            validateProps.parseValue : parseNumber;
+        const parse = typeof mergedProps.parseValue === 'function' ?
+            mergedProps.parseValue : parseNumber;
 
         const parsedValue = parse(value);
 
@@ -31,12 +36,12 @@ export default function max(maxValue, props) {
             // Empty values are always valid except with the required validator
         } else if (typeof parsedValue !== 'number') {
             isValid = false;
-        } else if (parsedValue > validateProps.max) {
+        } else if (parsedValue > mergedProps.max) {
             isValid = false;
         }
 
         return {
-            ...validateProps,
+            ...mergedProps,
             isValid,
             parsedValue
         };

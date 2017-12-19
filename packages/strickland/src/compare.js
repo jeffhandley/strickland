@@ -2,38 +2,43 @@ import validate from './strickland';
 import {parseString} from './string';
 
 export default function compare(compareValue, props) {
-    let validateProps;
+    let validatorProps;
 
     if (typeof compareValue === 'object') {
-        validateProps = {
+        validatorProps = {
             ...compareValue
         };
     } else {
-        validateProps = {
+        validatorProps = {
             compare: compareValue,
             ...props
         };
     }
 
-    if (typeof validateProps.compare === 'undefined') {
+    if (typeof validatorProps.compare === 'undefined') {
         throw 'compare value must be specified';
     }
 
-    if (validateProps.trim !== false && validateProps.trim !== true) {
-        validateProps.trim = true;
+    if (validatorProps.trim !== false && validatorProps.trim !== true) {
+        validatorProps.trim = true;
     }
 
-    function validateCompare(value) {
+    function validateCompare(value, validateProps) {
+        const mergedProps = {
+            ...validatorProps,
+            ...validateProps
+        };
+
         let isValid = true;
         let parse;
 
-        if (typeof validateProps.parseValue === 'function') {
-            parse = validateProps.parseValue;
+        if (typeof mergedProps.parseValue === 'function') {
+            parse = mergedProps.parseValue;
         } else {
-            parse = (toParse) => parseString(toParse, {trim: validateProps.trim});
+            parse = (toParse) => parseString(toParse, {trim: mergedProps.trim});
         }
 
-        let valueToCompare = validateProps.compare;
+        let valueToCompare = mergedProps.compare;
 
         if (typeof valueToCompare === 'function') {
             valueToCompare = valueToCompare();
@@ -49,7 +54,7 @@ export default function compare(compareValue, props) {
         }
 
         return {
-            ...validateProps,
+            ...mergedProps,
             isValid,
             compare: valueToCompare,
             parsedValue,

@@ -170,6 +170,19 @@ describe('maxLength', () => {
         });
     });
 
+    describe('with props passed into validation', () => {
+        it('allows the maxLength value to be specified at time of validation', () => {
+            const validatorProps = {maxLength: 5};
+            const validate = maxLength(validatorProps);
+            const result = validate('123456', {maxLength: 6});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                maxLength: 6
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {maxLength: 5};

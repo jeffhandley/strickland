@@ -185,6 +185,30 @@ describe('range', () => {
     validates('with a numeric min and props', range(3, {max: 5}));
     validates('with numeric min and max plus props', range(3, 5, {other: 'other'}));
 
+    describe('with props passed into validation', () => {
+        it('allows the min value to be specified at time of validation', () => {
+            const validatorProps = {min: 4, max: 6};
+            const validate = range(validatorProps);
+            const result = validate(3, {min: 2});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                min: 2
+            });
+        });
+
+        it('allows the max value to be specified at time of validation', () => {
+            const validatorProps = {min: 4, max: 6};
+            const validate = range(validatorProps);
+            const result = validate(7, {max: 8});
+
+            expect(result).toMatchObject({
+                isValid: true,
+                max: 8
+            });
+        });
+    });
+
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {min: 3, max: 5};
