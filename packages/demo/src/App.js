@@ -28,7 +28,9 @@ function hasValidationResults(validation, fieldName) {
             return !!validation.results[fieldName];
         }
 
-        return true;
+        // When the form has been validated entirely
+        // we gain a value prop on the validation results
+        return !!validation.value;
     }
 
     return false;
@@ -122,20 +124,33 @@ class App extends Component {
         if (isValid(validation) || hasValidationResults(fieldName)) {
             // Once the field is valid or we're rendering validation results
             // then update the field on blur to reflect the parsed value
-            this.setState({
-                form: {
-                    ...this.state.form,
-                    [fieldName]: validation.parsedValue
-                },
-                validation: {
-                    ...this.state.validation,
-                    results: {
-                        ...(this.state.validation ? this.state.validation.results : {}),
-                        [fieldName]: validation
+            const form = {
+                ...this.state.form,
+                [fieldName]: validation.parsedValue
+            };
+
+            // If the entire form has already been validated, then
+            // we'll revalidate the entire form on each field blur
+            if(hasValidationResults(this.state.validation)) {
+                this.setState({
+                    form,
+                    validation: validate(this.rules, form)
+                });
+            } else {
+                // Otherwise just update for the current field
+                this.setState({
+                    form,
+                    validation: {
+                        ...this.state.validation,
+                        results: {
+                            ...(this.state.validation ? this.state.validation.results : {}),
+                            [fieldName]: validation
+                        }
                     }
-                }
-            });
+                });
+            }
         }
+
     }
 
     onSubmit() {
