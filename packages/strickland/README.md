@@ -1,10 +1,10 @@
 # Strickland
 
-Strickland is a JavaScript validation _framework_. It's pure JavaScript and while it works well
-with React, Redux, or other libraries, Strickland is not coupled to any other library or application
-type.
+Strickland is a JavaScript validation _framework_ with a focus on extensibility and composition.
+It's pure, universal JavaScript and while it works well with React, Redux, or other libraries,
+Strickland is not coupled to any other library or application type.
 
-Strickland is a unique and robust approach to performing validation in JavaScript.
+Strickland is a unique and robust approach to building validation into your application.
 
 * It is *not* a type system and it does not interfere with how you create and manage data
 * Instead, validation rules are defined separately from the data
