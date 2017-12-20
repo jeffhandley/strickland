@@ -21,7 +21,9 @@ export function isValid(result) {
 }
 
 function isValidObjectResult(result) {
-    if (typeof result.results === 'object') {
+    if (typeof result.isValid === 'boolean') {
+        return result.isValid;
+    } else if (typeof result.results === 'object') {
         const props = Object.keys(result.results);
 
         for (let i = 0; i < props.length; i++) {

@@ -594,26 +594,27 @@ describe('validate', () => {
 
     describe('with hybrid object validators', () => {
         function validateWorkAddress(address) {
-            if (address && address.street && address.street.name) {
-                const message = 'Work address must be on a St.';
-                let isValidWorkAddress = true;
+            const message = 'Work address must be on a St.';
+            let isValidWorkAddress = true;
 
-                if (address.street.name.indexOf(' St.') === -1) {
-                    isValidWorkAddress = false;
-                }
-
-                return {
-                    isValid: isValidWorkAddress,
-                    message
-                };
+            if (address.street.name.indexOf(' St.') === -1) {
+                isValidWorkAddress = false;
             }
+
+            return {
+                isValid: isValidWorkAddress,
+                message
+            };
         }
 
         const rules = {
             name: required({message: 'Name is required'}),
             workAddress: [
+                // the pattern illustrated here is to first
+                // ensure the address object is supplied
+                // and then to validate its fields
+                // and lastly perform object-level validation
                 required({message: 'Work address is required'}),
-                validateWorkAddress,
                 {
                     street: [
                         required({message: 'Street is required'}),
@@ -624,7 +625,8 @@ describe('validate', () => {
                     ],
                     city: required({message: 'City is required'}),
                     state: required({message: 'State is required'})
-                }
+                },
+                validateWorkAddress
             ]
         };
 
@@ -684,10 +686,14 @@ describe('validate', () => {
 
         it('validates custom validators for objects', () => {
             const value = {
+                name: 'Name',
                 workAddress: {
                     street: {
+                        number: 123,
                         name: 'Hollywood Blvd.'
-                    }
+                    },
+                    city: 'City',
+                    state: 'ST'
                 }
             };
 
