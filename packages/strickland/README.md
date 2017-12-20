@@ -685,7 +685,7 @@ person object might be null in the input, we could use `required` to validate th
 since validators are just functions, we could even write a custom validator to ensure that a person
 named 'Stanford Strickland' must be born in 1925.
 
-```
+``` jsx
 import validate, {props, required, length, range, every} from 'strickland';
 
 // Define the rules for validating first name, last name, and birthYear
