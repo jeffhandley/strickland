@@ -7,6 +7,12 @@ export default function props(propRules, validatorProps) {
             ...validationProps
         };
 
+        let result = {
+            ...mergedProps,
+            value,
+            isValid: true
+        };
+
         if (typeof value === 'object' && value) {
             const propNames = Object.keys(propRules);
 
@@ -23,16 +29,13 @@ export default function props(propRules, validatorProps) {
                 }
             });
 
-            return {
+            result = {
+                ...result,
                 results,
-                value,
                 isValid: allValid
             };
         }
 
-        return {
-            ...mergedProps,
-            isValid: true
-        };
+        return result;
     }
 }

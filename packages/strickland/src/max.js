@@ -1,17 +1,14 @@
-import validate from './strickland';
 import {isFalsyButNotZero, parseNumber} from './number';
 
-export default function max(maxValue, props) {
-    let validatorProps;
-
-    if (typeof maxValue === 'object') {
+export default function max(maxProp, validatorProps) {
+    if (typeof maxProp === 'object') {
         validatorProps = {
-            ...maxValue
+            ...maxProp
         };
     } else {
         validatorProps = {
-            max: maxValue,
-            ...props
+            max: maxProp,
+            ...validatorProps
         };
     }
 
@@ -19,10 +16,10 @@ export default function max(maxValue, props) {
         throw 'max must be a number';
     }
 
-    function validateMax(value, validateProps) {
+    return function validateMax(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
-            ...validateProps
+            ...validationProps
         };
 
         let isValid = true;
@@ -42,10 +39,9 @@ export default function max(maxValue, props) {
 
         return {
             ...mergedProps,
-            isValid,
-            parsedValue
+            value,
+            parsedValue,
+            isValid
         };
     }
-
-    return validate.bind(null, validateMax);
 }

@@ -1,31 +1,27 @@
-import validate from './strickland';
-import minLength from './minLength';
-import maxLength from './maxLength';
+import validate, {minLength, maxLength} from './strickland';
 
-export default function length(min, max, props) {
-    let validatorProps;
-
-    if (typeof min === 'object') {
+export default function length(minLengthProp, maxLengthProp, validatorProps) {
+    if (typeof minLengthProp === 'object') {
         validatorProps = {
-            ...min
+            ...minLengthProp
         };
-    } else if (typeof max === 'object') {
+    } else if (typeof maxLengthProp === 'object') {
         validatorProps = {
-            minLength: min,
-            ...max
+            minLength: minLengthProp,
+            ...maxLengthProp
         };
     } else {
         validatorProps = {
-            minLength: min,
-            maxLength: max,
-            ...props
+            minLength: minLengthProp,
+            maxLength: maxLengthProp,
+            ...validatorProps
         };
     }
 
-    const validateRangeLength = [
+    const validateLength = [
         minLength(validatorProps),
         maxLength(validatorProps)
     ];
 
-    return validate.bind(null, validateRangeLength);
+    return validate.bind(null, validateLength);
 }

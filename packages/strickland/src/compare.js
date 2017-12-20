@@ -1,17 +1,14 @@
-import validate from './strickland';
 import {parseString} from './string';
 
-export default function compare(compareValue, props) {
-    let validatorProps;
-
-    if (typeof compareValue === 'object') {
+export default function compare(compareProp, validatorProps) {
+    if (typeof compareProp === 'object') {
         validatorProps = {
-            ...compareValue
+            ...compareProp
         };
     } else {
         validatorProps = {
-            compare: compareValue,
-            ...props
+            compare: compareProp,
+            ...validatorProps
         };
     }
 
@@ -19,13 +16,14 @@ export default function compare(compareValue, props) {
         throw 'compare value must be specified';
     }
 
-    function validateCompare(value, validateProps) {
+    return function validateCompare(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
-            ...validateProps
+            ...validationProps
         };
 
         let isValid = true;
+
         let valueToCompare = mergedProps.compare;
 
         if (typeof valueToCompare === 'function') {
@@ -46,12 +44,11 @@ export default function compare(compareValue, props) {
 
         return {
             ...mergedProps,
-            isValid,
-            compare: valueToCompare,
+            value,
             parsedValue,
-            parsedCompare
+            compare: valueToCompare,
+            parsedCompare,
+            isValid
         };
     }
-
-    return validate.bind(null, validateCompare);
 }

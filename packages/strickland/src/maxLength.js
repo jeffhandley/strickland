@@ -1,17 +1,14 @@
-import validate from './strickland';
 import {parseString} from './string';
 
-export default function maxLength(max, props) {
-    let validatorProps;
-
-    if (typeof max === 'object') {
+export default function maxLength(maxLengthProp, validatorProps) {
+    if (typeof maxLengthProp === 'object') {
         validatorProps = {
-            ...max
+            ...maxLengthProp
         };
     } else {
         validatorProps = {
-            maxLength: max,
-            ...props
+            maxLength: maxLengthProp,
+            ...validatorProps
         };
     }
 
@@ -23,10 +20,10 @@ export default function maxLength(max, props) {
         validatorProps.trim = true;
     }
 
-    function validateMaxLength(value, validateProps) {
+    return function validateMaxLength(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
-            ...validateProps
+            ...validationProps
         };
 
         let isValid = true;
@@ -55,11 +52,10 @@ export default function maxLength(max, props) {
 
         return {
             ...mergedProps,
-            isValid,
+            value,
             parsedValue,
-            length
+            length,
+            isValid
         };
     }
-
-    return validate.bind(null, validateMaxLength);
 }

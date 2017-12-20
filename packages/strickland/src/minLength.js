@@ -1,17 +1,14 @@
-import validate from './strickland';
 import {parseString} from './string';
 
-export default function minLength(min, props) {
-    let validatorProps;
-
-    if (typeof min === 'object') {
+export default function minLength(minLengthProp, validatorProps) {
+    if (typeof minLengthProp === 'object') {
         validatorProps = {
-            ...min
+            ...minLengthProp
         };
     } else {
         validatorProps = {
-            minLength: min,
-            ...props
+            minLength: minLengthProp,
+            ...validatorProps
         };
     }
 
@@ -23,10 +20,10 @@ export default function minLength(min, props) {
         validatorProps.trim = true;
     }
 
-    function validateMinLength(value, validateProps) {
+    return function validateMinLength(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
-            ...validateProps
+            ...validationProps
         };
 
         let isValid = true;
@@ -55,11 +52,10 @@ export default function minLength(min, props) {
 
         return {
             ...mergedProps,
-            isValid,
+            value,
             parsedValue,
-            length
+            length,
+            isValid
         };
     }
-
-    return validate.bind(null, validateMinLength);
 }

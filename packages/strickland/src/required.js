@@ -1,17 +1,12 @@
-import validate from './strickland';
 import {parseString} from './string';
 
 let notDefined;
 
-export default function required(props) {
-    let validatorProps = {
-        ...props
-    };
-
-    function validateRequired(value, validateProps) {
+export default function required(validatorProps) {
+    return function validateRequired(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
-            ...validateProps
+            ...validationProps
         };
 
         let isValid = true;
@@ -31,10 +26,9 @@ export default function required(props) {
 
         return {
             ...mergedProps,
-            isValid,
-            parsedValue
+            value,
+            parsedValue,
+            isValid
         };
     }
-
-    return validate.bind(null, validateRequired);
 }
