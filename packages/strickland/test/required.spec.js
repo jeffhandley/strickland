@@ -49,6 +49,20 @@ describe('required', () => {
     });
 
     describe('with props', () => {
+        describe('includes a required prop on the result', () => {
+            const validate = required();
+
+            it('when valid', () => {
+                const result = validate('Valid');
+                expect(result.required).toBe(true);
+            });
+
+            it('when invalid', () => {
+                const result = validate('');
+                expect(result.required).toBe(true);
+            });
+        });
+
         describe('passes props though to the result', () => {
             const validate = required({message: 'Required'})
 

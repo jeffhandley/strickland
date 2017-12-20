@@ -19,6 +19,7 @@ export default function required(validatorProps) {
 
         return {
             ...validationProps,
+            required: true,
             value,
             isValid
         };
