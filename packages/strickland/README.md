@@ -68,7 +68,7 @@ that accepts the desired letter and returns a validator to be used.
 import validate from 'strickland';
 
 function letter(letterProp) {
-    return function validate(value) {
+    return function validateLetter(value) {
         return (value === letterProp);
     }
 }
@@ -85,7 +85,7 @@ result = {
 
 ## Validation Messages
 
-Strickland does not produce any validation messages; your applications and validator libraries are
+Strickland does not produce any validation messages itself; your applications and validator libraries are
 responsible for handling messages. This approach ensures you can build your application with the user
 experience you need, including localization of your own messages, without any possibility of a default
 message leaking through.
@@ -99,10 +99,10 @@ application.
 import validate from 'strickland';
 
 function letter(letterProp) {
-    return function validate(value) {
+    return function validateLetter(value) {
         return {
             isValid: (value === letter),
-            message: `Must match the letter: ${letterProp}`
+            message: `Must match the letter ${letterProp}`
         };
     }
 }
@@ -136,9 +136,9 @@ function letter(letterProp, validatorProps) {
         };
     }
 
-    return function validate(value) {
+    return function validateLetter(value) {
         return {
-            message: `Must match the letter `${letter}`,
+            message: `Must match the letter ${letter}`,
             ...validatorProps,
             isValid: (value === letter)
         };
@@ -203,7 +203,7 @@ function letter(letterProp, validatorProps) {
         };
     }
 
-    return function validate(value, props) {
+    return function validateLetter(value, props) {
         props = {
             ...validatorProps,
             ...props
@@ -442,7 +442,7 @@ export default function every(validators) {
 }
 ```
 
-The `every` validator uses the factory approach, accepting an array of validators and returning
+The `every` validator uses the factory pattern, accepting an array of validators and returning
 a function to validate every one of the validators. Because validators can accept validation
 props, those must be accepted and passed through. By convention, those props should be included
 on the validation result object too.
@@ -539,11 +539,11 @@ There are a few notable characteristics of this result:
 ## Validating Objects
 
 We've demonstrated quite a bit of flexibility validating single values with Strickland, including seeing a
-glimse of composition using the `every` validator. But every application need to validate objects. Let's see
+glimse of composition using the `every` validator. But every application needs to validate objects. Let's see
 how Strickland can do this.
 
 We will start by illustrating what object validation might look like with no additional Strickland features.
-This example
+This example will validate a person's first name, last name, and birth year.
 
 ``` jsx
 import validate, {required, length, range, every} from 'strickland';
