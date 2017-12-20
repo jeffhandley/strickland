@@ -47,30 +47,6 @@ describe('validate', () => {
             });
         });
 
-        describe('returning a string', () => {
-            describe('that is not empty', () => {
-                const rules = () => 'That is not valid';
-                const result = validate(rules, 'value');
-
-                it('returns the string as the result message', () => {
-                    expect(result.message).toEqual('That is not valid');
-                });
-
-                it('returns invalid result', () => {
-                    expect(isValid(result)).toBe(false);
-                });
-            });
-
-            describe('that is empty', () => {
-                const rules = () => '';
-                const result = validate(rules, 'value');
-
-                it('returns a valid result ', () => {
-                    expect(isValid(result)).toBe(true);
-                });
-            });
-        });
-
         describe('returning an object', () => {
             it('returns an object with the rule result properties', () => {
                 const ruleResult = {
