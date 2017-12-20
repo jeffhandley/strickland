@@ -326,26 +326,6 @@ const matchesAtValidation = range();
 const result = validate(matchesAtValidation, 9, {min: () => minValue, max: () => maxValue});
 ```
 
-### maxLength
-
-The `maxLength` validator checks that a value has a length no greater than the max length provided.
-
-#### Usage
-
-``` jsx
-import validate, {maxLength} from 'strickland';
-
-const maxLength5 = maxLength(5, {message: 'Must have a length no more than 5'});
-const maxLength6 = maxLength({maxLength: 6, message: 'Must have a length no more than 6'});
-
-const maxLengthValue = 8;
-const applyMaxLengthWithArg = maxLength(() => maxLengthValue);
-const applyMaxLengthWithProp = maxLength({maxLength: () => maxLengthValue});
-
-const matchesAtValidation = maxLength();
-const result = validate(matchesAtValidation, '123456789', {maxLength: () => maxLengthValue});
-```
-
 ### minLength
 
 The `minLength` validator checks that a value has a length no greater than the max length provided.
@@ -364,6 +344,26 @@ const applyminLengthWithProp = minLength({minLength: () => minLengthValue});
 
 const matchesAtValidation = minLength();
 const result = validate(matchesAtValidation, '1234567', {minLength: () => minLengthValue});
+```
+
+### maxLength
+
+The `maxLength` validator checks that a value has a length no greater than the max length provided.
+
+#### Usage
+
+``` jsx
+import validate, {maxLength} from 'strickland';
+
+const maxLength5 = maxLength(5, {message: 'Must have a length no more than 5'});
+const maxLength6 = maxLength({maxLength: 6, message: 'Must have a length no more than 6'});
+
+const maxLengthValue = 8;
+const applyMaxLengthWithArg = maxLength(() => maxLengthValue);
+const applyMaxLengthWithProp = maxLength({maxLength: () => maxLengthValue});
+
+const matchesAtValidation = maxLength();
+const result = validate(matchesAtValidation, '123456789', {maxLength: () => maxLengthValue});
 ```
 
 ### length
