@@ -1,18 +1,6 @@
 import every from './every';
 import props from './props';
 
-export function isValid(result) {
-    if (result === true) {
-        return true;
-    }
-
-    if (typeof result === 'object') {
-        return !!result.isValid;
-    }
-
-    return false;
-}
-
 export default function validate(rules, value, validateProps) {
     let result = true;
 

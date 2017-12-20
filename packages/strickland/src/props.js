@@ -1,4 +1,4 @@
-import validate, {isValid} from './strickland';
+import validate from './strickland';
 
 export default function props(propRules, validatorProps) {
     return function validateProps(value, validationProps) {
@@ -21,7 +21,7 @@ export default function props(propRules, validatorProps) {
 
             propNames.forEach((propName) => {
                 const propResult = validate(propRules[propName], value[propName], validationProps);
-                allValid = allValid && isValid(propResult);
+                allValid = allValid && propResult.isValid;
 
                 propResults = {
                     ...propResults,

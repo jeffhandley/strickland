@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import logo from './logo.svg';
 import './App.css';
-import validate, {isValid, every, required, minLength, compare} from 'strickland';
+import validate, {every, required, minLength, compare} from 'strickland';
 
 function getValidationClassName(form, validation, fieldName) {
     return classnames({
@@ -106,7 +106,7 @@ class App extends Component {
         if (hasValidationResults(validation, fieldName)) {
             const result = validate(this.rules[fieldName], parsedValue);
 
-            if (isValid(result) || !isValid(validation.props[fieldName])) {
+            if (result.isValid || !validation.props[fieldName].isValid) {
                 validation = updateFieldResult(validation, fieldName, result);
             }
         }
@@ -138,7 +138,7 @@ class App extends Component {
         // If the field is valid, show validation results on blur
         // Or, update existing validation results on blur
         // But don't show initially invalid results on a field on blur
-        if (isValid(result) || hasValidationResults(validation, fieldName)) {
+        if (result.isValid || hasValidationResults(validation, fieldName)) {
             // If the entire form has already been validated, then
             // we'll revalidate the entire form on each field blur
             if (hasValidationResults(validation)) {

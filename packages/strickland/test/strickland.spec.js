@@ -1,5 +1,5 @@
 import expect from 'expect';
-import validate, {isValid, required, minLength} from '../src/strickland';
+import validate, {required, minLength} from '../src/strickland';
 
 describe('validate', () => {
     describe('throws', () => {
@@ -32,10 +32,6 @@ describe('validate', () => {
             const rules = () => true;
             const result = validate(rules, 'value');
 
-            it('returns valid result', () => {
-                expect(isValid(result)).toBe(true);
-            });
-
             it('returns an object with isValid set to true', () => {
                 expect(result.isValid).toBe(true);
             });
@@ -44,10 +40,6 @@ describe('validate', () => {
         describe('returning false', () => {
             const rules = () => false;
             const result = validate(rules, 'value');
-
-            it('returns invalid result', () => {
-                expect(isValid(result)).toBe(false);
-            });
 
             it('returns an object with isValid set to false', () => {
                 expect(result.isValid).toBe(false);
@@ -72,17 +64,6 @@ describe('validate', () => {
                 expect(resultProps).toEqual(ruleResult);
             });
 
-            it('returns invalid result if the object is not marked as valid', () => {
-                const ruleResult = {
-                    message: 'That is not valid'
-                };
-
-                const rules = () => ruleResult;
-                const result = validate(rules, 'value');
-
-                expect(isValid(result)).toBe(false);
-            });
-
             it('returns an object with isValid = false if the object does not specify isValid', () => {
                 const ruleResult = {
                     message: 'That is not valid'
@@ -102,10 +83,6 @@ describe('validate', () => {
 
                 const rules = () => ruleResult;
                 const result = validate(rules, 'value');
-
-                it('returns valid result', () => {
-                    expect(isValid(result)).toBe(true);
-                });
 
                 it('returns an object with an isValid prop set to true', () => {
                     expect(result.isValid).toBe(true);
@@ -133,10 +110,10 @@ describe('validate', () => {
                 const rules = () => ruleResult;
                 const result = validate(rules, 'value');
 
-                expect(isValid(result)).toBe(false);
+                expect(result.isValid).toBe(false);
             });
 
-            it('returns an object with isValid = false if the object has isValid set to a falsy value other than false', () => {
+            it('returns an invalid result if the object has isValid set to a falsy value other than false', () => {
                 const ruleResult = {
                     message: 'That is not valid',
                     isValid: 0
@@ -172,7 +149,7 @@ describe('validate', () => {
             const result = validate(rules, 'value');
 
             it('returns a valid result', () => {
-                expect(isValid(result)).toBe(true);
+                expect(result.isValid).toBe(true);
             });
 
             it('includes props from the first validator', () => {
@@ -209,7 +186,7 @@ describe('validate', () => {
             const result = validate(rules, 'value');
 
             it('returns an invalid result', () => {
-                expect(isValid(result)).toBe(false);
+                expect(result.isValid).toBe(false);
             });
 
             it('includes props from the first validator on the result', () => {
