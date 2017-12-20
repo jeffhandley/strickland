@@ -2,9 +2,8 @@ import {isFalsyButNotZero} from './number';
 
 export default function max(maxProp, validatorProps) {
     if (typeof maxProp === 'object') {
-        validatorProps = {
-            ...maxProp
-        };
+        validatorProps = maxProp;
+
     } else {
         validatorProps = {
             max: maxProp,

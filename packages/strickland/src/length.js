@@ -2,14 +2,14 @@ import validate, {minLength, maxLength} from './strickland';
 
 export default function length(minLengthProp, maxLengthProp, validatorProps) {
     if (typeof minLengthProp === 'object') {
-        validatorProps = {
-            ...minLengthProp
-        };
+        validatorProps = minLengthProp;
+
     } else if (typeof maxLengthProp === 'object') {
         validatorProps = {
             minLength: minLengthProp,
             ...maxLengthProp
         };
+
     } else {
         validatorProps = {
             minLength: minLengthProp,

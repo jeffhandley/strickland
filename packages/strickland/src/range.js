@@ -2,14 +2,14 @@ import validate, {min, max} from './strickland';
 
 export default function range(minProp, maxProp, validatorProps) {
     if (typeof minProp === 'object') {
-        validatorProps = {
-            ...minProp
-        };
+        validatorProps = minProp;
+
     } else if (typeof maxProp === 'object') {
         validatorProps = {
             min: minProp,
             ...maxProp
         };
+
     } else {
         validatorProps = {
             min: minProp,

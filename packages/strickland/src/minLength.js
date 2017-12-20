@@ -1,8 +1,7 @@
 export default function minLength(minLengthProp, validatorProps) {
     if (typeof minLengthProp === 'object') {
-        validatorProps = {
-            ...minLengthProp
-        };
+        validatorProps = minLengthProp;
+
     } else {
         validatorProps = {
             minLength: minLengthProp,

@@ -2,9 +2,8 @@ import {isFalsyButNotZero} from './number';
 
 export default function min(minProp, validatorProps) {
     if (typeof minProp === 'object') {
-        validatorProps = {
-            ...minProp
-        };
+        validatorProps = minProp;
+
     } else {
         validatorProps = {
             min: minProp,

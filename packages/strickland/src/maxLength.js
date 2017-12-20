@@ -1,8 +1,7 @@
 export default function maxLength(maxLengthProp, validatorProps) {
     if (typeof maxLengthProp === 'object') {
-        validatorProps = {
-            ...maxLengthProp
-        };
+        validatorProps = maxLengthProp;
+
     } else {
         validatorProps = {
             maxLength: maxLengthProp,

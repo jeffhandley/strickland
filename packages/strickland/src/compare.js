@@ -1,8 +1,7 @@
 export default function compare(compareProp, validatorProps) {
     if (typeof compareProp === 'object') {
-        validatorProps = {
-            ...compareProp
-        };
+        validatorProps = compareProp;
+
     } else {
         validatorProps = {
             compare: compareProp,
