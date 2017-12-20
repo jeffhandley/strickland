@@ -14,14 +14,14 @@ export default function compare(compareProp, validatorProps) {
     }
 
     return function validateCompare(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
 
         let isValid = true;
 
-        let valueToCompare = mergedProps.compare;
+        let valueToCompare = validationProps.compare;
 
         if (typeof valueToCompare === 'function') {
             valueToCompare = valueToCompare();
@@ -34,7 +34,7 @@ export default function compare(compareProp, validatorProps) {
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             compare: valueToCompare,
             isValid

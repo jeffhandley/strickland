@@ -16,7 +16,7 @@ export default function max(maxProp, validatorProps) {
     }
 
     return function validateMax(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
@@ -27,12 +27,12 @@ export default function max(maxProp, validatorProps) {
             // Empty values are always valid except with the required validator
         } else if (typeof value !== 'number') {
             isValid = false;
-        } else if (value > mergedProps.max) {
+        } else if (value > validationProps.max) {
             isValid = false;
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             isValid
         };

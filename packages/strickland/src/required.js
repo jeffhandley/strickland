@@ -2,7 +2,7 @@ let notDefined;
 
 export default function required(validatorProps) {
     return function validateRequired(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
@@ -18,7 +18,7 @@ export default function required(validatorProps) {
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             isValid
         };

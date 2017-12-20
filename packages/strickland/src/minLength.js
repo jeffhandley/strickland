@@ -14,7 +14,7 @@ export default function minLength(minLengthProp, validatorProps) {
     }
 
     return function validateMinLength(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
@@ -25,12 +25,12 @@ export default function minLength(minLengthProp, validatorProps) {
         if (!value) {
             // Empty values are always valid except with the required validator
 
-        } else if (length < mergedProps.minLength) {
+        } else if (length < validationProps.minLength) {
             isValid = false;
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             length,
             isValid

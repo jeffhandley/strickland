@@ -14,7 +14,7 @@ export default function maxLength(maxLengthProp, validatorProps) {
     }
 
     return function validateMaxLength(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
@@ -25,12 +25,12 @@ export default function maxLength(maxLengthProp, validatorProps) {
         if (!value) {
             // Empty values are always valid except with the required validator
 
-        } else if (length > mergedProps.maxLength) {
+        } else if (length > validationProps.maxLength) {
             isValid = false;
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             length,
             isValid

@@ -2,13 +2,13 @@ import validate, {isValid} from './strickland';
 
 export default function props(propRules, validatorProps) {
     return function validateProps(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
 
         let result = {
-            ...mergedProps,
+            ...validationProps,
             value,
             isValid: true
         };
@@ -20,7 +20,7 @@ export default function props(propRules, validatorProps) {
             let allValid = true;
 
             propNames.forEach((propName) => {
-                const propResult = validate(propRules[propName], value[propName], mergedProps);
+                const propResult = validate(propRules[propName], value[propName], validationProps);
                 allValid = allValid && isValid(propResult);
 
                 propResults = {

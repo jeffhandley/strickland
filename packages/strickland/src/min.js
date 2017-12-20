@@ -16,7 +16,7 @@ export default function min(minProp, validatorProps) {
     }
 
     return function validateMin(value, validationProps) {
-        const mergedProps = {
+        validationProps = {
             ...validatorProps,
             ...validationProps
         };
@@ -26,12 +26,12 @@ export default function min(minProp, validatorProps) {
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
 
-        } else if (value < mergedProps.min) {
+        } else if (value < validationProps.min) {
             isValid = false;
         }
 
         return {
-            ...mergedProps,
+            ...validationProps,
             value,
             isValid
         };
