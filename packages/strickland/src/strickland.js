@@ -1,3 +1,4 @@
+export {default as required} from './required';
 export {default as compare} from './compare';
 export {default as max} from './max';
 export {default as maxLength} from './maxLength';
@@ -5,8 +6,10 @@ export {default as min} from './min';
 export {default as minLength} from './minLength';
 export {default as range} from './range';
 export {default as length} from './length';
-export {default as required} from './required';
 export {default as composite} from './composite';
+
+import props from './props';
+export {props};
 
 export function isValid(result) {
     if (result === true) {
@@ -14,28 +17,10 @@ export function isValid(result) {
     }
 
     if (typeof result === 'object') {
-        return isValidObjectResult(result);
+        return !!result.isValid;
     }
 
     return false;
-}
-
-function isValidObjectResult(result) {
-    if (typeof result.isValid === 'boolean') {
-        return result.isValid;
-    } else if (typeof result.results === 'object') {
-        const props = Object.keys(result.results);
-
-        for (let i = 0; i < props.length; i++) {
-            if (!isValid(result.results[props[i]])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    return !!result.isValid;
 }
 
 export default function validate(rules, value, validateProps) {
@@ -46,7 +31,7 @@ export default function validate(rules, value, validateProps) {
     } else if (Array.isArray(rules)) {
         result = validateRulesArray(rules, value, validateProps);
     } else if (typeof rules === 'object' && rules) {
-        result = validateRulesObject(rules, value, validateProps);
+        result = props(rules)(value, validateProps);
     } else {
         throw 'unrecognized validation rules: ' + (typeof rules)
     }
@@ -73,58 +58,23 @@ function validateRulesArray(rules, value, validateProps) {
     return result;
 }
 
-function validateRulesObject(rules, value, validateProps) {
-    if (typeof value === 'object' && value) {
-        const props = Object.keys(rules);
-        let results = {};
-
-        for (let i = 0; i < props.length; i++) {
-            results = {
-                ...results,
-                [props[i]]: validate(rules[props[i]], value[props[i]], validateProps)
-            };
-        }
-
-        // Wrap the results in an object to be nested in the outer result
-        return {results};
-    }
-
-    return true;
-}
-
 function convertResult(result, value) {
     if (typeof result === 'boolean') {
-        return convertBooleanResult(result);
+        result = {
+            isValid: result
+        };
     }
 
     if (typeof result === 'string') {
-        return convertStringResult(result);
+        result = {
+            isValid: !result,
+            message: result
+        };
     }
 
-    if (typeof result === 'object') {
-        return convertObjectResult(result, value);
-    }
-}
-
-function convertBooleanResult(result) {
-    return {
-        isValid: !!result
-    };
-}
-
-function convertStringResult(result) {
-    // If the string is empty, then there is no error message
-    // and therefore the result is valid
-    return {
-        message: result,
-        isValid: !result
-    };
-}
-
-function convertObjectResult(result, value) {
     return {
         ...result,
-        isValid: isValid(result),
+        isValid: !!(result && result.isValid),
         value
     };
 }
