@@ -9,10 +9,6 @@ export default function compare(compareProp, validatorProps) {
         };
     }
 
-    if (typeof validatorProps.compare === 'undefined') {
-        throw 'compare value must be specified';
-    }
-
     return function validateCompare(value, validationProps) {
         validationProps = {
             ...validatorProps,

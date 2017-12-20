@@ -3,16 +3,6 @@ import deepFreeze from 'deep-freeze';
 import compare from '../src/compare';
 
 describe('compare', () => {
-    describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => compare()).toThrow();
-        });
-
-        it('when props is an object without a compare', () => {
-            expect(() => compare({message: 'Custom message'})).toThrow();
-        });
-    });
-
     describe('with a single props argument', () => {
         const validate = compare({compare: 5, message: 'Custom message'});
         const result = validate(5);
