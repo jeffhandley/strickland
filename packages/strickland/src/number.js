@@ -5,11 +5,3 @@ export function isFalsyButNotZero(value) {
 
     return !value;
 }
-
-export function parseNumber(value) {
-    if (isFalsyButNotZero(value)) {
-        return value;
-    }
-
-    return Number(value);
-}

@@ -1,5 +1,3 @@
-import {parseString} from './string';
-
 let notDefined;
 
 export default function required(validatorProps) {
@@ -11,23 +9,17 @@ export default function required(validatorProps) {
 
         let isValid = true;
 
-        const parse = typeof mergedProps.parseValue === 'function' ?
-            mergedProps.parseValue : parseString;
-
-        const parsedValue = parse(value, mergedProps);
-
-        if (parsedValue === null || parsedValue === notDefined) {
+        if (value === null || value === notDefined) {
             isValid = false;
-        } else if (typeof parsedValue === 'string') {
-            isValid = !!parsedValue.length;
-        } else if (typeof parsedValue === 'boolean') {
-            isValid = parsedValue;
+        } else if (typeof value === 'string') {
+            isValid = !!value.length;
+        } else if (typeof value === 'boolean') {
+            isValid = value;
         }
 
         return {
             ...mergedProps,
             value,
-            parsedValue,
             isValid
         };
     }

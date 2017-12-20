@@ -127,81 +127,21 @@ describe('props', () => {
             });
         });
 
-        it('parses values', () => {
-            const value = {
-                name: ' Name ',
-                homeAddress: {
-                    street: ' 9303 Lyon Dr. ',
-                    city: ' Hill Valley ',
-                    state: ' CA '
-                },
-                workAddress: {
-                    street: {
-                        number: 456,
-                        name: ' Front St. '
-                    },
-                    city: ' City ',
-                    state: ' ST '
-                }
-            };
-
-            const result = validate(value);
-
-            expect(result.props).toMatchObject({
-                name: {
-                    parsedValue: 'Name'
-                },
-                homeAddress: {
-                    props: {
-                        street: {
-                            parsedValue: '9303 Lyon Dr.'
-                        },
-                        city: {
-                            parsedValue: 'Hill Valley'
-                        },
-                        state: {
-                            parsedValue: 'CA'
-                        }
-                    }
-                },
-                workAddress: {
-                    props: {
-                        street: {
-                            props: {
-                                number: {
-                                    parsedValue: '456'
-                                },
-                                name: {
-                                    parsedValue: 'Front St.'
-                                }
-                            }
-                        },
-                        city: {
-                            parsedValue: 'City'
-                        },
-                        state: {
-                            parsedValue: 'ST'
-                        }
-                    }
-                }
-            });
-        });
-
         it('returns valid results', () => {
             const value = {
                 name: 'Name',
                 homeAddress: {
-                    street: ' 9303 Lyon Dr. ',
-                    city: ' Hill Valley ',
-                    state: ' CA '
+                    street: '9303 Lyon Dr.',
+                    city: 'Hill Valley',
+                    state: 'CA'
                 },
                 workAddress: {
                     street: {
                         number: 456,
-                        name: ' Front St. '
+                        name: 'Front St.'
                     },
-                    city: ' City ',
-                    state: ' ST '
+                    city: 'City',
+                    state: 'ST'
                 }
             };
 

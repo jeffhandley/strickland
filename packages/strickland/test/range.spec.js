@@ -80,42 +80,6 @@ describe('range', () => {
         });
     });
 
-    it('returns the value on the result', () => {
-        const validate = range(3, 5);
-        const result = validate(4);
-
-        expect(result.value).toBe(4);
-    });
-
-    describe('returns the parsedValue on the result', () => {
-        const validate = range(3, 5);
-
-        it('when the value is a number', () => {
-            const result = validate(4);
-            expect(result.parsedValue).toBe(4);
-        });
-
-        it('when the value is a string', () => {
-            const result = validate('4');
-            expect(result.parsedValue).toBe(4);
-        });
-
-        it('when the value is null', () => {
-            const result = validate(null);
-            expect(result.parsedValue).toBe(null);
-        });
-
-        it('when the value is an empty string', () => {
-            const result = validate('');
-            expect(result.parsedValue).toBe('');
-        });
-
-        it('when the value is 0 as a string', () => {
-            const result = validate('0');
-            expect(result.parsedValue).toBe(0);
-        });
-    });
-
     const validates = (description, validate) => describe(description, () => {
         describe('validates', () => {
             it('with the value equal to the min, it is valid', () => {
@@ -140,31 +104,6 @@ describe('range', () => {
 
             it('with the value greater than the max, it is invalid', () => {
                 const result = validate(6);
-                expect(result.isValid).toBe(false);
-            });
-
-            it('with a string value equal to the min, it is valid', () => {
-                const result = validate('3');
-                expect(result.isValid).toBe(true);
-            });
-
-            it('with a string value equal to the max, it is valid', () => {
-                const result = validate('5');
-                expect(result.isValid).toBe(true);
-            });
-
-            it('with a string value greater than the min and less than the max, it is valid', () => {
-                const result = validate('4');
-                expect(result.isValid).toBe(true);
-            });
-
-            it('with a string value less than the min, it is invalid', () => {
-                const result = validate('2');
-                expect(result.isValid).toBe(false);
-            });
-
-            it('with a string value greater than the max, it is invalid', () => {
-                const result = validate('6');
                 expect(result.isValid).toBe(false);
             });
 

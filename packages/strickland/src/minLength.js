@@ -1,5 +1,3 @@
-import {parseString} from './string';
-
 export default function minLength(minLengthProp, validatorProps) {
     if (typeof minLengthProp === 'object') {
         validatorProps = {
@@ -16,10 +14,6 @@ export default function minLength(minLengthProp, validatorProps) {
         throw 'minLength must be a number';
     }
 
-    if (validatorProps.trim !== false && validatorProps.trim !== true) {
-        validatorProps.trim = true;
-    }
-
     return function validateMinLength(value, validationProps) {
         const mergedProps = {
             ...validatorProps,
@@ -27,25 +21,11 @@ export default function minLength(minLengthProp, validatorProps) {
         };
 
         let isValid = true;
-        let parse;
+        let length = value ? value.length : 0;
 
-        if (typeof mergedProps.parseValue === 'function') {
-            parse = mergedProps.parseValue;
-        } else {
-            parse = (toParse) => parseString(toParse, {trim: mergedProps.trim});
-        }
-
-        const parsedValue = parse(value, mergedProps);
-        let length;
-
-        if (typeof parsedValue === 'string') {
-            length = parsedValue.length;
-        }
-
-        if (!parsedValue) {
+        if (!value) {
             // Empty values are always valid except with the required validator
-        } else if (typeof parsedValue !== 'string') {
-            isValid = false;
+
         } else if (length < mergedProps.minLength) {
             isValid = false;
         }
@@ -53,7 +33,6 @@ export default function minLength(minLengthProp, validatorProps) {
         return {
             ...mergedProps,
             value,
-            parsedValue,
             length,
             isValid
         };

@@ -47,42 +47,6 @@ describe('max', () => {
         });
     });
 
-    it('returns the value on the result', () => {
-        const validate = max(5);
-        const result = validate(4);
-
-        expect(result.value).toBe(4);
-    });
-
-    describe('returns the parsedValue on the result', () => {
-        const validate = max(5);
-
-        it('when the value is a number', () => {
-            const result = validate(4);
-            expect(result.parsedValue).toBe(4);
-        });
-
-        it('when the value is a string', () => {
-            const result = validate('4');
-            expect(result.parsedValue).toBe(4);
-        });
-
-        it('when the value is null', () => {
-            const result = validate(null);
-            expect(result.parsedValue).toBe(null);
-        });
-
-        it('when the value is an empty string', () => {
-            const result = validate('');
-            expect(result.parsedValue).toBe('');
-        });
-
-        it('when the value is 0 as a string', () => {
-            const result = validate('0');
-            expect(result.parsedValue).toBe(0);
-        });
-    });
-
     describe('validates', () => {
         const validate = max(3);
 
@@ -109,21 +73,6 @@ describe('max', () => {
         it('with an undefined value, it is valid', () => {
             const result = validate();
             expect(result.isValid).toBe(true);
-        });
-
-        it('with a string value equal to the max, it is valid', () => {
-            const result = validate('3');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with a string value less than the max, it is valid', () => {
-            const result = validate('2');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with a string value greater than the max, it is invalid', () => {
-            const result = validate('4');
-            expect(result.isValid).toBe(false);
         });
     });
 

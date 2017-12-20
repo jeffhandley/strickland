@@ -43,52 +43,6 @@ describe('maxLength', () => {
         });
     });
 
-    it('returns the value on the result', () => {
-        const validate = maxLength(5);
-        const result = validate('1234');
-
-        expect(result.value).toBe('1234');
-    });
-
-    describe('returns the parsedValue on the result', () => {
-        const validate = maxLength(5);
-
-        it('when the value is a string', () => {
-            const result = validate('1234');
-            expect(result.parsedValue).toBe('1234');
-        });
-
-        it('when the value is null', () => {
-            const result = validate(null);
-            expect(result.parsedValue).toBe('');
-        });
-
-        it('when the value is an empty string', () => {
-            const result = validate('');
-            expect(result.parsedValue).toBe('');
-        });
-
-        it('when the value is 0 as a string', () => {
-            const result = validate('0');
-            expect(result.parsedValue).toBe('0');
-        });
-
-        it('when the value has leading spaces', () => {
-            const result = validate('   1234');
-            expect(result.parsedValue).toBe('1234');
-        });
-
-        it('when the value has trailing spaces', () => {
-            const result = validate('1234   ');
-            expect(result.parsedValue).toBe('1234');
-        });
-
-        it('when the value has leading and trailing spaces', () => {
-            const result = validate('   1234   ');
-            expect(result.parsedValue).toBe('1234');
-        });
-    });
-
     describe('returns the length on the result', () => {
         const validate = maxLength(5);
 
@@ -114,17 +68,17 @@ describe('maxLength', () => {
 
         it('when the value has leading spaces', () => {
             const result = validate('   1234');
-            expect(result.length).toBe(4);
+            expect(result.length).toBe(7);
         });
 
         it('when the value has trailing spaces', () => {
             const result = validate('1234   ');
-            expect(result.length).toBe(4);
+            expect(result.length).toBe(7);
         });
 
         it('when the value has leading and trailing spaces', () => {
             const result = validate('   1234   ');
-            expect(result.length).toBe(4);
+            expect(result.length).toBe(10);
         });
     });
 
@@ -154,19 +108,6 @@ describe('maxLength', () => {
         it('with an undefined value, it is valid', () => {
             const result = validate();
             expect(result.isValid).toBe(true);
-        });
-    });
-
-    describe('if specified on props, will not trim', () => {
-        const validate = maxLength(3, {trim: false});
-        const result = validate(' 123 ');
-
-        it('the value', () => {
-            expect(result.parsedValue).toBe(' 123 ');
-        });
-
-        it('and causes whitespace to lead to being invalid', () => {
-            expect(result.isValid).toBe(false);
         });
     });
 

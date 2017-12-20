@@ -1,4 +1,4 @@
-import {isFalsyButNotZero, parseNumber} from './number';
+import {isFalsyButNotZero} from './number';
 
 export default function max(maxProp, validatorProps) {
     if (typeof maxProp === 'object') {
@@ -24,23 +24,17 @@ export default function max(maxProp, validatorProps) {
 
         let isValid = true;
 
-        const parse = typeof mergedProps.parseValue === 'function' ?
-            mergedProps.parseValue : parseNumber;
-
-        const parsedValue = parse(value, mergedProps);
-
-        if (isFalsyButNotZero(parsedValue)) {
+        if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
-        } else if (typeof parsedValue !== 'number') {
+        } else if (typeof value !== 'number') {
             isValid = false;
-        } else if (parsedValue > mergedProps.max) {
+        } else if (value > mergedProps.max) {
             isValid = false;
         }
 
         return {
             ...mergedProps,
             value,
-            parsedValue,
             isValid
         };
     }

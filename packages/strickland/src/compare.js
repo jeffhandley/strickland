@@ -1,5 +1,3 @@
-import {parseString} from './string';
-
 export default function compare(compareProp, validatorProps) {
     if (typeof compareProp === 'object') {
         validatorProps = {
@@ -30,24 +28,16 @@ export default function compare(compareProp, validatorProps) {
             valueToCompare = valueToCompare();
         }
 
-        const parse = typeof mergedProps.parseValue === 'function' ?
-            mergedProps.parseValue : parseString;
-
-        const parsedValue = parse(value, mergedProps);
-        const parsedCompare = parse(valueToCompare, mergedProps);
-
-        if (!parsedValue) {
+        if (!value) {
             // Empty values are always valid except with the required validator
-        } else if (parsedValue !== parsedCompare) {
+        } else if (value !== valueToCompare) {
             isValid = false;
         }
 
         return {
             ...mergedProps,
             value,
-            parsedValue,
             compare: valueToCompare,
-            parsedCompare,
             isValid
         };
     }

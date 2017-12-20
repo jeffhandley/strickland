@@ -1,4 +1,4 @@
-import {isFalsyButNotZero, parseNumber} from './number';
+import {isFalsyButNotZero} from './number';
 
 export default function min(minProp, validatorProps) {
     if (typeof minProp === 'object') {
@@ -24,23 +24,16 @@ export default function min(minProp, validatorProps) {
 
         let isValid = true;
 
-        const parse = typeof mergedProps.parseValue === 'function' ?
-            mergedProps.parseValue : parseNumber;
-
-        const parsedValue = parse(value, mergedProps);
-
-        if (isFalsyButNotZero(parsedValue)) {
+        if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
-        } else if (typeof parsedValue !== 'number') {
-            isValid = false;
-        } else if (parsedValue < mergedProps.min) {
+
+        } else if (value < mergedProps.min) {
             isValid = false;
         }
 
         return {
             ...mergedProps,
             value,
-            parsedValue,
             isValid
         };
     }
