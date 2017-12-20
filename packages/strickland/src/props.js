@@ -2,12 +2,12 @@ import validate, {isValid} from './strickland';
 
 export default function props(propRules, validatorProps) {
     return function validateProps(value, validationProps) {
-        if (typeof value === 'object' && value) {
-            const mergedProps = {
-                ...validatorProps,
-                ...validationProps
-            };
+        const mergedProps = {
+            ...validatorProps,
+            ...validationProps
+        };
 
+        if (typeof value === 'object' && value) {
             const propNames = Object.keys(propRules);
 
             let results = {};
@@ -30,6 +30,9 @@ export default function props(propRules, validatorProps) {
             };
         }
 
-        return true;
+        return {
+            ...mergedProps,
+            isValid: true
+        };
     }
 }
