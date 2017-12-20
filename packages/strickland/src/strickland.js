@@ -53,7 +53,6 @@ function convertResult(result, value) {
 }
 
 export {default as compare} from './compare';
-export {default as composite} from './composite';
 export {default as length} from './length';
 export {default as max} from './max';
 export {default as maxLength} from './maxLength';
