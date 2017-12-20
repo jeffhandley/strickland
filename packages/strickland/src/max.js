@@ -11,15 +11,21 @@ export default function max(maxProp, validatorProps) {
         };
     }
 
-    if (typeof validatorProps.max !== 'number') {
-        throw 'max must be a number';
-    }
-
     return function validateMax(value, validationProps) {
         validationProps = {
             ...validatorProps,
             ...validationProps
         };
+
+        let maxValue = validationProps.max;
+
+        if (typeof maxValue === 'function') {
+            maxValue = maxValue();
+        }
+
+        if (typeof maxValue !== 'number') {
+            throw 'max must be a number';
+        }
 
         let isValid = true;
 
@@ -33,6 +39,7 @@ export default function max(maxProp, validatorProps) {
 
         return {
             ...validationProps,
+            max: maxValue,
             value,
             isValid
         };

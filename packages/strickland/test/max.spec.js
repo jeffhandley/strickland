@@ -4,20 +4,9 @@ import max from '../src/max';
 
 describe('max', () => {
     describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => max()).toThrow();
-        });
-
-        it('when props is a string', () => {
-            expect(() => max('123')).toThrow();
-        });
-
-        it('when props is an object without a max', () => {
-            expect(() => max({message: 'Custom message'})).toThrow();
-        });
-
-        it('when props is an object with a non-numeric max', () => {
-            expect(() => max({max: 'Custom message'})).toThrow();
+        it('when max is non-numeric', () => {
+            const validate = max('non-numeric');
+            expect(() => validate()).toThrow();
         });
     });
 
@@ -38,12 +27,62 @@ describe('max', () => {
         const validate = max(5, {message: 'Custom message'});
         const result = validate(4);
 
-        it('sets the min prop', () => {
+        it('sets the max prop', () => {
             expect(result.max).toBe(5);
         });
 
         it('retains extra props', () => {
             expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with max provided at the time of validation', () => {
+        const validate = max();
+        const result = validate(4, {max: 5, message: 'Custom message'});
+
+        it('sets the max prop', () => {
+            expect(result.max).toBe(5);
+        });
+
+        it('retains extra props', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with max as a function', () => {
+        let getMaxCalls = 0;
+
+        const getMax = () => {
+            return ++getMaxCalls;
+        };
+
+        beforeEach(() => {
+            getMaxCalls = 0;
+        });
+
+        it('does not call the function during validator construction', () => {
+            max(getMax);
+            expect(getMaxCalls).toBe(0);
+        });
+
+        it('the function is called at the time of validation', () => {
+            const validate = max(getMax);
+            validate(0);
+
+            expect(getMaxCalls).toBe(1);
+        });
+
+        it('validates using the function result', () => {
+            getMaxCalls = 5;
+
+            const validate = max(getMax);
+            const result = validate(4);
+
+            expect(result).toMatchObject({
+                isValid: true,
+                max: 6,
+                value: 4
+            });
         });
     });
 

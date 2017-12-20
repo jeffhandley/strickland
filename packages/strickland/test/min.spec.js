@@ -4,20 +4,9 @@ import min from '../src/min';
 
 describe('min', () => {
     describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => min()).toThrow();
-        });
-
-        it('when props is a string', () => {
-            expect(() => min('123')).toThrow();
-        });
-
-        it('when props is an object without a min', () => {
-            expect(() => min({message: 'Custom message'})).toThrow();
-        });
-
-        it('when props is an object with a non-numeric min', () => {
-            expect(() => min({min: 'Custom message'})).toThrow();
+        it('when min is non-numeric', () => {
+            const validate = min('non-numeric');
+            expect(() => validate()).toThrow();
         });
     });
 
@@ -44,6 +33,43 @@ describe('min', () => {
 
         it('retains extra props', () => {
             expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with min as a function', () => {
+        let getMinCalls = 0;
+
+        const getMin = () => {
+            return ++getMinCalls;
+        };
+
+        beforeEach(() => {
+            getMinCalls = 0;
+        });
+
+        it('does not call the function during validator construction', () => {
+            min(getMin);
+            expect(getMinCalls).toBe(0);
+        });
+
+        it('the function is called at the time of validation', () => {
+            const validate = min(getMin);
+            validate(0);
+
+            expect(getMinCalls).toBe(1);
+        });
+
+        it('validates using the function result', () => {
+            getMinCalls = 5;
+
+            const validate = min(getMin);
+            const result = validate(7);
+
+            expect(result).toMatchObject({
+                isValid: true,
+                min: 6,
+                value: 7
+            });
         });
     });
 

@@ -4,16 +4,9 @@ import minLength from '../src/minLength';
 
 describe('minLength', () => {
     describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => minLength()).toThrow();
-        });
-
-        it('when props is a string', () => {
-            expect(() => minLength('123')).toThrow();
-        });
-
-        it('when props is an object without a minLength', () => {
-            expect(() => minLength({ min: 123 })).toThrow();
+        it('when minLength is non-numeric', () => {
+            const validate = minLength('non-numeric');
+            expect(() => validate()).toThrow();
         });
     });
 
@@ -79,6 +72,44 @@ describe('minLength', () => {
         it('when the value has leading and trailing spaces', () => {
             const result = validate('   1234   ');
             expect(result.length).toBe(10);
+        });
+    });
+
+    describe('with minLength as a function', () => {
+        let getMinLengthCalls = 0;
+
+        const getMinLength = () => {
+            return ++getMinLengthCalls;
+        };
+
+        beforeEach(() => {
+            getMinLengthCalls = 0;
+        });
+
+        it('does not call the function during validator construction', () => {
+            minLength(getMinLength);
+            expect(getMinLengthCalls).toBe(0);
+        });
+
+        it('the function is called at the time of validation', () => {
+            const validate = minLength(getMinLength);
+            validate('A');
+
+            expect(getMinLengthCalls).toBe(1);
+        });
+
+        it('validates using the function result', () => {
+            getMinLengthCalls = 5;
+
+            const validate = minLength(getMinLength);
+            const result = validate('1234567');
+
+            expect(result).toMatchObject({
+                isValid: true,
+                minLength: 6,
+                value: '1234567',
+                length: 7
+            });
         });
     });
 

@@ -11,15 +11,21 @@ export default function min(minProp, validatorProps) {
         };
     }
 
-    if (typeof validatorProps.min !== 'number') {
-        throw 'min must be a number';
-    }
-
     return function validateMin(value, validationProps) {
         validationProps = {
             ...validatorProps,
             ...validationProps
         };
+
+        let minValue = validationProps.min;
+
+        if (typeof minValue === 'function') {
+            minValue = minValue();
+        }
+
+        if (typeof minValue !== 'number') {
+            throw 'min must be a number';
+        }
 
         let isValid = true;
 
@@ -32,6 +38,7 @@ export default function min(minProp, validatorProps) {
 
         return {
             ...validationProps,
+            min: minValue,
             value,
             isValid
         };

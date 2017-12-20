@@ -16,7 +16,6 @@ export default function compare(compareProp, validatorProps) {
         };
 
         let isValid = true;
-
         let valueToCompare = validationProps.compare;
 
         if (typeof valueToCompare === 'function') {

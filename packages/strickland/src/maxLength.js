@@ -9,15 +9,21 @@ export default function maxLength(maxLengthProp, validatorProps) {
         };
     }
 
-    if (typeof validatorProps.maxLength !== 'number') {
-        throw 'maxLength must be a number';
-    }
-
     return function validateMaxLength(value, validationProps) {
         validationProps = {
             ...validatorProps,
             ...validationProps
         };
+
+        let maxLengthValue = validationProps.maxLength;
+
+        if (typeof maxLengthValue === 'function') {
+            maxLengthValue = maxLengthValue();
+        }
+
+        if (typeof maxLengthValue !== 'number') {
+            throw 'maxLength must be a number';
+        }
 
         let isValid = true;
         let length = value ? value.length : 0;
@@ -25,12 +31,13 @@ export default function maxLength(maxLengthProp, validatorProps) {
         if (!value) {
             // Empty values are always valid except with the required validator
 
-        } else if (length > validationProps.maxLength) {
+        } else if (length > maxLengthValue) {
             isValid = false;
         }
 
         return {
             ...validationProps,
+            maxLength: maxLengthValue,
             value,
             length,
             isValid

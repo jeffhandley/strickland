@@ -3,32 +3,6 @@ import deepFreeze from 'deep-freeze';
 import length from '../src/length';
 
 describe('length', () => {
-    describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => length()).toThrow();
-        });
-
-        it('when the min length is a string', () => {
-            expect(() => length('123', 456)).toThrow();
-        });
-
-        it('when the max length is a string', () => {
-            expect(() => length(123, '456')).toThrow();
-        });
-
-        it('when props is an object without a min or a max', () => {
-            expect(() => length({})).toThrow();
-        });
-
-        it('when props is an object without a min', () => {
-            expect(() => length({ maxLength: 456 })).toThrow();
-        });
-
-        it('when props is an object without a max', () => {
-            expect(() => length({ minLength: 123 })).toThrow();
-        });
-    });
-
     describe('with a single props argument', () => {
         const validate = length({minLength: 3, maxLength: 5, message: 'Custom message'});
         const result = validate('1234');

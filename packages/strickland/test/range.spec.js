@@ -3,32 +3,6 @@ import deepFreeze from 'deep-freeze';
 import range from '../src/range';
 
 describe('range', () => {
-    describe('throws', () => {
-        it('when props are not supplied', () => {
-            expect(() => range()).toThrow();
-        });
-
-        it('when the min value is a string', () => {
-            expect(() => range('123')).toThrow();
-        });
-
-        it('when the max value is a string', () => {
-            expect(() => range(123, '456')).toThrow();
-        });
-
-        it('when props is an object without a min or a max', () => {
-            expect(() => range({})).toThrow();
-        });
-
-        it('when props is an object without a min', () => {
-            expect(() => range({ max: 456 })).toThrow();
-        });
-
-        it('when props is an object without a max', () => {
-            expect(() => range({ min: 123 })).toThrow();
-        });
-    });
-
     describe('with a single props argument', () => {
         const validate = range({min: 3, max: 5, message: 'Custom message'});
         const result = validate(4);
