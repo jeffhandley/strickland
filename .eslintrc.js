@@ -27,7 +27,7 @@ module.exports = {
         'strict': [2, 'global'],
         'wrap-iife': [2, 'any'],
         'quotes': [2, 'single'],
-        'jsx-quotes': [ 2, 'prefer-single' ],
+        'jsx-quotes': [ 2, 'prefer-double' ],
         'react/jsx-boolean-value': 2,
         'react/jsx-no-undef': 2,
         'react/jsx-sort-props': 2,
@@ -42,7 +42,7 @@ module.exports = {
         'react/react-in-jsx-scope': 2,
         'react/self-closing-comp': 2,
         'react/sort-prop-types': 2,
-        'react/wrap-multilines': 2,
+        'react/jsx-wrap-multilines': 2,
 
         'eqeqeq': 2,
         'eol-last': 2,
@@ -91,11 +91,6 @@ module.exports = {
         'key-spacing': 2,
         'no-trailing-spaces': 2,
         'camelcase': 2
-    },
-
-    'ecmaFeatures': {
-        'modules': true,
-        'jsx': true
     },
 
     'plugins': [

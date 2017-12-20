@@ -1,0 +1,51 @@
+{
+  "name": "strickland",
+  "version": "1.0.0-rc.0",
+  "description": "JavaScript data validation. Ideal for universal React applications that use Flux, Redux, or similar patterns.",
+  "main": "./lib/strickland.js",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rm -rf lib",
+    "build": "npm run lint && npm test && babel src -d lib",
+    "lint": "eslint src/** test/**",
+    "test": "mocha --compilers js:babel-register --recursive",
+    "test:watch": "nodemon -e js -x \"npm test\"",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeffhandley/strickland.git"
+  },
+  "keywords": [
+    "validation",
+    "universal",
+    "framework",
+    "validator",
+    "validate",
+    "react",
+    "redux",
+    "flux",
+    "node"
+  ],
+  "author": "Jeff Handley <jeff@jeffhandley.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jeffhandley/strickland/issues"
+  },
+  "homepage": "https://github.com/jeffhandley/strickland",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "deep-freeze": "0.0.1",
+    "eslint": "^4.13.0",
+    "eslint-plugin-react": "^7.5.1",
+    "expect": "^21.2.1",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.5"
+  }
+}
