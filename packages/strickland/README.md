@@ -826,5 +826,5 @@ Strickland actually uses very few concepts to accomplish a great deal.
 
 The design and implementation of Strickland ends up being fractal, with composition available at every
 turn. Because validator functions are so simple, Strickland is a great framework on which you
-can build the validator libraries you need for your application. And since Strickland is not coupled
-to any other libraries or concepts, it can be used in any JavaScript application.
+can build the validator libraries you need for your application. And since Strickland is pure JavaScript
+and not coupled to any other libraries or concepts, it can be used in any JavaScript application.
