@@ -39,6 +39,7 @@ export default function validate(rules, value, validateProps) {
     }
 
     return {
+        ...validateProps,
         ...result,
         isValid: !!result.isValid,
         value

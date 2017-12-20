@@ -21,6 +21,13 @@ describe('validate', () => {
     });
 
     describe('with rules function', () => {
+        it('returns the validated value on the result', () => {
+            const rules = () => true;
+            const result = validate(rules, 'validated value');
+
+            expect(result.value).toBe('validated value');
+        });
+
         describe('returning true', () => {
             const rules = () => true;
             const result = validate(rules, 'value');
@@ -464,6 +471,20 @@ describe('validate', () => {
             expect(validatedProps).toMatchObject({
                 first: props,
                 second: props
+            });
+        });
+
+        it('includes those props on the result automatically', () => {
+            let props = {message: 'Message'};
+
+            function validator() {
+                return true;
+            }
+
+            const result = validate(validator, null, props);
+
+            expect(result).toMatchObject({
+                message: 'Message'
             });
         });
     });
