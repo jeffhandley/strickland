@@ -20,9 +20,14 @@
   },
   "keywords": [
     "validation",
-    "react",
     "universal",
-    "flux"
+    "framework",
+    "validator",
+    "validate",
+    "react",
+    "redux",
+    "flux",
+    "node"
   ],
   "author": "Jeff Handley <jeff@jeffhandley.com>",
   "license": "Apache-2.0",
