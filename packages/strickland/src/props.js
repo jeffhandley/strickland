@@ -16,22 +16,22 @@ export default function props(propRules, validatorProps) {
         if (typeof value === 'object' && value) {
             const propNames = Object.keys(propRules);
 
-            let results = {};
+            let propResults = {};
             let allValid = true;
 
             propNames.forEach((propName) => {
                 const propResult = validate(propRules[propName], value[propName], mergedProps);
                 allValid = allValid && isValid(propResult);
 
-                results = {
-                    ...results,
+                propResults = {
+                    ...propResults,
                     [propName]: propResult
                 }
             });
 
             result = {
                 ...result,
-                results,
+                props: propResults,
                 isValid: allValid
             };
         }

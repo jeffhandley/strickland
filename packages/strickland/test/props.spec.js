@@ -28,9 +28,9 @@ describe('props', () => {
             expect(result).toBeInstanceOf(Object);
         });
 
-        it('returning results for all properties', () => {
+        it('returning results for all props', () => {
             expect(result).toMatchObject({
-                results: {
+                props: {
                     first: {isValid: false},
                     last: {isValid: false}
                 }
@@ -54,7 +54,7 @@ describe('props', () => {
             const validResult = validate(validPerson);
             expect(validResult).toMatchObject({
                 isValid: true,
-                results: {
+                props: {
                     first: {isValid: true},
                     last: {isValid: true}
                 }
@@ -63,7 +63,7 @@ describe('props', () => {
     });
 
     describe('with nested rules objects', () => {
-        const rules = {
+        const validate = props({
             name: required(),
             homeAddress: {
                 street: required(),
@@ -78,11 +78,9 @@ describe('props', () => {
                 city: required(),
                 state: [required(), length(2, 2)]
             }
-        };
+        });
 
-        const validate = props(rules);
-
-        it('returns results in the shape of the rules', () => {
+        it('returns props in the shape of the rules', () => {
             const value = {
                 name: 'Name',
                 homeAddress: {
@@ -102,11 +100,11 @@ describe('props', () => {
 
             const result = validate(value);
 
-            expect(result.results).toMatchObject({
+            expect(result.props).toMatchObject({
                 name: {isValid: true},
                 homeAddress: {
                     isValid: true,
-                    results: {
+                    props: {
                         street: {isValid: true},
                         city: {isValid: true},
                         state: {isValid: true}
@@ -114,10 +112,10 @@ describe('props', () => {
                 },
                 workAddress: {
                     isValid: true,
-                    results: {
+                    props: {
                         street: {
                             isValid: true,
-                            results: {
+                            props: {
                                 number: {isValid: true},
                                 name: {isValid: true}
                             }
@@ -149,12 +147,12 @@ describe('props', () => {
 
             const result = validate(value);
 
-            expect(result.results).toMatchObject({
+            expect(result.props).toMatchObject({
                 name: {
                     parsedValue: 'Name'
                 },
                 homeAddress: {
-                    results: {
+                    props: {
                         street: {
                             parsedValue: '9303 Lyon Dr.'
                         },
@@ -167,9 +165,9 @@ describe('props', () => {
                     }
                 },
                 workAddress: {
-                    results: {
+                    props: {
                         street: {
-                            results: {
+                            props: {
                                 number: {
                                     parsedValue: '456'
                                 },
@@ -211,11 +209,11 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: true,
-                results: {
+                props: {
                     homeAddress: {isValid: true},
                     workAddress: {
                         isValid: true,
-                        results: {
+                        props: {
                             street: {isValid: true}
                         }
                     }
@@ -245,16 +243,16 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                results: {
+                props: {
                     homeAddress: {
                         isValid: false
                     },
                     workAddress: {
                         isValid: false,
-                        results: {
+                        props: {
                             street: {
                                 isValid: false,
-                                results: {
+                                props: {
                                     name: {isValid: false}
                                 }
                             }
@@ -266,7 +264,7 @@ describe('props', () => {
     });
 
     describe('when properties are missing from the value', () => {
-        const rules = {
+        const validate = props({
             name: required(),
             homeAddress: {
                 street: required(),
@@ -281,9 +279,7 @@ describe('props', () => {
                 city: required(),
                 state: [required(), length(2, 2)]
             }
-        };
-
-        const validate = props(rules);
+        });
 
         it('validates missing scalar values', () => {
             const value = {
@@ -297,11 +293,11 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                results: {
+                props: {
                     name: {isValid: false},
                     homeAddress: {
                         isValid: false,
-                        results: {
+                        props: {
                             street: {isValid: false},
                             city: {isValid: false},
                             state: {isValid: false}
@@ -309,10 +305,10 @@ describe('props', () => {
                     },
                     workAddress: {
                         isValid: false,
-                        results: {
+                        props: {
                             street: {
                                 isValid: false,
-                                results: {
+                                props: {
                                     number: {isValid: false},
                                     name: {isValid: false}
                                 }
@@ -333,14 +329,14 @@ describe('props', () => {
             };
 
             const result = validate(value);
-            expect(result.results.homeAddress.isValid).toBe(true);
+            expect(result.props.homeAddress.isValid).toBe(true);
         });
 
-        it('does not create results for missing top-level object properties', () => {
+        it('does not create props for missing top-level object properties', () => {
             const value = {};
             const result = validate(value);
 
-            expect(result.results).not.toHaveProperty('homeAddress.results');
+            expect(result.props).not.toHaveProperty('homeAddress.props');
         });
 
         it('sets missing nested object properties to valid', () => {
@@ -350,14 +346,14 @@ describe('props', () => {
 
             const result = validate(value);
 
-            expect(result.results.workAddress.results.street.isValid).toBe(true);
+            expect(result.props.workAddress.props.street.isValid).toBe(true);
         });
 
-        it('does not create results for missing nested object properties', () => {
+        it('does not create props for missing nested object properties', () => {
             const value = {};
             const result = validate(value);
 
-            expect(result.results).not.toHaveProperty('workAddress.results.street.results');
+            expect(result.props).not.toHaveProperty('workAddress.props.street.results');
         });
     });
 });

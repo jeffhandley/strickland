@@ -1,5 +1,5 @@
 import expect from 'expect';
-import validate, {isValid, required, minLength, length} from '../src/strickland';
+import validate, {isValid, required, minLength} from '../src/strickland';
 
 describe('validate', () => {
     describe('throws', () => {
@@ -257,17 +257,17 @@ describe('validate', () => {
 
             const result = validate(rules, value);
 
-            it('returns with a results prop', () => {
-                expect(result.results).not.toBeUndefined();
+            it('returns props on the result', () => {
+                expect(result.props).not.toBeUndefined();
             });
 
-            it('returns results in the shape of the rules', () => {
-                const keys = Object.keys(result.results);
+            it('returns props in the shape of the rules', () => {
+                const keys = Object.keys(result.props);
                 expect(keys).toEqual(['firstName', 'lastName']);
             });
 
-            it('returns validation results for the rules', () => {
-                expect(result.results).toMatchObject({
+            it('returns props being the results of the rules', () => {
+                expect(result.props).toMatchObject({
                     firstName: {
                         isValid: true,
                         value: 'First'
@@ -345,7 +345,7 @@ describe('validate', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                results: {
+                props: {
                     name: {isValid: true},
                     workAddress: {
                         isValid: false,
@@ -368,9 +368,9 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                results: {
+                props: {
                     workAddress: {
-                        results: {
+                        props: {
                             street: {
                                 isValid: false,
                                 message: 'Street is required'
@@ -405,7 +405,7 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                results: {
+                props: {
                     workAddress: {
                         isValid: false,
                         message: 'Work address must be on a St.'
