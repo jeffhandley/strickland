@@ -356,4 +356,40 @@ describe('props', () => {
             expect(result.props).not.toHaveProperty('workAddress.props.street.results');
         });
     });
+
+    describe('passes props to the validators', () => {
+        const validatorProps = {validatorProp: 'Validator'};
+
+        const validate = props({
+            first: required({message: 'First'}),
+            last: required({message: 'Last'})
+        }, validatorProps);
+
+        const value = {
+            first: 'A',
+            last: 'B'
+        };
+
+        const result = validate(value, {validateProp: 'Validate'});
+
+        it('from the validator definition', () => {
+            expect(result).toMatchObject({
+                validatorProp: 'Validator',
+                props: {
+                    first: {validatorProp: 'Validator', message: 'First'},
+                    last: {validatorProp: 'Validator', message: 'Last'}
+                }
+            });
+        });
+
+        it('from the validate function', () => {
+            expect(result).toMatchObject({
+                validateProp: 'Validate',
+                props: {
+                    first: {validateProp: 'Validate', message: 'First'},
+                    last: {validateProp: 'Validate', message: 'Last'}
+                }
+            });
+        });
+    });
 });

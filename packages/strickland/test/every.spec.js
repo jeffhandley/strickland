@@ -73,4 +73,29 @@ describe('every', () => {
             });
         });
     });
+
+    describe('passes props to the validators', () => {
+        const validate = every([required({message: 'Required'}), minLength(2)], {validatorProp: 'Validator'});
+        const result = validate('AB', {validateProp: 'Validate'});
+
+        it('from the validator definition', () => {
+            expect(result).toMatchObject({
+                validatorProp: 'Validator',
+                every: [
+                    {validatorProp: 'Validator', message: 'Required'},
+                    {validatorProp: 'Validator', minLength: 2}
+                ]
+            });
+        });
+
+        it('from the validate function', () => {
+            expect(result).toMatchObject({
+                validateProp: 'Validate',
+                every: [
+                    {validateProp: 'Validate', message: 'Required'},
+                    {validateProp: 'Validate', minLength: 2}
+                ]
+            });
+        });
+    });
 });
