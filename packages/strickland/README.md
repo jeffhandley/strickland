@@ -495,7 +495,8 @@ const result = validate(nameRequired, '');
 result = {
     isValid: false,
     value: '',
-    required: true
+    required: true,
+    message: 'Name is required'
 }
 */
 ```
