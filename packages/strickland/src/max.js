@@ -31,8 +31,10 @@ export default function max(maxProp, validatorProps) {
 
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
+
         } else if (typeof value !== 'number') {
             isValid = false;
+
         } else if (value > validationProps.max) {
             isValid = false;
         }

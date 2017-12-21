@@ -112,6 +112,11 @@ describe('max', () => {
             const result = validate();
             expect(result.isValid).toBe(true);
         });
+
+        it('with a string value, it is not valid', () => {
+            const result = validate('A');
+            expect(result.isValid).toBe(false);
+        });
     });
 
     describe('with props passed into validation', () => {

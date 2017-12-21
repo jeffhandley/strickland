@@ -32,6 +32,9 @@ export default function min(minProp, validatorProps) {
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
 
+        } else if (typeof value !== 'number') {
+            isValid = false;
+
         } else if (value < validationProps.min) {
             isValid = false;
         }
