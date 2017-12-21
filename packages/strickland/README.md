@@ -153,7 +153,11 @@ new properties to the validation result. Here are some examples for calling this
 import validate from 'strickland';
 
 const letterX = letter('X', {fieldLabel: 'letter'});
-const acceptTerms = letter('Y', {fieldLabel: 'terms', message: 'Enter the letter Y to accept the terms'});
+
+const acceptTerms = letter('Y', {
+    fieldLabel: 'terms',
+    message: 'Enter the letter Y to accept the terms'
+});
 
 const letter = 'X';
 const terms = 'N';
@@ -187,7 +191,7 @@ two values and we wanted to ensure they are the same letter, we would need to pa
 at the time of validation.
 
 To enable this, Strickland's `validate` function accepts a props argument after the value to be validated,
-and those props are passed to the validator. We can extend our `letter` validator to support this user case.
+and those props are passed to the validator. We can extend our `letter` validator to support this use case.
 
 ``` jsx
 import validate from 'strickland';
@@ -210,14 +214,16 @@ function letter(letterProp, validatorProps) {
         };
 
         return {
-            message: `Must match the letter `${letter}`,
+            message: `Must match the letter ${letter}`,
             ...props,
             isValid: (value === letter)
         };
     }
 }
 
-const secondMatchesFirst = letter({message: 'The second value must match the first value'});
+const secondMatchesFirst = letter({
+    message: 'The second value must match the first value'
+});
 
 const first = 'M';
 const second = 'N';
@@ -243,25 +249,30 @@ your applications can use.
 
 The `compare` validator is quite similar to the `letter` validator we've built. In fact, it only has
 one additional feature. It accepts a function for the `compare` prop so that the compare value can
-be fetched at the time of validation.
+be fetched at the time of validation even more easily than providing it as a
+validation-time prop.
 
 #### Usage
 
 ``` jsx
 import validate, {compare} from 'strickland';
 
-const letterA = compare('A', {message: 'Must be the letter A'});
-const letterB = compare({compare: 'B', message: 'Must be the letter B'});
+const a = compare('A', {message: 'Must be the letter A'});
+const b = compare({compare: 'B', message: 'Must be the letter B'});
 
-const d = 'D';
-const matchesD = compare(() => d, {message: 'Must match d'});
+const c = 'C';
+const d = compare(() => c, {message: 'Must match c'});
 
 const e = 'E';
-const matchesE = compare({compare: () => e, message: 'Must match e'});
+const f = compare({compare: () => e, message: 'Must match e'});
 
-const f = 'F';
-const matchesAtValidation = compare({message: 'Must match f'});
-const result = validate(matchesAtValidation, 'G', {compare: () => f});
+const g = 'G';
+const matchesAtValidation = compare();
+
+const result = validate(matchesAtValidation, 'H', {
+    compare: () => g,
+    message: 'Must match g'
+});
 ```
 
 ### min
@@ -281,7 +292,9 @@ const applyminWithArg = min(() => minValue);
 const applyminWithProp = min({min: () => minValue});
 
 const matchesAtValidation = min();
-const result = validate(matchesAtValidation, 7, {min: () => minValue});
+const result = validate(matchesAtValidation, 7, {
+    min: () => minValue
+});
 ```
 
 ### max
@@ -301,7 +314,9 @@ const applyMaxWithArg = max(() => maxValue);
 const applyMaxWithProp = max({max: () => maxValue});
 
 const matchesAtValidation = max();
-const result = validate(matchesAtValidation, 9, {max: () => maxValue});
+const result = validate(matchesAtValidation, 9, {
+    max: () => maxValue
+});
 ```
 
 ### range
@@ -314,16 +329,31 @@ that a value is within a range.
 ``` jsx
 import validate, {range} from 'strickland';
 
-const range5to7 = range(5, 7, {message: 'Must be between 5 and 7'});
-const range7to9 = range({min: 7, max: 9, message: 'Must be between 7 and 9'});
+const range5to7 = range(5, 7, {
+    message: 'Must be between 5 and 7'
+});
+
+const range7to9 = range({
+    min: 7,
+    max: 9,
+    message: 'Must be between 7 and 9'
+});
 
 const minValue = 6;
 const maxValue = 8;
+
 const applyWithArgs = range(() => minValue, () => maxValue);
-const applyWithProps = range({min: () => minValue, max: () => maxValue});
+
+const applyWithProps = range({
+    min: () => minValue,
+    max: () => maxValue
+});
 
 const matchesAtValidation = range();
-const result = validate(matchesAtValidation, 9, {min: () => minValue, max: () => maxValue});
+const result = validate(matchesAtValidation, 9, {
+    min: () => minValue,
+    max: () => maxValue
+});
 ```
 
 ### minLength
@@ -335,15 +365,27 @@ The `minLength` validator checks that a value has a length no greater than the m
 ``` jsx
 import validate, {minLength} from 'strickland';
 
-const minLength5 = minLength(5, {message: 'Must have a length of at least 5'});
-const minLength6 = minLength({minLength: 6, message: 'Must have a length of at least 6'});
+const minLength5 = minLength(5, {
+    message: 'Must have a length of at least 5'
+});
+
+const minLength6 = minLength({
+    minLength: 6,
+    message: 'Must have a length of at least 6'
+});
 
 const minLengthValue = 8;
+
 const applyminLengthWithArg = minLength(() => minLengthValue);
-const applyminLengthWithProp = minLength({minLength: () => minLengthValue});
+
+const applyminLengthWithProp = minLength({
+    minLength: () => minLengthValue
+});
 
 const matchesAtValidation = minLength();
-const result = validate(matchesAtValidation, '1234567', {minLength: () => minLengthValue});
+const result = validate(matchesAtValidation, '1234567', {
+    minLength: () => minLengthValue
+});
 ```
 
 ### maxLength
@@ -355,15 +397,27 @@ The `maxLength` validator checks that a value has a length no greater than the m
 ``` jsx
 import validate, {maxLength} from 'strickland';
 
-const maxLength5 = maxLength(5, {message: 'Must have a length no more than 5'});
-const maxLength6 = maxLength({maxLength: 6, message: 'Must have a length no more than 6'});
+const maxLength5 = maxLength(5, {
+    message: 'Must have a length no more than 5'
+});
+
+const maxLength6 = maxLength({
+    maxLength: 6,
+    message: 'Must have a length no more than 6'
+});
 
 const maxLengthValue = 8;
+
 const applyMaxLengthWithArg = maxLength(() => maxLengthValue);
-const applyMaxLengthWithProp = maxLength({maxLength: () => maxLengthValue});
+
+const applyMaxLengthWithProp = maxLength({
+    maxLength: () => maxLengthValue
+});
 
 const matchesAtValidation = maxLength();
-const result = validate(matchesAtValidation, '123456789', {maxLength: () => maxLengthValue});
+const result = validate(matchesAtValidation, '123456789', {
+    maxLength: () => maxLengthValue
+});
 ```
 
 ### length
@@ -376,16 +430,34 @@ that a value has a length within a range.
 ``` jsx
 import validate, {length} from 'strickland';
 
-const length5to7 = length(5, 7, {message: 'Must be between 5 and 7'});
-const length7to9 = length({min: 7, max: 9, message: 'Must be between 7 and 9'});
+const length5to7 = length(5, 7, {
+    message: 'Must be between 5 and 7'
+});
+
+const length7to9 = length({
+    min: 7,
+    max: 9,
+    message: 'Must be between 7 and 9'
+});
 
 const minLengthValue = 6;
 const maxLengthValue = 8;
-const applyWithArgs = length(() => minLengthValue, () => maxLengthValue);
-const applyWithProps = length({minLength: () => minLengthValue, maxLength: () => maxLengthValue});
+
+const applyWithArgs = length(
+    () => minLengthValue,
+    () => maxLengthValue
+);
+
+const applyWithProps = length({
+    minLength: () => minLengthValue,
+    maxLength: () => maxLengthValue
+});
 
 const matchesAtValidation = length();
-const result = validate(matchesAtValidation, '123456789', {minLength: () => minLengthValue, maxLength: () => maxLengthValue});
+const result = validate(matchesAtValidation, '123456789', {
+    minLength: () => minLengthValue,
+    maxLength: () => maxLengthValue
+});
 ```
 
 ### required
@@ -408,6 +480,26 @@ The `false` Boolean value being invalid is commonly used to validate that checkb
 when a user must accept terms before submitting a form, the `checked` state of the checkbox can be validated
 with `required`.
 
+### Usage
+
+``` jsx
+import validate, {required} from 'strickland';
+
+const nameRequired = required({
+    message: 'Name is required'
+});
+
+const result = validate(nameRequired, '');
+
+/*
+result = {
+    isValid: false,
+    value: '',
+    required: true
+}
+*/
+```
+
 ## Composing Validators
 
 Strickland gains its power through composition of validators. Because every validator is simply a
@@ -426,7 +518,9 @@ export default function every(validators) {
         };
 
         validators.every((validator) => {
-            let validatorResult = validate(validator, value, validationProps);
+            let validatorResult = validate(
+                validator, value, validationProps
+            );
 
             result = {
                 ...result,
@@ -453,7 +547,9 @@ Here is how the `every` validator can be used.
 import validate, {every, required, minLength} from 'strickland';
 
 const mustExistWithLength5 = every([required(), minLength(5)]);
-const result = validate(mustExistWithLength5, '1234', {message: 'Must have a length of at least 5'});
+const result = validate(mustExistWithLength5, '1234', {
+    message: 'Must have a length of at least 5'
+});
 
 /*
 result = {
@@ -476,7 +572,14 @@ supplied to every validator. This allows properties common to all validators to 
 at the time of creation.
 
 ``` jsx
-const mustExistWithLength5 = every([required(), maxLength(2)], {message: 'Must have a length of at least 5'});
+const mustExistWithLength5 = every(
+    [
+        required(),
+        maxLength(2)
+    ],
+    {message: 'Must have a length of at least 5'}
+);
+
 const result = validate(mustExistWithLength5, '1234');
 ```
 
@@ -548,8 +651,8 @@ This example will validate a person's first name, last name, and birth year.
 ``` jsx
 import validate, {required, length, range, every} from 'strickland';
 
-// Define the rules for validating first name, last name, and birthYear
-const validatePersonProps = {
+// Define the rules for first name, last name, and birthYear
+const validateProps = {
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
     birthYear: range(1900, 2018)
@@ -564,9 +667,9 @@ const person = {
 
 // Validate the person's properties
 const props = {
-    firstName: validate(validatePersonProps.firstName, person.firstName),
-    lastName: validate(validatePersonProps.lastName, person.lastName),
-    birthYear: validate(validatePersonProps.birthYear, person.birthYear)
+    firstName: validate(validateProps.firstName, person.firstName),
+    lastName: validate(validateProps.lastName, person.lastName),
+    birthYear: validate(validateProps.birthYear, person.birthYear)
 };
 ```
 
@@ -583,10 +686,14 @@ const props = {
     birthYear: validate(rules.birthYear, person.birthYear)
 };
 
-// Create a top-level result that includes the results from the props
+// Create a top-level result including the results from the props
 const result = {
     props,
-    isValid: (props.firstName.isValid && props.lastName.isValid && props.birthYear.isValid),
+    isValid: (
+        props.firstName.isValid &&
+        props.lastName.isValid &&
+        props.birthYear.isValid
+    ),
     value: person
 };
 ```
@@ -604,9 +711,11 @@ validators are supplied as an object with the shape matching the object. Here's 
 the person we used above showing what the detailed result properties are.
 
 ``` jsx
-import validate, {props, required, length, range, every} from 'strickland';
+import validate, {
+    props, required, length, range, every
+} from 'strickland';
 
-// Define the rules for validating first name, last name, and birthYear
+// Define the rules for first name, last name, and birthYear
 const validatePersonProps = props({
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
@@ -686,9 +795,11 @@ since validators are just functions, we could even write a custom validator to e
 named 'Stanford Strickland' must be born in 1925.
 
 ``` jsx
-import validate, {props, required, length, range, every} from 'strickland';
+import validate, {
+    props, required, length, range, every
+} from 'strickland';
 
-// Define the rules for validating first name, last name, and birthYear
+// Define the rules for first name, last name, and birthYear
 const validatePersonProps = props({
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
@@ -702,7 +813,9 @@ function stanfordStricklandBornIn1925(person) {
         return true;
     }
 
-    if (person.firstName === 'Stanford' && person.lastName === 'Strickland') {
+    const {firstName, lastName} = person;
+
+    if (firstName === 'Stanford' && lastName === 'Strickland') {
         return (person.birthYear === 1925);
     }
 
@@ -749,7 +862,9 @@ This composition ability for combining validators together on props and objects 
 Another great example is nested objects.
 
 ``` jsx
-import validate, {props, required, length, range, every} from 'strickland';
+import validate, {
+    props, required, length, range, every
+} from 'strickland';
 
 const validatePerson = props({
     name: every([required(), length(5, 40)]),
