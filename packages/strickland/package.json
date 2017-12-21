@@ -10,8 +10,8 @@
     "clean": "rm -rf lib",
     "build": "npm run lint && npm test && babel src -d lib",
     "lint": "eslint src/** test/**",
-    "test": "mocha --compilers js:babel-register --recursive",
-    "test:watch": "nodemon -e js -x \"npm test\"",
+    "test": "jest --verbose --coverage",
+    "test:watch": "jest --watch",
     "prepare": "npm run build"
   },
   "repository": {
@@ -43,9 +43,9 @@
     "babel-register": "^6.26.0",
     "deep-freeze": "0.0.1",
     "eslint": "^4.13.0",
-    "eslint-plugin-react": "^7.5.1",
-    "expect": "^21.2.1",
-    "mocha": "^4.0.1",
-    "nodemon": "^1.12.5"
+    "eslint-plugin-react": "^7.5.1"
+  },
+  "dependencies": {
+    "jest": "^22.0.3"
   }
 }

@@ -1,4 +1,3 @@
-import expect from 'expect';
 import validate, {props, required, minLength, maxLength, length, range, every} from '../src/strickland';
 
 describe('readme', () => {

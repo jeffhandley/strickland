@@ -1,4 +1,3 @@
-import expect from 'expect';
 import {every, required, minLength, maxLength} from '../src/strickland';
 
 describe('every', () => {

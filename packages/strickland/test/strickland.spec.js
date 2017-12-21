@@ -1,4 +1,3 @@
-import expect from 'expect';
 import validate, {required, minLength} from '../src/strickland';
 
 describe('validate', () => {
