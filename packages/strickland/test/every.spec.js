@@ -186,7 +186,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate('Every with a promise');
-                expect(result).resolves.toMatchObject({isValid: true});
+                return expect(result).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
@@ -195,7 +195,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                expect(result).resolves.toMatchObject({isValid: true});
+                return expect(result).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as false', () => {
@@ -204,7 +204,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                expect(result).resolves.toMatchObject({isValid: false});
+                return expect(result).resolves.toMatchObject({isValid: false});
             });
 
             it('that resolve as an invalid result object', () => {
@@ -213,7 +213,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                expect(result).resolves.toMatchObject({isValid: false});
+                return expect(result).resolves.toMatchObject({isValid: false});
             });
 
             it('recursively', () => {
@@ -242,7 +242,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!', inNestedEveryValidators: 'Yep'});
+                return expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!', inNestedEveryValidators: 'Yep'});
             });
 
             it('after the first promise', () => {
@@ -252,7 +252,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                expect(result).resolves.toMatchObject({
+                return expect(result).resolves.toMatchObject({
                     isValid: true,
                     first: 'First',
                     second: 'Second'
@@ -266,7 +266,7 @@ describe('every', () => {
             ]);
 
             const result = validate('ABC');
-            expect(result).resolves.toMatchObject({value: 'ABC'});
+            return expect(result).resolves.toMatchObject({value: 'ABC'});
         });
 
         it('puts validate props on the resolved result', () => {
@@ -275,7 +275,7 @@ describe('every', () => {
             ]);
 
             const result = validate('ABC', {message: 'Message'});
-            expect(result).resolves.toMatchObject({message: 'Message'});
+            return expect(result).resolves.toMatchObject({message: 'Message'});
         });
     });
 });
