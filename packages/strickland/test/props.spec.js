@@ -337,4 +337,136 @@ describe('props', () => {
             });
         });
     });
+
+    describe('given async validators', () => {
+        it('returns a Promise if a validator returns a Promise', () => {
+            const validate = props({
+                first: () => Promise.resolve(true)
+            });
+
+            const result = validate({first: 'LOG'});
+            expect(result).toBeInstanceOf(Promise);
+        });
+
+        describe('resolves results', () => {
+            it('that resolve as true', () => {
+                const validate = props({
+                    first: () => Promise.resolve(true)
+                });
+
+                const result = validate({first: 'LOG', test: 'that resolve as true'});
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
+
+            it('that resolve as a valid result object', () => {
+                const validate = props({
+                    first: () => Promise.resolve({isValid: true})
+                });
+
+                const result = validate({first: 'LOG'});
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
+
+            it('that resolve as false', () => {
+                const validate = props({
+                    first: () => Promise.resolve(false)
+                });
+
+                const result = validate({first: 'LOG'});
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
+
+            it('that resolve as an invalid result object', () => {
+                const validate = props({
+                    first: () => Promise.resolve({isValid: false})
+                });
+
+                const result = validate({first: 'LOG'});
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
+
+            it('recursively', () => {
+                const validate = props({
+                    first: () => Promise.resolve(
+                        Promise.resolve(
+                            Promise.resolve({
+                                isValid: true,
+                                recursively: 'Yes!'
+                            })
+                        )
+                    ),
+                    second: props({
+                        third: () => Promise.resolve(
+                            Promise.resolve(true)
+                        ),
+                        fourth: props({
+                            fifth: () => Promise.resolve(
+                                Promise.resolve({
+                                    isValid: true,
+                                    inNestedPropsValidators: 'Yep'
+                                })
+                            )
+                        })
+                    }),
+                    sixth: () => ({
+                        isValid: true,
+                        syncProps: true
+                    })
+                });
+
+                const value = {
+                    first: null,
+                    second: {
+                        third: null,
+                        fourth: {
+                            fifth: null
+                        }
+                    }
+                };
+
+                const result = validate(value);
+                return expect(result).resolves.toMatchObject({
+                    isValid: true,
+                    props: {
+                        first: {
+                            isValid: true,
+                            recursively: 'Yes!'
+                        },
+                        second: {
+                            isValid: true,
+                            props: {
+                                third: {isValid: true},
+                                fourth: {
+                                    isValid: true,
+                                    props: {
+                                        fifth: {
+                                            isValid: true,
+                                            inNestedPropsValidators: 'Yep'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        sixth: {
+                            isValid: true,
+                            syncProps: true
+                        }
+                    }
+                });
+            });
+        });
+
+        it('puts validate props on the resolved result', () => {
+            const validate = props({
+                first: () => Promise.resolve(true)
+            });
+
+            const value = {
+                first: 'First'
+            };
+
+            const result = validate(value, {message: 'Message'});
+            return expect(result).resolves.toMatchObject({message: 'Message'});
+        });
+    });
 });
