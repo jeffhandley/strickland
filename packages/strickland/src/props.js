@@ -14,24 +14,14 @@ export default function props(propRules, validatorProps) {
 
             const propNames = Object.keys(validators);
 
-            let propResults = {};
-            let allValid = true;
-
             propNames.forEach((propName) => {
+                const previousResult = currentResult;
                 const propResult = validate(validators[propName], value[propName], validationProps);
-                allValid = allValid && propResult.isValid;
 
-                propResults = {
-                    ...propResults,
-                    [propName]: propResult
-                }
+                currentResult = applyPropResult(previousResult, propName, propResult);
             });
 
-            return {
-                ...currentResult,
-                props: propResults,
-                isValid: allValid
-            };
+            return currentResult;
         }
 
         let initialResult = {
@@ -42,6 +32,17 @@ export default function props(propRules, validatorProps) {
         const result = executeValidators(initialResult, propRules)
         return prepareResult(validationProps, result);
     }
+}
+
+function applyPropResult(topLevelResult, propName, propResult) {
+    return {
+        ...topLevelResult,
+        props: {
+            ...topLevelResult.props,
+            [propName]: propResult
+        },
+        isValid: !!(topLevelResult.isValid && propResult.isValid)
+    };
 }
 
 function prepareResult(validationProps, result) {
