@@ -35,7 +35,6 @@ function prepareResult(value, validationProps, result) {
 
     if (result.each.some((result) => result instanceof Promise)) {
         return Promise.all(result.each).then((resolvedResults) => {
-
             const flattenedResult = resolvedResults.reduce((previous, next) => ({
                 ...previous,
                 ...next

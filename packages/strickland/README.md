@@ -1066,9 +1066,9 @@ you will always need to treat the result from `validate` as a `Promise`.
 
 ### Async Validator Arrays and Objects
 
-As you likely guessed, the `every` and `props` validators support async validators too. That means
-you can compose async validators together with any other validators. If anywhere in your tree of
-validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
+As you likely guessed, the `every`, `props`, `each`, and `some` validators support async validators too.
+That means you can compose async validators together with any other validators. If anywhere in your tree
+of validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
 
 The conventions for `every` and `props` still apply when async validators are in use. Here is
 an example showing sync and async validators mixed together when nested objects and arrays.
@@ -1160,6 +1160,14 @@ validate(validatePerson, person).then((result) => {
 You can use async validators anywhere you want and the resolved results match the shape
 you would expect if everything was executed synchronously.
 
+#### props
+
+The `props` validator on the other hand validates all props at once. This is possible
+because one prop being invalid does not prevent other props from being validated. The `props`
+validator result will not be resolved until all props have been validated, but the async
+validators will be executed in parallel using `Promise.all()`. In the example above,
+`usernameIsAvailable` and `validateCity` run in parallel.
+
 #### every
 
 The `every` validator retains its short-circuiting behavior when async results are returned.
@@ -1169,13 +1177,20 @@ subsequent validators from getting called if earlier validators are already inva
 that multiple async validators in an array would then have their execution times added up before
 valid results can be returned.
 
-#### props
+#### each
 
-The `props` validator on the other hand validates all props at once. This is possible
-because one prop being invalid does not prevent other props from being validated. The `props`
-validator result will not be resolved until all props have been validated, but the async
-validators will be executed in parallel using `Promise.all()`. In the example above,
-`usernameIsAvailable` and `validateCity` run in parallel.
+The `each` validator behaves more like the `props` validator when async validation is needed.
+Because `each` will never short-circuit based on validation results, it uses `Promise.all()`
+to resolve each of the validators. Its async validators can therefore run in parallel, and
+it may sometimes be beneficial to use `each` explicitly when performing multiple async
+validations.
+
+#### some
+
+The `some` validator is similar to `every`; it short-circuits and therefore cannot run async
+validators in parallel. The `some` validator will short-circuit and return a *valid* result
+as soon as it encounters the first valid result. Async validators will therefore get
+chained together and run in series until a valid result is found.
 
 ## Summary
 
