@@ -7,20 +7,18 @@ export default function props(propRules, validatorProps) {
             ...validationProps
         };
 
-        let result = {
-            ...validationProps,
-            value,
-            isValid: true
-        };
+        function executeValidators(currentResult, validators) {
+            if (!value || typeof value !== 'object' || !validators) {
+                return currentResult;
+            }
 
-        if (typeof value === 'object' && value) {
-            const propNames = Object.keys(propRules);
+            const propNames = Object.keys(validators);
 
             let propResults = {};
             let allValid = true;
 
             propNames.forEach((propName) => {
-                const propResult = validate(propRules[propName], value[propName], validationProps);
+                const propResult = validate(validators[propName], value[propName], validationProps);
                 allValid = allValid && propResult.isValid;
 
                 propResults = {
@@ -29,13 +27,26 @@ export default function props(propRules, validatorProps) {
                 }
             });
 
-            result = {
-                ...result,
+            return {
+                ...currentResult,
                 props: propResults,
                 isValid: allValid
             };
         }
 
-        return result;
+        let initialResult = {
+            props: {},
+            isValid: true
+        };
+
+        const result = executeValidators(initialResult, propRules)
+        return prepareResult(validationProps, result);
     }
+}
+
+function prepareResult(validationProps, result) {
+    return {
+        ...validationProps,
+        ...result
+    };
 }

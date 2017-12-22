@@ -61,6 +61,19 @@ describe('props', () => {
         });
     });
 
+    describe('with empty rules', () => {
+        const validate = props();
+        const result = validate();
+
+        it('returns valid results', () => {
+            expect(result.isValid).toBe(true);
+        });
+
+        it('returns empty props', () => {
+            expect(result.props).toEqual({});
+        });
+    });
+
     describe('with nested rules objects', () => {
         const validate = props({
             name: required(),
@@ -269,13 +282,6 @@ describe('props', () => {
 
             const result = validate(value);
             expect(result.props.homeAddress.isValid).toBe(true);
-        });
-
-        it('does not create props for missing top-level object properties', () => {
-            const value = {};
-            const result = validate(value);
-
-            expect(result.props).not.toHaveProperty('homeAddress.props');
         });
 
         it('sets missing nested object properties to valid', () => {
