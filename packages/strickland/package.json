@@ -29,12 +29,12 @@
     "flux",
     "node"
   ],
-  "author": "Jeff Handley <jeff@jeffhandley.com>",
+  "author": "Jeff Handley <npm@jeffhandley.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jeffhandley/strickland/issues"
   },
-  "homepage": "https://github.com/jeffhandley/strickland",
+  "homepage": "http://strickland.io",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.3",
