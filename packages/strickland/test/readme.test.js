@@ -1,4 +1,4 @@
-import validate, {props, required, minLength, maxLength, length, range, every} from '../src/strickland';
+import validate, {props, required, minLength, maxLength, length, range, every, each, some} from '../src/strickland';
 
 describe('readme', () => {
     it('performing validation', () => {
@@ -132,6 +132,75 @@ describe('readme', () => {
                 }
             ]
         });
+    });
+
+    it('each', () => {
+        const mustExistWithLength5 = each([
+            required({message: 'Required'}),
+            minLength(5, {message: 'Must have a length of at least 5'}),
+            maxLength(10, {message: 'Must have a length no greater than 10'})
+        ]);
+
+        const result = validate(mustExistWithLength5, '1234');
+
+        expect(result).toMatchObject({
+            isValid: false,
+            value: '1234',
+            required: true,
+            minLength: 5,
+            message: 'Must have a length no greater than 10',
+            each: [
+                {
+                    isValid: true,
+                    value: '1234',
+                    required: true,
+                    message: 'Required'
+                },
+                {
+                    isValid: false,
+                    value: '1234',
+                    minLength: 5,
+                    message: 'Must have a length of at least 5'
+                },
+                {
+                    isValid: true,
+                    value: '1234',
+                    maxLength: 10,
+                    message: 'Must have a length no greater than 10'
+                }
+            ]
+        });
+    });
+
+    it('some', () => {
+        const mustExistWithLength5 = some([
+            required({message: 'Required'}),
+            maxLength(10, {message: 'Must have a length no greater than 10'}),
+            minLength(5, {message: 'Must have a length of at least 5'})
+        ]);
+        const result = validate(mustExistWithLength5, '');
+
+        expect(result).toMatchObject({
+            isValid: true,
+            value: '',
+            required: true,
+            maxLength: 10,
+            message: 'Must have a length no greater than 10',
+            some: [
+                {
+                    isValid: false,
+                    value: '',
+                    required: true,
+                    message: 'Required'
+                },
+                {
+                    isValid: true,
+                    value: '',
+                    maxLength: 10,
+                    message: 'Must have a length no greater than 10'
+                }
+            ]
+        })
     });
 
     it('validating objects', () => {

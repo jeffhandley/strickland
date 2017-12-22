@@ -1,7 +1,7 @@
 import validate from './strickland';
 
-export default function every(validators, validatorProps) {
-    return function validateEvery(value, validationProps) {
+export default function some(validators, validatorProps) {
+    return function validateSome(value, validationProps) {
         validationProps = {
             ...validatorProps,
             ...validationProps
@@ -12,7 +12,7 @@ export default function every(validators, validatorProps) {
                 return currentResult;
             }
 
-            validatorsToExecute.every((validator, index) => {
+            validatorsToExecute.some((validator, index) => {
                 const previousResult = currentResult;
                 const nextResult = validate(validator, value, validationProps);
 
@@ -24,8 +24,8 @@ export default function every(validators, validatorProps) {
                         )
                     );
 
-                    // Break out of the every loop so the promise can be returned
-                    return false;
+                    // Break out of the some loop so the promise can be returned
+                    return true;
                 }
 
                 currentResult = applyNextResult(previousResult, nextResult);
@@ -36,7 +36,7 @@ export default function every(validators, validatorProps) {
         }
 
         const initialResult = {
-            every: []
+            some: []
         };
 
         const result = executeValidators(initialResult, validators);
@@ -48,8 +48,8 @@ function applyNextResult(previousResult, nextResult) {
     return {
         ...previousResult,
         ...nextResult,
-        every: [
-            ...previousResult.every,
+        some: [
+            ...previousResult.some,
             nextResult
         ]
     };
@@ -63,6 +63,6 @@ function prepareResult(validationProps, result) {
     return {
         ...validationProps,
         ...result,
-        isValid: !result.every.length || result.every.every((eachResult) => !!(eachResult.isValid))
+        isValid: !result.some.length || result.some.some((eachResult) => !!(eachResult.isValid))
     };
 }

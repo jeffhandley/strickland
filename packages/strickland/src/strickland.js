@@ -42,6 +42,7 @@ function prepareResult(value, validateProps, result) {
 }
 
 export {default as compare} from './compare';
+export {default as each} from './each';
 export {default as length} from './length';
 export {default as max} from './max';
 export {default as maxLength} from './maxLength';
@@ -49,4 +50,5 @@ export {default as min} from './min';
 export {default as minLength} from './minLength';
 export {default as range} from './range';
 export {default as required} from './required';
+export {default as some} from './some';
 export {every, props};

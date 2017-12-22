@@ -592,7 +592,7 @@ because of validation failing early will be omitted from this output property. T
 Here is an example illustrating the `every` property.
 
 ``` jsx
-import validate, {every, required, minLength} from 'strickland';
+import validate, {every, required, minLength, maxLength} from 'strickland';
 
 const mustExistWithLength5 = every([
     required({message: 'Required'}),
@@ -639,6 +639,97 @@ There are a few notable characteristics of this result:
     * The props from the `maxLength` validator are not included on the result
     * The `every` array in the result does not include an item for the `maxLength` validator
 1. The top-level `isValid` prop on the result reflects the overall validation result
+
+### each
+
+Strickland also provides an `each` validator. The `each` validator operates over an array and it
+will only return a valid result if each and every validator in the array is valid. But `each` has
+a significant difference from `every`: `each` will always execute every validator, regardless
+of previous results. You can use `each` if all validators are safe to execute and you need to
+know all validator results, even if some are invalid.
+
+``` jsx
+import validate, {each, required, minLength, maxLength} from 'strickland';
+
+const mustExistWithLength5 = each([
+    required({message: 'Required'}),
+    minLength(5, {message: 'Must have a length of at least 5'}),
+    maxLength(10, {message: 'Must have a length no greater than 10'})
+]);
+const result = validate(mustExistWithLength5, '1234');
+
+/*
+result = {
+    isValid: false,
+    value: '1234',
+    required: true,
+    minLength: 5,
+    message: 'Must have a length no greater than 10',
+    each: [
+        {
+            isValid: true,
+            value: '1234',
+            required: true,
+            message: 'Required'
+        },
+        {
+            isValid: false,
+            value: '1234',
+            minLength: 5,
+            message: 'Must have a length of at least 5'
+        },
+        {
+            isValid: true,
+            value: '1234',
+            maxLength: 10,
+            message: 'Must have a length no greater than 10'
+        }
+    ]
+}
+*/
+```
+
+### some
+
+Strickland also provides an `some` validator. The `some` validator also operates over an array
+of validators and it behaves similarly to `every`, except that it will exit as soon as it encounters
+a *valid* result. If any of the validators in the array are valid, then the overall result will
+be valid.
+
+``` jsx
+import validate, {some, required, minLength, maxLength} from 'strickland';
+
+const mustExistWithLength5 = some([
+    required({message: 'Required'}),
+    maxLength(10, {message: 'Must have a length no greater than 10'}),
+    minLength(5, {message: 'Must have a length of at least 5'})
+]);
+const result = validate(mustExistWithLength5, '');
+
+/*
+result = {
+    isValid: true,
+    value: '',
+    required: true,
+    maxLength: 10,
+    message: 'Must have a length no greater than 10',
+    some: [
+        {
+            isValid: false,
+            value: '',
+            required: true,
+            message: 'Required'
+        },
+        {
+            isValid: true,
+            value: '',
+            maxLength: 10,
+            message: 'Must have a length no greater than 10'
+        }
+    ]
+}
+*/
+```
 
 ## Validating Objects
 

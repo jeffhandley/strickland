@@ -1,25 +1,25 @@
-import {every, required, minLength, maxLength} from '../src/strickland';
+import {each, required, minLength, maxLength} from '../src/strickland';
 
-describe('every', () => {
+describe('each', () => {
     it('returns a validate function', () => {
-        const validate = every();
+        const validate = each();
         expect(validate).toBeInstanceOf(Function);
     });
 
     it('defaults to valid when there are no validators', () => {
-        const validate = every();
+        const validate = each();
         const result = validate();
         expect(result.isValid).toBe(true);
     });
 
     it('defaults to valid when validators is empty', () => {
-        const validate = every([]);
+        const validate = each([]);
         const result = validate();
         expect(result.isValid).toBe(true);
     });
 
     describe('validates', () => {
-        const validate = every([
+        const validate = each([
             required({message: 'Required'}),
             minLength(2),
             maxLength(4)
@@ -32,15 +32,16 @@ describe('every', () => {
             expect(result).toBeInstanceOf(Object);
         });
 
-        it('returning an every array on the result', () => {
-            expect(result.every).toBeInstanceOf(Array);
+        it('returning an each array on the result', () => {
+            expect(result.each).toBeInstanceOf(Array);
         });
 
-        it('returning results for all valid validators and the first invalid validator', () => {
+        it('returning results for each validator (including after invalid results)', () => {
             expect(result).toMatchObject({
-                every: [
+                each: [
                     {isValid: true, message: 'Required'},
-                    {isValid: false, minLength: 2}
+                    {isValid: false, minLength: 2},
+                    {isValid: true, maxLength: 4}
                 ]
             });
         });
@@ -53,7 +54,7 @@ describe('every', () => {
             const validResult = validate('ABC');
             expect(validResult).toMatchObject({
                 isValid: true,
-                every: [
+                each: [
                     {isValid: true, message: 'Required'},
                     {isValid: true, minLength: 2},
                     {isValid: true, maxLength: 4}
@@ -63,23 +64,23 @@ describe('every', () => {
     });
 
     describe('with nested rules arrays', () => {
-        const validate = every([
+        const validate = each([
             required({message: 'Required'}),
-            [
+            each([
                 minLength(2),
                 maxLength(4)
-            ]
+            ])
         ]);
 
         it('returns results in the shape of the rules', () => {
             const result = validate('ABC');
 
             expect(result).toMatchObject({
-                every: [
+                each: [
                     {isValid: true, message: 'Required'},
                     {
                         isValid: true,
-                        every: [
+                        each: [
                             {isValid: true, minLength: 2},
                             {isValid: true, maxLength: 4}
                         ]
@@ -96,13 +97,13 @@ describe('every', () => {
                 });
             }
 
-            const validateWithResultProps = every([
+            const validateWithResultProps = each([
                 resultPropValidator({first: 'First'}),
                 resultPropValidator({second: 'Second'}),
-                every([
+                each([
                     resultPropValidator({third: 'Third'}),
                     resultPropValidator({fourth: 'Fourth'}),
-                    every([
+                    each([
                         resultPropValidator({fifth: 'Fifth'})
                     ])
                 ])
@@ -122,13 +123,13 @@ describe('every', () => {
     });
 
     describe('passes props to the validators', () => {
-        const validate = every([required({message: 'Required'}), minLength(2)], {validatorProp: 'Validator'});
+        const validate = each([required({message: 'Required'}), minLength(2)], {validatorProp: 'Validator'});
         const result = validate('AB', {validateProp: 'Validate'});
 
         it('from the validator definition', () => {
             expect(result).toMatchObject({
                 validatorProp: 'Validator',
-                every: [
+                each: [
                     {validatorProp: 'Validator', message: 'Required'},
                     {validatorProp: 'Validator', minLength: 2}
                 ]
@@ -138,7 +139,7 @@ describe('every', () => {
         it('from the validate function', () => {
             expect(result).toMatchObject({
                 validateProp: 'Validate',
-                every: [
+                each: [
                     {validateProp: 'Validate', message: 'Required'},
                     {validateProp: 'Validate', minLength: 2}
                 ]
@@ -153,7 +154,7 @@ describe('every', () => {
                 };
             }
 
-            const validateWithMessage = every([(validator)]);
+            const validateWithMessage = each([(validator)]);
             const resultWithMessage = validateWithMessage('AB', {message: 'From validation'})
 
             expect(resultWithMessage.message).toBe('From the result');
@@ -162,7 +163,7 @@ describe('every', () => {
 
     describe('given async validators', () => {
         it('returns a Promise if a validator returns a Promise', () => {
-            const validate = every([
+            const validate = each([
                 () => Promise.resolve(true)
             ]);
 
@@ -170,31 +171,37 @@ describe('every', () => {
             expect(result).toBeInstanceOf(Promise);
         });
 
-        it('returns a resolved result if an invalid result appears before hitting a Promise', () => {
-            const validate = every([
+        it('resolves each results, even when some are invalid', () => {
+            const validate = each([
                 () => ({isValid: false, first: 'First'}),
-                () => Promise.resolve(true)
+                () => Promise.resolve({isValid: false, second: 'Second'}),
+                () => ({isValid: false, third: 'Third'}),
+                () => Promise.resolve({isValid: false, fourth: 'Fourth'}),
+                () => Promise.resolve({isValid: true, fifth: 'Fifth'})
             ]);
 
             const result = validate();
-            expect(result).toMatchObject({
-                isValid: false,
-                first: 'First'
+            return expect(result).resolves.toMatchObject({
+                first: 'First',
+                second: 'Second',
+                third: 'Third',
+                fourth: 'Fourth',
+                fifth: 'Fifth'
             });
         });
 
         describe('resolves results', () => {
             it('that resolve as true', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve(true)
                 ]);
 
-                const result = validate('Every with a promise');
+                const result = validate('each with a promise');
                 return expect(result).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve({isValid: true})
                 ]);
 
@@ -203,7 +210,7 @@ describe('every', () => {
             });
 
             it('that resolve as false', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve(false)
                 ]);
 
@@ -212,7 +219,7 @@ describe('every', () => {
             });
 
             it('that resolve as an invalid result object', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve({isValid: false})
                 ]);
 
@@ -221,7 +228,7 @@ describe('every', () => {
             });
 
             it('recursively', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve(
                         Promise.resolve(
                             Promise.resolve({
@@ -230,11 +237,11 @@ describe('every', () => {
                             })
                         )
                     ),
-                    every([
+                    each([
                         () => Promise.resolve(
                             Promise.resolve(true)
                         ),
-                        every([
+                        each([
                             () => Promise.resolve(
                                 Promise.resolve({
                                     isValid: true,
@@ -255,7 +262,7 @@ describe('every', () => {
             });
 
             it('after the first promise', () => {
-                const validate = every([
+                const validate = each([
                     () => Promise.resolve({isValid: true, first: 'First'}),
                     () => ({isValid: true, second: 'Second'})
                 ]);
@@ -271,7 +278,7 @@ describe('every', () => {
         });
 
         it('puts the value on the resolved result', () => {
-            const validate = every([
+            const validate = each([
                 () => Promise.resolve(true)
             ]);
 
@@ -280,7 +287,7 @@ describe('every', () => {
         });
 
         it('puts validate props on the resolved result', () => {
-            const validate = every([
+            const validate = each([
                 () => Promise.resolve(true)
             ]);
 
