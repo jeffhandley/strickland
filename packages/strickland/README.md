@@ -649,7 +649,9 @@ of previous results. You can use `each` if all validators are safe to execute an
 know all validator results, even if some are invalid.
 
 ``` jsx
-import validate, {each, required, minLength, maxLength} from 'strickland';
+import validate, {
+    each, required, minLength, maxLength
+} from 'strickland';
 
 const mustExistWithLength5 = each([
     required({message: 'Required'}),
@@ -697,7 +699,9 @@ a *valid* result. If any of the validators in the array are valid, then the over
 be valid.
 
 ``` jsx
-import validate, {some, required, minLength, maxLength} from 'strickland';
+import validate, {
+    some, required, minLength, maxLength
+} from 'strickland';
 
 const mustExistWithLength5 = some([
     required({message: 'Required'}),
@@ -741,7 +745,9 @@ We will start by illustrating what object validation might look like with no add
 This example will validate a person's first name, last name, and birth year.
 
 ``` jsx
-import validate, {required, length, range, every} from 'strickland';
+import validate, {
+    required, length, range, every
+} from 'strickland';
 
 // Define the rules for first name, last name, and birthYear
 const validateProps = {
@@ -1038,7 +1044,7 @@ function usernameIsAvailable(username) {
         if (username === 'marty') {
             resolve({
                 isValid: false,
-                message: `The username "${username}" is not available`
+                message: `"${username}" is not available`
             });
         }
 
@@ -1051,7 +1057,7 @@ validate(usernameIsAvailable, 'marty').then((result) => {
     result = {
         isValid: false,
         value: 'marty',
-        message: 'The username "marty" is not available'
+        message: '"marty" is not available'
     }
     */
 });
@@ -1140,7 +1146,7 @@ validate(validatePerson, person).then((result) => {
             username: {
                 isValid: false,
                 value: 'marty',
-                message: 'The username "marty" is not available'
+                message: '"marty" is not available'
             },
             address: {
                 isValid: false,

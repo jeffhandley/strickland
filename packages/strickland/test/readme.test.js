@@ -314,7 +314,7 @@ describe('readme', () => {
                 if (username === 'marty') {
                     resolve({
                         isValid: false,
-                        message: `The username "${username}" is not available`
+                        message: `"${username}" is not available`
                     });
                 }
 
@@ -327,7 +327,7 @@ describe('readme', () => {
                 expect(result).toMatchObject({
                     isValid: false,
                     value: 'marty',
-                    message: 'The username "marty" is not available'
+                    message: '"marty" is not available'
                 });
             });
         });
@@ -385,7 +385,7 @@ describe('readme', () => {
                         username: {
                             isValid: false,
                             value: 'marty',
-                            message: 'The username "marty" is not available'
+                            message: '"marty" is not available'
                         },
                         address: {
                             isValid: false,
