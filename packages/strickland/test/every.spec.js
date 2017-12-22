@@ -162,7 +162,7 @@ describe('every', () => {
                 () => Promise.resolve(true)
             ]);
 
-            const result = validate('LOG');
+            const result = validate();
             expect(result).toBeInstanceOf(Promise);
         });
 
@@ -182,11 +182,11 @@ describe('every', () => {
         describe('resolves results', () => {
             it('that resolve as true', () => {
                 const validate = every([
-                    () => Promise.resolve({isValid: true, resolvedPromise: true})
+                    () => Promise.resolve(true)
                 ]);
 
                 const result = validate('Every with a promise');
-                expect(result).resolves.toMatchObject({isValid: true, resolvedPromise: true});
+                expect(result).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
@@ -262,7 +262,7 @@ describe('every', () => {
 
         it('puts the value on the resolved result', () => {
             const validate = every([
-                () => Promise.resolve({isValid: true})
+                () => Promise.resolve(true)
             ]);
 
             const result = validate('ABC');
@@ -271,7 +271,7 @@ describe('every', () => {
 
         it('puts validate props on the resolved result', () => {
             const validate = every([
-                () => Promise.resolve({isValid: true})
+                () => Promise.resolve(true)
             ]);
 
             const result = validate('ABC', {message: 'Message'});
