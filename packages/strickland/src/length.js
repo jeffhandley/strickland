@@ -1,4 +1,4 @@
-import validate, {minLength, maxLength} from './strickland';
+import {every, minLength, maxLength} from './strickland';
 
 export default function length(minLengthProp, maxLengthProp, validatorProps) {
     if (typeof minLengthProp === 'object') {
@@ -18,10 +18,8 @@ export default function length(minLengthProp, maxLengthProp, validatorProps) {
         };
     }
 
-    const validateLength = [
+    return every([
         minLength(validatorProps),
         maxLength(validatorProps)
-    ];
-
-    return validate.bind(null, validateLength);
+    ]);
 }

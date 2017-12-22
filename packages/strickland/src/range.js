@@ -1,4 +1,4 @@
-import validate, {min, max} from './strickland';
+import {every, min, max} from './strickland';
 
 export default function range(minProp, maxProp, validatorProps) {
     if (typeof minProp === 'object') {
@@ -18,10 +18,8 @@ export default function range(minProp, maxProp, validatorProps) {
         };
     }
 
-    const validateRange = [
+    return every([
         min(validatorProps),
         max(validatorProps)
-    ];
-
-    return validate.bind(null, validateRange);
+    ]);
 }
