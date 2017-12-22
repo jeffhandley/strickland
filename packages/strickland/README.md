@@ -15,6 +15,8 @@ Strickland is a unique and robust approach to building validation into your appl
 Strickland focuses not on being a bloated collection of validators, but instead on enabling you to create
 your own collection of validators that can be composed together easily.
 
+[https://www.npmjs.com/package/strickland](https://www.npmjs.com/package/strickland)
+
 ## Creating a Validator
 
 Validators are functions that take values and return a validation result. Here is an extremely simple validator
