@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "prepublish": "cp packages/strickland/README.md .",
-    "publish": "lerna run publish",
+    "publish": "lerna publish",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"
