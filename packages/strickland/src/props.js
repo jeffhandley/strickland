@@ -7,47 +7,28 @@ export default function props(propRules, validatorProps) {
             ...validationProps
         };
 
-        function executeValidators(currentResult, validators) {
-            if (!value || typeof value !== 'object' || !validators) {
-                return currentResult;
-            }
+        let propsResult = {};
 
-            const propNames = Object.keys(validators);
+        if (value && typeof value === 'object' && propRules) {
+            const propNames = Object.keys(propRules);
 
-            propNames.forEach((propName) => {
-                const propResult = validate(validators[propName], value[propName], validationProps);
-                currentResult = applyPropResult(currentResult, propName, propResult);
-            });
-
-            return currentResult;
+            propsResult = propNames.reduce((previousResult, propName) => ({
+                ...previousResult,
+                [propName]: validate(propRules[propName], value[propName], validationProps)
+            }), propsResult);
         }
 
-        let initialResult = {
-            props: {}
-        };
-
-        const result = executeValidators(initialResult, propRules)
-        return prepareResult(value, validationProps, result);
+        return prepareResult(value, validationProps, propsResult);
     }
 }
 
-function applyPropResult(topLevelResult, propName, propResult) {
-    return {
-        ...topLevelResult,
-        props: {
-            ...topLevelResult.props,
-            [propName]: propResult
-        }
-    };
-}
-
-function prepareResult(value, validationProps, result) {
-    const propNames = Object.keys(result.props);
+function prepareResult(value, validationProps, propsResult) {
+    const propNames = Object.keys(propsResult);
     const propPromises = [];
     let isValid = true;
 
     propNames.forEach((propName) => {
-        const propResult = result.props[propName];
+        const propResult = propsResult[propName];
 
         if (propResult instanceof Promise) {
             propPromises.push(propResult.then((resolvedPropResult) => ({
@@ -61,18 +42,18 @@ function prepareResult(value, validationProps, result) {
 
     if (propPromises.length) {
         return Promise.all(propPromises).then((resolvedProps) => {
-            resolvedProps.forEach(({propName, resolvedPropResult}) => {
-                result = applyPropResult(result, propName, resolvedPropResult);
-                isValid = isValid && resolvedPropResult.isValid;
-            });
+            propsResult = resolvedProps.reduce((previousResult, {propName, resolvedPropResult}) => ({
+                ...previousResult,
+                [propName]: resolvedPropResult
+            }), propsResult);
 
-            return prepareResult(value, validationProps, result);
+            return prepareResult(value, validationProps, propsResult);
         });
     }
 
     return {
         ...validationProps,
-        ...result,
+        props: propsResult,
         isValid
     };
 }
