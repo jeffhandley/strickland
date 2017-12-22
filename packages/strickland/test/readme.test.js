@@ -234,4 +234,102 @@ describe('readme', () => {
             }
         });
     });
+
+    describe('async validators', () => {
+        function usernameIsAvailable(username) {
+            if (!username) {
+                return true;
+            }
+
+            return new Promise((resolve) => {
+                if (username === 'marty') {
+                    resolve({
+                        isValid: false,
+                        message: `The username "${username}" is not available`
+                    });
+                }
+
+                resolve(true);
+            });
+        }
+
+        it('first example', () => {
+            return validate(usernameIsAvailable, 'marty').then((result) => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: 'marty',
+                    message: 'The username "marty" is not available'
+                });
+            });
+        });
+
+        it('async validator arrays and objects', () => {
+            function validateCity(address) {
+                if (!address) {
+                    return true;
+                }
+
+                return new Promise((resolve) => {
+                    if (address.city === 'Hill Valley' && address.state !== 'CA') {
+                        resolve({
+                            isValid: false,
+                            message: 'Hill Valley is in California'
+                        });
+                    } else {
+                        resolve(true);
+                    }
+                });
+            }
+
+            const validatePerson = {
+                name: [required(), length(2, 20, {message: 'Name must be 2-20 characters'})],
+                username: [required(), length(2, 20), usernameIsAvailable],
+                address: [
+                    required({message: 'Address is required'}),
+                    {
+                        street: [required(), length(2, 40)],
+                        city: [required(), length(2, 40)],
+                        state: [required(), length(2, 2)]
+                    },
+                    validateCity
+                ]
+            };
+
+            const person = {
+                name: 'Marty McFly',
+                username: 'marty',
+                address: {
+                    street: '9303 Lyon Dr.',
+                    city: 'Hill Valley',
+                    state: 'WA'
+                }
+            };
+
+            return validate(validatePerson, person).then((result) => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    props: {
+                        name: {
+                            isValid: true,
+                            value: 'Marty McFly'
+                        },
+                        username: {
+                            isValid: false,
+                            value: 'marty',
+                            message: 'The username "marty" is not available'
+                        },
+                        address: {
+                            isValid: false,
+                            message: 'Hill Valley is in California',
+                            props: {
+                                street: {isValid: true},
+                                city: {isValid: true},
+                                state: {isValid: true}
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
 });

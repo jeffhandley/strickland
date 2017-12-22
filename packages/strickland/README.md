@@ -929,6 +929,163 @@ array conventions, there is no way to pass validator props in that would apply a
 to all validators within the array. But it is quite easy to reintroduce the `props` or `every` wrapper
 and pass props in after the object or array as seen previously.
 
+## Async Validators
+
+If you have wondered how async validators would work with Strickland, you will be delighted at how
+simple they are. If a validator returns a `Promise`, then Strickland will return a `Promise` for
+the validation result. When the validation result is resolved, any async validators will be resolved.
+
+``` jsx
+import validate from 'strickland';
+
+function usernameIsAvailable(username) {
+    if (!username) {
+        return true;
+    }
+
+    return new Promise((resolve) => {
+        if (username === 'marty') {
+            resolve({
+                isValid: false,
+                message: `The username "${username}" is not available`
+            });
+        }
+
+        resolve(true);
+    });
+}
+
+validate(usernameIsAvailable, 'marty').then((result) => {
+    /*
+    result = {
+        isValid: false,
+        value: 'marty',
+        message: 'The username "marty" is not available'
+    }
+    */
+});
+```
+
+When validation results are invalid, do not reject the promise. Instead, resolve the promise
+with a validation result that is not valid. As usual, this can be done by returning `false` or
+an object with `isValid: false`.
+
+It is your responsibility to know if one of your validators could return a `Promise`; if so, then
+you will always need to treat the result from `validate` as a `Promise`.
+
+### Async Validator Arrays and Objects
+
+As you likely guessed, the `every` and `props` validators support async validators too. That means
+you can compose async validators together with any other validators. If anywhere in your tree of
+validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
+
+The conventions for `every` and `props` still apply when async validators are in use. Here is
+an example showing sync and async validators mixed together when nested objects and arrays.
+
+``` jsx
+import validate, {required, length} from 'strickland';
+
+function validateCity(address) {
+    if (!address) {
+        return true;
+    }
+
+    return new Promise((resolve) => {
+        const {city, state} = address;
+
+        if (city === 'Hill Valley' && state !== 'CA') {
+            resolve({
+                isValid: false,
+                message: 'Hill Valley is in California'
+            });
+        } else {
+            resolve(true);
+        }
+    });
+}
+
+const validatePerson = {
+    name: [
+        required(),
+        length(2, 20, {
+            message: 'Name must be 2-20 characters'
+        })
+    ],
+    username: [
+        required(),
+        length(2, 20),
+        usernameIsAvailable
+    ],
+    address: [
+        required({message: 'Address is required'}),
+        {
+            street: [required(), length(2, 40)],
+            city: [required(), length(2, 40)],
+            state: [required(), length(2, 2)]
+        },
+        validateCity
+    ]
+};
+
+const person = {
+    name: 'Marty McFly',
+    username: 'marty',
+    address: {
+        street: '9303 Lyon Dr.',
+        city: 'Hill Valley',
+        state: 'WA'
+    }
+};
+
+validate(validatePerson, person).then((result) => {
+    /*
+    result = {
+        isValid: false,
+        props: {
+            name: {
+                isValid: true,
+                value: 'Marty McFly'
+            },
+            username: {
+                isValid: false,
+                value: 'marty',
+                message: 'The username "marty" is not available'
+            },
+            address: {
+                isValid: false,
+                message: 'Hill Valley is in California',
+                props: {
+                    street: {isValid: true},
+                    city: {isValid: true},
+                    state: {isValid: true}
+                }
+            }
+        }
+    }
+    */
+});
+```
+
+You can use async validators anywhere you want and the resolved results match the shape
+you would expect if everything was executed synchronously.
+
+#### every
+
+The `every` validator retains its short-circuiting behavior when async results are returned.
+Multiple async validators will be chained together such that the first async validator will
+complete before the next async validator is executed. This lets you chain validators to prevent
+subsequent validators from getting called if earlier validators are already invalid. But beware
+that multiple async validators in an array would then have their execution times added up before
+valid results can be returned.
+
+#### props
+
+The `props` validator on the other hand validates all props at once. This is possible
+because one prop being invalid does not prevent other props from being validated. The `props`
+validator result will not be resolved until all props have been validated, but the async
+validators will be executed in parallel using `Promise.all()`. In the example above,
+`usernameIsAvailable` and `validateCity` run in parallel.
+
 ## Summary
 
 Strickland actually uses very few concepts to accomplish a great deal.
@@ -939,8 +1096,10 @@ Strickland actually uses very few concepts to accomplish a great deal.
 1. Validators and factories can receive props that get included in validation result objects
 1. Validators can be composed together by writing validator functions that operate over validators
 1. This pattern allows arrays and objects of validators to be validated easily
+1. Even async validation layers on easily, with Promises being returned if needed
 
-The design and implementation of Strickland ends up being fractal, with composition available at every
-turn. Because validator functions are so simple, Strickland is a great framework on which you
-can build the validator libraries you need for your application. And since Strickland is pure JavaScript
-and not coupled to any other libraries or concepts, it can be used in any JavaScript application.
+The design and implementation of Strickland ends up being fractal, with composition available
+at every turn. Because validator functions are so simple, Strickland is a great framework on
+which you can build the validator libraries you need for your application. And since Strickland
+is pure JavaScript and not coupled to any other libraries or concepts, it can be used in any
+JavaScript application.
