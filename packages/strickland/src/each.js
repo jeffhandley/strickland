@@ -31,9 +31,7 @@ export default function each(validators, validatorProps) {
 }
 
 function prepareResult(value, validationProps, result) {
-    let isValid = true;
-
-    if (result.each.some((result) => result instanceof Promise)) {
+    if (result.each.some((eachResult) => eachResult instanceof Promise)) {
         return Promise.all(result.each).then((resolvedResults) => {
             const flattenedResult = resolvedResults.reduce((previous, next) => ({
                 ...previous,
@@ -50,6 +48,6 @@ function prepareResult(value, validationProps, result) {
     return {
         ...validationProps,
         ...result,
-        isValid: result.each.every((result) => !!(result.isValid))
+        isValid: result.each.every((eachResult) => !!(eachResult.isValid))
     };
 }
