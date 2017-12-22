@@ -592,7 +592,7 @@ because of validation failing early will be omitted from this output property. T
 Here is an example illustrating the `every` property.
 
 ``` jsx
-import validate, {every, required, minLength} from 'strickland';
+import validate, {every, required, minLength, maxLength} from 'strickland';
 
 const mustExistWithLength5 = every([
     required({message: 'Required'}),
@@ -639,6 +639,97 @@ There are a few notable characteristics of this result:
     * The props from the `maxLength` validator are not included on the result
     * The `every` array in the result does not include an item for the `maxLength` validator
 1. The top-level `isValid` prop on the result reflects the overall validation result
+
+### each
+
+Strickland also provides an `each` validator. The `each` validator operates over an array and it
+will only return a valid result if each and every validator in the array is valid. But `each` has
+a significant difference from `every`: `each` will always execute every validator, regardless
+of previous results. You can use `each` if all validators are safe to execute and you need to
+know all validator results, even if some are invalid.
+
+``` jsx
+import validate, {each, required, minLength, maxLength} from 'strickland';
+
+const mustExistWithLength5 = each([
+    required({message: 'Required'}),
+    minLength(5, {message: 'Must have a length of at least 5'}),
+    maxLength(10, {message: 'Must have a length no greater than 10'})
+]);
+const result = validate(mustExistWithLength5, '1234');
+
+/*
+result = {
+    isValid: false,
+    value: '1234',
+    required: true,
+    minLength: 5,
+    message: 'Must have a length no greater than 10',
+    each: [
+        {
+            isValid: true,
+            value: '1234',
+            required: true,
+            message: 'Required'
+        },
+        {
+            isValid: false,
+            value: '1234',
+            minLength: 5,
+            message: 'Must have a length of at least 5'
+        },
+        {
+            isValid: true,
+            value: '1234',
+            maxLength: 10,
+            message: 'Must have a length no greater than 10'
+        }
+    ]
+}
+*/
+```
+
+### some
+
+Strickland also provides an `some` validator. The `some` validator also operates over an array
+of validators and it behaves similarly to `every`, except that it will exit as soon as it encounters
+a *valid* result. If any of the validators in the array are valid, then the overall result will
+be valid.
+
+``` jsx
+import validate, {some, required, minLength, maxLength} from 'strickland';
+
+const mustExistWithLength5 = some([
+    required({message: 'Required'}),
+    maxLength(10, {message: 'Must have a length no greater than 10'}),
+    minLength(5, {message: 'Must have a length of at least 5'})
+]);
+const result = validate(mustExistWithLength5, '');
+
+/*
+result = {
+    isValid: true,
+    value: '',
+    required: true,
+    maxLength: 10,
+    message: 'Must have a length no greater than 10',
+    some: [
+        {
+            isValid: false,
+            value: '',
+            required: true,
+            message: 'Required'
+        },
+        {
+            isValid: true,
+            value: '',
+            maxLength: 10,
+            message: 'Must have a length no greater than 10'
+        }
+    ]
+}
+*/
+```
 
 ## Validating Objects
 
@@ -929,6 +1020,178 @@ array conventions, there is no way to pass validator props in that would apply a
 to all validators within the array. But it is quite easy to reintroduce the `props` or `every` wrapper
 and pass props in after the object or array as seen previously.
 
+## Async Validators
+
+If you have wondered how async validators would work with Strickland, you will be delighted at how
+simple they are. If a validator returns a `Promise`, then Strickland will return a `Promise` for
+the validation result. When the validation result is resolved, any async validators will be resolved.
+
+``` jsx
+import validate from 'strickland';
+
+function usernameIsAvailable(username) {
+    if (!username) {
+        return true;
+    }
+
+    return new Promise((resolve) => {
+        if (username === 'marty') {
+            resolve({
+                isValid: false,
+                message: `The username "${username}" is not available`
+            });
+        }
+
+        resolve(true);
+    });
+}
+
+validate(usernameIsAvailable, 'marty').then((result) => {
+    /*
+    result = {
+        isValid: false,
+        value: 'marty',
+        message: 'The username "marty" is not available'
+    }
+    */
+});
+```
+
+When validation results are invalid, do not reject the promise. Instead, resolve the promise
+with a validation result that is not valid. As usual, this can be done by returning `false` or
+an object with `isValid: false`.
+
+It is your responsibility to know if one of your validators could return a `Promise`; if so, then
+you will always need to treat the result from `validate` as a `Promise`.
+
+### Async Validator Arrays and Objects
+
+As you likely guessed, the `every`, `props`, `each`, and `some` validators support async validators too.
+That means you can compose async validators together with any other validators. If anywhere in your tree
+of validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
+
+The conventions for `every` and `props` still apply when async validators are in use. Here is
+an example showing sync and async validators mixed together when nested objects and arrays.
+
+``` jsx
+import validate, {required, length} from 'strickland';
+
+function validateCity(address) {
+    if (!address) {
+        return true;
+    }
+
+    return new Promise((resolve) => {
+        const {city, state} = address;
+
+        if (city === 'Hill Valley' && state !== 'CA') {
+            resolve({
+                isValid: false,
+                message: 'Hill Valley is in California'
+            });
+        } else {
+            resolve(true);
+        }
+    });
+}
+
+const validatePerson = {
+    name: [
+        required(),
+        length(2, 20, {
+            message: 'Name must be 2-20 characters'
+        })
+    ],
+    username: [
+        required(),
+        length(2, 20),
+        usernameIsAvailable
+    ],
+    address: [
+        required({message: 'Address is required'}),
+        {
+            street: [required(), length(2, 40)],
+            city: [required(), length(2, 40)],
+            state: [required(), length(2, 2)]
+        },
+        validateCity
+    ]
+};
+
+const person = {
+    name: 'Marty McFly',
+    username: 'marty',
+    address: {
+        street: '9303 Lyon Dr.',
+        city: 'Hill Valley',
+        state: 'WA'
+    }
+};
+
+validate(validatePerson, person).then((result) => {
+    /*
+    result = {
+        isValid: false,
+        props: {
+            name: {
+                isValid: true,
+                value: 'Marty McFly'
+            },
+            username: {
+                isValid: false,
+                value: 'marty',
+                message: 'The username "marty" is not available'
+            },
+            address: {
+                isValid: false,
+                message: 'Hill Valley is in California',
+                props: {
+                    street: {isValid: true},
+                    city: {isValid: true},
+                    state: {isValid: true}
+                }
+            }
+        }
+    }
+    */
+});
+```
+
+You can use async validators anywhere you want and the resolved results match the shape
+you would expect if everything was executed synchronously.
+
+#### props
+
+The `props` validator on the other hand validates all props at once. This is possible
+because one prop being invalid does not prevent other props from being validated. The `props`
+validator result will not be resolved until all props have been validated, but the async
+validators will be executed in parallel using `Promise.all()`. In the example above,
+`usernameIsAvailable` and `validateCity` run in parallel.
+
+#### every
+
+The `every` validator retains its short-circuiting behavior when async results are returned.
+Multiple async validators will be chained together such that the first async validator will
+complete before the next async validator is executed. This lets you chain validators to prevent
+subsequent validators from getting called if earlier validators are already invalid. But beware
+that multiple async validators in an array would then have their execution times added up before
+valid results can be returned.
+
+#### each
+
+The `each` validator behaves more like the `props` validator when async validation is needed.
+Because `each` will never short-circuit based on validation results, it uses `Promise.all()`
+to resolve each of the validators. Its async validators can therefore run in parallel, and
+it may sometimes be beneficial to use `each` explicitly when performing multiple async
+validations.
+
+#### some
+
+The `some` validator is similar to `every`; it short-circuits and therefore cannot run async
+validators in parallel. The `some` validator will short-circuit and return a *valid* result
+as soon as it encounters the first valid result. Async validators will therefore get
+chained together and run in series until a valid result is found.
+
 ## Summary
 
 Strickland actually uses very few concepts to accomplish a great deal.
@@ -939,8 +1202,10 @@ Strickland actually uses very few concepts to accomplish a great deal.
 1. Validators and factories can receive props that get included in validation result objects
 1. Validators can be composed together by writing validator functions that operate over validators
 1. This pattern allows arrays and objects of validators to be validated easily
+1. Even async validation layers on easily, with Promises being returned if needed
 
-The design and implementation of Strickland ends up being fractal, with composition available at every
-turn. Because validator functions are so simple, Strickland is a great framework on which you
-can build the validator libraries you need for your application. And since Strickland is pure JavaScript
-and not coupled to any other libraries or concepts, it can be used in any JavaScript application.
+The design and implementation of Strickland ends up being fractal, with composition available
+at every turn. Because validator functions are so simple, Strickland is a great framework on
+which you can build the validator libraries you need for your application. And since Strickland
+is pure JavaScript and not coupled to any other libraries or concepts, it can be used in any
+JavaScript application.

@@ -22,6 +22,4 @@ export default function range(minProp, maxProp, validatorProps) {
         min(validatorProps),
         max(validatorProps)
     ]);
-
-    return validate.bind(null, validateRange);
 }

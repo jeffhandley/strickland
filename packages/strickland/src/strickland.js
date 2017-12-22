@@ -15,6 +15,13 @@ export default function validate(rules, value, validateProps) {
     }
 
     result = rules(value, validateProps);
+    return prepareResult(value, validateProps, result);
+}
+
+function prepareResult(value, validateProps, result) {
+    if (result instanceof Promise) {
+        return result.then((resolved) => prepareResult(value, validateProps, resolved));
+    }
 
     if (!result) {
         result = {
@@ -35,6 +42,7 @@ export default function validate(rules, value, validateProps) {
 }
 
 export {default as compare} from './compare';
+export {default as each} from './each';
 export {default as length} from './length';
 export {default as max} from './max';
 export {default as maxLength} from './maxLength';
@@ -42,4 +50,5 @@ export {default as min} from './min';
 export {default as minLength} from './minLength';
 export {default as range} from './range';
 export {default as required} from './required';
+export {default as some} from './some';
 export {every, props};

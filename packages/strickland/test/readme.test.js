@@ -1,4 +1,4 @@
-import validate, {props, required, minLength, maxLength, length, range, every} from '../src/strickland';
+import validate, {props, required, minLength, maxLength, length, range, every, each, some} from '../src/strickland';
 
 describe('readme', () => {
     it('performing validation', () => {
@@ -134,6 +134,75 @@ describe('readme', () => {
         });
     });
 
+    it('each', () => {
+        const mustExistWithLength5 = each([
+            required({message: 'Required'}),
+            minLength(5, {message: 'Must have a length of at least 5'}),
+            maxLength(10, {message: 'Must have a length no greater than 10'})
+        ]);
+
+        const result = validate(mustExistWithLength5, '1234');
+
+        expect(result).toMatchObject({
+            isValid: false,
+            value: '1234',
+            required: true,
+            minLength: 5,
+            message: 'Must have a length no greater than 10',
+            each: [
+                {
+                    isValid: true,
+                    value: '1234',
+                    required: true,
+                    message: 'Required'
+                },
+                {
+                    isValid: false,
+                    value: '1234',
+                    minLength: 5,
+                    message: 'Must have a length of at least 5'
+                },
+                {
+                    isValid: true,
+                    value: '1234',
+                    maxLength: 10,
+                    message: 'Must have a length no greater than 10'
+                }
+            ]
+        });
+    });
+
+    it('some', () => {
+        const mustExistWithLength5 = some([
+            required({message: 'Required'}),
+            maxLength(10, {message: 'Must have a length no greater than 10'}),
+            minLength(5, {message: 'Must have a length of at least 5'})
+        ]);
+        const result = validate(mustExistWithLength5, '');
+
+        expect(result).toMatchObject({
+            isValid: true,
+            value: '',
+            required: true,
+            maxLength: 10,
+            message: 'Must have a length no greater than 10',
+            some: [
+                {
+                    isValid: false,
+                    value: '',
+                    required: true,
+                    message: 'Required'
+                },
+                {
+                    isValid: true,
+                    value: '',
+                    maxLength: 10,
+                    message: 'Must have a length no greater than 10'
+                }
+            ]
+        })
+    });
+
     it('validating objects', () => {
         // Define the rules for validating first name, last name, and birthYear
         const validatePersonProps = props({
@@ -232,6 +301,104 @@ describe('readme', () => {
                     }
                 }
             }
+        });
+    });
+
+    describe('async validators', () => {
+        function usernameIsAvailable(username) {
+            if (!username) {
+                return true;
+            }
+
+            return new Promise((resolve) => {
+                if (username === 'marty') {
+                    resolve({
+                        isValid: false,
+                        message: `The username "${username}" is not available`
+                    });
+                }
+
+                resolve(true);
+            });
+        }
+
+        it('first example', () => {
+            return validate(usernameIsAvailable, 'marty').then((result) => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: 'marty',
+                    message: 'The username "marty" is not available'
+                });
+            });
+        });
+
+        it('async validator arrays and objects', () => {
+            function validateCity(address) {
+                if (!address) {
+                    return true;
+                }
+
+                return new Promise((resolve) => {
+                    if (address.city === 'Hill Valley' && address.state !== 'CA') {
+                        resolve({
+                            isValid: false,
+                            message: 'Hill Valley is in California'
+                        });
+                    } else {
+                        resolve(true);
+                    }
+                });
+            }
+
+            const validatePerson = {
+                name: [required(), length(2, 20, {message: 'Name must be 2-20 characters'})],
+                username: [required(), length(2, 20), usernameIsAvailable],
+                address: [
+                    required({message: 'Address is required'}),
+                    {
+                        street: [required(), length(2, 40)],
+                        city: [required(), length(2, 40)],
+                        state: [required(), length(2, 2)]
+                    },
+                    validateCity
+                ]
+            };
+
+            const person = {
+                name: 'Marty McFly',
+                username: 'marty',
+                address: {
+                    street: '9303 Lyon Dr.',
+                    city: 'Hill Valley',
+                    state: 'WA'
+                }
+            };
+
+            return validate(validatePerson, person).then((result) => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    props: {
+                        name: {
+                            isValid: true,
+                            value: 'Marty McFly'
+                        },
+                        username: {
+                            isValid: false,
+                            value: 'marty',
+                            message: 'The username "marty" is not available'
+                        },
+                        address: {
+                            isValid: false,
+                            message: 'Hill Valley is in California',
+                            props: {
+                                street: {isValid: true},
+                                city: {isValid: true},
+                                state: {isValid: true}
+                            }
+                        }
+                    }
+                });
+            });
         });
     });
 });

@@ -463,5 +463,71 @@ describe('validate', () => {
                 message: 'Message'
             });
         });
+
+        it('overrides result props with the props passed in', () => {
+            function validator() {
+                return {
+                    isValid: true,
+                    message: 'From the result'
+                };
+            }
+
+            const result = validate(validator, null, {message: 'From valdation'});
+            expect(result.message).toBe('From the result');
+        });
+    });
+
+    describe('given async validators', () => {
+        it('returns a Promise if the validator returns a Promise', () => {
+            const result = validate(() => Promise.resolve());
+            expect(result).toBeInstanceOf(Promise);
+        });
+
+        describe('resolves results', () => {
+            it('that resolve as true', () => {
+                const result = validate(() => Promise.resolve(true));
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
+
+            it('that resolve as a valid result object', () => {
+                const result = validate(() => Promise.resolve({isValid: true}));
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
+
+            it('that resolve as false', () => {
+                const result = validate(() => Promise.resolve(false));
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
+
+            it('that resolve as an invalid result object', () => {
+                const result = validate(() => Promise.resolve({isValid: false}));
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
+
+            it('recursively', () => {
+                const result = validate(() =>
+                    Promise.resolve(
+                        Promise.resolve(
+                            Promise.resolve({
+                                isValid: true,
+                                recursively: 'Yes!'
+                            })
+                        )
+                    )
+                );
+
+                return expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!'});
+            });
+        });
+
+        it('puts the value on the resolved result', () => {
+            const result = validate(() => Promise.resolve(true), 'ABC');
+            return expect(result).resolves.toMatchObject({value: 'ABC'});
+        });
+
+        it('puts validate props on the resolved result', () => {
+            const result = validate(() => Promise.resolve(true), 'ABC', {message: 'Message'});
+            return expect(result).resolves.toMatchObject({message: 'Message'});
+        });
     });
 });
