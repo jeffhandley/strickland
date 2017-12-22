@@ -16,6 +16,14 @@ export default function validate(rules, value, validateProps) {
 
     result = rules(value, validateProps);
 
+    if (result instanceof Promise) {
+        return result.then((resolved) => prepareResult(resolved, value, validateProps));
+    }
+
+    return prepareResult(result, value, validateProps);
+}
+
+function prepareResult(result, value, validateProps) {
     if (!result) {
         result = {
             isValid: false
@@ -32,6 +40,12 @@ export default function validate(rules, value, validateProps) {
         isValid: !!result.isValid,
         value
     };
+}
+
+function promiseResult(resultPromise, value, validateProps) {
+    return new Promise((resolve) => {
+        resultPromise.then((result) => prepareResult(result, value, validateProps));
+    });
 }
 
 export {default as compare} from './compare';
