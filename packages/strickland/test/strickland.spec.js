@@ -463,6 +463,18 @@ describe('validate', () => {
                 message: 'Message'
             });
         });
+
+        it('overrides result props with the props passed in', () => {
+            function validator() {
+                return {
+                    isValid: true,
+                    message: 'From the result'
+                };
+            }
+
+            const result = validate(validator, null, {message: 'From valdation'});
+            expect(result.message).toBe('From the result');
+        });
     });
 
     describe('given async validators', () => {
@@ -490,6 +502,21 @@ describe('validate', () => {
             it('that resolve as an invalid result object', () => {
                 const result = validate(() => Promise.resolve({isValid: false}));
                 expect(result).resolves.toMatchObject({isValid: false});
+            });
+
+            it('recursively', () => {
+                const result = validate(() =>
+                    Promise.resolve(
+                        Promise.resolve(
+                            Promise.resolve({
+                                isValid: true,
+                                recursively: 'Yes!'
+                            })
+                        )
+                    )
+                );
+
+                expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!'});
             });
         });
 
