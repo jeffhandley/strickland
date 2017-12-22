@@ -52,7 +52,8 @@ function applyNextResult(previousResult, nextResult) {
         every: [
             ...previousResult.every,
             nextResult
-        ]
+        ],
+        isValid: !!(previousResult.isValid && nextResult.isValid)
     };
 }
 
