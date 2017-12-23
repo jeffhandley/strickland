@@ -1,4 +1,4 @@
-import validate from './strickland';
+import validate from './validate';
 
 export default function some(validators, validatorProps) {
     return function validateSome(value, validationProps) {

@@ -1,4 +1,6 @@
-import {every, min, max} from './strickland';
+import every from './every';
+import min from './min';
+import max from './max';
 
 export default function range(minProp, maxProp, validatorProps) {
     if (typeof minProp === 'object') {

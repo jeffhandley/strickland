@@ -1,4 +1,6 @@
-import {every, minLength, maxLength} from './strickland';
+import every from './every';
+import minLength from './minLength';
+import maxLength from './maxLength';
 
 export default function length(minLengthProp, maxLengthProp, validatorProps) {
     if (typeof minLengthProp === 'object') {
