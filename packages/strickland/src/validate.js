@@ -2,6 +2,8 @@ import every from './every';
 import props from './props';
 
 export default function validate(rules, value, validateProps) {
+    validateProps = {...validateProps};
+
     let result = true;
 
     if (Array.isArray(rules)) {
@@ -19,6 +21,19 @@ export default function validate(rules, value, validateProps) {
 }
 
 function prepareResult(value, validateProps, result) {
+    // When resolving, don't allow the resolvePromise prop to flow
+    // Otherwise it could cause incomplete resolution
+    // eslint-disable-next-line no-unused-vars
+    const {resolvePromise, ...resolveProps} = validateProps;
+
+    if (result instanceof Promise) {
+        result.resolvePromise = result.then((resolved) => prepareResult(value, validateProps, resolved));
+
+        if (resolvePromise !== false) {
+            return result.resolvePromise;
+        }
+    }
+
     if (!result) {
         result = {
             isValid: false

@@ -1200,6 +1200,107 @@ validators in parallel. The `some` validator will short-circuit and return a *va
 as soon as it encounters the first valid result. Async validators will therefore get
 chained together and run in series until a valid result is found.
 
+### Getting Partial Results from Async Validation
+
+In some user scenarios with a mixture of synchronous and asynchronous validators, your user
+experience will required showing the partial validation results that are available before
+async validation completes. In those scenarios, it is valuable to get partial validation results
+before initiating the async validation.
+
+Strickland makes this possible by using a `resolvePromise: false` validation prop. If this
+prop is passed into the validation, then any results that can be completed synchronously
+will be completed and returned as the validation results instead of a `Promise`. The validation
+result will include a `resolvePromise` property that itself is the `Promise` that will
+resolve the full validation results.
+
+Here's the same async example from above, but with `resovePromise` set to `false`.
+
+``` jsx
+const result = validate(validatePerson, person, {resolvePromise: false});
+
+/*
+result = {
+    isValid: false,
+    props: {
+        name: {
+            isValid: true,
+            value: 'Marty McFly'
+        },
+        username: {
+            isValid: false,
+            required: true,
+            minLength: 2,
+            maxLength: 20,
+            resolvePromise: Promise.prototype
+        },
+        address: {
+            isValid: false,
+            required: true,
+            props: {
+                street: {isValid: true},
+                city: {isValid: true},
+                state: {isValid: true}
+            },
+            resolvePromise: Promise.prototype
+        }
+    },
+    resolvePromise: Promise.prototype
+}
+*/
+
+result.resolvePromise.then((asyncResult) => {
+    /*
+    asyncResult = {
+        isValid: false,
+        props: {
+            name: {
+                isValid: true,
+                value: 'Marty McFly'
+            },
+            username: {
+                isValid: false,
+                value: 'marty',
+                message: '"marty" is not available',
+                resolvePromise: false
+            },
+            address: {
+                isValid: false,
+                message: 'Hill Valley is in California',
+                props: {
+                    street: {isValid: true},
+                    city: {isValid: true},
+                    state: {isValid: true}
+                },
+                resolvePromise: false
+            }
+        },
+        resolvePromise: false
+    }
+    */
+});
+```
+
+The initial result comes back with a few notable characteristics:
+
+* `isValid` will always be `false` when there is async validation waiting to be completed
+* `resolvePromise` is returned on any result that has async validation waiting
+    * If an async result is included in `each`, `every`, `some`, or `props`, then that validator will also include a `resolvePromise` result prop
+    * If desired, you can execute `resolvePromise` at any point in the graph to get individual results, but it is most common to execute the top-level `resolvePromise` to resolve all promises in the results
+* Once `resolvePromise` is called, the `resolvePromise` result prop is returned as `false` to indicate that no async validation remains
+    * There will only be at most one level of resolution needed
+    * But if there are no async validators needed during the first round of validation, then `resolvePromise` will return as `false` right away
+
+### Async Validation Cheat Sheet
+
+Performing async validation with partial results is one of the more advanced features of Strickland, but here is
+a cheat sheet for the behavior of async validation.
+
+1. If no validators return a `Promise`, then `validate` will return a complete result
+1. If any validators return a `Promise`, then `validate` will return a `Promise`
+    * Unless `resolvePromise: false` is supplied as a validation prop
+    * In that case, `validate` will return a partial result with `resolvePromise` on the result
+    * `resolvePromise` can then be used to resolve all async validation and get a complete result
+
 ## Summary
 
 Strickland actually uses very few concepts to accomplish a great deal.

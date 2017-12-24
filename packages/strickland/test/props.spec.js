@@ -338,135 +338,252 @@ describe('props', () => {
         });
     });
 
-    // describe('given async validators', () => {
-    //     it('returns a Promise if a validator returns a Promise', () => {
-    //         const validate = props({
-    //             first: () => Promise.resolve(true)
-    //         });
+    describe('given async validators', () => {
+        it('returns a Promise if a validator returns a Promise', () => {
+            const validate = props({
+                firstProp: () => Promise.resolve(true)
+            });
 
-    //         const result = validate({first: 'LOG'});
-    //         expect(result).toBeInstanceOf(Promise);
-    //     });
+            const result = validate({});
+            expect(result).toBeInstanceOf(Promise);
+        });
 
-    //     describe('resolves results', () => {
-    //         it('that resolve as true', () => {
-    //             const validate = props({
-    //                 first: () => Promise.resolve(true)
-    //             });
+        describe('resolves results', () => {
+            it('resolves each result, even when some are invalid', () => {
+                const validate = props({
+                    firstProp: () => ({isValid: false, first: 'First'}),
+                    secondProp: () => Promise.resolve({isValid: false, second: 'Second'}),
+                    thirdProp: () => ({isValid: false, third: 'Third'}),
+                    fourthProp: () => Promise.resolve({isValid: false, fourth: 'Fourth'}),
+                    fifthProp: () => Promise.resolve({isValid: true, fifth: 'Fifth'})
+                });
 
-    //             const result = validate({first: 'LOG', test: 'that resolve as true'});
-    //             return expect(result).resolves.toMatchObject({isValid: true});
-    //         });
+                const result = validate({});
 
-    //         it('that resolve as a valid result object', () => {
-    //             const validate = props({
-    //                 first: () => Promise.resolve({isValid: true})
-    //             });
+                return expect(result).resolves.toMatchObject({
+                    props: {
+                        firstProp: {isValid: false, first: 'First'},
+                        secondProp: {isValid: false, second: 'Second'},
+                        thirdProp: {isValid: false, third: 'Third'},
+                        fourthProp: {isValid: false, fourth: 'Fourth'},
+                        fifthProp: {isValid: true, fifth: 'Fifth'}
+                    }
+                });
+            });
 
-    //             const result = validate({first: 'LOG'});
-    //             return expect(result).resolves.toMatchObject({isValid: true});
-    //         });
+            it('that resolve as true', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(true)
+                });
 
-    //         it('that resolve as false', () => {
-    //             const validate = props({
-    //                 first: () => Promise.resolve(false)
-    //             });
+                const result = validate({});
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
 
-    //             const result = validate({first: 'LOG'});
-    //             return expect(result).resolves.toMatchObject({isValid: false});
-    //         });
+            it('that resolve as a valid result object', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve({isValid: true})
+                });
 
-    //         it('that resolve as an invalid result object', () => {
-    //             const validate = props({
-    //                 first: () => Promise.resolve({isValid: false})
-    //             });
+                const result = validate({});
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
 
-    //             const result = validate({first: 'LOG'});
-    //             return expect(result).resolves.toMatchObject({isValid: false});
-    //         });
+            it('that resolve as false', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(false)
+                });
 
-    //         it('recursively', () => {
-    //             const validate = props({
-    //                 first: () => Promise.resolve(
-    //                     Promise.resolve(
-    //                         Promise.resolve({
-    //                             isValid: true,
-    //                             recursively: 'Yes!'
-    //                         })
-    //                     )
-    //                 ),
-    //                 second: props({
-    //                     third: () => Promise.resolve(
-    //                         Promise.resolve(true)
-    //                     ),
-    //                     fourth: props({
-    //                         fifth: () => Promise.resolve(
-    //                             Promise.resolve({
-    //                                 isValid: true,
-    //                                 inNestedPropsValidators: 'Yep'
-    //                             })
-    //                         )
-    //                     })
-    //                 }),
-    //                 sixth: () => ({
-    //                     isValid: true,
-    //                     syncProps: true
-    //                 })
-    //             });
+                const result = validate({});
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
 
-    //             const value = {
-    //                 first: null,
-    //                 second: {
-    //                     third: null,
-    //                     fourth: {
-    //                         fifth: null
-    //                     }
-    //                 }
-    //             };
+            it('that resolve as an invalid result object', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve({isValid: false})
+                });
 
-    //             const result = validate(value);
-    //             return expect(result).resolves.toMatchObject({
-    //                 isValid: true,
-    //                 props: {
-    //                     first: {
-    //                         isValid: true,
-    //                         recursively: 'Yes!'
-    //                     },
-    //                     second: {
-    //                         isValid: true,
-    //                         props: {
-    //                             third: {isValid: true},
-    //                             fourth: {
-    //                                 isValid: true,
-    //                                 props: {
-    //                                     fifth: {
-    //                                         isValid: true,
-    //                                         inNestedPropsValidators: 'Yep'
-    //                                     }
-    //                                 }
-    //                             }
-    //                         }
-    //                     },
-    //                     sixth: {
-    //                         isValid: true,
-    //                         syncProps: true
-    //                     }
-    //                 }
-    //             });
-    //         });
-    //     });
+                const result = validate({});
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
 
-    //     it('puts validate props on the resolved result', () => {
-    //         const validate = props({
-    //             first: () => Promise.resolve(true)
-    //         });
+            it('recursively', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(
+                        Promise.resolve(
+                            Promise.resolve({
+                                isValid: true,
+                                recursively: 'Yes!'
+                            })
+                        )
+                    ),
+                    secondProp: props({
+                        thirdProp: () => Promise.resolve(
+                            Promise.resolve(true)
+                        ),
+                        fourthProp: props({
+                            fifthProp: () => Promise.resolve(
+                                Promise.resolve({
+                                    isValid: true,
+                                    inNestedValidators: 'Yep'
+                                })
+                            )
+                        })
+                    })
+                });
 
-    //         const value = {
-    //             first: 'First'
-    //         };
+                const result = validate({
+                    firstProp: 'first',
+                    secondProp: {
+                        thirdProp: 'third',
+                        fourthProp: {
+                            fifthProp: 'fifth'
+                        }
+                    }
+                });
 
-    //         const result = validate(value, {message: 'Message'});
-    //         return expect(result).resolves.toMatchObject({message: 'Message'});
-    //     });
-    // });
+                return expect(result).resolves.toMatchObject({
+                    props: {
+                        firstProp: {recursively: 'Yes!'},
+                        secondProp: {
+                            props: {
+                                thirdProp: {isValid: true},
+                                fourthProp: {
+                                    props: {
+                                        fifthProp: {inNestedValidators: 'Yep'}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            it('puts the value on the resolved result', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(true)
+                });
+
+                const result = validate({marty: 'McFly'});
+                return expect(result).resolves.toMatchObject({
+                    value: {marty: 'McFly'}
+                });
+            });
+
+            it('puts validate props on the resolved result', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(true)
+                });
+
+                const result = validate({}, {message: 'Message'});
+                return expect(result).resolves.toMatchObject({message: 'Message'});
+            });
+        });
+
+        describe('can return a partial result object', () => {
+            const validate = props({
+                firstProp: () => ({isValid: true, first: 'First'}),
+                secondProp: () => Promise.resolve({isValid: true, second: 'Second'}),
+                thirdProp: props({
+                    fourthProp: () => ({isValid: true, fourth: 'Fourth'}),
+                    fifthProp: () => Promise.resolve({isValid: true, fifth: 'Fifth'}),
+                    sixthProp: () => ({isValid: true, sixth: 'Sixth'})
+                }),
+                seventhProp: () => ({isValid: true, seventh: 'Seventh'})
+            });
+
+            const result = validate({
+                firstProp: 'first',
+                secondProp: 'second',
+                thirdProp: {
+                    fourthProp: '',
+                    fifthProp: '',
+                    sixthProp: ''
+                },
+                seventhProp: ''
+            }, {resolvePromise: false});
+
+            it('that is not a Promise', () => {
+                expect(result).not.toBeInstanceOf(Promise);
+            });
+
+            it('that is marked as not valid', () => {
+                expect(result.isValid).toBe(false);
+            });
+
+            it('with sync results in place and Promise results where expected', () => {
+                expect(result).toMatchObject({
+                    props: {
+                        firstProp: {first: 'First'},
+                        secondProp: Promise.prototype,
+                        thirdProp: {
+                            props: {
+                                fourthProp: {fourth: 'Fourth'},
+                                fifthProp: Promise.prototype,
+                                sixthProp: {sixth: 'Sixth'}
+                            }
+                        },
+                        seventhProp: {seventh: 'Seventh'}
+                    }
+                });
+            });
+
+            describe('with a resolvePromise result prop', () => {
+                it('that is a Promise', () => {
+                    expect(result.resolvePromise).toBeInstanceOf(Promise);
+                });
+
+                it('that resolves result promises', () => {
+                    return expect(result.resolvePromise).resolves.toMatchObject({
+                        isValid: true,
+                        props: {
+                            firstProp: {first: 'First'},
+                            secondProp: {second: 'Second'},
+                            thirdProp: {
+                                isValid: true,
+                                props: {
+                                    fourthProp: {fourth: 'Fourth'},
+                                    fifthProp: {fifth: 'Fifth'},
+                                    sixthProp: {sixth: 'Sixth'}
+                                }
+                            },
+                            seventhProp: {seventh: 'Seventh'}
+                        }
+                    });
+                });
+
+                it('that results in a resolvePromise prop set to false when resolved', () => {
+                    return expect(result.resolvePromise).resolves.toMatchObject({
+                        resolvePromise: false
+                    });
+                });
+
+                it('that resolves exclusively nested results', () => {
+                    const validateNested = props({
+                        firstProp: props({
+                            secondProp: () => Promise.resolve({isValid: true, exclusively: 'nested'})
+                        })
+                    });
+
+                    const nestedResult = validateNested({
+                        firstProp: {
+                            secondProp: {}
+                        }
+                    }, {resolvePromise: false});
+
+                    return expect(nestedResult.resolvePromise).resolves.toMatchObject({
+                        isValid: true,
+                        props: {
+                            firstProp: {
+                                isValid: true,
+                                props: {
+                                    secondProp: {isValid: true}
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    });
 });

@@ -477,57 +477,93 @@ describe('validate', () => {
         });
     });
 
-    // describe('given async validators', () => {
-    //     it('returns a Promise if the validator returns a Promise', () => {
-    //         const result = validate(() => Promise.resolve());
-    //         expect(result).toBeInstanceOf(Promise);
-    //     });
+    describe('given async validators', () => {
+        it('returns a Promise if the validator returns a Promise', () => {
+            const result = validate(() => Promise.resolve());
+            expect(result).toBeInstanceOf(Promise);
+        });
 
-    //     describe('resolves results', () => {
-    //         it('that resolve as true', () => {
-    //             const result = validate(() => Promise.resolve(true));
-    //             return expect(result).resolves.toMatchObject({isValid: true});
-    //         });
+        describe('resolves results', () => {
+            it('that resolve as true', () => {
+                const result = validate(() => Promise.resolve(true));
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
 
-    //         it('that resolve as a valid result object', () => {
-    //             const result = validate(() => Promise.resolve({isValid: true}));
-    //             return expect(result).resolves.toMatchObject({isValid: true});
-    //         });
+            it('that resolve as a valid result object', () => {
+                const result = validate(() => Promise.resolve({isValid: true}));
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
 
-    //         it('that resolve as false', () => {
-    //             const result = validate(() => Promise.resolve(false));
-    //             return expect(result).resolves.toMatchObject({isValid: false});
-    //         });
+            it('that resolve as false', () => {
+                const result = validate(() => Promise.resolve(false));
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
 
-    //         it('that resolve as an invalid result object', () => {
-    //             const result = validate(() => Promise.resolve({isValid: false}));
-    //             return expect(result).resolves.toMatchObject({isValid: false});
-    //         });
+            it('that resolve as an invalid result object', () => {
+                const result = validate(() => Promise.resolve({isValid: false}));
+                return expect(result).resolves.toMatchObject({isValid: false});
+            });
 
-    //         it('recursively', () => {
-    //             const result = validate(() =>
-    //                 Promise.resolve(
-    //                     Promise.resolve(
-    //                         Promise.resolve({
-    //                             isValid: true,
-    //                             recursively: 'Yes!'
-    //                         })
-    //                     )
-    //                 )
-    //             );
+            it('recursively', () => {
+                const result = validate(() =>
+                    Promise.resolve(
+                        Promise.resolve(
+                            Promise.resolve({
+                                isValid: true,
+                                recursively: 'Yes!'
+                            })
+                        )
+                    )
+                );
 
-    //             return expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!'});
-    //         });
-    //     });
+                return expect(result).resolves.toMatchObject({isValid: true, recursively: 'Yes!'});
+            });
 
-    //     it('puts the value on the resolved result', () => {
-    //         const result = validate(() => Promise.resolve(true), 'ABC');
-    //         return expect(result).resolves.toMatchObject({value: 'ABC'});
-    //     });
+            it('puts the value on the resolved result', () => {
+                const result = validate(() => Promise.resolve(true), 'ABC');
+                return expect(result).resolves.toMatchObject({value: 'ABC'});
+            });
 
-    //     it('puts validate props on the resolved result', () => {
-    //         const result = validate(() => Promise.resolve(true), 'ABC', {message: 'Message'});
-    //         return expect(result).resolves.toMatchObject({message: 'Message'});
-    //     });
-    // });
+            it('puts validate props on the resolved result', () => {
+                const result = validate(() => Promise.resolve(true), 'ABC', {message: 'Message'});
+                return expect(result).resolves.toMatchObject({message: 'Message'});
+            });
+        });
+
+        describe('can return a partial result object', () => {
+            const validator = () => Promise.resolve({
+                isValid: true,
+                message: 'Resolved the promise'
+            });
+
+            const result = validate(validator, null, {resolvePromise: false});
+
+            it('that is not a Promise', () => {
+                expect(result).not.toBeInstanceOf(Promise);
+            });
+
+            it('that is marked as not valid', () => {
+                expect(result.isValid).toBe(false);
+            });
+
+            describe('with a resolvePromise result prop', () => {
+                it('that is a Promise', () => {
+                    expect(result.resolvePromise).toBeInstanceOf(Promise);
+                });
+
+                it('that resolves the result promise', () => {
+                    return expect(result.resolvePromise).resolves.toMatchObject({
+                        isValid: true,
+                        message: 'Resolved the promise'
+                    });
+                });
+
+                it('that results in a resolvePromise prop set to false when resolved', () => {
+                    return expect(result.resolvePromise).resolves.toMatchObject({
+                        resolvePromise: false
+                    });
+                });
+            });
+        });
+    });
 });

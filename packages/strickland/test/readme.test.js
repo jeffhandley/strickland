@@ -304,101 +304,164 @@ describe('readme', () => {
         });
     });
 
-    // describe('async validators', () => {
-    //     function usernameIsAvailable(username) {
-    //         if (!username) {
-    //             return true;
-    //         }
+    describe('async validators', () => {
+        function usernameIsAvailable(username) {
+            if (!username) {
+                return true;
+            }
 
-    //         return new Promise((resolve) => {
-    //             if (username === 'marty') {
-    //                 resolve({
-    //                     isValid: false,
-    //                     message: `"${username}" is not available`
-    //                 });
-    //             }
+            return new Promise((resolve) => {
+                if (username === 'marty') {
+                    resolve({
+                        isValid: false,
+                        message: `"${username}" is not available`
+                    });
+                }
 
-    //             resolve(true);
-    //         });
-    //     }
+                resolve(true);
+            });
+        }
 
-    //     it('first example', () => {
-    //         return validate(usernameIsAvailable, 'marty').then((result) => {
-    //             expect(result).toMatchObject({
-    //                 isValid: false,
-    //                 value: 'marty',
-    //                 message: '"marty" is not available'
-    //             });
-    //         });
-    //     });
+        it('first example', () => {
+            return validate(usernameIsAvailable, 'marty').then((result) => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: 'marty',
+                    message: '"marty" is not available'
+                });
+            });
+        });
 
-    //     it('async validator arrays and objects', () => {
-    //         function validateCity(address) {
-    //             if (!address) {
-    //                 return true;
-    //             }
+        describe('async validator arrays and objects', () => {
+            function validateCity(address) {
+                if (!address) {
+                    return true;
+                }
 
-    //             return new Promise((resolve) => {
-    //                 if (address.city === 'Hill Valley' && address.state !== 'CA') {
-    //                     resolve({
-    //                         isValid: false,
-    //                         message: 'Hill Valley is in California'
-    //                     });
-    //                 } else {
-    //                     resolve(true);
-    //                 }
-    //             });
-    //         }
+                return new Promise((resolve) => {
+                    if (address.city === 'Hill Valley' && address.state !== 'CA') {
+                        resolve({
+                            isValid: false,
+                            message: 'Hill Valley is in California'
+                        });
+                    } else {
+                        resolve(true);
+                    }
+                });
+            }
 
-    //         const validatePerson = {
-    //             name: [required(), length(2, 20, {message: 'Name must be 2-20 characters'})],
-    //             username: [required(), length(2, 20), usernameIsAvailable],
-    //             address: [
-    //                 required({message: 'Address is required'}),
-    //                 {
-    //                     street: [required(), length(2, 40)],
-    //                     city: [required(), length(2, 40)],
-    //                     state: [required(), length(2, 2)]
-    //                 },
-    //                 validateCity
-    //             ]
-    //         };
+            const validatePerson = {
+                name: [required(), length(2, 20, {message: 'Name must be 2-20 characters'})],
+                username: [required(), length(2, 20), usernameIsAvailable],
+                address: [
+                    required({message: 'Address is required'}),
+                    {
+                        street: [required(), length(2, 40)],
+                        city: [required(), length(2, 40)],
+                        state: [required(), length(2, 2)]
+                    },
+                    validateCity
+                ]
+            };
 
-    //         const person = {
-    //             name: 'Marty McFly',
-    //             username: 'marty',
-    //             address: {
-    //                 street: '9303 Lyon Dr.',
-    //                 city: 'Hill Valley',
-    //                 state: 'WA'
-    //             }
-    //         };
+            const person = {
+                name: 'Marty McFly',
+                username: 'marty',
+                address: {
+                    street: '9303 Lyon Dr.',
+                    city: 'Hill Valley',
+                    state: 'WA'
+                }
+            };
 
-    //         return validate(validatePerson, person).then((result) => {
-    //             expect(result).toMatchObject({
-    //                 isValid: false,
-    //                 props: {
-    //                     name: {
-    //                         isValid: true,
-    //                         value: 'Marty McFly'
-    //                     },
-    //                     username: {
-    //                         isValid: false,
-    //                         value: 'marty',
-    //                         message: '"marty" is not available'
-    //                     },
-    //                     address: {
-    //                         isValid: false,
-    //                         message: 'Hill Valley is in California',
-    //                         props: {
-    //                             street: {isValid: true},
-    //                             city: {isValid: true},
-    //                             state: {isValid: true}
-    //                         }
-    //                     }
-    //                 }
-    //             });
-    //         });
-    //     });
-    // });
+            it('async results', () => {
+                return validate(validatePerson, person).then((result) => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        props: {
+                            name: {
+                                isValid: true,
+                                value: 'Marty McFly'
+                            },
+                            username: {
+                                isValid: false,
+                                value: 'marty',
+                                message: '"marty" is not available'
+                            },
+                            address: {
+                                isValid: false,
+                                message: 'Hill Valley is in California',
+                                props: {
+                                    street: {isValid: true},
+                                    city: {isValid: true},
+                                    state: {isValid: true}
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+
+            it('partial results', () => {
+                const result = validate(validatePerson, person, {resolvePromise: false});
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    props: {
+                        name: {
+                            isValid: true,
+                            value: 'Marty McFly'
+                        },
+                        username: {
+                            isValid: false,
+                            required: true,
+                            minLength: 2,
+                            maxLength: 20,
+                            resolvePromise: Promise.prototype
+                        },
+                        address: {
+                            isValid: false,
+                            required: true,
+                            props: {
+                                street: {isValid: true},
+                                city: {isValid: true},
+                                state: {isValid: true}
+                            },
+                            resolvePromise: Promise.prototype
+                        }
+                    },
+                    resolvePromise: Promise.prototype
+                });
+
+                return result.resolvePromise.then((asyncResult) => {
+                    expect(asyncResult).toMatchObject({
+                        isValid: false,
+                        props: {
+                            name: {
+                                isValid: true,
+                                value: 'Marty McFly'
+                            },
+                            username: {
+                                isValid: false,
+                                value: 'marty',
+                                message: '"marty" is not available',
+                                resolvePromise: false
+                            },
+                            address: {
+                                isValid: false,
+                                message: 'Hill Valley is in California',
+                                props: {
+                                    street: {isValid: true},
+                                    city: {isValid: true},
+                                    state: {isValid: true}
+                                },
+                                resolvePromise: false
+                            }
+                        },
+                        resolvePromise: false
+                    });
+                });
+            });
+        });
+    });
 });
