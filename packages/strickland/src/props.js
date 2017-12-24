@@ -1,59 +1,35 @@
 import validate from './validate';
 
-export default function props(propRules, validatorProps) {
+export default function props(validators, validatorProps) {
     return function validateProps(value, validationProps) {
         validationProps = {
             ...validatorProps,
             ...validationProps
         };
 
-        let propsResult = {};
+        let result = {
+            props: {}
+        };
 
-        if (value && typeof value === 'object' && propRules) {
-            const propNames = Object.keys(propRules);
+        if (value && validators && typeof validators === 'object') {
+            Object.keys(validators).forEach((propName) => {
+                const validatorResult = validate(validators[propName], value[propName], validationProps);
 
-            propsResult = propNames.reduce((previousResult, propName) => ({
-                ...previousResult,
-                [propName]: validate(propRules[propName], value[propName], validationProps)
-            }), propsResult);
+                result.props = {
+                    ...result.props,
+                    [propName]: validatorResult
+                };
+            });
         }
 
-        return prepareResult(value, validationProps, propsResult);
+        return prepareResult(value, validationProps, result);
     }
 }
 
-function prepareResult(value, validationProps, propsResult) {
-    const propNames = Object.keys(propsResult);
-    const propPromises = [];
-    let isValid = true;
-
-    propNames.forEach((propName) => {
-        const propResult = propsResult[propName];
-
-        if (propResult instanceof Promise) {
-            propPromises.push(propResult.then((resolvedPropResult) => ({
-                propName,
-                resolvedPropResult
-            })));
-        } else {
-            isValid = isValid && propResult.isValid;
-        }
-    });
-
-    if (propPromises.length) {
-        return Promise.all(propPromises).then((resolvedProps) => {
-            propsResult = resolvedProps.reduce((previousResult, {propName, resolvedPropResult}) => ({
-                ...previousResult,
-                [propName]: resolvedPropResult
-            }), propsResult);
-
-            return prepareResult(value, validationProps, propsResult);
-        });
-    }
-
+function prepareResult(value, validationProps, result) {
     return {
         ...validationProps,
-        props: propsResult,
-        isValid
+        ...result,
+        isValid: Object.keys(result.props).every((propName) => !!(result.props[propName].isValid))
     };
 }

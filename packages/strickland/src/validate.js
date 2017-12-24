@@ -19,10 +19,6 @@ export default function validate(rules, value, validateProps) {
 }
 
 function prepareResult(value, validateProps, result) {
-    if (result instanceof Promise) {
-        return result.then((resolved) => prepareResult(value, validateProps, resolved));
-    }
-
     if (!result) {
         result = {
             isValid: false

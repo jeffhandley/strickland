@@ -11,18 +11,10 @@ export default function each(validators, validatorProps) {
             each: []
         };
 
-        if (validators && validators.length) {
+        if (Array.isArray(validators)) {
             validators.forEach((validator) => {
-                const validatorResult = validate(validator, value, validationProps);
-
-                result = {
-                    ...result,
-                    ...validatorResult,
-                    each: [
-                        ...result.each,
-                        validatorResult
-                    ]
-                };
+                const nextResult = validate(validator, value, validationProps);
+                result = applyNextResult(result, nextResult);
             });
         }
 
@@ -30,24 +22,21 @@ export default function each(validators, validatorProps) {
     }
 }
 
+function applyNextResult(previousResult, nextResult) {
+    return {
+        ...previousResult,
+        ...nextResult,
+        each: [
+            ...previousResult.each,
+            nextResult
+        ]
+    };
+}
+
 function prepareResult(value, validationProps, result) {
-    if (result.each.some((eachResult) => eachResult instanceof Promise)) {
-        return Promise.all(result.each).then((resolvedResults) => {
-            const flattenedResult = resolvedResults.reduce((previous, next) => ({
-                ...previous,
-                ...next
-            }));
-
-            return prepareResult(value, validationProps, {
-                ...flattenedResult,
-                each: resolvedResults
-            });
-        });
-    }
-
     return {
         ...validationProps,
         ...result,
-        isValid: result.each.every((eachResult) => !!(eachResult.isValid))
+        isValid: !result.each.length || result.each.every((eachResult) => !!(eachResult.isValid))
     };
 }
