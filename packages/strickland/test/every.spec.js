@@ -161,28 +161,50 @@ describe('every', () => {
     });
 
     describe('given async validators', () => {
-        it('returns a Promise if a validator returns a Promise', () => {
-            const validate = every([
-                () => Promise.resolve(true)
-            ]);
+        describe('returns a resolvePromise result prop', () => {
+            it('that is a Promise', () => {
+                const validate = every([
+                    () => Promise.resolve(true)
+                ]);
 
-            const result = validate();
-            expect(result).toBeInstanceOf(Promise);
+                const result = validate();
+                expect(result.resolvePromise).toBeInstanceOf(Promise);
+            });
+
+            it('with exclusively nested results', () => {
+                const validateNested = every([
+                    every([
+                        () => Promise.resolve(true)
+                    ])
+                ]);
+
+                const nestedResult = validateNested('ABC', {resolvePromise: false});
+
+                return expect(nestedResult.resolvePromise).resolves.toMatchObject({
+                    isValid: true,
+                    every: [
+                        {
+                            isValid: true,
+                            every: [{isValid: true}]
+                        }
+                    ]
+                });
+            });
         });
 
         describe('resolves results', () => {
-            it('resolves until an invalid result is encountered', () => {
+            it('until an invalid result is encountered', () => {
                 const validate = every([
-                    () => Promise.resolve({isValid: true, first: 'First'}),
+                    () => ({isValid: true, first: 'First'}),
                     () => Promise.resolve({isValid: true, second: 'Second'}),
-                    () => Promise.resolve({isValid: true, third: 'Third'}),
+                    () => ({isValid: true, third: 'Third'}),
                     () => Promise.resolve({isValid: false, fourth: 'Fourth'}),
                     () => Promise.resolve({isValid: true, fifth: 'Fifth'})
                 ]);
 
-                const result = validate();
+                const result = validate(null);
 
-                return expect(result).resolves.toMatchObject({
+                return expect(result.resolvePromise).resolves.toMatchObject({
                     first: 'First',
                     second: 'Second',
                     third: 'Third',
@@ -190,17 +212,18 @@ describe('every', () => {
                 });
             });
 
-            it('does not resolve results after an invalid result is encountered', () => {
+            it('but does not execute validators after the first invalid result', () => {
                 const validate = every([
-                    () => Promise.resolve({isValid: true, first: 'First'}),
+                    () => ({isValid: true, first: 'First'}),
                     () => Promise.resolve({isValid: true, second: 'Second'}),
-                    () => Promise.resolve({isValid: true, third: 'Third'}),
+                    () => ({isValid: true, third: 'Third'}),
                     () => Promise.resolve({isValid: false, fourth: 'Fourth'}),
                     () => Promise.resolve({isValid: true, fifth: 'Fifth'})
                 ]);
 
                 const result = validate();
-                return expect(result).resolves.not.toHaveProperty('fifth');
+
+                return expect(result.resolvePromise).resolves.not.toHaveProperty('fifth');
             });
 
             it('that resolve as true', () => {
@@ -208,8 +231,8 @@ describe('every', () => {
                     () => Promise.resolve(true)
                 ]);
 
-                const result = validate('every with a promise');
-                return expect(result).resolves.toMatchObject({isValid: true});
+                const result = validate();
+                return expect(result.resolvePromise).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
@@ -218,7 +241,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result).resolves.toMatchObject({isValid: true});
+                return expect(result.resolvePromise).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as false', () => {
@@ -227,7 +250,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result).resolves.toMatchObject({isValid: false});
+                return expect(result.resolvePromise).resolves.toMatchObject({isValid: false});
             });
 
             it('that resolve as an invalid result object', () => {
@@ -236,7 +259,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result).resolves.toMatchObject({isValid: false});
+                return expect(result.resolvePromise).resolves.toMatchObject({isValid: false});
             });
 
             it('recursively', () => {
@@ -266,7 +289,7 @@ describe('every', () => {
 
                 const result = validate();
 
-                return expect(result).resolves.toMatchObject({
+                return expect(result.resolvePromise).resolves.toMatchObject({
                     isValid: true,
                     recursively: 'Yes!',
                     inNestedValidators: 'Yep'
@@ -279,7 +302,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate('ABC');
-                return expect(result).resolves.toMatchObject({value: 'ABC'});
+                return expect(result.resolvePromise).resolves.toMatchObject({value: 'ABC'});
             });
 
             it('puts validate props on the resolved result', () => {
@@ -288,98 +311,56 @@ describe('every', () => {
                 ]);
 
                 const result = validate('ABC', {message: 'Message'});
-                return expect(result).resolves.toMatchObject({message: 'Message'});
+                return expect(result.resolvePromise).resolves.toMatchObject({message: 'Message'});
             });
         });
 
-        describe('can return a partial result object', () => {
+        describe('returns a partial result object', () => {
             const validate = every([
                 () => ({isValid: true, first: 'First'}),
-                () => Promise.resolve({isValid: true, second: 'Second'}),
+                () => ({isValid: true, second: 'Second'}),
                 every([
                     () => ({isValid: true, third: 'Third'}),
-                    () => Promise.resolve({isValid: true, fourth: 'Fourth'}),
+                    () => ({
+                        fourth: 'Not yet resolved',
+                        resolvePromise: Promise.resolve({isValid: true, fourth: 'Fourth'})
+                    }),
                     () => ({isValid: true, fifth: 'Fifth'})
                 ]),
                 () => ({isValid: true, sixth: 'Sixth'})
             ]);
 
-            const result = validate('ABC', {resolvePromise: false});
-
-            it('that is not a Promise', () => {
-                expect(result).not.toBeInstanceOf(Promise);
-            });
+            const result = validate('ABC');
 
             it('that is marked as not valid', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            it('with sync results in place and a Promise result where the first promise was', () => {
+            it('with sync results in place and Promise results where expected', () => {
                 expect(result).toMatchObject({
                     first: 'First',
+                    second: 'Second',
+                    third: 'Third',
+                    fourth: 'Not yet resolved',
                     every: [
                         {first: 'First'},
-                        Promise.prototype
+                        {second: 'Second'},
+                        {
+                            third: 'Third',
+                            fourth: 'Not yet resolved',
+                            every: [
+                                {third: 'Third'},
+                                {resolvePromise: Promise.prototype}
+                            ]
+                        }
                     ]
                 });
             });
 
-            describe('with a resolvePromise result prop', () => {
-                it('that is a Promise', () => {
-                    expect(result.resolvePromise).toBeInstanceOf(Promise);
-                });
-
-                it('that resolves result promises', () => {
-                    return expect(result.resolvePromise).resolves.toMatchObject({
-                        isValid: true,
-                        first: 'First',
-                        second: 'Second',
-                        third: 'Third',
-                        fourth: 'Fourth',
-                        fifth: 'Fifth',
-                        sixth: 'Sixth',
-                        every: [
-                            {first: 'First'},
-                            {second: 'Second'},
-                            {
-                                third: 'Third',
-                                fourth: 'Fourth',
-                                fifth: 'Fifth',
-                                every: [
-                                    {third: 'Third'},
-                                    {fourth: 'Fourth'},
-                                    {fifth: 'Fifth'}
-                                ]
-                            },
-                            {sixth: 'Sixth'}
-                        ]
-                    });
-                });
-
-                it('that results in a resolvePromise prop set to false when resolved', () => {
-                    return expect(result.resolvePromise).resolves.toMatchObject({
-                        resolvePromise: false
-                    });
-                });
-
-                it('that resolves exclusively nested results', () => {
-                    const validateNested = every([
-                        every([
-                            () => Promise.resolve(true)
-                        ])
-                    ]);
-
-                    const nestedResult = validateNested('ABC', {resolvePromise: false});
-
-                    return expect(nestedResult.resolvePromise).resolves.toMatchObject({
-                        isValid: true,
-                        every: [
-                            {
-                                isValid: true,
-                                every: [{isValid: true}]
-                            }
-                        ]
-                    });
+            it('with individual validator promises that will finish their results', () => {
+                return expect(result.every[2].every[1].resolvePromise).resolves.toMatchObject({
+                    isValid: true,
+                    fourth: 'Fourth'
                 });
             });
         });

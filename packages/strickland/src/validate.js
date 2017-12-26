@@ -21,19 +21,6 @@ export default function validate(rules, value, validateProps) {
 }
 
 function prepareResult(value, validateProps, result) {
-    // When resolving, don't allow the resolvePromise prop to flow
-    // Otherwise it could cause incomplete resolution
-    // eslint-disable-next-line no-unused-vars
-    const {resolvePromise, ...resolveProps} = validateProps;
-
-    if (result instanceof Promise) {
-        result.resolvePromise = result.then((resolved) => prepareResult(value, validateProps, resolved));
-
-        if (resolvePromise !== false) {
-            return result.resolvePromise;
-        }
-    }
-
     if (!result) {
         result = {
             isValid: false
@@ -42,6 +29,19 @@ function prepareResult(value, validateProps, result) {
         result = {
             isValid: result
         };
+    } else if (result instanceof Promise) {
+        result = {
+            isValid: false,
+            resolvePromise: result
+        };
+    }
+
+    if (result.resolvePromise) {
+        result.resolvePromise = result.resolvePromise.then((resolved) => prepareResult(value, validateProps, resolved));
+
+        if (validateProps.resolvePromise !== false) {
+            return result.resolvePromise;
+        }
     }
 
     return {

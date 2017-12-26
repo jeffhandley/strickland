@@ -483,6 +483,11 @@ describe('validate', () => {
             expect(result).toBeInstanceOf(Promise);
         });
 
+        it('returns a Promise if the validator returns a resolvePromise result prop', () => {
+            const result = validate(() => ({resolvePromise: Promise.resolve()}));
+            expect(result).toBeInstanceOf(Promise);
+        });
+
         describe('resolves results', () => {
             it('that resolve as true', () => {
                 const result = validate(() => Promise.resolve(true));
@@ -561,6 +566,45 @@ describe('validate', () => {
                 it('that results in a resolvePromise prop set to false when resolved', () => {
                     return expect(result.resolvePromise).resolves.toMatchObject({
                         resolvePromise: false
+                    });
+                });
+
+                it('where the partial result can include other props', () => {
+                    function partialWithProps() {
+                        return {
+                            resolvePromise: Promise.resolve(true),
+                            message: 'Validating...'
+                        };
+                    }
+
+                    const partialResult = validate(partialWithProps, null, {resolvePromise: false});
+                    expect(partialResult.message).toBe('Validating...');
+                });
+
+                it('where the partial result can be valid', () => {
+                    function partialIsValid() {
+                        return {
+                            isValid: true,
+                            resolvePromise: Promise.resolve(false)
+                        };
+                    }
+
+                    const partialResult = validate(partialIsValid, null, {resolvePromise: false});
+                    expect(partialResult.isValid).toBe(true);
+                });
+
+                it('where a valid partial result can resolve to invalid', () => {
+                    function partialIsValid() {
+                        return {
+                            isValid: true,
+                            resolvePromise: Promise.resolve(false)
+                        };
+                    }
+
+                    const partialResult = validate(partialIsValid, 'LOG', {resolvePromise: false});
+
+                    return partialResult.resolvePromise.then((finalResult) => {
+                        expect(finalResult.isValid).toBe(false);
                     });
                 });
             });

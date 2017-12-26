@@ -1070,7 +1070,13 @@ with a validation result that is not valid. As usual, this can be done by return
 an object with `isValid: false`.
 
 It is your responsibility to know if one of your validators could return a `Promise`; if so, then
-you will always need to treat the result from `validate` as a `Promise`.
+you will always need to treat the result from `validate` as a `Promise`. If you are unsure if
+`validate` is going to return a `Promise`, you can always safely use `Promise.resolve()` around
+the validation results.
+
+``` jsx
+Promise.resolve(validate(validator, value)).then(handleValidationResult);
+```
 
 ### Async Validator Arrays and Objects
 
@@ -1200,23 +1206,77 @@ validators in parallel. The `some` validator will short-circuit and return a *va
 as soon as it encounters the first valid result. Async validators will therefore get
 chained together and run in series until a valid result is found.
 
-### Getting Partial Results from Async Validation
+### Two-Stage Sync/Async Validation
 
-In some user scenarios with a mixture of synchronous and asynchronous validators, your user
-experience will required showing the partial validation results that are available before
-async validation completes. In those scenarios, it is valuable to get partial validation results
-before initiating the async validation.
+When a validator returns a `Promise`, the `validate` function actually applies a convention for
+the validation result. The `Promise` result is converted into a validation result object that
+has a `resolvePromise` prop with the `Promise` returned. This behavior is consistent with
+how boolean results are handled--they are wrapped in results where the boolean value is used
+as the `isValid` prop.
 
-Strickland makes this possible by using a `resolvePromise: false` validation prop. If this
-prop is passed into the validation, then any results that can be completed synchronously
-will be completed and returned as the validation results instead of a `Promise`. The validation
-result will include a `resolvePromise` property that itself is the `Promise` that will
-resolve the full validation results.
+Because the handling of `Promise` results is just a convention, your validators can skip
+that convention when needed. Instead of directly returning a `Promise`, a validator can return
+a result with a `resolvePromise` prop that represents additional validation to be performed
+asynchronously. Additional props can be included alongside `resolveProp` for richer results.
 
-Here's the same async example from above, but with `resovePromise` set to `false`.
+As seen above though, `validate` will directly return a `Promise` if any validation returns
+a `Promise`. This is due to a second convention that `validate` applies: if the validation
+result includes a `resolvePromise` result prop, that `Promise` will be directly returned.
+However, callers to `validate` can also skip that convention. To do so, pass a validation
+prop of `resolvePromise: false` and `validate` will return the actual result object
+containing the `resolvePromise` prop as the `Promise` to be resolved.
+
+Understanding these conventions, it's possible to perform two-stage validation where the first
+stage produces partial, synchronous validation; and the second stage performs complete,
+asynchronous validation. The following example would allow a UI to render partial validation
+results along with a progress indicator for the validation still executing. When the final
+validation is complete, the UI would update to reflect the complete result.
 
 ``` jsx
-const result = validate(validatePerson, person, {resolvePromise: false});
+import validate, {required, length} from 'strickland';
+
+function checkUsernameAvailability(username) {
+    if (!username) {
+        // Return just a boolean - it will be
+        // converted to a valid result
+        return true;
+    }
+
+    // Return an initial result indicating the value is
+    // not valid (yet), but validation is in progress
+    return {
+        isValid: false,
+        message: `Checking availability of "${username}"...`,
+        resolvePromise: new Promise((resolve) => {
+
+            if (username === 'marty') {
+
+                // Produce an async result object with
+                // a message
+                resolve({
+                    isValid: false,
+                    message: `"${username}" is not available`
+                });
+            }
+
+            // Produce an async result using just a boolean
+            resolve(true);
+        })
+    };
+}
+
+const validateUser = {
+    name: [required(), length(2, 20)],
+    username: [required(), length(2, 20), checkUsernameAvailability]
+};
+
+const user = {
+    name: 'Marty McFly',
+    username: 'marty'
+};
+
+// Pass {resolvePromise: false} to get immediate but partial results
+const result = validate(validateUser, user, {resolvePromise: false});
 
 /*
 result = {
@@ -1228,19 +1288,11 @@ result = {
         },
         username: {
             isValid: false,
+            value: 'marty',
             required: true,
             minLength: 2,
             maxLength: 20,
-            resolvePromise: Promise.prototype
-        },
-        address: {
-            isValid: false,
-            required: true,
-            props: {
-                street: {isValid: true},
-                city: {isValid: true},
-                state: {isValid: true}
-            },
+            message: 'Checking availability of "marty"...'
             resolvePromise: Promise.prototype
         }
     },
@@ -1260,17 +1312,10 @@ result.resolvePromise.then((asyncResult) => {
             username: {
                 isValid: false,
                 value: 'marty',
+                required: true,
+                minLength: 2,
+                maxLength: 20,
                 message: '"marty" is not available',
-                resolvePromise: false
-            },
-            address: {
-                isValid: false,
-                message: 'Hill Valley is in California',
-                props: {
-                    street: {isValid: true},
-                    city: {isValid: true},
-                    state: {isValid: true}
-                },
                 resolvePromise: false
             }
         },
@@ -1279,27 +1324,6 @@ result.resolvePromise.then((asyncResult) => {
     */
 });
 ```
-
-The initial result comes back with a few notable characteristics:
-
-* `isValid` will always be `false` when there is async validation waiting to be completed
-* `resolvePromise` is returned on any result that has async validation waiting
-    * If an async result is included in `each`, `every`, `some`, or `props`, then that validator will also include a `resolvePromise` result prop
-    * If desired, you can execute `resolvePromise` at any point in the graph to get individual results, but it is most common to execute the top-level `resolvePromise` to resolve all promises in the results
-* Once `resolvePromise` is called, the `resolvePromise` result prop is returned as `false` to indicate that no async validation remains
-    * There will only be at most one level of resolution needed
-    * But if there are no async validators needed during the first round of validation, then `resolvePromise` will return as `false` right away
-
-### Async Validation Cheat Sheet
-
-Performing async validation with partial results is one of the more advanced features of Strickland, but here is
-a cheat sheet for the behavior of async validation.
-
-1. If no validators return a `Promise`, then `validate` will return a complete result
-1. If any validators return a `Promise`, then `validate` will return a `Promise`
-    * Unless `resolvePromise: false` is supplied as a validation prop
-    * In that case, `validate` will return a partial result with `resolvePromise` on the result
-    * `resolvePromise` can then be used to resolve all async validation and get a complete result
 
 ## Summary
 

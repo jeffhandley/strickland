@@ -7,57 +7,54 @@ export default function some(validators, validatorProps) {
             ...validationProps
         };
 
-        function executeValidators(currentResult, validatorsToExecute, executionProps) {
-            if (!Array.isArray(validatorsToExecute) || !validatorsToExecute.length) {
-                return currentResult;
-            }
+        const validateProps = {
+            ...validationProps,
+            resolvePromise: false
+        };
 
-            validatorsToExecute.some((validator, index) => {
-                // Capture the current result so we can resume from it when resolving
-                const previousResult = currentResult;
-                const nextResult = validate(validator, value, executionProps);
+        function executeValidators(currentResult, validatorsToExecute) {
+            if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
+                validatorsToExecute.some((validator, index) => {
+                    const previousResult = currentResult;
+                    const nextResult = validate(validator, value, validateProps);
 
-                function resolveResultPromise(promise) {
-                    return promise.then((resolvedResult) => {
-                        const finalResult = applyNextResult(previousResult, resolvedResult);
+                    currentResult = applyNextResult(currentResult, nextResult);
 
-                        if (finalResult.isValid) {
-                            return finalResult;
-                        }
+                    if (nextResult.resolvePromise instanceof Promise) {
+                        const previousPromise = previousResult.resolvePromise || Promise.resolve(previousResult);
 
-                        // When resolving, don't allow the resolvePromise prop to flow
-                        // Otherwise it could cause incomplete resolution
-                        // eslint-disable-next-line no-unused-vars
-                        const {resolvePromise, ...remainingProps} = executionProps;
+                        currentResult.resolvePromise = previousPromise.then((initialResult) =>
+                            nextResult.resolvePromise.then((resolvedResult) => {
+                                let finalResult = applyNextResult(initialResult, resolvedResult);
 
-                        return executeValidators(
-                            applyNextResult(previousResult, resolvedResult),
-                            validatorsToExecute.slice(index + 1),
-                            remainingProps
+                                if (!finalResult.isValid) {
+                                    const remainingValidators = validatorsToExecute.slice(index + 1);
+                                    finalResult = executeValidators(finalResult, remainingValidators);
+
+                                    if (finalResult.resolvePromise) {
+                                        return finalResult.resolvePromise;
+                                    }
+                                }
+
+                                return prepareResult(value, validationProps, finalResult);
+                            })
                         );
-                    });
-                }
 
-                if (nextResult instanceof Promise) {
-                    currentResult = resolveResultPromise(nextResult);
+                        // Break out of the loop to prevent subsequent validation from occurring
+                        return true;
+                    }
 
-                    // Break out of the loop so the promise can be returned
-                    return true;
-                }
-
-                if (nextResult.resolvePromise instanceof Promise) {
-                    nextResult.resolvePromise = resolveResultPromise(nextResult.resolvePromise);
-                }
-
-                currentResult = applyNextResult(previousResult, nextResult);
-                return currentResult.isValid || currentResult.resolvePromise;
-            });
+                    return currentResult.isValid;
+                });
+            }
 
             return currentResult;
         }
 
-        const result = executeValidators({some: []}, validators, validationProps);
-        return prepareResult(validationProps, result);
+        let result = {some: []};
+        result = executeValidators(result, validators);
+
+        return prepareResult(value, validationProps, result);
     }
 }
 
@@ -72,18 +69,13 @@ function applyNextResult(previousResult, nextResult) {
     };
 }
 
-function prepareResult(validationProps, result) {
-    if (result instanceof Promise) {
-        return result.then((resolvedResult) => prepareResult(validationProps, resolvedResult));
-    }
-
-    if (result.resolvePromise instanceof Promise) {
-        result.resolvePromise = result.resolvePromise.then((resolvedResult) => prepareResult(validationProps, resolvedResult));
-    }
+function prepareResult(value, validationProps, result) {
+    validationProps.debug && validationProps.debug('prepareResult', result);
 
     return {
         ...validationProps,
         ...result,
-        isValid: !result.some.length || result.some.some((eachResult) => !!(eachResult.isValid))
+        value,
+        isValid: !result.some.length || result.some.some((everyResult) => !!(everyResult.isValid))
     };
 }

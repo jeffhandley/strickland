@@ -375,8 +375,10 @@ describe('readme', () => {
             };
 
             it('async results', () => {
-                return validate(validatePerson, person).then((result) => {
-                    expect(result).toMatchObject({
+                const result = validate(validatePerson, person);
+
+                return result.then((resolvedResult) => {
+                    expect(resolvedResult).toMatchObject({
                         isValid: false,
                         props: {
                             name: {
@@ -402,39 +404,52 @@ describe('readme', () => {
                 });
             });
 
-            it('partial results', () => {
-                const result = validate(validatePerson, person, {resolvePromise: false});
+            describe('partial results', () => {
+                function checkUsernameAvailability(username) {
+                    if (!username) {
+                        // Return just a boolean - it will be
+                        // converted to a valid result
+                        return true;
+                    }
 
-                expect(result).toMatchObject({
-                    isValid: false,
-                    props: {
-                        name: {
-                            isValid: true,
-                            value: 'Marty McFly'
-                        },
-                        username: {
-                            isValid: false,
-                            required: true,
-                            minLength: 2,
-                            maxLength: 20,
-                            resolvePromise: Promise.prototype
-                        },
-                        address: {
-                            isValid: false,
-                            required: true,
-                            props: {
-                                street: {isValid: true},
-                                city: {isValid: true},
-                                state: {isValid: true}
-                            },
-                            resolvePromise: Promise.prototype
-                        }
-                    },
-                    resolvePromise: Promise.prototype
-                });
+                    // Return an initial result indicating the value is
+                    // not valid (yet), but validation is in progress
+                    return {
+                        isValid: false,
+                        message: `Checking availability of "${username}"...`,
+                        resolvePromise: new Promise((resolve) => {
 
-                return result.resolvePromise.then((asyncResult) => {
-                    expect(asyncResult).toMatchObject({
+                            if (username === 'marty') {
+
+                                // Produce an async result object with
+                                // a message
+                                resolve({
+                                    isValid: false,
+                                    message: `"${username}" is not available`
+                                });
+                            }
+
+                            // Produce an async result using just a boolean
+                            resolve(true);
+                        })
+                    };
+                }
+
+                const validateUser = {
+                    name: [required(), length(2, 20)],
+                    username: [required(), length(2, 20), checkUsernameAvailability]
+                };
+
+                const user = {
+                    name: 'Marty McFly',
+                    username: 'marty'
+                };
+
+                // Pass {resolvePromise: false} to get immediate but partial results
+                const result = validate(validateUser, user, {resolvePromise: false});
+
+                it('initial result', () => {
+                    expect(result).toMatchObject({
                         isValid: false,
                         props: {
                             name: {
@@ -444,21 +459,38 @@ describe('readme', () => {
                             username: {
                                 isValid: false,
                                 value: 'marty',
-                                message: '"marty" is not available',
-                                resolvePromise: false
-                            },
-                            address: {
-                                isValid: false,
-                                message: 'Hill Valley is in California',
-                                props: {
-                                    street: {isValid: true},
-                                    city: {isValid: true},
-                                    state: {isValid: true}
-                                },
-                                resolvePromise: false
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20,
+                                message: 'Checking availability of "marty"...',
+                                resolvePromise: Promise.prototype
                             }
                         },
-                        resolvePromise: false
+                        resolvePromise: Promise.prototype
+                    });
+                });
+
+                it('async result', () => {
+                    return result.resolvePromise.then((asyncResult) => {
+                        expect(asyncResult).toMatchObject({
+                            isValid: false,
+                            props: {
+                                name: {
+                                    isValid: true,
+                                    value: 'Marty McFly'
+                                },
+                                username: {
+                                    isValid: false,
+                                    value: 'marty',
+                                    required: true,
+                                    minLength: 2,
+                                    maxLength: 20,
+                                    message: '"marty" is not available',
+                                    resolvePromise: false
+                                }
+                            },
+                            resolvePromise: false
+                        });
                     });
                 });
             });
