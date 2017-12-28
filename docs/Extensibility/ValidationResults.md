@@ -30,7 +30,7 @@ const result = validate(validator, 'A', { letter: 'A' });
 result = {
     message: 'Must match "A"',
     isValid: true,
-    value: 'B'
+    value: 'A'
 }
 */
 ```
