@@ -26,6 +26,8 @@
         * [some](/docs/Composition/some.md)
     * [Validating Objects](/docs/Composition/ValidatingObjects.md)
         * [props](/docs/Composition/props.md)
+        * [Advanced Object Validation](/docs/Composition/AdvancedObjectValidation.md)
+        * [Nested Objects](/docs/Composition/NestedObjects.md)
     * [Array and Object Conventions](/docs/Composition/Conventions.md)
 * [Async Validation](/docs/Async/README.md)
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
