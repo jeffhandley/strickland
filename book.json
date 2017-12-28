@@ -5,7 +5,7 @@
     "plugins": ["edit-link", "github"],
     "pluginsConfig": {
         "edit-link": {
-            "base": "https://github.com/jeffhandley/strickland/master",
+            "base": "https://github.com/jeffhandley/strickland/blob/master",
             "label": "Edit This Page"
         },
         "github": {
