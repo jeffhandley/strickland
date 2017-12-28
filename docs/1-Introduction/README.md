@@ -4,7 +4,7 @@ There are three core concepts you need to know with Strickland:
 
 1. **Validators** - Implementations of your validation rules
 2. **Validation** - The act of executing a validator against a value
-3. **Validation Result** - The output of validation for the given validator and value
+3. **Validation Results** - The output of validation for the given validator and value
 
 ## Creating a Validator
 
@@ -39,7 +39,7 @@ result = {
 
 ## Validation Results
 
-Strickland normalizes the validation result to always be an object with `isValid` and `value` properties.
+Strickland normalizes validation results to always be objects with `isValid` and `value` properties.
 
 If the validator returns a falsy value, then `isValid` will be `false`. If the validator returns `true`, then `isValid` will be `true`. If the validator returns an object, the truthiness of its `isValid` property will be used on the result's `isValid` property.
 

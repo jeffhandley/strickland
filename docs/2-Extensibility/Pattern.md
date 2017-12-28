@@ -57,7 +57,7 @@ result = {
 */
 ```
 
-## Including Validator Context Properties on Validation Results
+## Validator Context Properties on Validation Results
 
 In the above pattern, the validator context and validation context were composed together at the time of validation and all context properties were included on the validation result.
 
@@ -65,7 +65,7 @@ In our example, this has the by-product of including the `letter` property on th
 
 ## Flexible Validator Factory Parameters
 
-When applications provide context to validator factories, it can be convenient to simply include validator parameters within the context object. Validator factories can easily provide this flexibility by allowing the parameters and the context object to be either combined or separate.
+Named parameters are often implemented in JavaScript using objects. We can use the validator context object to support this while still allowing a simple parameter when desired. This is done by simply checking the first parameter's type to see if it is an object.
 
 Let's use this flexibility with the `letter` validator.
 
@@ -84,8 +84,7 @@ function letter(letterParam, validatorContext) {
 
     return function validateLetter(value, validationContext) {
         validationContext = {
-            letter: letterParam,
-            validatorContext,
+            ...validatorContext,
             ...validationContext
         };
 
