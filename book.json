@@ -10,6 +10,11 @@
         },
         "github": {
             "url": "https://github.com/jeffhandley/strickland/"
+        },
+        "theme-default": {
+            "styles": {
+                "website": "book.css"
+            }
         }
     }
 }
