@@ -20,7 +20,6 @@ There are three core concepts you need to know with Strickland:
 2. **Validation** - The act of executing a validator against a value
 3. **Validation Results** - The output of validation for the given validator and value
 
-<a name="validators"></a>
 ### Creating Validators
 
 Strickland **validators** are pure functions that *accept values* and *return validation results*. Here is an extremely simple validator that validates that the value supplied is the letter 'A'.
@@ -31,7 +30,6 @@ function letterA(value) {
 }
 ```
 
-<a name="validation"></a>
 ### Perfoming Validation
 
 Strickland's default export is a `validate` function that accepts a validator function and the value to validate against the validator; it returns the validation result.
@@ -53,7 +51,6 @@ result = {
 */
 ```
 
-<a name="validation-results"></a>
 ### Validation Results
 
 Strickland normalizes validation results to always be objects with `isValid` and `value` properties.
@@ -64,7 +61,10 @@ The `value` on the validation result will always be the value that was validated
 
 ## Documentation
 
-* [Introduction](/README.md)
+* [Introduction](/docs/Introduction/README.md)
+    * [Creating Validators](/docs/Introduction/Validators.md)
+    * [Performing Validation](/docs/Introduction/Validation.md)
+    * [Validation Results](/docs/Introduction/ValidationResults.md)
 * [Extensibility](/docs/Extensibility/README.md)
     * [Validator Factories](/docs/Extensibility/ValidatorFactories.md)
     * [Validation Context](/docs/Extensibility/ValidationContext.md)
