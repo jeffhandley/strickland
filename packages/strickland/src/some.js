@@ -70,8 +70,6 @@ function applyNextResult(previousResult, nextResult) {
 }
 
 function prepareResult(value, validationContext, result) {
-    validationContext.debug && validationContext.debug('prepareResult', result);
-
     return {
         ...validationContext,
         ...result,

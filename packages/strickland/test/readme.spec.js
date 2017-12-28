@@ -1,4 +1,4 @@
-import validate, {props, required, minLength, maxLength, length, range, every, each, some} from '../src/strickland';
+import validate, {props, required, minLength, length, range, every} from '../src/strickland';
 
 describe('readme', () => {
     it('performing validation', () => {
