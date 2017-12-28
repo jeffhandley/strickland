@@ -2,26 +2,26 @@ import every from './every';
 import minLength from './minLength';
 import maxLength from './maxLength';
 
-export default function length(minLengthProp, maxLengthProp, validatorProps) {
-    if (typeof minLengthProp === 'object') {
-        validatorProps = minLengthProp;
+export default function length(minLengthParam, maxLengthParam, validatorContext) {
+    if (typeof minLengthParam === 'object') {
+        validatorContext = minLengthParam;
 
-    } else if (typeof maxLengthProp === 'object') {
-        validatorProps = {
-            minLength: minLengthProp,
-            ...maxLengthProp
+    } else if (typeof maxLengthParam === 'object') {
+        validatorContext = {
+            minLength: minLengthParam,
+            ...maxLengthParam
         };
 
     } else {
-        validatorProps = {
-            minLength: minLengthProp,
-            maxLength: maxLengthProp,
-            ...validatorProps
+        validatorContext = {
+            minLength: minLengthParam,
+            maxLength: maxLengthParam,
+            ...validatorContext
         };
     }
 
     return every([
-        minLength(validatorProps),
-        maxLength(validatorProps)
+        minLength(validatorContext),
+        maxLength(validatorContext)
     ]);
 }

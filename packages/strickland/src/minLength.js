@@ -1,21 +1,21 @@
-export default function minLength(minLengthProp, validatorProps) {
-    if (typeof minLengthProp === 'object') {
-        validatorProps = minLengthProp;
+export default function minLength(minLengthParam, validatorContext) {
+    if (typeof minLengthParam === 'object') {
+        validatorContext = minLengthParam;
 
     } else {
-        validatorProps = {
-            minLength: minLengthProp,
-            ...validatorProps
+        validatorContext = {
+            minLength: minLengthParam,
+            ...validatorContext
         };
     }
 
-    return function validateMinLength(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+    return function validateMinLength(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
-        let minLengthValue = validationProps.minLength;
+        let minLengthValue = validationContext.minLength;
 
         if (typeof minLengthValue === 'function') {
             minLengthValue = minLengthValue();
@@ -36,7 +36,7 @@ export default function minLength(minLengthProp, validatorProps) {
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             minLength: minLengthValue,
             value,
             length,

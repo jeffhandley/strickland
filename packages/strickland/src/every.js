@@ -1,14 +1,14 @@
 import validate from './validate';
 
-export default function every(validators, validatorProps) {
-    return function validateEvery(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+export default function every(validators, validatorContext) {
+    return function validateEvery(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
         const validateProps = {
-            ...validationProps,
+            ...validationContext,
             resolvePromise: false
         };
 
@@ -36,7 +36,7 @@ export default function every(validators, validatorProps) {
                                     }
                                 }
 
-                                return prepareResult(value, validationProps, finalResult);
+                                return prepareResult(value, validationContext, finalResult);
                             })
                         );
 
@@ -54,7 +54,7 @@ export default function every(validators, validatorProps) {
         let result = {every: []};
         result = executeValidators(result, validators);
 
-        return prepareResult(value, validationProps, result);
+        return prepareResult(value, validationContext, result);
     }
 }
 
@@ -69,11 +69,11 @@ function applyNextResult(previousResult, nextResult) {
     };
 }
 
-function prepareResult(value, validationProps, result) {
-    validationProps.debug && validationProps.debug('prepareResult', result);
+function prepareResult(value, validationContext, result) {
+    validationContext.debug && validationContext.debug('prepareResult', result);
 
     return {
-        ...validationProps,
+        ...validationContext,
         ...result,
         value,
         isValid: !result.every.length || result.every.every((everyResult) => !!(everyResult.isValid))
