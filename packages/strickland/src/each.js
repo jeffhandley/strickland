@@ -1,14 +1,14 @@
 import validate from './validate';
 
-export default function each(validators, validatorProps) {
-    return function validateEach(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+export default function each(validators, validatorContext) {
+    return function validateEach(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
         const validateProps = {
-            ...validationProps,
+            ...validationContext,
             resolvePromise: false
         };
 
@@ -21,7 +21,7 @@ export default function each(validators, validatorProps) {
             });
         }
 
-        return prepareResult(value, validationProps, result);
+        return prepareResult(value, validationContext, result);
     }
 }
 
@@ -36,7 +36,7 @@ function applyNextResult(previousResult, nextResult) {
     };
 }
 
-function prepareResult(value, validationProps, result) {
+function prepareResult(value, validationContext, result) {
     if (result.each.some((eachResult) => eachResult.resolvePromise instanceof Promise)) {
         const promises = result.each.map((eachResult) =>
             eachResult.resolvePromise instanceof Promise ? eachResult.resolvePromise : Promise.resolve(eachResult)
@@ -46,12 +46,12 @@ function prepareResult(value, validationProps, result) {
 
         result.resolvePromise = Promise.all(promises).then((results) => {
             finalResult = results.reduce(applyNextResult, finalResult);
-            return prepareResult(value, validationProps, finalResult);
+            return prepareResult(value, validationContext, finalResult);
         });
     }
 
     return {
-        ...validationProps,
+        ...validationContext,
         ...result,
         value,
         isValid: !result.each.length || result.each.every((eachResult) => !!(eachResult.isValid))

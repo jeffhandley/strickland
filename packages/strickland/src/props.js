@@ -1,14 +1,14 @@
 import validate from './validate';
 
-export default function props(validators, validatorProps) {
-    return function validateEach(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+export default function props(validators, validatorContext) {
+    return function validateEach(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
         const validateProps = {
-            ...validationProps,
+            ...validationContext,
             resolvePromise: false
         };
 
@@ -23,7 +23,7 @@ export default function props(validators, validatorProps) {
             ).reduce(applyNextResult, result);
         }
 
-        return prepareResult(value, validationProps, result);
+        return prepareResult(value, validationContext, result);
     }
 }
 
@@ -43,7 +43,7 @@ function applyNextResult(previousResult, nextResult) {
     };
 }
 
-function prepareResult(value, validationProps, result) {
+function prepareResult(value, validationContext, result) {
     const propNames = Object.keys(result.props);
 
     if (propNames.some((propName) => result.props[propName].resolvePromise instanceof Promise)) {
@@ -59,12 +59,12 @@ function prepareResult(value, validationProps, result) {
 
         result.resolvePromise = Promise.all(promiseResults).then((resolvedResults) =>
             resolvedResults.reduce(applyNextResult, finalResult)
-        ).then((resolvedResult) => prepareResult(value, validationProps, resolvedResult));
+        ).then((resolvedResult) => prepareResult(value, validationContext, resolvedResult));
 
     }
 
     return {
-        ...validationProps,
+        ...validationContext,
         ...result,
         value,
         isValid: propNames.every((propName) => result.props[propName].isValid)

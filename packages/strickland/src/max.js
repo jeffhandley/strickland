@@ -1,23 +1,23 @@
 import {isFalsyButNotZero} from './number';
 
-export default function max(maxProp, validatorProps) {
-    if (typeof maxProp === 'object') {
-        validatorProps = maxProp;
+export default function max(maxParam, validatorContext) {
+    if (typeof maxParam === 'object') {
+        validatorContext = maxParam;
 
     } else {
-        validatorProps = {
-            max: maxProp,
-            ...validatorProps
+        validatorContext = {
+            max: maxParam,
+            ...validatorContext
         };
     }
 
-    return function validateMax(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+    return function validateMax(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
-        let maxValue = validationProps.max;
+        let maxValue = validationContext.max;
 
         if (typeof maxValue === 'function') {
             maxValue = maxValue();
@@ -35,12 +35,12 @@ export default function max(maxProp, validatorProps) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value > validationProps.max) {
+        } else if (value > validationContext.max) {
             isValid = false;
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             max: maxValue,
             value,
             isValid

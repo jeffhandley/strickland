@@ -1,22 +1,22 @@
-export default function compare(compareProp, validatorProps) {
-    if (typeof compareProp === 'object') {
-        validatorProps = compareProp;
+export default function compare(compareParam, validatorContext) {
+    if (typeof compareParam === 'object') {
+        validatorContext = compareParam;
 
     } else {
-        validatorProps = {
-            compare: compareProp,
-            ...validatorProps
+        validatorContext = {
+            compare: compareParam,
+            ...validatorContext
         };
     }
 
-    return function validateCompare(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+    return function validateCompare(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
         let isValid = true;
-        let valueToCompare = validationProps.compare;
+        let valueToCompare = validationContext.compare;
 
         if (typeof valueToCompare === 'function') {
             valueToCompare = valueToCompare();
@@ -29,7 +29,7 @@ export default function compare(compareProp, validatorProps) {
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             value,
             compare: valueToCompare,
             isValid

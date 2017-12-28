@@ -1,23 +1,23 @@
 import {isFalsyButNotZero} from './number';
 
-export default function min(minProp, validatorProps) {
-    if (typeof minProp === 'object') {
-        validatorProps = minProp;
+export default function min(minParam, validatorContext) {
+    if (typeof minParam === 'object') {
+        validatorContext = minParam;
 
     } else {
-        validatorProps = {
-            min: minProp,
-            ...validatorProps
+        validatorContext = {
+            min: minParam,
+            ...validatorContext
         };
     }
 
-    return function validateMin(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+    return function validateMin(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
-        let minValue = validationProps.min;
+        let minValue = validationContext.min;
 
         if (typeof minValue === 'function') {
             minValue = minValue();
@@ -35,12 +35,12 @@ export default function min(minProp, validatorProps) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value < validationProps.min) {
+        } else if (value < validationContext.min) {
             isValid = false;
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             min: minValue,
             value,
             isValid

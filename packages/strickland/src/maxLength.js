@@ -1,21 +1,21 @@
-export default function maxLength(maxLengthProp, validatorProps) {
-    if (typeof maxLengthProp === 'object') {
-        validatorProps = maxLengthProp;
+export default function maxLength(maxLengthParam, validatorContext) {
+    if (typeof maxLengthParam === 'object') {
+        validatorContext = maxLengthParam;
 
     } else {
-        validatorProps = {
-            maxLength: maxLengthProp,
-            ...validatorProps
+        validatorContext = {
+            maxLength: maxLengthParam,
+            ...validatorContext
         };
     }
 
-    return function validateMaxLength(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+    return function validateMaxLength(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
-        let maxLengthValue = validationProps.maxLength;
+        let maxLengthValue = validationContext.maxLength;
 
         if (typeof maxLengthValue === 'function') {
             maxLengthValue = maxLengthValue();
@@ -36,7 +36,7 @@ export default function maxLength(maxLengthProp, validatorProps) {
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             maxLength: maxLengthValue,
             value,
             length,

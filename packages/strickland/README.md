@@ -631,8 +631,8 @@ result = {
 There are a few notable characteristics of this result:
 
 1. The properties from each executed validator are added to the top-level result
-    * The `required` validator added the `required: true` prop to the result
-    * The `minLength` validator added the `minLength: 5` prop to the result
+    * The `required` validator added the `required: true` property to the result
+    * The `minLength` validator added the `minLength: 5` property to the result
 1. Property collisions are resolved using last-in-wins
     * In this example, the `message` from the `required` validator was replaced with the `message` from the `minLength` validator
     * This allows the message to reflect the deepest validation result in the array

@@ -1,10 +1,10 @@
 let notDefined;
 
-export default function required(validatorProps) {
-    return function validateRequired(value, validationProps) {
-        validationProps = {
-            ...validatorProps,
-            ...validationProps
+export default function required(validatorContext) {
+    return function validateRequired(value, validationContext) {
+        validationContext = {
+            ...validatorContext,
+            ...validationContext
         };
 
         let isValid = true;
@@ -18,7 +18,7 @@ export default function required(validatorProps) {
         }
 
         return {
-            ...validationProps,
+            ...validationContext,
             required: true,
             value,
             isValid

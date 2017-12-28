@@ -2,20 +2,20 @@ import every from './every';
 import min from './min';
 import max from './max';
 
-export default function range(minProp, maxProp, validatorProps) {
-    if (typeof minProp === 'object') {
-        validatorProps = minProp;
+export default function range(minParam, maxParam, validatorProps) {
+    if (typeof minParam === 'object') {
+        validatorProps = minParam;
 
-    } else if (typeof maxProp === 'object') {
+    } else if (typeof maxParam === 'object') {
         validatorProps = {
-            min: minProp,
-            ...maxProp
+            min: minParam,
+            ...maxParam
         };
 
     } else {
         validatorProps = {
-            min: minProp,
-            max: maxProp,
+            min: minParam,
+            max: maxParam,
             ...validatorProps
         };
     }
