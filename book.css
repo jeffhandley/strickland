@@ -2,7 +2,7 @@
     Hide the book summary list item at the top of the
     summary as well as the divider underneath it
 */
-.book-summary > ul.summary > li:nth-of-type(1),
-.book-summary > ul.summary > li:nth-of-type(2) {
+.book-summary > nav > ul.summary > li:nth-of-type(1),
+.book-summary > nav > ul.summary > li:nth-of-type(2) {
     display: none
 }
