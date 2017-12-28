@@ -1,5 +1,6 @@
 # Table of Contents
 
+* [Read Me](/README.md)
 * [Introduction](/docs/Introduction/README.md)
     * [Creating Validators](/docs/Introduction/Validators.md)
     * [Performing Validation](/docs/Introduction/Validation.md)
