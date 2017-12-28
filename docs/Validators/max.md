@@ -1,4 +1,4 @@
-# max
+# Built-In Validator: max
 
 The `max` validator checks that a value is at most the maximum value provided.
 

@@ -1,4 +1,4 @@
-# compare
+# Built-In Validator: compare
 
 The `compare` validator is quite similar to the `letter` validator we've built in our examples. In fact, it only has one additional feature. It accepts a function for the `compare` prop so that the compare value can be fetched at the time of validation even more easily than providing it as a validation-time prop. Of course, the comparison value can still be provided to either the validator factory or the validation context.
 

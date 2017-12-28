@@ -1,4 +1,4 @@
-# Built-In Validators
+# Built-In Validator: Built-In Validators
 
 Strickland provides a small set of fundamental validators, serving as the core building blocks that
 your applications can use.

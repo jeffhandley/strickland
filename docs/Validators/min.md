@@ -1,4 +1,4 @@
-# min
+# Built-In Validator: min
 
 The `min` validator checks that a value is at least the minimum value provided.
 

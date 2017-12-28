@@ -1,4 +1,4 @@
-# maxLength
+# Built-In Validator: maxLength
 
 The `maxLength` validator checks that a value has a length no more than the maximum length provided.
 

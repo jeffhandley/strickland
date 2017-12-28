@@ -1,4 +1,4 @@
-# required
+# Built-In Validator: required
 
 The `required` validator is the only validator that ensures a value is present. All other validators in Strickland will return `isValid: true` if the value supplied is empty. This approach allows all other validators to be applied to optional values. And as we'll explore shortly, validators can be composed to combine `required` with other validators.
 

@@ -1,4 +1,4 @@
-# minLength
+# Built-In Validator: minLength
 
 The `minLength` validator checks that a value has a length at least the minimum length provided.
 

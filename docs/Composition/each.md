@@ -1,4 +1,4 @@
-# each
+# Built-In Validator: each
 
 Strickland also provides an `each` validator. The `each` validator operates over an array and it will only return a valid result if each and every validator in the array is valid. But `each` has a significant difference from `every`: `each` will always execute every validator, regardless of previous results. You can use `each` if all validators are safe to execute and you need to know all validator results, even if some are invalid.
 

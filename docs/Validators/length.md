@@ -1,4 +1,4 @@
-# length
+# Built-In Validator: length
 
 The `length` validator conveniently combines the `minLength` and `maxLength` validators to check that a value is within a range. Both the `minLength` and `maxLength` values are inclusive.
 

@@ -1,4 +1,4 @@
-# props
+# Built-In Validator: props
 
 The `props` validator performs validation on every object property for which validators are defined. The validators are supplied as an object with the shape matching the object. Here's an example for validating the person we used above showing what the detailed result properties are.
 

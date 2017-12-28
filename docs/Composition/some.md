@@ -1,4 +1,4 @@
-# some
+# Built-In Validator: some
 
 Strickland also provides an `some` validator. The `some` validator also operates over an array of validators and it behaves similarly to `every`, except that it will exit as soon as it encounters a *valid* result. If any of the validators in the array are valid, then the overall result will be valid.
 

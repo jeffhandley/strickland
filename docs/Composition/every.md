@@ -1,4 +1,4 @@
-# every
+# Built-In Validator: every
 
 The `every` validator is built into Strickland. And it has a couple additional features not illustrated in the example implementation.
 

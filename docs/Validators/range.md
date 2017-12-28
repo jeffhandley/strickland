@@ -1,4 +1,4 @@
-# range
+# Built-In Validator: range
 
 The `range` validator conveniently combines the `min` and `max` validators to check that a value is within a range. Both the `min` and `max` values are inclusive.
 
