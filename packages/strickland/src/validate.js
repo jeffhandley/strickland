@@ -1,26 +1,26 @@
 import every from './every';
 import props from './props';
 
-export default function validate(rules, value, validateProps) {
-    validateProps = {...validateProps};
+export default function validate(validator, value, validationContext) {
+    validationContext = {...validationContext};
 
     let result = true;
 
-    if (Array.isArray(rules)) {
-        rules = every(rules);
-    } else if (typeof rules === 'object' && rules) {
-        rules = props(rules);
+    if (Array.isArray(validator)) {
+        validator = every(validator);
+    } else if (typeof validator === 'object' && validator) {
+        validator = props(validator);
     }
 
-    if (typeof rules !== 'function') {
-        throw 'unrecognized validation rules: ' + (typeof rules)
+    if (typeof validator !== 'function') {
+        throw 'Strickland: The validator passed to validate must be a function, an array (to use every), or an object (to use props). Validator type: ' + typeof(validator);
     }
 
-    result = rules(value, validateProps);
-    return prepareResult(value, validateProps, result);
+    result = validator(value, validationContext);
+    return prepareResult(value, validationContext, result);
 }
 
-function prepareResult(value, validateProps, result) {
+function prepareResult(value, validationContext, result) {
     if (!result) {
         result = {
             isValid: false
@@ -37,15 +37,15 @@ function prepareResult(value, validateProps, result) {
     }
 
     if (result.resolvePromise) {
-        result.resolvePromise = result.resolvePromise.then((resolved) => prepareResult(value, validateProps, resolved));
+        result.resolvePromise = result.resolvePromise.then((resolved) => prepareResult(value, validationContext, resolved));
 
-        if (validateProps.resolvePromise !== false) {
+        if (validationContext.resolvePromise !== false) {
             return result.resolvePromise;
         }
     }
 
     return {
-        ...validateProps,
+        ...validationContext,
         ...result,
         isValid: !!result.isValid,
         value
