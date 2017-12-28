@@ -1,7 +1,6 @@
 # Table of Contents
 
-* [Read Me](/README.md)
-* [Introduction](/docs/1-Introduction/README.md)
+* [Introduction](/README.md)
 * [Extensibility](/docs/2-Extensibility/README.md)
     * [Validator Factories](/docs/2-Extensibility/ValidatorFactories.md)
     * [Validation Context](/docs/2-Extensibility/ValidationContext.md)
@@ -23,3 +22,7 @@
         * [some](/docs/4-Composition/some.md)
     * [Validating Objects](/docs/4-Composition/ValidatingObjects.md)
         * [props](/docs/4-Composition/props.md)
+* [Async Validation](/docs/5-Async/README.md)
+    * [Async Validator Arrays and Objects](/docs/5-Async/ValidatorArraysAndObjects.md)
+    * [Two-Stage Sync/Async Validation](/docs/5-Async/TwoStageValidation.md)
+* [Wrap-Up](/docs/WrapUp.md)
