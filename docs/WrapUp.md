@@ -6,9 +6,9 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Core Concepts
 
-1. **[Validators](/README.md#validators)** are implementations of your validation rules
-1. **[Validation](/README.md#validation)** is the act of executing a validator against a value
-1. **[Validation Results](/README.md#validation-results)** are the output of validation for the given validator and value
+1. **[Validators](/docs/Introduction/Validators.md)** are implementations of your validation rules
+1. **[Validation](/docs/Introduction/Validation.md)** is the act of executing a validator against a value
+1. **[Validation Results](/docs/Introduction/ValidationResults.md)** are the output of validation for the given validator and value
 
 ## Extensibility Concepts
 
