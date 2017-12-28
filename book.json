@@ -1,0 +1,15 @@
+{
+    "title": "Strickland",
+    "description": "Strickland is a JavaScript validation framework with a focus on extensibility and composability.",
+    "author": "Jeff Handley <npm@jeffhandley.com>",
+    "plugins": ["edit-link", "github"],
+    "pluginsConfig": {
+        "edit-link": {
+            "base": "https://github.com/jeffhandley/strickland/master",
+            "label": "Edit This Page"
+        },
+        "github": {
+            "url": "https://github.com/jeffhandley/strickland/"
+        }
+    }
+}
