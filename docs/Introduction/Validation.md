@@ -10,11 +10,4 @@ function letterA(value) {
 }
 
 const result = validate(letterA, 'B');
-
-/*
-result = {
-    isValid: false,
-    value: 'B'
-}
-*/
 ```
