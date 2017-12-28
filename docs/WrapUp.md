@@ -12,18 +12,18 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Extensibility Concepts
 
-1. **[Validator Factories](/docs/2-Extensiblity/ValidatorFactories.md)** are functions that take parameters and return validator functions
-1. **[Validation Context](/docs/2-Extensibility/ValidationContext.md)** is provided to validators and returned on results
-1. **[Extensible Validation Results](/docs/2-Extensibility/ValidationResults.md)** allow applications to produce rich user experiences
+1. **[Validator Factories](/docs/Extensiblity/ValidatorFactories.md)** are functions that take parameters and return validator functions
+1. **[Validation Context](/docs/Extensibility/ValidationContext.md)** is provided to validators and returned on results
+1. **[Extensible Validation Results](/docs/Extensibility/ValidationResults.md)** allow applications to produce rich user experiences
 
 ## Composition Concepts
 
-1. **[Arrays of Validators](/docs/4-Composition/ArraysOfValidators.md)** can be composed together to validate a value against multiple validators
-1. **[Validating Objects](/docs/4-Composition/ValidatingObjects.md)** is done by building objects that define how object props should be validated
-1. **[Array and Object Conventions](/docs/4-Composition/Conventions.md)** enable terse and natural definitions of complex compositions
+1. **[Arrays of Validators](/docs/Composition/ArraysOfValidators.md)** can be composed together to validate a value against multiple validators
+1. **[Validating Objects](/docs/Composition/ValidatingObjects.md)** is done by building objects that define how object props should be validated
+1. **[Array and Object Conventions](/docs/Composition/Conventions.md)** enable terse and natural definitions of complex compositions
 
 ## Async Validation
 
-1. **[Validators Can Return Promises](/docs/5-Async/README.md)** to provide async validation capabilities
-1. **[Composition Supports Promises](/docs/5-Async/ValidatorArraysAndObjects.md)** within arrays of validators or object validation
-1. **[Two-Stage Sync/Async Validation](/docs/5-Async/TwoStageValidation.md)** is conducted using a `resolvePromise` validation result property
+1. **[Validators Can Return Promises](/docs/Async/README.md)** to provide async validation capabilities
+1. **[Composition Supports Promises](/docs/Async/ValidatorArraysAndObjects.md)** within arrays of validators or object validation
+1. **[Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)** is conducted using a `resolvePromise` validation result property
