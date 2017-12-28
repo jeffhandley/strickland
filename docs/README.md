@@ -1,6 +1,9 @@
 # Table of Contents
 
-* [Introduction](/README.md)
+* [Introduction](/docs/Introduction/README.md)
+    * [Creating Validators](/docs/Introduction/Validators.md)
+    * [Performing Validation](/docs/Introduction/Validation.md)
+    * [Validation Results](/docs/Introduction/ValidationResults.md)
 * [Extensibility](/docs/Extensibility/README.md)
     * [Validator Factories](/docs/Extensibility/ValidatorFactories.md)
     * [Validation Context](/docs/Extensibility/ValidationContext.md)
