@@ -12,7 +12,7 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Extensibility Concepts
 
-1. **[Validator Factories](/docs/Extensiblity/ValidatorFactories.md)** are functions that take parameters and return validator functions
+1. **[Validator Factories](/docs/Extensibility/ValidatorFactories.md)** are functions that take parameters and return validator functions
 1. **[Validation Context](/docs/Extensibility/ValidationContext.md)** is provided to validators and returned on results
 1. **[Extensible Validation Results](/docs/Extensibility/ValidationResults.md)** allow applications to produce rich user experiences
 

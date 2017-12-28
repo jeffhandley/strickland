@@ -26,6 +26,7 @@
         * [some](/docs/Composition/some.md)
     * [Validating Objects](/docs/Composition/ValidatingObjects.md)
         * [props](/docs/Composition/props.md)
+    * [Array and Object Conventions](/docs/Composition/Conventions.md)
 * [Async Validation](/docs/Async/README.md)
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
