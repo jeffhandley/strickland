@@ -1,6 +1,6 @@
 # Validator Factories
 
-Validators often need to be configurable. Instead of always validating that a value matches the letter 'A', our `letter` validator might need to specify which letter to compare against. To accomplish that, we can define a **Validator Factory** that accepts the desired letter and returns a validator to be used.
+Validators often need to be configurable. Instead of always validating that a value matches the letter 'A', our `letter` validator might need to accept which letter to compare against. To accomplish that, we can define a **Validator Factory** that accepts the desired letter and returns a validator to be used.
 
 ``` jsx
 import validate from 'strickland';

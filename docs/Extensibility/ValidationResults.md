@@ -1,6 +1,6 @@
 # Extensible Validation Results
 
-You may have noticed that examples so far have not included any validation messages. Validation messages are often the heart of validation libraries, but Strickland actually has no concept of them. This ensures you can build your application with the user experience you need, including style and localization of your own messages, without any interference from Strickland or any possibility of a default validation message leaking through.
+You may have noticed that examples so far have not included any validation messages. Validation messages are often the heart of validation libraries, but Strickland has no concept of them. This ensures you can build your application with the user experience you need, including style and localization of your own messages, without any interference from Strickland or any possibility of a default validation message leaking through.
 
 ***But how do you get validation messages on results?*** As was mentioned in our [core concepts](/docs/Introduction/CoreConcepts.md), a validator can return either a boolean or a validation result object with an `isValid` property. Validation result objects can have additional properties; those properties flow through Strickland's `validate` function to be available to your application.
 

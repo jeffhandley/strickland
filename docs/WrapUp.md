@@ -1,6 +1,6 @@
 # Wrap-Up
 
-The design and implementation of Strickland ends up being fractal, with extensibility and composition available at every turn. Because validator functions are so simple, Strickland is a great framework on which you can build the validator libraries you need for your application. And since Strickland is pure JavaScript and not coupled to any other libraries or concepts, it can be used in any JavaScript application.
+The design and implementation of Strickland ends up being fractal, with extensibility and composability available at every turn. Because validator functions are so simple, Strickland is a great framework on which you can build the validator libraries you need for your applications. And since Strickland is pure JavaScript and not coupled to any other libraries or concepts, it can be used in any JavaScript application.
 
 Using Strickland's built-in validators, and its extensibility and composability, you can build your application's validation library and provide rich validation experiences for your users.
 

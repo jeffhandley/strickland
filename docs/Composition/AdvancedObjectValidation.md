@@ -59,7 +59,7 @@ In this example, the following will be validated (in this order):
 
 Here are some notes should anything have been invalid:
 
-1. If the `person` had been empty, neither the props nor `stanfordStricklandBornIn1925` would have been validated
-1. If the `firstName` prop had been empty, its length would not have been validated
-1. If the `lastName` prop had been empty, its length would not have been validated
-1. If the `firstName`, `lastName`, or `birthYear` props had been invalid, `stanfordStricklandBornIn1925` would not have been validated
+1. If the `person` was empty, neither the props nor `stanfordStricklandBornIn1925` would be validated
+1. If the `firstName` prop was empty, its length would not be validated
+1. If the `lastName` prop was empty, its length would not be validated
+1. If the `firstName`, `lastName`, or `birthYear` props were invalid, `stanfordStricklandBornIn1925` would not be validated

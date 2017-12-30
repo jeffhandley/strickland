@@ -1,6 +1,6 @@
 # Built-In Validator: each
 
-Strickland also provides an `each` validator. The `each` validator operates over an array and it will only return a valid result if each and every validator in the array is valid. But `each` has a significant difference from `every`: `each` will always execute every validator, regardless of previous results. You can use `each` if all validators are safe to execute and you need to know all validator results, even if some are invalid.
+Strickland also provides an `each` validator. The `each` validator operates over an array and it will only return a valid result if all validators in the array are valid. But `each` has a significant difference from `every`: `each` will always execute all validators, regardless of previous results. You can use `each` if all validators are safe to execute and you need to know all validator results, even if some are invalid.
 
 ## Parameters
 
@@ -10,7 +10,7 @@ The first parameter to the `each` validator factory is the array of validators. 
 
 * `each`: The array of validation results produced during validation
 
-The `each` validator adds an `eacg` property to the validation result that provides the detailed validation results of each validator that was validated in the array of validators. The validation result property is named `each` to match the name of the validator (this is a common pattern in Strickland).
+The `each` validator adds an `each` property to the validation result that provides the detailed validation results of each validator that was validated in the array of validators. The validation result property is named `each` to match the name of the validator (this is a common pattern in Strickland).
 
 ## Usage
 

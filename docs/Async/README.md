@@ -1,6 +1,6 @@
 # Async Validators
 
-If you have wondered how async validators would work with Strickland, you will be delighted at how simple they are. If a validator returns a `Promise`, then Strickland will return a `Promise` for the validation result. When the validation result is resolved, async validators will be resolved.
+If you have wondered how async validators would work with Strickland, you will be delighted at how simple they are. If a validator returns a `Promise`, then Strickland will return a `Promise` for the validation result. When the validation result promise is resolved, async validators will be resolved.
 
 ``` jsx
 import validate from 'strickland';
@@ -35,8 +35,15 @@ validate(usernameIsAvailable, 'marty').then((result) => {
 
 When validation results are invalid, do not reject the promise. Instead, resolve the promise with a validation result that is not valid. As usual, this can be done by returning `false` or an object with `isValid: false`.
 
-It is your application's responsibility to know if one of your validators could return a `Promise`; if so, then you will always need to treat the result from `validate` as a `Promise`. If you are unsure if `validate` is going to return a `Promise`, you can always safely use `Promise.resolve()` around the validation results.
+It is your application's responsibility to know if one of your validators could return a `Promise`; if so, then you will always need to treat the result from `validate` as a `Promise`. If you are unsure if `validate` is going to return a `Promise`, you can safely use `Promise.resolve()` around the validation results.
 
 ``` jsx
 Promise.resolve(validate(validator, value)).then(handleValidationResult);
 ```
+
+## Additional Async Features
+
+Strickland has support for additional features related to async validation.
+
+* [Async Validator Arrays and Objects](ValidatorArraysAndObjects.md)
+* [Two Stage Sync/Async Validation](TwoStageValidation.md)

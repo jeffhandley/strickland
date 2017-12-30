@@ -1,16 +1,16 @@
 # Strickland
 
-Strickland is a JavaScript validation _framework_ with a focus on extensibility and composability. It built with pure, universal JavaScript and while it works well with React, Redux, or other libraries, Strickland is not coupled to any other library or application type.
+Strickland is a JavaScript validation _framework_ with a focus on extensibility and composability. It built with pure, universal JavaScript and while it works well with React, Redux, and other UI libraries, Strickland is not coupled to any other library or application type.
 
 Strickland is a unique and robust approach to building validation into your application.
 
-* It is *not* a type system and it does not interfere with how you create and manage data
+* It is *not* a type system and it does not interfere with how you create and manage objects
 * Instead, validation rules are defined separately from the data
 * While Strickland can be used within the UI layer (including React components or Redux modules), it is not limited to use within UI
 * Universal applications can share validators across both client-side and server-side validation
 * With its extensibility and composability, Strickland supports complex scenarios in large line-of-business applications
 
-Strickland focuses not on being a bloated collection of validators, but instead on enabling you to create your own collection of validators that can be composed together easily.
+Strickland focuses not on being a bloated collection of validators, but instead on enabling you to create your application's collection of validators and compose them together easily.
 
 ## Core Concepts
 
@@ -22,7 +22,7 @@ There are three core concepts you need to know with Strickland:
 
 ### Creating Validators
 
-Strickland **validators** are pure functions that *accept values* and *return validation results*. Here is an extremely simple validator that validates that the value supplied is the letter 'A'.
+Strickland **validators** are pure functions that *accept values* and *return validation results*. Here is an extremely simple validator that validates that the value supplied is the letter 'A', returning the validation result as a boolean.
 
 ``` jsx
 function letterA(value) {

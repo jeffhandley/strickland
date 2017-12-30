@@ -1,10 +1,10 @@
 # Extensibility
 
-Strickland is *not* a bloated collection of validators. Instead, Strickland is an *extensible framework* on which you can build your application's validation. To achieve this goal, Strickland keeps its core concepts at a minimum and provides you with the power to extend the concepts as needed in your application.
+Strickland is *not* a bloated collection of validators. Instead, Strickland is an *extensible framework* on which you can build your application's validation. To achieve the extensibility goal, Strickland keeps its core concepts at a minimum and provides you with the power to extend the concepts as needed in your application.
 
 ## Areas of Extensibility
 
-We learned that Strickland is made up of three core concepts: Validators, Validation, and Validation Results. Extensibility is key in all three of these concepts.
+We learned that Strickland is made up of three core concepts: Validators, Validation, and Validation Results. All three of these concepts are extensible.
 
 * [Validator Factories](ValidatorFactories.md)
 * [Validation Context](ValidationContext.md)

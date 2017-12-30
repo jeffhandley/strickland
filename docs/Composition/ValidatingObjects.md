@@ -1,8 +1,8 @@
 # Validating Objects
 
-We've demonstrated quite a bit of flexibility validating single values with Strickland, including seeing how arrays of validators can be composed together. But every application needs to validate objects. Let's see how Strickland can do this.
+We've demonstrated quite a bit of flexibility validating single values with Strickland, including how arrays of validators can be composed together. But every application needs to validate objects. Let's see how Strickland can do this.
 
-We will start by illustrating what object validation might look like with no additional Strickland features. This example will validate a person's first name, last name, and birth year.
+We will start by illustrating what object validation looks like with no additional Strickland features. This example will validate a person's first name, last name, and birth year.
 
 ``` jsx
 import validate, {

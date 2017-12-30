@@ -1,16 +1,16 @@
 # Built-In Validator: props
 
-The `props` validator performs validation on every object property for which validators are defined. The validators are supplied as an object with the shape matching the object. Here's an example for validating the person we used above showing what the detailed result properties are.
+The `props` validator performs validation on every object property for which validators are defined. The validators are supplied as an object with the shape matching the object.
 
 ## Parameters
 
-The first parameter to the `props` validator factory is an object defining the properties to be validated on objects. These properties themselves have values that are validators. The second parameter is a `validatorContext` that is combined with the `validationContext` supplied to every validator. This allows context common to all validators to be supplied at the time of creation.
+The first parameter to the `props` validator factory is an object defining the properties to be validated on objects. These properties themselves have values that are validators. The second parameter is a `validatorContext` that is combined with the context supplied to every validator; this allows context common to all validators to be supplied once at the time of creation.
 
 ## Result Properties
 
 * `props`: An object with properties matching those validated, with the values of the properties representing the validation results produced during validation
 
-The `props` validator adds a `props` property to the validation result that provides the detailed validation results of every property that was validated in the object's validators. Validators that were not executed because of validation succeeding early will be omitted from this array. The validation result property is named `props` to match the name of the validator (this is a common pattern in Strickland).
+The `props` validator adds a `props` property to the validation result that provides the detailed validation results of every property that was validated in the object's validators. The validation result property is named `props` to match the name of the validator (this is a common pattern in Strickland).
 
 
 ``` jsx

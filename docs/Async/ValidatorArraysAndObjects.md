@@ -1,6 +1,6 @@
 # Async Validator Arrays and Objects
 
-As you likely guessed, the `every`, `props`, `each`, and `some` validators support async validators too. That means you can compose async validators together with any other validators. If anywhere in your tree of validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
+As you likely guessed, the `every`, `each`, `some`, and `props` validators support async validators too. That means you can compose async validators together with any other validators. If anywhere in your tree of validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
 
 The conventions for `every` and `props` still apply when async validators are in use. Here is an example showing sync and async validators mixed together when nested objects and arrays.
 
