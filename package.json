@@ -2,7 +2,7 @@
   "name": "strickland-root",
   "private": true,
   "scripts": {
-    "prepublish": "cp packages/strickland/README.md .",
+    "prepublish": "cp README.md packages/strickland",
     "publish": "lerna publish",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
