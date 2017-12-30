@@ -9,7 +9,7 @@ export default function props(validators, validatorContext) {
 
         const validateProps = {
             ...validationContext,
-            resolvePromise: false
+            async: false
         };
 
         let result = {props: {}};
@@ -46,18 +46,18 @@ function applyNextResult(previousResult, nextResult) {
 function prepareResult(value, validationContext, result) {
     const propNames = Object.keys(result.props);
 
-    if (propNames.some((propName) => result.props[propName].resolvePromise instanceof Promise)) {
+    if (propNames.some((propName) => result.props[propName].async instanceof Promise)) {
         let finalResult = {props: {}};
 
         const promiseResults = propNames.map((propName) =>
-            result.props[propName].resolvePromise instanceof Promise ?
-                result.props[propName].resolvePromise.then((resolvedResult) =>
+            result.props[propName].async instanceof Promise ?
+                result.props[propName].async.then((resolvedResult) =>
                     convertToPropResult(propName, resolvedResult)
                 ) :
                 convertToPropResult(propName, result.props[propName])
         );
 
-        result.resolvePromise = Promise.all(promiseResults).then((resolvedResults) =>
+        result.async = Promise.all(promiseResults).then((resolvedResults) =>
             resolvedResults.reduce(applyNextResult, finalResult)
         ).then((resolvedResult) => prepareResult(value, validationContext, resolvedResult));
 

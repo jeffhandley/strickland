@@ -26,4 +26,4 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 1. **[Validators Can Return Promises](/docs/Async/README.md)** to provide async validation capabilities
 1. **[Composition Supports Promises](/docs/Async/ValidatorArraysAndObjects.md)** within arrays of validators or object validation
-1. **[Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)** is conducted using a `resolvePromise` validation result property
+1. **[Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)** is conducted using an `async` validation result property

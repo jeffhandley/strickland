@@ -9,7 +9,7 @@ export default function every(validators, validatorContext) {
 
         const validateProps = {
             ...validationContext,
-            resolvePromise: false
+            async: false
         };
 
         function executeValidators(currentResult, validatorsToExecute) {
@@ -20,19 +20,19 @@ export default function every(validators, validatorContext) {
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
-                    if (nextResult.resolvePromise instanceof Promise) {
-                        const previousPromise = previousResult.resolvePromise || Promise.resolve(previousResult);
+                    if (nextResult.async instanceof Promise) {
+                        const previousPromise = previousResult.async || Promise.resolve(previousResult);
 
-                        currentResult.resolvePromise = previousPromise.then((initialResult) =>
-                            nextResult.resolvePromise.then((resolvedResult) => {
+                        currentResult.async = previousPromise.then((initialResult) =>
+                            nextResult.async.then((resolvedResult) => {
                                 let finalResult = applyNextResult(initialResult, resolvedResult);
 
                                 if (finalResult.isValid) {
                                     const remainingValidators = validatorsToExecute.slice(index + 1);
                                     finalResult = executeValidators(finalResult, remainingValidators);
 
-                                    if (finalResult.resolvePromise) {
-                                        return finalResult.resolvePromise;
+                                    if (finalResult.async) {
+                                        return finalResult.async;
                                     }
                                 }
 

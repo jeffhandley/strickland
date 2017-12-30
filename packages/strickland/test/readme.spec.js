@@ -494,7 +494,7 @@ describe('readme', () => {
                     return {
                         isValid: false,
                         message: `Checking availability of "${username}"...`,
-                        resolvePromise: new Promise((resolve) => {
+                        async: new Promise((resolve) => {
 
                             if (username === 'marty') {
 
@@ -522,8 +522,8 @@ describe('readme', () => {
                     username: 'marty'
                 };
 
-                // Pass {resolvePromise: false} to get immediate but partial results
-                const result = validate(validateUser, user, {resolvePromise: false});
+                // Pass {async: false} to get immediate but partial results
+                const result = validate(validateUser, user, {async: false});
 
                 it('initial result', () => {
                     expect(result).toMatchObject({
@@ -540,15 +540,15 @@ describe('readme', () => {
                                 minLength: 2,
                                 maxLength: 20,
                                 message: 'Checking availability of "marty"...',
-                                resolvePromise: Promise.prototype
+                                async: Promise.prototype
                             }
                         },
-                        resolvePromise: Promise.prototype
+                        async: Promise.prototype
                     });
                 });
 
                 it('async result', () => {
-                    return result.resolvePromise.then((asyncResult) => {
+                    return result.async.then((asyncResult) => {
                         expect(asyncResult).toMatchObject({
                             isValid: false,
                             props: {
@@ -563,10 +563,10 @@ describe('readme', () => {
                                     minLength: 2,
                                     maxLength: 20,
                                     message: '"marty" is not available',
-                                    resolvePromise: false
+                                    async: false
                                 }
                             },
-                            resolvePromise: false
+                            async: false
                         });
                     });
                 });

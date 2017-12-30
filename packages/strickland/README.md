@@ -1210,21 +1210,21 @@ chained together and run in series until a valid result is found.
 
 When a validator returns a `Promise`, the `validate` function actually applies a convention for
 the validation result. The `Promise` result is converted into a validation result object that
-has a `resolvePromise` prop with the `Promise` returned. This behavior is consistent with
+has an `async` prop with the `Promise` returned. This behavior is consistent with
 how boolean results are handled--they are wrapped in results where the boolean value is used
 as the `isValid` prop.
 
 Because the handling of `Promise` results is just a convention, your validators can skip
 that convention when needed. Instead of directly returning a `Promise`, a validator can return
-a result with a `resolvePromise` prop that represents additional validation to be performed
+a result with an `async` prop that represents additional validation to be performed
 asynchronously. Additional props can be included alongside `resolveProp` for richer results.
 
 As seen above though, `validate` will directly return a `Promise` if any validation returns
 a `Promise`. This is due to a second convention that `validate` applies: if the validation
-result includes a `resolvePromise` result prop, that `Promise` will be directly returned.
+result includes an `async` result prop, that `Promise` will be directly returned.
 However, callers to `validate` can also skip that convention. To do so, pass a validation
-prop of `resolvePromise: false` and `validate` will return the actual result object
-containing the `resolvePromise` prop as the `Promise` to be resolved.
+prop of `async: false` and `validate` will return the actual result object
+containing the `async` prop as the `Promise` to be resolved.
 
 Understanding these conventions, it's possible to perform two-stage validation where the first
 stage produces partial, synchronous validation; and the second stage performs complete,
@@ -1247,7 +1247,7 @@ function checkUsernameAvailability(username) {
     return {
         isValid: false,
         message: `Checking availability of "${username}"...`,
-        resolvePromise: new Promise((resolve) => {
+        async: new Promise((resolve) => {
 
             if (username === 'marty') {
 
@@ -1275,8 +1275,8 @@ const user = {
     username: 'marty'
 };
 
-// Pass {resolvePromise: false} to get immediate but partial results
-const result = validate(validateUser, user, {resolvePromise: false});
+// Pass {async: false} to get immediate but partial results
+const result = validate(validateUser, user, {async: false});
 
 /*
 result = {
@@ -1293,14 +1293,14 @@ result = {
             minLength: 2,
             maxLength: 20,
             message: 'Checking availability of "marty"...'
-            resolvePromise: Promise.prototype
+            async: Promise.prototype
         }
     },
-    resolvePromise: Promise.prototype
+    async: Promise.prototype
 }
 */
 
-result.resolvePromise.then((asyncResult) => {
+result.async.then((asyncResult) => {
     /*
     asyncResult = {
         isValid: false,
@@ -1316,10 +1316,10 @@ result.resolvePromise.then((asyncResult) => {
                 minLength: 2,
                 maxLength: 20,
                 message: '"marty" is not available',
-                resolvePromise: false
+                async: false
             }
         },
-        resolvePromise: false
+        async: false
     }
     */
 });

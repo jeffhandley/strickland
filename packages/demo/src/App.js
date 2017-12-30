@@ -183,7 +183,7 @@ class App extends Component {
     }
 
     onSubmit() {
-        Promise.resolve(validate(this.rules, this.state.form)).then((validation) => {
+        validate(this.rules, this.state.form, {async: true}).then((validation) => {
             this.setState({validation});
         });
     }

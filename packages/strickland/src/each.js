@@ -9,7 +9,7 @@ export default function each(validators, validatorContext) {
 
         const validateProps = {
             ...validationContext,
-            resolvePromise: false
+            async: false
         };
 
         let result = {each: []};
@@ -37,14 +37,14 @@ function applyNextResult(previousResult, nextResult) {
 }
 
 function prepareResult(value, validationContext, result) {
-    if (result.each.some((eachResult) => eachResult.resolvePromise instanceof Promise)) {
+    if (result.each.some((eachResult) => eachResult.async instanceof Promise)) {
         const promises = result.each.map((eachResult) =>
-            eachResult.resolvePromise instanceof Promise ? eachResult.resolvePromise : Promise.resolve(eachResult)
+            eachResult.async instanceof Promise ? eachResult.async : Promise.resolve(eachResult)
         );
 
         let finalResult = {each: []};
 
-        result.resolvePromise = Promise.all(promises).then((results) => {
+        result.async = Promise.all(promises).then((results) => {
             finalResult = results.reduce(applyNextResult, finalResult);
             return prepareResult(value, validationContext, finalResult);
         });

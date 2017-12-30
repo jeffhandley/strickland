@@ -483,12 +483,22 @@ describe('validate', () => {
             expect(result).toBeInstanceOf(Promise);
         });
 
-        it('returns a Promise if the validator returns a resolvePromise result prop', () => {
-            const result = validate(() => ({resolvePromise: Promise.resolve()}));
+        it('returns a Promise if the validator returns an async result prop', () => {
+            const result = validate(() => ({async: Promise.resolve()}));
+            expect(result).toBeInstanceOf(Promise);
+        });
+
+        it('returns a Promise if the validator did not, but async: true was specified in context', () => {
+            const result = validate(() => true, null, {async: true});
             expect(result).toBeInstanceOf(Promise);
         });
 
         describe('resolves results', () => {
+            it('that were forced to be a Promise with async: true', () => {
+                const result = validate(() => true, null, {async: true});
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
+
             it('that resolve as true', () => {
                 const result = validate(() => Promise.resolve(true));
                 return expect(result).resolves.toMatchObject({isValid: true});
@@ -541,7 +551,7 @@ describe('validate', () => {
                 message: 'Resolved the promise'
             });
 
-            const result = validate(validator, null, {resolvePromise: false});
+            const result = validate(validator, null, {async: false});
 
             it('that is not a Promise', () => {
                 expect(result).not.toBeInstanceOf(Promise);
@@ -551,33 +561,33 @@ describe('validate', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            describe('with a resolvePromise result prop', () => {
+            describe('with an async result prop', () => {
                 it('that is a Promise', () => {
-                    expect(result.resolvePromise).toBeInstanceOf(Promise);
+                    expect(result.async).toBeInstanceOf(Promise);
                 });
 
                 it('that resolves the result promise', () => {
-                    return expect(result.resolvePromise).resolves.toMatchObject({
+                    return expect(result.async).resolves.toMatchObject({
                         isValid: true,
                         message: 'Resolved the promise'
                     });
                 });
 
-                it('that results in a resolvePromise prop set to false when resolved', () => {
-                    return expect(result.resolvePromise).resolves.toMatchObject({
-                        resolvePromise: false
+                it('that results in an async prop set to false when resolved', () => {
+                    return expect(result.async).resolves.toMatchObject({
+                        async: false
                     });
                 });
 
                 it('where the partial result can include other props', () => {
                     function partialWithProps() {
                         return {
-                            resolvePromise: Promise.resolve(true),
+                            async: Promise.resolve(true),
                             message: 'Validating...'
                         };
                     }
 
-                    const partialResult = validate(partialWithProps, null, {resolvePromise: false});
+                    const partialResult = validate(partialWithProps, null, {async: false});
                     expect(partialResult.message).toBe('Validating...');
                 });
 
@@ -585,11 +595,11 @@ describe('validate', () => {
                     function partialIsValid() {
                         return {
                             isValid: true,
-                            resolvePromise: Promise.resolve(false)
+                            async: Promise.resolve(false)
                         };
                     }
 
-                    const partialResult = validate(partialIsValid, null, {resolvePromise: false});
+                    const partialResult = validate(partialIsValid, null, {async: false});
                     expect(partialResult.isValid).toBe(true);
                 });
 
@@ -597,13 +607,13 @@ describe('validate', () => {
                     function partialIsValid() {
                         return {
                             isValid: true,
-                            resolvePromise: Promise.resolve(false)
+                            async: Promise.resolve(false)
                         };
                     }
 
-                    const partialResult = validate(partialIsValid, 'LOG', {resolvePromise: false});
+                    const partialResult = validate(partialIsValid, 'LOG', {async: false});
 
-                    return partialResult.resolvePromise.then((finalResult) => {
+                    return partialResult.async.then((finalResult) => {
                         expect(finalResult.isValid).toBe(false);
                     });
                 });

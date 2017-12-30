@@ -32,22 +32,28 @@ function prepareResult(value, validationContext, result) {
     } else if (result instanceof Promise) {
         result = {
             isValid: false,
-            resolvePromise: result
+            async: result
         };
     }
 
-    if (result.resolvePromise) {
-        result.resolvePromise = result.resolvePromise.then((resolved) => prepareResult(value, validationContext, resolved));
+    if (result.async instanceof Promise) {
+        result.async = result.async.then((resolved) => prepareResult(value, validationContext, resolved));
 
-        if (validationContext.resolvePromise !== false) {
-            return result.resolvePromise;
+        if (validationContext.async !== false) {
+            return result.async;
         }
     }
 
-    return {
+    result = {
         ...validationContext,
         ...result,
         isValid: !!result.isValid,
         value
     };
+
+    if (validationContext.async === true) {
+        return Promise.resolve(result);
+    }
+
+    return result;
 }
