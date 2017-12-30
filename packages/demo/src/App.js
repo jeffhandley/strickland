@@ -51,6 +51,19 @@ function updateFieldResult(validation, fieldName, result) {
     };
 }
 
+function usernameIsAvailable(username) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const isValid = (username !== 'marty')
+            resolve({
+                isValid,
+                message: isValid ? `"${username}" is available` : `Sorry, "${username}" is not available`,
+                showValidation: true
+            });
+        }, 500);
+    });
+}
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -59,6 +72,7 @@ class App extends Component {
             form: {
                 firstName: '',
                 lastName: '',
+                username: '',
                 password: '',
                 confirmPassword: ''
             }
@@ -66,29 +80,36 @@ class App extends Component {
 
         this.onSubmit = this.onSubmit.bind(this);
 
+        const trim = true;
+
         this.onFieldChange = {
-            firstName: this.onFieldChange.bind(this, 'firstName'),
-            lastName: this.onFieldChange.bind(this, 'lastName'),
-            password: this.onFieldChange.bind(this, 'password'),
-            confirmPassword: this.onFieldChange.bind(this, 'confirmPassword')
+            firstName: this.onFieldChange.bind(this, 'firstName', {trim}),
+            lastName: this.onFieldChange.bind(this, 'lastName', {trim}),
+            username: this.onFieldChange.bind(this, 'username', {trim}),
+            password: this.onFieldChange.bind(this, 'password', {
+                dependents: ['confirmPassword']
+            }),
+            confirmPassword: this.onFieldChange.bind(this, 'confirmPassword', null)
         };
 
         this.onFieldBlur = {
-            firstName: this.onFieldBlur.bind(this, 'firstName'),
-            lastName: this.onFieldBlur.bind(this, 'lastName'),
-            password: this.onFieldBlur.bind(this, 'password'),
-            confirmPassword: this.onFieldBlur.bind(this, 'confirmPassword')
+            firstName: this.onFieldBlur.bind(this, 'firstName', {trim}),
+            lastName: this.onFieldBlur.bind(this, 'lastName', {trim}),
+            username: this.onFieldBlur.bind(this, 'username', null),
+            password: this.onFieldBlur.bind(this, 'password', null),
+            confirmPassword: this.onFieldBlur.bind(this, 'confirmPassword', null)
         };
 
         this.rules = {
             firstName: required({message: 'Required'}),
             lastName: [required({message: 'Required'}), minLength(2, {message: 'Must have at least 2 characters'})],
+            username: [required({message: 'Required'}), minLength(4, {message: 'Must have at least 4 characters'}), usernameIsAvailable],
             password: every([required(), minLength(8)], {message: 'Must have at least 8 characters'}),
             confirmPassword: every([required(), compare(() => this.state.form.password)], {message: 'Must match password'})
         };
     }
 
-    onFieldChange(fieldName, {target}) {
+    onFieldChange(fieldName, fieldContext, {target}) {
         let {form, validation} = this.state;
         const {value} = target;
 
@@ -98,8 +119,9 @@ class App extends Component {
         };
 
         let parsedValue = value;
+        fieldContext = {...fieldContext};
 
-        if (fieldName === 'firstName' || fieldName === 'lastName') {
+        if (fieldContext.trim) {
             parsedValue = value.trim();
         }
 
@@ -111,51 +133,59 @@ class App extends Component {
             }
         }
 
-        if (fieldName === 'password' && hasValidationResults(validation, 'confirmPassword')) {
-            validation = validateField(validation, this.rules, 'confirmPassword', form.confirmPassword, {compare: parsedValue});
+        if (fieldContext.dependents && Array.isArray(fieldContext.dependents)) {
+            fieldContext.dependents.forEach((dependent) => {
+                if (hasValidationResults(validation, dependent)) {
+                    validation = validateField(validation, this.rules, dependent, form[dependent], {compare: parsedValue});
+                }
+            });
         }
 
         this.setState({form, validation});
     }
 
-    onFieldBlur(fieldName, {target}) {
+    onFieldBlur(fieldName, fieldContext, {target}) {
         let {form, validation} = this.state;
         const {value} = target;
 
         let parsedValue = value;
+        fieldContext = {...fieldContext};
 
-        if (fieldName === 'firstName' || fieldName === 'lastName') {
+        if (fieldContext.trim) {
             parsedValue = value.trim();
 
             form = {
                 ...form,
                 [fieldName]: parsedValue
             };
+
+            this.setState({form});
         }
 
-        const result = validate(this.rules[fieldName], parsedValue);
+        Promise.resolve(validate(this.rules[fieldName], parsedValue)).then((result) => {
+            // If the field is valid, show validation results on blur
+            // Or, update existing validation results on blur
+            // But don't show initially invalid results on a field on blur
+            if (result.isValid || hasValidationResults(validation, fieldName) || result.showValidation) {
+                // If the entire form has already been validated, then
+                // we'll revalidate the entire form on each field blur
+                if (hasValidationResults(validation)) {
+                    validation = validate(this.rules, form)
+                } else {
+                    // Otherwise just update for the current field
+                    validation = updateFieldResult(validation, fieldName, result);
+                }
 
-        // If the field is valid, show validation results on blur
-        // Or, update existing validation results on blur
-        // But don't show initially invalid results on a field on blur
-        if (result.isValid || hasValidationResults(validation, fieldName)) {
-            // If the entire form has already been validated, then
-            // we'll revalidate the entire form on each field blur
-            if (hasValidationResults(validation)) {
-                validation = validate(this.rules, form)
-            } else {
-                // Otherwise just update for the current field
-                validation = updateFieldResult(validation, fieldName, result);
             }
 
-        }
-
-        this.setState({form, validation});
+            this.setState({validation});
+        });
     }
 
     onSubmit() {
-        const validation = validate(this.rules, this.state.form);
-        this.setState({validation: validation});
+        Promise.resolve(validate(this.rules, this.state.form)).then((validation) => {
+            this.setState({validation});
+        });
     }
 
     render() {
@@ -189,6 +219,18 @@ class App extends Component {
                             value={this.state.form.lastName}
                         />
                         <label data-validation-message={getValidationMessage(this.state.validation, 'lastName')} htmlFor="lastName">Last name</label>
+                    </div>
+                    <div className="formfield">
+                        <input
+                            className={getValidationClassName(this.state.form, this.state.validation, 'username')}
+                            id="username"
+                            name="username"
+                            onBlur={this.onFieldBlur.username}
+                            onChange={this.onFieldChange.username}
+                            type="text"
+                            value={this.state.form.username}
+                        />
+                        <label data-validation-message={getValidationMessage(this.state.validation, 'username')} htmlFor="username">Username</label>
                     </div>
                     <div className="formfield">
                         <input

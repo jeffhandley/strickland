@@ -35,7 +35,7 @@ validate(usernameIsAvailable, 'marty').then((result) => {
 
 When validation results are invalid, do not reject the promise. Instead, resolve the promise with a validation result that is not valid. As usual, this can be done by returning `false` or an object with `isValid: false`.
 
-It is your application's responsibility to know if one of your validators could return a `Promise`; if so, then you will always need to treat the result from `validate` as a `Promise`. If you are unsure if `validate` is going to return a `Promise`, you can safely use `Promise.resolve()` around the validation results.
+It is your application's responsibility to know if one of your validators could return a `Promise`; if so, then you will need to treat the result from `validate` as a `Promise`. If validation short-circuits before the `Promise` is encountered though, then a regular result will be returned instead of a `Promise. Because of this possibility, it is recommended to wrap `Promise.resolve()` around the validation results and remove any uncertainty.
 
 ``` jsx
 Promise.resolve(validate(validator, value)).then(handleValidationResult);
