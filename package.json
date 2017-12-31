@@ -2,6 +2,7 @@
   "name": "strickland-root",
   "private": true,
   "scripts": {
+    "demo": "cd packages/demo && npm start",
     "prepublish": "cp README.md packages/strickland",
     "publish": "lerna publish",
     "postinstall": "lerna bootstrap",

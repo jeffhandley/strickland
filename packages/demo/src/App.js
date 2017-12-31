@@ -5,10 +5,13 @@ import './App.css';
 import validate, {every, required, minLength, compare} from 'strickland';
 
 function getValidationClassName(form, validation, fieldName) {
+    const fieldValidation = validation && validation.props && validation.props[fieldName];
+
     return classnames({
         'validation-value': !!form[fieldName],
-        'validation-valid': validation && validation.props && validation.props[fieldName] && validation.props[fieldName].isValid,
-        'validation-invalid': validation && validation.props && validation.props[fieldName] && !validation.props[fieldName].isValid
+        'validation-valid': fieldValidation && fieldValidation.isValid,
+        'validation-async': fieldValidation && fieldValidation.async,
+        'validation-invalid': fieldValidation && !fieldValidation.isValid && !fieldValidation.async
     });
 }
 
@@ -37,8 +40,14 @@ function hasValidationResults(validation, fieldName) {
 }
 
 function validateField(validation, rules, fieldName, value, validationProps) {
-    const result = validate(rules[fieldName], value, validationProps);
-    return updateFieldResult(validation, fieldName, result);
+    validationProps = {
+        validationProps,
+        async: false
+    };
+
+    return validate(rules[fieldName], value, validationProps).then((result) =>
+        updateFieldResult(validation, fieldName, result)
+    );
 }
 
 function updateFieldResult(validation, fieldName, result) {
@@ -51,17 +60,31 @@ function updateFieldResult(validation, fieldName, result) {
     };
 }
 
+function conditional(shouldValidate, validator) {
+    return function validateConditional(value, validationContext) {
+        if (shouldValidate(value, validationContext)) {
+            return validate(validator, value, validationContext);
+        }
+
+        return true;
+    }
+}
+
 function usernameIsAvailable(username) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const isValid = (username !== 'marty')
-            resolve({
-                isValid,
-                message: isValid ? `"${username}" is available` : `Sorry, "${username}" is not available`,
-                showValidation: true
-            });
-        }, 500);
-    });
+    return {
+        isValid: false,
+        message: `Checking availability of "${username}"...`,
+        async: new Promise((resolve) => {
+            setTimeout(() => {
+                const isValid = (username !== 'marty')
+                resolve({
+                    isValid,
+                    message: isValid ? `"${username}" is available` : `Sorry, "${username}" is not available`,
+                    showValidation: true
+                });
+            }, 2000);
+        })
+    };
 }
 
 class App extends Component {
@@ -102,10 +125,26 @@ class App extends Component {
 
         this.rules = {
             firstName: required({message: 'Required'}),
-            lastName: [required({message: 'Required'}), minLength(2, {message: 'Must have at least 2 characters'})],
-            username: [required({message: 'Required'}), minLength(4, {message: 'Must have at least 4 characters'}), usernameIsAvailable],
-            password: every([required(), minLength(8)], {message: 'Must have at least 8 characters'}),
-            confirmPassword: every([required(), compare(() => this.state.form.password)], {message: 'Must match password'})
+            lastName: [
+                required({message: 'Required'}),
+                minLength(2, {message: 'Must have at least 2 characters'})
+            ],
+            username: [
+                required({message: 'Required'}),
+                minLength(4, {message: 'Must have at least 4 characters'}),
+                conditional(
+                    (value, validationContext) => !validationContext.onFieldChange,
+                    usernameIsAvailable
+                )
+            ],
+            password: every(
+                [required(), minLength(8)],
+                {message: 'Must have at least 8 characters'}
+            ),
+            confirmPassword: every(
+                [required(), compare(() => this.state.form.password)],
+                {message: 'Must match password'}
+            )
         };
     }
 
@@ -126,7 +165,7 @@ class App extends Component {
         }
 
         if (hasValidationResults(validation, fieldName)) {
-            const result = validate(this.rules[fieldName], parsedValue);
+            const result = validate(this.rules[fieldName], parsedValue, {onFieldChange: true})
 
             if (result.isValid || !validation.props[fieldName].isValid) {
                 validation = updateFieldResult(validation, fieldName, result);
@@ -136,7 +175,14 @@ class App extends Component {
         if (fieldContext.dependents && Array.isArray(fieldContext.dependents)) {
             fieldContext.dependents.forEach((dependent) => {
                 if (hasValidationResults(validation, dependent)) {
-                    validation = validateField(validation, this.rules, dependent, form[dependent], {compare: parsedValue});
+                    validation = validateField(
+                        validation,
+                        this.rules,
+                        dependent,
+                        form[dependent], {
+                            compare: parsedValue
+                        }
+                    );
                 }
             });
         }
@@ -162,24 +208,35 @@ class App extends Component {
             this.setState({form});
         }
 
-        Promise.resolve(validate(this.rules[fieldName], parsedValue)).then((result) => {
-            // If the field is valid, show validation results on blur
-            // Or, update existing validation results on blur
-            // But don't show initially invalid results on a field on blur
-            if (result.isValid || hasValidationResults(validation, fieldName) || result.showValidation) {
-                // If the entire form has already been validated, then
-                // we'll revalidate the entire form on each field blur
-                if (hasValidationResults(validation)) {
-                    validation = validate(this.rules, form)
-                } else {
-                    // Otherwise just update for the current field
-                    validation = updateFieldResult(validation, fieldName, result);
-                }
+        const result = validate(this.rules[fieldName], parsedValue, {async: false});
 
+        // If the field is valid, show validation results on blur
+        // Or, update existing validation results on blur
+        // But don't show initially invalid results on a field on blur
+        if (result.isValid || hasValidationResults(validation, fieldName) || result.async) {
+            // If the entire form has already been validated, then
+            // we'll revalidate the entire form on each field blur
+            if (hasValidationResults(validation)) {
+                validation = validate(this.rules, form, {async: false});
+
+                if (validation.async) {
+                    validation.async.then((asyncResult) => this.setState({validation: asyncResult}));
+                }
+            } else {
+                // Otherwise just update for the current field
+                validation = updateFieldResult(validation, fieldName, result);
+
+                if (result.async) {
+                    result.async.then((asyncResult) => {
+                        asyncResult = updateFieldResult(this.state.validation, fieldName, asyncResult);
+                        this.setState({validation: asyncResult});
+                    });
+                }
             }
 
-            this.setState({validation});
-        });
+        }
+
+        this.setState({validation});
     }
 
     onSubmit() {

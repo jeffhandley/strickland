@@ -80,6 +80,10 @@
   color: #22AA00;
 }
 
+.formfield input.validation-async + label {
+  color: goldenrod;
+}
+
 .formfield input.validation-invalid + label {
   color: #FF2200;
 }
