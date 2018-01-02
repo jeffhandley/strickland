@@ -2,7 +2,7 @@
 
 While validators can be executed asynchronously using `validateAsync`, there are scenarios where partial, synchronous results can be valuable in your applications. These scenarios can defer the asynchronous validation until the right time in the user's workflow, achieving two-stage sync/async validation.
 
-We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: **validators can return either a `Promise` or a result object with the `Promise` as a `validateAsync` property.**
+We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: **validators can return either a `Promise` or a result object with the `Promise` on the `validateAsync` property.**
 
 We also know that validators can include additional properties on their validation results; this is still true when one of those properties is a `validateAsync` `Promise`. Those additional properties will be available to the application synchronously, before resolving the asynchronous result.
 
