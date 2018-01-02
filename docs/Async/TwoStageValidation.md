@@ -1,49 +1,55 @@
 # Two-Stage Sync/Async Validation
 
-When a validator returns a `Promise`, the `validate` function actually applies a convention for the validation result. The `Promise` result is converted into a validation result object that has an `async` prop with the `Promise` returned. This behavior is consistent with how boolean results are handled--they are wrapped in results where the boolean value is used as the `isValid` prop.
+While validators can be executed asynchronously using `validateAsync`, there are scenarios where partial, synchronous results can be valuable in your applications. These scenarios can defer the asynchronous validation until the right time in the user's workflow, achieving two-stage sync/async validation.
 
-Because the handling of `Promise` results is just a convention, your validators can skip that convention when needed. Instead of directly returning a `Promise`, a validator can return a result with an `async` prop that represents additional validation to be performed asynchronously. Additional props can be included alongside `async` for richer results.
+We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: **validators can return either a `Promise` or a result object with the `Promise` as a `validateAsync` property.**
 
-As seen previously though, `validate` will directly return a `Promise` if any validation returns a `Promise`. This is due to a second convention that `validate` applies: if the validation result includes an `async` result prop, that `Promise` will be directly returned. However, callers to `validate` can bypass that convention. To do so, pass a validation prop of `async: false` and `validate` will return the actual result object containing the `async` prop as the `Promise` to be resolved. Passing `async: true` to `validate` will *force* a `Promise` to be returned even if no async validators were encountered.
+We also know that validators can include additional properties on their validation results; this is still true when one of those properties is a `validateAsync` `Promise`. Those additional properties will be available to the application synchronously, before resolving the asynchronous result.
 
-Understanding these conventions, it's possible to perform two-stage validation where the first stage produces partial, synchronous validation; and the second stage performs complete, asynchronous validation. The following example would allow a UI to render partial validation results along with a progress indicator for the validation still executing. When the final validation is complete, the UI would update to reflect the complete result.
+Let's modify the `usernameIsAvailable` validator to make it return both a synchronous result and an asynchronous result.
 
 ``` jsx
-import validate, {required, length} from 'strickland';
-
-function checkUsernameAvailability(username) {
+function usernameIsAvailable(username) {
     if (!username) {
+        // Do not check availability of an empty username
+
         // Return just a boolean - it will be
         // converted to a valid result
         return true;
     }
 
     // Return an initial result indicating the value is
-    // not valid (yet), but validation is in progress
+    // not (yet) valid, but availability will be checked
     return {
         isValid: false,
         message: `Checking availability of "${username}"...`,
-        async: new Promise((resolve) => {
-
+        validateAsync: new Promise((resolve) => {
             if (username === 'marty') {
-
-                // Produce an async result object with
-                // a message
                 resolve({
                     isValid: false,
                     message: `"${username}" is not available`
                 });
+            } else {
+                resolve({
+                    isValid: true,
+                    message: `"${username}" is available`
+                });
             }
-
-            // Produce an async result using just a boolean
-            resolve(true);
         })
     };
 }
+```
+
+This pattern makes it possible to perform two-stage validation where the first stage produces partial, synchronous validation and the second stage performs complete, asynchronous validation. Validators can even mark their initial results with `isValid: true` if synchronous validation should be treated as valid.
+
+In the following example, the application will render the partial, synchronous validation results; resolve the asynchronous validation; and render the final result once complete.
+
+``` jsx
+import validate, {required, length} from 'strickland';
 
 const validateUser = {
     name: [required(), length(2, 20)],
-    username: [required(), length(2, 20), checkUsernameAvailability]
+    username: [required(), length(2, 20), usernameIsAvailable]
 };
 
 const user = {
@@ -51,8 +57,7 @@ const user = {
     username: 'marty'
 };
 
-// Pass {async: false} to get immediate but partial results
-const result = validate(validateUser, user, {async: false});
+const result = validate(validateUser, user);
 
 /*
 result = {
@@ -68,15 +73,15 @@ result = {
             required: true,
             minLength: 2,
             maxLength: 20,
-            message: 'Checking availability of "marty"...'
-            async: Promise.prototype
+            message: 'Checking availability of "marty"...',
+            validateAsync: Promise.prototype
         }
     },
-    async: Promise.prototype
+    validateAsync: Promise.prototype
 }
 */
 
-result.async.then((asyncResult) => {
+result.validateAsync.then((asyncResult) => {
     /*
     asyncResult = {
         isValid: false,
@@ -91,11 +96,9 @@ result.async.then((asyncResult) => {
                 required: true,
                 minLength: 2,
                 maxLength: 20,
-                message: '"marty" is not available',
-                async: false
+                message: '"marty" is not available'
             }
-        },
-        async: false
+        }
     }
     */
 });

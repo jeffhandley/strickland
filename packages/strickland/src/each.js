@@ -7,17 +7,28 @@ export default function each(validators, validatorContext) {
             ...validationContext
         };
 
-        const validateProps = {
-            ...validationContext,
-            async: false
-        };
-
         let result = {each: []};
+        let hasPromises = false;
 
         if (Array.isArray(validators)) {
             validators.forEach((validator) => {
-                const nextResult = validate(validator, value, validateProps);
+                const nextResult = validate(validator, value, validationContext);
+                hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
+
                 result = applyNextResult(result, nextResult);
+            });
+        }
+
+        if (hasPromises) {
+            const promises = result.each.map((eachResult) =>
+                eachResult.validateAsync instanceof Promise ? eachResult.validateAsync : Promise.resolve(eachResult)
+            );
+
+            let finalResult = {each: []};
+
+            result.validateAsync = Promise.all(promises).then((results) => {
+                finalResult = results.reduce(applyNextResult, finalResult);
+                return prepareResult(value, validationContext, finalResult);
             });
         }
 
@@ -37,19 +48,6 @@ function applyNextResult(previousResult, nextResult) {
 }
 
 function prepareResult(value, validationContext, result) {
-    if (result.each.some((eachResult) => eachResult.async instanceof Promise)) {
-        const promises = result.each.map((eachResult) =>
-            eachResult.async instanceof Promise ? eachResult.async : Promise.resolve(eachResult)
-        );
-
-        let finalResult = {each: []};
-
-        result.async = Promise.all(promises).then((results) => {
-            finalResult = results.reduce(applyNextResult, finalResult);
-            return prepareResult(value, validationContext, finalResult);
-        });
-    }
-
     return {
         ...validationContext,
         ...result,

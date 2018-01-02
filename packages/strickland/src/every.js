@@ -7,32 +7,27 @@ export default function every(validators, validatorContext) {
             ...validationContext
         };
 
-        const validateProps = {
-            ...validationContext,
-            async: false
-        };
-
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.every((validator, index) => {
                     const previousResult = currentResult;
-                    const nextResult = validate(validator, value, validateProps);
+                    const nextResult = validate(validator, value, validationContext);
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
-                    if (nextResult.async instanceof Promise) {
-                        const previousPromise = previousResult.async || Promise.resolve(previousResult);
+                    if (nextResult.validateAsync instanceof Promise) {
+                        const previousPromise = previousResult.validateAsync || Promise.resolve(previousResult);
 
-                        currentResult.async = previousPromise.then((initialResult) =>
-                            nextResult.async.then((resolvedResult) => {
+                        currentResult.validateAsync = previousPromise.then((initialResult) =>
+                            nextResult.validateAsync.then((resolvedResult) => {
                                 let finalResult = applyNextResult(initialResult, resolvedResult);
 
                                 if (finalResult.isValid) {
                                     const remainingValidators = validatorsToExecute.slice(index + 1);
                                     finalResult = executeValidators(finalResult, remainingValidators);
 
-                                    if (finalResult.async) {
-                                        return finalResult.async;
+                                    if (finalResult.validateAsync) {
+                                        return finalResult.validateAsync;
                                     }
                                 }
 

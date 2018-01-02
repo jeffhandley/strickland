@@ -7,20 +7,35 @@ export default function props(validators, validatorContext) {
             ...validationContext
         };
 
-        const validateProps = {
-            ...validationContext,
-            async: false
-        };
-
         let result = {props: {}};
+        let hasPromises = false;
 
         if (value && validators && typeof validators === 'object') {
-            result = Object.keys(validators).map((propName) =>
-                convertToPropResult(
-                    propName,
-                    validate(validators[propName], value[propName], validateProps)
-                )
-            ).reduce(applyNextResult, result);
+            result = Object.keys(validators).map((propName) => {
+                const validatorResult = validate(validators[propName], value[propName], validationContext);
+                hasPromises = hasPromises || validatorResult.validateAsync instanceof Promise;
+
+                return convertToPropResult(propName, validatorResult)
+            }).reduce(applyNextResult, result);
+        }
+
+        const propNames = Object.keys(result.props);
+
+        if (hasPromises) {
+            let finalResult = {props: {}};
+
+            const promiseResults = propNames.map((propName) =>
+                result.props[propName].validateAsync instanceof Promise ?
+                    result.props[propName].validateAsync.then((resolvedResult) =>
+                        convertToPropResult(propName, resolvedResult)
+                    ) :
+                    convertToPropResult(propName, result.props[propName])
+            );
+
+            result.validateAsync = Promise.all(promiseResults).then((resolvedResults) =>
+                resolvedResults.reduce(applyNextResult, finalResult)
+            ).then((resolvedResult) => prepareResult(value, validationContext, resolvedResult));
+
         }
 
         return prepareResult(value, validationContext, result);
@@ -45,23 +60,6 @@ function applyNextResult(previousResult, nextResult) {
 
 function prepareResult(value, validationContext, result) {
     const propNames = Object.keys(result.props);
-
-    if (propNames.some((propName) => result.props[propName].async instanceof Promise)) {
-        let finalResult = {props: {}};
-
-        const promiseResults = propNames.map((propName) =>
-            result.props[propName].async instanceof Promise ?
-                result.props[propName].async.then((resolvedResult) =>
-                    convertToPropResult(propName, resolvedResult)
-                ) :
-                convertToPropResult(propName, result.props[propName])
-        );
-
-        result.async = Promise.all(promiseResults).then((resolvedResults) =>
-            resolvedResults.reduce(applyNextResult, finalResult)
-        ).then((resolvedResult) => prepareResult(value, validationContext, resolvedResult));
-
-    }
 
     return {
         ...validationContext,

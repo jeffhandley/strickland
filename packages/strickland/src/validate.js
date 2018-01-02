@@ -20,6 +20,16 @@ export default function validate(validator, value, validationContext) {
     return prepareResult(value, validationContext, result);
 }
 
+export function validateAsync(...validateParams) {
+    const result = validate(...validateParams);
+
+    if (result.validateAsync instanceof Promise) {
+        return result.validateAsync;
+    }
+
+    return Promise.resolve(result);
+}
+
 function prepareResult(value, validationContext, result) {
     if (!result) {
         result = {
@@ -32,28 +42,22 @@ function prepareResult(value, validationContext, result) {
     } else if (result instanceof Promise) {
         result = {
             isValid: false,
-            async: result
+            validateAsync: result
         };
     }
 
-    if (result.async instanceof Promise) {
-        result.async = result.async.then((resolved) => prepareResult(value, validationContext, resolved));
-
-        if (validationContext.async !== false) {
-            return result.async;
+    if (typeof result.validateAsync !== 'undefined') {
+        if (result.validateAsync instanceof Promise) {
+            result.validateAsync = result.validateAsync.then((resolved) => prepareResult(value, validationContext, resolved));
+        } else {
+            throw 'Strickland: The validator returned a `validateAsync` prop that was not a Promise';
         }
     }
 
-    result = {
+    return {
         ...validationContext,
         ...result,
         isValid: !!result.isValid,
         value
     };
-
-    if (validationContext.async === true) {
-        return Promise.resolve(result);
-    }
-
-    return result;
 }

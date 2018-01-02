@@ -1,30 +1,34 @@
 # Async Validators
 
-If you have wondered how async validators would work with Strickland, you will be delighted at how simple they are. If a validator returns a `Promise`, then Strickland will return a `Promise` for the validation result. When the validation result promise is resolved, async validators will be resolved.
+If you have wondered how async validators work with Strickland, you will be delighted at how simple they are: **a validator can return a `Promise`.**
+
+Similar to how `validate` normalizes a boolean into validation result with an `isValid` property, a `Promise` is normalized into a validation result with a `validateAsync` property. The `validateAsync` property is a `Promise` that will normalize the async result.
+
+Let's take a look at a `usernameIsAvailable` validator. Just like synchronous validators, async validators can resolve to either boolean results or validation results with `isValid` properties.
 
 ``` jsx
 import validate from 'strickland';
 
 function usernameIsAvailable(username) {
-    if (!username) {
-        return true;
-    }
-
     return new Promise((resolve) => {
         if (username === 'marty') {
+            // Resolve to an invalid validation result object
             resolve({
                 isValid: false,
                 message: `"${username}" is not available`
             });
         }
 
+        // Resolve to a boolean
         resolve(true);
     });
 }
 
-validate(usernameIsAvailable, 'marty').then((result) => {
+const result = validate(usernameIsAvailable, 'marty');
+
+result.validateAsync.then((asyncResult) => {
     /*
-    result = {
+    asyncResult = {
         isValid: false,
         value: 'marty',
         message: '"marty" is not available'
@@ -33,12 +37,34 @@ validate(usernameIsAvailable, 'marty').then((result) => {
 });
 ```
 
-When validation results are invalid, do not reject the promise. Instead, resolve the promise with a validation result that is not valid. As usual, this can be done by returning `false` or an object with `isValid: false`.
+When a validator returns a `Promise`, the normalized validation result will include `isValid: false` to indicate that the result is not (yet) valid.
 
-It is your application's responsibility to know if one of your validators could return a `Promise`; if so, then you will need to treat the result from `validate` as a `Promise`. If validation short-circuits before the `Promise` is encountered though, then a regular result will be returned instead of a `Promise`. Because of this possibility, it is recommended to wrap `Promise.resolve()` around the validation results and remove any uncertainty. This can be achieved automatically by passing `async: true` in the validation context.
+## Resolving Async Validators
+
+Because `validate` returns synchronously, your application must recognize when async validation needs to be resolved. The validation result returned from `validate` will only include a `validateAsync` property when a `Promise` needs to be resolved. Applications can simply check the existence of that property and resolve the `Promise` if needed.
 
 ``` jsx
-validate(validator, value, {async: true}).then(handleValidationResult);
+const result = validate(usernameIsAvailable, 'marty');
+
+// The application defines a `handleValidationResult` function
+// to handle validation results when the are completed
+
+if (result.asyncValidation) {
+    result.asyncValidation.then((asyncResult) => handleValidationResult(asyncResult));
+} else {
+    handleValidationResult(result);
+}
+```
+
+### The `validateAsync` Function
+
+To avoid boilerplate code, Strickland provides a `validateAsync` function as a named export. This function always returns a `Promise`, regardless of whether validation completed synchronously or needs to be resolved asynchronously.
+
+``` jsx
+import {validateAsync} from 'strickland';
+
+const result = validateAsync(usernameIsAvailable, 'marty');
+result.then((asyncResult) => handleValidationResult(asyncResult));
 ```
 
 ## Additional Async Features

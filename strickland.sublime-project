@@ -4,7 +4,7 @@
 		{
             "path": ".",
             "folder_exclude_patterns": [ "lib", "node_modules" ],
-            "file_exclude_patterns": [ "*.sublime-project", "*.sublime-workspace" ]
+            "file_exclude_patterns": [ "*.sublime-project", "*.sublime-workspace", "coverage" ]
 		}
 	]
 }

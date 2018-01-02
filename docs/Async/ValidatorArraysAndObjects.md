@@ -1,18 +1,16 @@
 # Async Validator Arrays and Objects
 
-As you likely guessed, the `every`, `each`, `some`, and `props` validators support async validators too. That means you can compose async validators together with any other validators. If anywhere in your tree of validators, a `Promise` is returned as a result, then the overall result will be a `Promise`.
-
-The conventions for `every` and `props` still apply when async validators are in use. Here is an example showing sync and async validators mixed together when nested objects and arrays.
+The `every`, `each`, `some`, and `props` validators support async validators too. You can compose async validators together with any other validators. Here is an example showing sync and async validators mixed together with nested objects and arrays.
 
 ``` jsx
-import validate, {required, length} from 'strickland';
+import {validateAsync, required, length} from 'strickland';
 
 function validateCity(address) {
-    if (!address) {
-        return true;
-    }
-
     return new Promise((resolve) => {
+        if (!address) {
+            resolve(true);
+        }
+
         const {city, state} = address;
 
         if (city === 'Hill Valley' && state !== 'CA') {
@@ -59,7 +57,7 @@ const person = {
     }
 };
 
-validate(validatePerson, person).then((result) => {
+validateAsync(validatePerson, person).then((result) => {
     /*
     result = {
         isValid: false,
@@ -88,7 +86,7 @@ validate(validatePerson, person).then((result) => {
 });
 ```
 
-You can use async validators anywhere you want and the resolved results match the shape you would expect if everything was executed synchronously.
+You can use async validators anywhere you want and the resolved results match the shape you would expect if everything was executed synchronously. When `validateAsync` is resolved, all async validators will be resolved.
 
 ## every
 

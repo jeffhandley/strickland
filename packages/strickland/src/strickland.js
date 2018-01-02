@@ -1,4 +1,4 @@
-export {default} from './validate';
+export {default, validateAsync} from './validate';
 
 export {default as compare} from './compare';
 export {default as each} from './each';

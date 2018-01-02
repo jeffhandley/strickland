@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import logo from './logo.svg';
 import './App.css';
-import validate, {every, required, minLength, compare} from 'strickland';
+import validate, {validateAsync, every, required, minLength, compare} from 'strickland';
 
 function getValidationClassName(form, validation, fieldName) {
     const fieldValidation = validation && validation.props && validation.props[fieldName];
@@ -10,8 +10,8 @@ function getValidationClassName(form, validation, fieldName) {
     return classnames({
         'validation-value': !!form[fieldName],
         'validation-valid': fieldValidation && fieldValidation.isValid,
-        'validation-async': fieldValidation && fieldValidation.async,
-        'validation-invalid': fieldValidation && !fieldValidation.isValid && !fieldValidation.async
+        'validation-async': fieldValidation && fieldValidation.validateAsync,
+        'validation-invalid': fieldValidation && !fieldValidation.isValid && !fieldValidation.validateAsync
     });
 }
 
@@ -40,14 +40,8 @@ function hasValidationResults(validation, fieldName) {
 }
 
 function validateField(validation, rules, fieldName, value, validationProps) {
-    validationProps = {
-        validationProps,
-        async: false
-    };
-
-    return validate(rules[fieldName], value, validationProps).then((result) =>
-        updateFieldResult(validation, fieldName, result)
-    );
+    const result = validate(rules[fieldName], value, validationProps);
+    return updateFieldResult(validation, fieldName, result);
 }
 
 function updateFieldResult(validation, fieldName, result) {
@@ -74,7 +68,7 @@ function usernameIsAvailable(username) {
     return {
         isValid: false,
         message: `Checking availability of "${username}"...`,
-        async: new Promise((resolve) => {
+        validateAsync: new Promise((resolve) => {
             setTimeout(() => {
                 const isValid = (username !== 'marty')
                 resolve({
@@ -208,26 +202,26 @@ class App extends Component {
             this.setState({form});
         }
 
-        const result = validate(this.rules[fieldName], parsedValue, {async: false});
+        const result = validate(this.rules[fieldName], parsedValue);
 
         // If the field is valid, show validation results on blur
         // Or, update existing validation results on blur
         // But don't show initially invalid results on a field on blur
-        if (result.isValid || hasValidationResults(validation, fieldName) || result.async) {
+        if (result.isValid || hasValidationResults(validation, fieldName) || result.validateAsync) {
             // If the entire form has already been validated, then
             // we'll revalidate the entire form on each field blur
             if (hasValidationResults(validation)) {
-                validation = validate(this.rules, form, {async: false});
+                validation = validate(this.rules, form);
 
-                if (validation.async) {
-                    validation.async.then((asyncResult) => this.setState({validation: asyncResult}));
+                if (validation.validateAsync) {
+                    validation.validateAsync.then((asyncResult) => this.setState({validation: asyncResult}));
                 }
             } else {
                 // Otherwise just update for the current field
                 validation = updateFieldResult(validation, fieldName, result);
 
-                if (result.async) {
-                    result.async.then((asyncResult) => {
+                if (result.validateAsync) {
+                    result.validateAsync.then((asyncResult) => {
                         asyncResult = updateFieldResult(this.state.validation, fieldName, asyncResult);
                         this.setState({validation: asyncResult});
                     });
@@ -240,7 +234,7 @@ class App extends Component {
     }
 
     onSubmit() {
-        validate(this.rules, this.state.form, {async: true}).then((validation) => {
+        validateAsync(this.rules, this.state.form).then((validation) => {
             this.setState({validation});
         });
     }

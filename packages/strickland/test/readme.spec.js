@@ -1,4 +1,4 @@
-import validate, {props, required, minLength, length, range, every} from '../src/strickland';
+import validate, {validateAsync, props, required, minLength, length, range, every} from '../src/strickland';
 
 describe('readme', () => {
     it('performing validation', () => {
@@ -383,25 +383,25 @@ describe('readme', () => {
 
     describe('async validators', () => {
         function usernameIsAvailable(username) {
-            if (!username) {
-                return true;
-            }
-
             return new Promise((resolve) => {
                 if (username === 'marty') {
+                    // Resolve to an invalid validation result object
                     resolve({
                         isValid: false,
                         message: `"${username}" is not available`
                     });
                 }
 
+                // Resolve to a boolean
                 resolve(true);
             });
         }
 
         it('first example', () => {
-            return validate(usernameIsAvailable, 'marty').then((result) => {
-                expect(result).toMatchObject({
+            const result = validate(usernameIsAvailable, 'marty');
+
+            return result.validateAsync.then((asyncResult) => {
+                expect(asyncResult).toMatchObject({
                     isValid: false,
                     value: 'marty',
                     message: '"marty" is not available'
@@ -411,12 +411,14 @@ describe('readme', () => {
 
         describe('async validator arrays and objects', () => {
             function validateCity(address) {
-                if (!address) {
-                    return true;
-                }
-
                 return new Promise((resolve) => {
-                    if (address.city === 'Hill Valley' && address.state !== 'CA') {
+                    if (!address) {
+                        resolve(true);
+                    }
+
+                    const {city, state} = address;
+
+                    if (city === 'Hill Valley' && state !== 'CA') {
                         resolve({
                             isValid: false,
                             message: 'Hill Valley is in California'
@@ -428,8 +430,17 @@ describe('readme', () => {
             }
 
             const validatePerson = {
-                name: [required(), length(2, 20, {message: 'Name must be 2-20 characters'})],
-                username: [required(), length(2, 20), usernameIsAvailable],
+                name: [
+                    required(),
+                    length(2, 20, {
+                        message: 'Name must be 2-20 characters'
+                    })
+                ],
+                username: [
+                    required(),
+                    length(2, 20),
+                    usernameIsAvailable
+                ],
                 address: [
                     required({message: 'Address is required'}),
                     {
@@ -452,10 +463,8 @@ describe('readme', () => {
             };
 
             it('async results', () => {
-                const result = validate(validatePerson, person);
-
-                return result.then((resolvedResult) => {
-                    expect(resolvedResult).toMatchObject({
+                return validateAsync(validatePerson, person).then((result) => {
+                    expect(result).toMatchObject({
                         isValid: false,
                         props: {
                             name: {
@@ -480,53 +489,76 @@ describe('readme', () => {
                     });
                 });
             });
+        });
 
-            describe('partial results', () => {
-                function checkUsernameAvailability(username) {
-                    if (!username) {
-                        // Return just a boolean - it will be
-                        // converted to a valid result
-                        return true;
-                    }
+        describe('two-stage sync/async validation', () => {
+            function usernameIsAvailable2(username) {
+                if (!username) {
+                    // Do not check availability of an empty username
 
-                    // Return an initial result indicating the value is
-                    // not valid (yet), but validation is in progress
-                    return {
-                        isValid: false,
-                        message: `Checking availability of "${username}"...`,
-                        async: new Promise((resolve) => {
-
-                            if (username === 'marty') {
-
-                                // Produce an async result object with
-                                // a message
-                                resolve({
-                                    isValid: false,
-                                    message: `"${username}" is not available`
-                                });
-                            }
-
-                            // Produce an async result using just a boolean
-                            resolve(true);
-                        })
-                    };
+                    // Return just a boolean - it will be
+                    // converted to a valid result
+                    return true;
                 }
 
-                const validateUser = {
-                    name: [required(), length(2, 20)],
-                    username: [required(), length(2, 20), checkUsernameAvailability]
+                // Return an initial result indicating the value is
+                // not (yet) valid, but availability will be checked
+                return {
+                    isValid: false,
+                    message: `Checking availability of "${username}"...`,
+                    validateAsync: new Promise((resolve) => {
+                        if (username === 'marty') {
+                            resolve({
+                                isValid: false,
+                                message: `"${username}" is not available`
+                            });
+                        } else {
+                            resolve({
+                                isValid: true,
+                                message: `"${username}" is available`
+                            });
+                        }
+                    })
                 };
+            }
 
-                const user = {
-                    name: 'Marty McFly',
-                    username: 'marty'
-                };
+            const validateUser = {
+                name: [required(), length(2, 20)],
+                username: [required(), length(2, 20), usernameIsAvailable2]
+            };
 
-                // Pass {async: false} to get immediate but partial results
-                const result = validate(validateUser, user, {async: false});
+            const user = {
+                name: 'Marty McFly',
+                username: 'marty'
+            };
 
-                it('initial result', () => {
-                    expect(result).toMatchObject({
+            const result = validate(validateUser, user);
+
+            it('initial result', () => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    props: {
+                        name: {
+                            isValid: true,
+                            value: 'Marty McFly'
+                        },
+                        username: {
+                            isValid: false,
+                            value: 'marty',
+                            required: true,
+                            minLength: 2,
+                            maxLength: 20,
+                            message: 'Checking availability of "marty"...',
+                            validateAsync: Promise.prototype
+                        }
+                    },
+                    validateAsync: Promise.prototype
+                });
+            });
+
+            it('async result', () => {
+                return result.validateAsync.then((asyncResult) => {
+                    expect(asyncResult).toMatchObject({
                         isValid: false,
                         props: {
                             name: {
@@ -539,35 +571,9 @@ describe('readme', () => {
                                 required: true,
                                 minLength: 2,
                                 maxLength: 20,
-                                message: 'Checking availability of "marty"...',
-                                async: Promise.prototype
+                                message: '"marty" is not available'
                             }
-                        },
-                        async: Promise.prototype
-                    });
-                });
-
-                it('async result', () => {
-                    return result.async.then((asyncResult) => {
-                        expect(asyncResult).toMatchObject({
-                            isValid: false,
-                            props: {
-                                name: {
-                                    isValid: true,
-                                    value: 'Marty McFly'
-                                },
-                                username: {
-                                    isValid: false,
-                                    value: 'marty',
-                                    required: true,
-                                    minLength: 2,
-                                    maxLength: 20,
-                                    message: '"marty" is not available',
-                                    async: false
-                                }
-                            },
-                            async: false
-                        });
+                        }
                     });
                 });
             });
