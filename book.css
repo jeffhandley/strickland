@@ -47,3 +47,7 @@
 .markdown-section a, #book-search-results .search-results .has-results .search-results-item a {
     color: #FB7E00;
 }
+
+.markdown-section a {
+    font-weight: 450;
+}
