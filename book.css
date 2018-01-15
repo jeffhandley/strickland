@@ -44,6 +44,10 @@
     background-color: #1F3244;
 }
 
+.markdown-section {
+    color: #1F3244;
+}
+
 .markdown-section a, #book-search-results .search-results .has-results .search-results-item a {
     color: #FB7E00;
 }
