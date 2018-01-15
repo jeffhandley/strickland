@@ -4,7 +4,7 @@
   "scripts": {
     "demo": "cd packages/demo && npm start",
     "prepublish": "cp README.md packages/strickland",
-    "publish": "lerna publish",
+    "publish": "lerna publish --conventional-commits",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"
