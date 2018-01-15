@@ -1,4 +1,4 @@
-# Built-In Validator: Built-In Validators
+# Built-In Validators
 
 Strickland provides a small set of fundamental validators, serving as the core building blocks that
 your applications can use. All built-in validators use the validator factory pattern and are provided as named exports.
