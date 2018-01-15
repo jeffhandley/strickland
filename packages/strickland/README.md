@@ -1,4 +1,4 @@
-# Strickland
+# <a href="http://strickland.io"><img src="https://raw.githubusercontent.com/jeffhandley/strickland/f73c6bbb370210d0dc5119f0fac96aa29dc52b22/logo/strickland.png" height="60" alt="Strickland logo" aria-label="Strickland.io website" border="0" /></a>
 
 Strickland is a JavaScript validation _framework_ with a focus on extensibility and composability. It is built with pure, universal JavaScript and while it works well with React, Redux, and other UI libraries, Strickland is not coupled to any other library or application type.
 
