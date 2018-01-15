@@ -62,7 +62,7 @@ describe('required', () => {
             });
         });
 
-        describe('passes props though to the result', () => {
+        describe('passes context though to the result', () => {
             const validate = required({message: 'Required'})
 
             it('when valid', () => {

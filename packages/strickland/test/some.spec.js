@@ -117,7 +117,7 @@ describe('some', () => {
         });
     });
 
-    describe('passes props to the validators', () => {
+    describe('passes context to the validators', () => {
         const validate = some([minLength(2)], {validatorProp: 'Validator'});
         const result = validate('AB', {validateProp: 'Validate'});
 

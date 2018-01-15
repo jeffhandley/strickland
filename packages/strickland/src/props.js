@@ -12,7 +12,14 @@ export default function props(validators, validatorContext) {
 
         if (value && validators && typeof validators === 'object') {
             result = Object.keys(validators).map((propName) => {
-                const validatorResult = validate(validators[propName], value[propName], validationContext);
+                const {props: propsContext = {}, ...otherContext} = validationContext;
+
+                const childContext = {
+                    ...otherContext,
+                    ...propsContext[propName]
+                };
+
+                const validatorResult = validate(validators[propName], value[propName], childContext);
                 hasPromises = hasPromises || validatorResult.validateAsync instanceof Promise;
 
                 return convertToPropResult(propName, validatorResult)

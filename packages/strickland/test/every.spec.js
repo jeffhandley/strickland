@@ -121,7 +121,7 @@ describe('every', () => {
         });
     });
 
-    describe('passes props to the validators', () => {
+    describe('passes context to the validators', () => {
         const validate = every([required({message: 'Required'}), minLength(2)], {validatorProp: 'Validator'});
         const result = validate('AB', {validateProp: 'Validate'});
 

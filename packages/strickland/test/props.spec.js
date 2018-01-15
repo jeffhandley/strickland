@@ -302,7 +302,7 @@ describe('props', () => {
         });
     });
 
-    describe('passes props to the validators', () => {
+    describe('passes context to the validators', () => {
         const validatorProps = {validatorProp: 'Validator'};
 
         const validate = props({
@@ -335,6 +335,110 @@ describe('props', () => {
                     last: {validateProp: 'Validate', message: 'Last'}
                 }
             });
+        });
+    });
+
+    describe('allows context to be specified for individual props', () => {
+        const validate = props({
+            name: required(),
+            address: {
+                home: {
+                    city: required()
+                },
+                work: {
+                    city: required()
+                }
+            }
+        });
+
+        const value = {
+            name: 'Stanford Strickland',
+            address: {
+                home: {},
+                work: {}
+            }
+        };
+
+        const context = {
+            message: 'top-level message',
+            props: {
+                name: {
+                    message: 'name message'
+                },
+                address: {
+                    message: 'address message',
+                    props: {
+                        home: {
+                            message: 'home message',
+                            props: {
+                                city: {
+                                    message: 'home city message'
+                                }
+                            }
+                        },
+                        work: {
+                            message: 'work message',
+                            props: {
+                                city: {
+                                    message: 'work city message'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const result = validate(value, context);
+
+        it('for top-level props, overriding outer context', () => {
+            expect(result).toMatchObject({
+                props: {
+                    name: {
+                        message: 'name message'
+                    },
+                    address: {
+                        message: 'address message'
+                    }
+                },
+                message: 'top-level message'
+            });
+        });
+
+        it('for nested props, overriding outer context and parent context', () => {
+            expect(result).toMatchObject({
+                props: {
+                    address: {
+                        message: 'address message',
+                        props: {
+                            home: {
+                                message: 'home message',
+                                props: {
+                                    city: {
+                                        message: 'home city message'
+                                    }
+                                }
+                            },
+                            work: {
+                                message: 'work message',
+                                props: {
+                                    city: {
+                                        message: 'work city message'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        it('without passing props context to the top-level props', () => {
+            expect(result.props.name).not.toHaveProperty('props');
+        });
+
+        it('without passing props context to the nested props', () => {
+            expect(result.props.address.props.home.props.city).not.toHaveProperty('props');
         });
     });
 
