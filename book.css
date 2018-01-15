@@ -36,6 +36,14 @@
     background-color: #FB7E00;
 }
 
+.book-body::-webkit-scrollbar, .body-inner::-webkit-scrollbar {
+    width: 8px;
+}
+
+.book-body::-webkit-scrollbar-thumb, .body-inner::-webkit-scrollbar-thumb {
+    background-color: #1F3244;
+}
+
 .markdown-section a, #book-search-results .search-results .has-results .search-results-item a {
     color: #FB7E00;
 }
