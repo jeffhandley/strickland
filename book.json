@@ -2,7 +2,7 @@
     "title": "Strickland",
     "description": "Strickland is a JavaScript validation framework with a focus on extensibility and composability.",
     "author": "Jeff Handley <npm@jeffhandley.com>",
-    "plugins": ["edit-link", "github"],
+    "plugins": ["edit-link", "github", "custom-favicon"],
     "pluginsConfig": {
         "edit-link": {
             "base": "https://github.com/jeffhandley/strickland/blob/master",
@@ -15,6 +15,7 @@
             "styles": {
                 "website": "book.css"
             }
-        }
+        },
+        "favicon": "logo/logo.png"
     }
 }
