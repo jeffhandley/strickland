@@ -1,4 +1,4 @@
-import {props, required, minLength, length} from '../src/strickland';
+import stricklandValidate, {props, every, range, required, minLength, length} from '../src/strickland';
 
 describe('props', () => {
     it('returns a validate function', () => {
@@ -710,6 +710,85 @@ describe('props', () => {
                     fourth: 'Fourth'
                 });
             });
+        });
+    });
+
+    describe('readme', () => {
+        // Define the rules for first name, last name, and birthYear
+        const validatePersonProps = props({
+            firstName: every([required(), length(2, 20)]),
+            lastName: every([required(), length(2, 20)]),
+            birthYear: range(1900, 2018)
+        });
+
+        // Create a person
+        const person = {
+            firstName: 'Stanford',
+            lastName: 'Strickland',
+            birthYear: 1925
+        };
+
+        // Provide validation context to the validators
+        const context = {
+            props: {
+                firstName: {maxLength: 25},
+                lastName: {maxLength: 30}
+            }
+        };
+
+        const result = stricklandValidate(validatePersonProps, person, context);
+
+        expect(result).toMatchObject({
+            isValid: true,
+            value: person,
+            props: {
+                firstName: {
+                    isValid: true,
+                    value: 'Stanford',
+                    required: true,
+                    minLength: 2,
+                    maxLength: 25,
+                    every: [
+                        {
+                            isValid: true,
+                            value: 'Stanford',
+                            required: true
+                        },
+                        {
+                            isValid: true,
+                            value: 'Stanford',
+                            minLength: 2,
+                            maxLength: 25
+                        }
+                    ]
+                },
+                lastName: {
+                    isValid: true,
+                    value: 'Strickland',
+                    required: true,
+                    minLength: 2,
+                    maxLength: 30,
+                    every: [
+                        {
+                            isValid: true,
+                            value: 'Strickland',
+                            required: true
+                        },
+                        {
+                            isValid: true,
+                            value: 'Strickland',
+                            minLength: 2,
+                            maxLength: 30
+                        }
+                    ]
+                },
+                birthYear: {
+                    isValid: true,
+                    value: 1925,
+                    min: 1900,
+                    max: 2018
+                }
+            }
         });
     });
 });
