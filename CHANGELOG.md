@@ -40,16 +40,6 @@
 
 
 
-<a name="1.0.0-rc.7"></a>
-# [1.0.0-rc.7](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2017-12-22)
-
-
-
-<a name="1.0.0-rc.6"></a>
-# [1.0.0-rc.6](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2017-12-22)
-
-
-
 <a name="1.0.0-rc.5"></a>
 # [1.0.0-rc.5](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.3...v1.0.0-rc.5) (2017-12-22)
 
@@ -66,21 +56,6 @@
 * every now works with async validators ([62baf40](https://github.com/jeffhandley/strickland/commit/62baf40))
 * support async props validation ([207a096](https://github.com/jeffhandley/strickland/commit/207a096))
 * support async validators in the validate function (but not yet in every or props) ([0b140b3](https://github.com/jeffhandley/strickland/commit/0b140b3))
-
-
-
-<a name="1.0.0-rc.3"></a>
-# [1.0.0-rc.3](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2017-12-21)
-
-
-
-<a name="1.0.0-rc.2"></a>
-# [1.0.0-rc.2](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2017-12-21)
-
-
-
-<a name="1.0.0-rc.1"></a>
-# [1.0.0-rc.1](https://github.com/jeffhandley/strickland/compare/1.0.0-rc.0...v1.0.0-rc.1) (2017-12-20)
 
 
 
