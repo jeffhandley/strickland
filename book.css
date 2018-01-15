@@ -6,3 +6,32 @@
 .book-summary > nav > ul.summary > li:nth-of-type(2) {
     display: none
 }
+
+.book-summary {
+    background-color: #1F3244;
+}
+
+.book-summary ul.summary li a, .book-summary ul.summary li span {
+    color: white;
+}
+
+.book-summary ul.summary li.active > a {
+    color: #FB7E00;
+}
+
+#book-search-input {
+    background: transparent;
+}
+
+#book-search-input input, #book-search-input input:focus, #book-search-input input:hover {
+    color: white;
+}
+
+.book-summary::-webkit-scrollbar {
+    background-color: #1F3244;
+    width: 3px;
+}
+
+.book-summary::-webkit-scrollbar-thumb {
+    background-color: #FB7E00;
+}
