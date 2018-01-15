@@ -43,9 +43,7 @@
     "babel-register": "^6.26.0",
     "deep-freeze": "0.0.1",
     "eslint": "^4.13.0",
-    "eslint-plugin-react": "^7.5.1"
-  },
-  "dependencies": {
+    "eslint-plugin-react": "^7.5.1",
     "jest": "^22.0.3"
   }
 }
