@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import logo from './logo.svg';
 import './App.css';
 import validate, {validateAsync, every, required, minLength, compare} from 'strickland';
 
@@ -40,7 +39,12 @@ function hasValidationResults(validation, fieldName) {
 }
 
 function validateField(validation, rules, fieldName, value, validationProps) {
-    const result = validate(rules[fieldName], value, validationProps);
+    const result = validate({
+        [fieldName]: rules[fieldName]
+    }, {
+        [fieldName]: value
+    }, validationProps);
+
     return updateFieldResult(validation, fieldName, result);
 }
 
@@ -49,7 +53,7 @@ function updateFieldResult(validation, fieldName, result) {
         ...validation,
         props: {
             ...((validation && validation.props) || {}),
-            [fieldName]: result
+            [fieldName]: result.props[fieldName]
         }
     };
 }
@@ -159,7 +163,11 @@ class App extends Component {
         }
 
         if (hasValidationResults(validation, fieldName)) {
-            const result = validate(this.rules[fieldName], parsedValue, {onFieldChange: true})
+            const result = validate({
+                [fieldName]: this.rules[fieldName]
+            }, {
+                [fieldName]: parsedValue
+            }, {onFieldChange: true})
 
             if (result.isValid || !validation.props[fieldName].isValid) {
                 validation = updateFieldResult(validation, fieldName, result);
@@ -202,7 +210,11 @@ class App extends Component {
             this.setState({form});
         }
 
-        const result = validate(this.rules[fieldName], parsedValue);
+        const result = validate({
+            [fieldName]: this.rules[fieldName]
+        }, {
+            [fieldName]: parsedValue
+        });
 
         // If the field is valid, show validation results on blur
         // Or, update existing validation results on blur
@@ -222,12 +234,15 @@ class App extends Component {
 
                 if (result.validateAsync) {
                     result.validateAsync.then((asyncResult) => {
-                        asyncResult = updateFieldResult(this.state.validation, fieldName, asyncResult);
-                        this.setState({validation: asyncResult});
+                        const currentForm = this.state.form;
+
+                        if (currentForm[fieldName] === asyncResult.props[fieldName].value) {
+                            asyncResult = updateFieldResult(this.state.validation, fieldName, asyncResult);
+                            this.setState({validation: asyncResult});
+                        }
                     });
                 }
             }
-
         }
 
         this.setState({validation});
@@ -243,8 +258,7 @@ class App extends Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <img alt="logo" className="App-logo" src={logo} />
-                    <h1 className="App-title">Strickland</h1>
+                    <h1><img alt="logo" aria-label="Strickland demo" className="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png" /></h1>
                 </header>
                 <div className="form">
                     <div className="formfield">
@@ -316,8 +330,8 @@ class App extends Component {
                         </div>
                     </div>
                 </div>
-                <pre style={{textAlign: 'left', backgroundColor: 'goldenrod', padding: 24}}>
-                    {JSON.stringify(this.state, null, 2)}
+                <pre id="current-state">
+                    {JSON.stringify(this.state.validation, null, 2)}
                 </pre>
             </div>
         );
