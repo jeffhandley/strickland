@@ -12,7 +12,7 @@
 }
 
 .book-summary ul.summary li a, .book-summary ul.summary li span {
-    color: white;
+    color: #FEFFFE;
 }
 
 .book-summary ul.summary li.active > a {
@@ -24,7 +24,7 @@
 }
 
 #book-search-input input, #book-search-input input:focus, #book-search-input input:hover {
-    color: white;
+    color: #FEFFFE;
 }
 
 .book-summary::-webkit-scrollbar {
