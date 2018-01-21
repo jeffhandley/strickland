@@ -55,6 +55,27 @@ describe('compare', () => {
             const result = validate();
             expect(result.isValid).toBe(true);
         });
+
+        it('comparing against 0', () => {
+            const validateAgainst0 = compare(0);
+            const result = validateAgainst0(1);
+
+            expect(result).toMatchObject({
+                isValid: false,
+                compare: 0,
+                value: 1
+            });
+        });
+
+        it('with a value of 0', () => {
+            const result = validate(0)
+
+            expect(result).toMatchObject({
+                isValid: false,
+                compare: 3,
+                value: 0
+            });
+        });
     });
 
     describe('with a function for the compare value', () => {

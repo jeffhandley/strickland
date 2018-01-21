@@ -1,3 +1,5 @@
+import {isFalsyButNotZero} from './number';
+
 export default function compare(compareParam, validatorContext) {
     if (typeof compareParam === 'object') {
         validatorContext = compareParam;
@@ -23,8 +25,9 @@ export default function compare(compareParam, validatorContext) {
             compareValue = compareValue(validationContext);
         }
 
-        if (!value) {
+        if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
+
         } else if (value !== compareValue) {
             isValid = false;
         }
