@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/jeffhandley/strickland/compare/v1.0.0...v1.1.0) (2018-01-21)
+
+
+### Bug Fixes
+
+* compare with a value of 0 should actually validate ([d0f6fe1](https://github.com/jeffhandley/strickland/commit/d0f6fe1))
+* include length on context passed to minLength and maxLength functions ([d61436a](https://github.com/jeffhandley/strickland/commit/d61436a))
+
+
+### Features
+
+* pass validation context to parameter functions ([b466e9f](https://github.com/jeffhandley/strickland/commit/b466e9f))
+
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/jeffhandley/strickland/compare/v1.0.0-rc.11...v1.0.0) (2018-01-15)
 
