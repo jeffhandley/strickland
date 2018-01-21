@@ -14,13 +14,14 @@ export default function min(minParam, validatorContext) {
     return function validateMin(value, validationContext) {
         validationContext = {
             ...validatorContext,
-            ...validationContext
+            ...validationContext,
+            value
         };
 
         let minValue = validationContext.min;
 
         if (typeof minValue === 'function') {
-            minValue = minValue();
+            minValue = minValue(validationContext);
         }
 
         if (typeof minValue !== 'number') {

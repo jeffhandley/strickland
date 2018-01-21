@@ -1,7 +1,7 @@
 import validate from './validate';
 
 export default function props(validators, validatorContext) {
-    return function validateEach(value, validationContext) {
+    return function validateProps(value, validationContext) {
         validationContext = {
             ...validatorContext,
             ...validationContext

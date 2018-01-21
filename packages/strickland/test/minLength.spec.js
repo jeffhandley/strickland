@@ -75,30 +75,38 @@ describe('minLength', () => {
     });
 
     describe('with minLength as a function', () => {
-        let getMinLengthCalls = 0;
-
-        const getMinLength = () => {
-            return ++getMinLengthCalls;
-        };
-
-        beforeEach(() => {
-            getMinLengthCalls = 0;
-        });
-
         it('does not call the function during validator construction', () => {
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
+
             minLength(getMinLength);
-            expect(getMinLengthCalls).toBe(0);
+            expect(getMinLength).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
+
             const validate = minLength(getMinLength);
             validate('A');
 
-            expect(getMinLengthCalls).toBe(1);
+            expect(getMinLength).toHaveBeenCalledTimes(1);
+        });
+
+        it('the function is called every time validation occurs', () => {
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
+
+            const validate = minLength(getMinLength);
+            validate('A');
+            validate('A');
+
+            expect(getMinLength).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            getMinLengthCalls = 5;
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
 
             const validate = minLength(getMinLength);
             const result = validate('1234567');
@@ -108,6 +116,21 @@ describe('minLength', () => {
                 minLength: 6,
                 value: '1234567',
                 length: 7
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
+
+            const validate = minLength(getMinLength, {a: 'validator context'});
+            validate('abcde', {b: 'validation context'});
+
+            expect(getMinLength.mock.calls[0][0]).toMatchObject({
+                value: 'abcde',
+                minLength: getMinLength,
+                a: 'validator context',
+                b: 'validation context'
             });
         });
     });

@@ -49,30 +49,38 @@ describe('max', () => {
     });
 
     describe('with max as a function', () => {
-        let getMaxCalls = 0;
-
-        const getMax = () => {
-            return ++getMaxCalls;
-        };
-
-        beforeEach(() => {
-            getMaxCalls = 0;
-        });
-
         it('does not call the function during validator construction', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
             max(getMax);
-            expect(getMaxCalls).toBe(0);
+            expect(getMax).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
             const validate = max(getMax);
             validate(0);
 
-            expect(getMaxCalls).toBe(1);
+            expect(getMax).toHaveBeenCalledTimes(1);
+        });
+
+        it('the function is called every time validation occurs', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            const validate = max(getMax);
+            validate(0);
+            validate(0);
+
+            expect(getMax).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            getMaxCalls = 5;
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
 
             const validate = max(getMax);
             const result = validate(4);
@@ -81,6 +89,21 @@ describe('max', () => {
                 isValid: true,
                 max: 6,
                 value: 4
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            const validate = max(getMax, {a: 'validator context'});
+            validate(6, {b: 'validation context'});
+
+            expect(getMax.mock.calls[0][0]).toMatchObject({
+                value: 6,
+                max: getMax,
+                a: 'validator context',
+                b: 'validation context'
             });
         });
     });

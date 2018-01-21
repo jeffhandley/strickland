@@ -75,30 +75,38 @@ describe('maxLength', () => {
     });
 
     describe('with maxLength as a function', () => {
-        let getMaxLengthCalls = 0;
-
-        const getMaxLength = () => {
-            return ++getMaxLengthCalls;
-        };
-
-        beforeEach(() => {
-            getMaxLengthCalls = 0;
-        });
-
         it('does not call the function during validator construction', () => {
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
+
             maxLength(getMaxLength);
-            expect(getMaxLengthCalls).toBe(0);
+            expect(getMaxLength).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
+
             const validate = maxLength(getMaxLength);
             validate('A');
 
-            expect(getMaxLengthCalls).toBe(1);
+            expect(getMaxLength).toHaveBeenCalledTimes(1);
+        });
+
+        it('the function is called every time validation occurs', () => {
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
+
+            const validate = maxLength(getMaxLength);
+            validate(0);
+            validate(0);
+
+            expect(getMaxLength).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            getMaxLengthCalls = 5;
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
 
             const validate = maxLength(getMaxLength);
             const result = validate('1234');
@@ -108,6 +116,21 @@ describe('maxLength', () => {
                 maxLength: 6,
                 value: '1234',
                 length: 4
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
+
+            const validate = maxLength(getMaxLength, {a: 'validator context'});
+            validate('abcde', {b: 'validation context'});
+
+            expect(getMaxLength.mock.calls[0][0]).toMatchObject({
+                value: 'abcde',
+                maxLength: getMaxLength,
+                a: 'validator context',
+                b: 'validation context'
             });
         });
     });

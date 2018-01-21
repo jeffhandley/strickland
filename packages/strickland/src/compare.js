@@ -12,26 +12,26 @@ export default function compare(compareParam, validatorContext) {
     return function validateCompare(value, validationContext) {
         validationContext = {
             ...validatorContext,
-            ...validationContext
+            ...validationContext,
+            value
         };
 
         let isValid = true;
-        let valueToCompare = validationContext.compare;
+        let compareValue = validationContext.compare;
 
-        if (typeof valueToCompare === 'function') {
-            valueToCompare = valueToCompare();
+        if (typeof compareValue === 'function') {
+            compareValue = compareValue(validationContext);
         }
 
         if (!value) {
             // Empty values are always valid except with the required validator
-        } else if (value !== valueToCompare) {
+        } else if (value !== compareValue) {
             isValid = false;
         }
 
         return {
             ...validationContext,
-            value,
-            compare: valueToCompare,
+            compare: compareValue,
             isValid
         };
     }

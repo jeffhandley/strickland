@@ -12,13 +12,14 @@ export default function minLength(minLengthParam, validatorContext) {
     return function validateMinLength(value, validationContext) {
         validationContext = {
             ...validatorContext,
-            ...validationContext
+            ...validationContext,
+            value
         };
 
         let minLengthValue = validationContext.minLength;
 
         if (typeof minLengthValue === 'function') {
-            minLengthValue = minLengthValue();
+            minLengthValue = minLengthValue(validationContext);
         }
 
         if (typeof minLengthValue !== 'number') {
@@ -38,7 +39,6 @@ export default function minLength(minLengthParam, validatorContext) {
         return {
             ...validationContext,
             minLength: minLengthValue,
-            value,
             length,
             isValid
         };

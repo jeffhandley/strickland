@@ -14,13 +14,14 @@ export default function max(maxParam, validatorContext) {
     return function validateMax(value, validationContext) {
         validationContext = {
             ...validatorContext,
-            ...validationContext
+            ...validationContext,
+            value
         };
 
         let maxValue = validationContext.max;
 
         if (typeof maxValue === 'function') {
-            maxValue = maxValue();
+            maxValue = maxValue(validationContext);
         }
 
         if (typeof maxValue !== 'number') {
@@ -42,7 +43,6 @@ export default function max(maxParam, validatorContext) {
         return {
             ...validationContext,
             max: maxValue,
-            value,
             isValid
         };
     }

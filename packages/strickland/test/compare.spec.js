@@ -58,37 +58,62 @@ describe('compare', () => {
     });
 
     describe('with a function for the compare value', () => {
-        let getValueCalls = 0;
+        it('does not call the function during validator construction', () => {
+            const getCompareValue = jest.fn();
+            getCompareValue.mockReturnValue(6);
 
-        function getValue() {
-            getValueCalls++;
-            return 'value to compare';
-        }
-
-        const validate = compare(getValue);
-        const result = validate('value to compare');
-
-        it('calls the function (once) to get the compare value', () => {
-            expect(getValueCalls).toBe(1);
+            compare(getCompareValue);
+            expect(getCompareValue).not.toHaveBeenCalled();
         });
 
-        it('sets the compare value to the result of the function', () => {
-            expect(result.compare).toBe('value to compare');
+        it('the function is called at the time of validation', () => {
+            const getCompareValue = jest.fn();
+            getCompareValue.mockReturnValue(6);
+
+            const validate = compare(getCompareValue);
+            validate(5);
+
+            expect(getCompareValue).toHaveBeenCalledTimes(1);
         });
 
-        it('the function is called each time validation occurs', () => {
-            let calls = 0;
+        it('the function is called every time validation occurs', () => {
+            const getCompareValue = jest.fn();
+            getCompareValue.mockReturnValue(6);
 
-            function getValueOnValidation() {
-                return ++calls;
-            }
+            const validate = compare(getCompareValue);
+            validate(7);
+            validate(7);
 
-            const validateMultipleTimes = compare(getValueOnValidation);
+            expect(getCompareValue).toHaveBeenCalledTimes(2);
+        });
 
-            validateMultipleTimes(1);
-            validateMultipleTimes(2);
+        it('validates using the function result', () => {
+            const getCompareValue = jest.fn();
+            getCompareValue.mockReturnValue(6);
 
-            expect(calls).toBe(2);
+            const validate = compare(getCompareValue);
+            const result = validate(6);
+
+            expect(result).toMatchObject({
+                isValid: true,
+                compare: 6,
+                value: 6
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getCompareValue = jest.fn();
+            getCompareValue.mockReturnValue(6);
+
+            const validate = compare(getCompareValue, {a: 'validator context'});
+            validate(6, {b: 'validation context'});
+
+            expect(getCompareValue.mock.calls[0][0]).toMatchObject({
+                value: 6,
+                compare: getCompareValue,
+                a: 'validator context',
+                b: 'validation context'
+            });
         });
     });
 

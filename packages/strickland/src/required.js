@@ -4,7 +4,8 @@ export default function required(validatorContext) {
     return function validateRequired(value, validationContext) {
         validationContext = {
             ...validatorContext,
-            ...validationContext
+            ...validationContext,
+            value
         };
 
         let isValid = true;
@@ -20,7 +21,6 @@ export default function required(validatorContext) {
         return {
             ...validationContext,
             required: true,
-            value,
             isValid
         };
     }
