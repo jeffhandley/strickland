@@ -133,6 +133,22 @@ describe('minLength', () => {
                 b: 'validation context'
             });
         });
+
+        it('validation context includes the length', () => {
+            const getMinLength = jest.fn();
+            getMinLength.mockReturnValue(6);
+
+            const validate = minLength(getMinLength, {a: 'validator context'});
+            validate('abcde', {b: 'validation context'});
+
+            expect(getMinLength.mock.calls[0][0]).toMatchObject({
+                value: 'abcde',
+                length: 5,
+                minLength: getMinLength,
+                a: 'validator context',
+                b: 'validation context'
+            });
+        });
     });
 
     describe('validates', () => {

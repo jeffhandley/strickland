@@ -10,10 +10,13 @@ export default function minLength(minLengthParam, validatorContext) {
     }
 
     return function validateMinLength(value, validationContext) {
+        let length = value ? value.length : 0;
+
         validationContext = {
             ...validatorContext,
             ...validationContext,
-            value
+            value,
+            length
         };
 
         let minLengthValue = validationContext.minLength;
@@ -27,7 +30,6 @@ export default function minLength(minLengthParam, validatorContext) {
         }
 
         let isValid = true;
-        let length = value ? value.length : 0;
 
         if (!value) {
             // Empty values are always valid except with the required validator
@@ -39,7 +41,6 @@ export default function minLength(minLengthParam, validatorContext) {
         return {
             ...validationContext,
             minLength: minLengthValue,
-            length,
             isValid
         };
     }

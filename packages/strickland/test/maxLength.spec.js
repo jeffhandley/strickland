@@ -133,6 +133,22 @@ describe('maxLength', () => {
                 b: 'validation context'
             });
         });
+
+        it('validation context includes the length', () => {
+            const getMaxLength = jest.fn();
+            getMaxLength.mockReturnValue(6);
+
+            const validate = maxLength(getMaxLength, {a: 'validator context'});
+            validate('abcde', {b: 'validation context'});
+
+            expect(getMaxLength.mock.calls[0][0]).toMatchObject({
+                value: 'abcde',
+                length: 5,
+                maxLength: getMaxLength,
+                a: 'validator context',
+                b: 'validation context'
+            });
+        });
     });
 
     describe('validates', () => {

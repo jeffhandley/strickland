@@ -10,10 +10,13 @@ export default function maxLength(maxLengthParam, validatorContext) {
     }
 
     return function validateMaxLength(value, validationContext) {
+        let length = value ? value.length : 0;
+
         validationContext = {
             ...validatorContext,
             ...validationContext,
-            value
+            value,
+            length
         };
 
         let maxLengthValue = validationContext.maxLength;
@@ -27,7 +30,6 @@ export default function maxLength(maxLengthParam, validatorContext) {
         }
 
         let isValid = true;
-        let length = value ? value.length : 0;
 
         if (!value) {
             // Empty values are always valid except with the required validator
@@ -39,7 +41,6 @@ export default function maxLength(maxLengthParam, validatorContext) {
         return {
             ...validationContext,
             maxLength: maxLengthValue,
-            length,
             isValid
         };
     }
