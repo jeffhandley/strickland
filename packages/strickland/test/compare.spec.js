@@ -136,6 +136,25 @@ describe('compare', () => {
                 b: 'validation context'
             });
         });
+
+        it('validation context can be used to provide a form to get the compare value from', () => {
+            const validateConfirmPassword = compare(({form}) => form.password);
+
+            const formValues = {
+                password: 'marty88'
+            };
+
+            const result = validateConfirmPassword('einstein', {form: formValues});
+
+            expect(result).toMatchObject({
+                isValid: false,
+                value: 'einstein',
+                compare: 'marty88',
+                form: {
+                    password: 'marty88'
+                }
+            });
+        });
     });
 
     describe('with props passed into validation', () => {
