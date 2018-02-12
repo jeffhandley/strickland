@@ -2,26 +2,26 @@ import every from './every';
 import min from './min';
 import max from './max';
 
-export default function range(minParam, maxParam, validatorProps) {
+export default function range(minParam, maxParam, validatorContext) {
     if (typeof minParam === 'object') {
-        validatorProps = minParam;
+        validatorContext = minParam;
 
     } else if (typeof maxParam === 'object') {
-        validatorProps = {
+        validatorContext = {
             min: minParam,
             ...maxParam
         };
 
     } else {
-        validatorProps = {
+        validatorContext = {
             min: minParam,
             max: maxParam,
-            ...validatorProps
+            ...validatorContext
         };
     }
 
     return every([
-        min(validatorProps),
-        max(validatorProps)
-    ]);
+        min(),
+        max()
+    ], validatorContext);
 }

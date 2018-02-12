@@ -42,6 +42,7 @@ export default function max(maxParam, validatorContext) {
 
         return {
             ...validationContext,
+            value,
             max: maxValue,
             isValid
         };

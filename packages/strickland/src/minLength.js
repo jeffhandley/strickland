@@ -40,6 +40,8 @@ export default function minLength(minLengthParam, validatorContext) {
 
         return {
             ...validationContext,
+            value,
+            length,
             minLength: minLengthValue,
             isValid
         };

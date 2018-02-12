@@ -21,7 +21,7 @@ export default function length(minLengthParam, maxLengthParam, validatorContext)
     }
 
     return every([
-        minLength(validatorContext),
-        maxLength(validatorContext)
-    ]);
+        minLength(),
+        maxLength()
+    ], validatorContext);
 }

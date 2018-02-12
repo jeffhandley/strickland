@@ -42,8 +42,8 @@ export default function min(minParam, validatorContext) {
 
         return {
             ...validationContext,
-            min: minValue,
             value,
+            min: minValue,
             isValid
         };
     }

@@ -40,6 +40,8 @@ export default function maxLength(maxLengthParam, validatorContext) {
 
         return {
             ...validationContext,
+            value,
+            length,
             maxLength: maxLengthValue,
             isValid
         };
