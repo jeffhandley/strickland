@@ -1,17 +1,12 @@
 import validate from './validate';
 
-export default function some(validators, validatorContext) {
-    return function validateSome(value, validationContext) {
-        validationContext = {
-            ...validatorContext,
-            ...validationContext
-        };
-
+export default function some(validators) {
+    return function validateSome(value) {
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.some((validator, index) => {
                     const previousResult = currentResult;
-                    const nextResult = validate(validator, value, validationContext);
+                    const nextResult = validate(validator, value);
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
@@ -31,7 +26,7 @@ export default function some(validators, validatorContext) {
                                     }
                                 }
 
-                                return prepareResult(value, validationContext, finalResult);
+                                return finalResult;
                             })
                         );
 
@@ -46,10 +41,13 @@ export default function some(validators, validatorContext) {
             return currentResult;
         }
 
-        let result = {some: []};
-        result = executeValidators(result, validators);
+        let result = {
+            isValid: true,
+            some: []
+        };
 
-        return prepareResult(value, validationContext, result);
+        result = executeValidators(result, validators);
+        return result;
     }
 }
 
@@ -57,18 +55,10 @@ function applyNextResult(previousResult, nextResult) {
     return {
         ...previousResult,
         ...nextResult,
+        isValid: previousResult.isValid && nextResult.isValid,
         some: [
             ...previousResult.some,
             nextResult
         ]
-    };
-}
-
-function prepareResult(value, validationContext, result) {
-    return {
-        ...validationContext,
-        ...result,
-        value,
-        isValid: !result.some.length || result.some.some((everyResult) => !!(everyResult.isValid))
     };
 }

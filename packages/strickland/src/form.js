@@ -20,11 +20,6 @@ export default function form(validators) {
             ...formContext
         } = context.form;
 
-        let validationContext = {
-            ...context,
-            form: formContext
-        };
-
         if (formContext.fields && !Array.isArray(formContext.fields)) {
             formContext.fields = [formContext.fields];
         }
@@ -46,7 +41,7 @@ export default function form(validators) {
             });
         }
 
-        const result = validate(fieldValidators, values, validationContext);
+        const result = validate(fieldValidators, values);
 
         let hasExistingPromises = false;
         let existingPromises;
@@ -72,10 +67,9 @@ export default function form(validators) {
         if (hasExistingPromises) {
             const existingReduced = {};
 
-            const resolveExisting = Promise.all(existingPromises)
-                .then((resolvedPromises) =>
-                    resolvedPromises.reduce(applyNextResult, existingReduced)
-                );
+            const resolveExisting = Promise.all(existingPromises).then(
+                (resolvedPromises) => resolvedPromises.reduce(applyNextResult, existingReduced)
+            );
 
             if (result.validateAsync instanceof Promise) {
                 result.validateAsync = Promise.all([result.validateAsync, resolveExisting])
@@ -133,7 +127,9 @@ function prepareResult(result, validators, formContext, existingResults) {
         isComplete = arraysEqual(Object.keys(validators).sort(), Object.keys(validationResults).sort());
     }
 
-    const isValid = isComplete && result.isValid && validationErrors.length === 0;
+    const isValid = isComplete &&
+        result.isValid &&
+        validationErrors.length === 0;
 
     const preparedResult = {
         ...result,
