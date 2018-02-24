@@ -1,34 +1,10 @@
-export default function maxLength(maxLengthParam, validatorContext) {
-    if (typeof maxLengthParam === 'object') {
-        validatorContext = maxLengthParam;
-
-    } else {
-        validatorContext = {
-            maxLength: maxLengthParam,
-            ...validatorContext
-        };
-    }
-
-    return function validateMaxLength(value, validationContext) {
-        let length = value ? value.length : 0;
-
-        validationContext = {
-            ...validatorContext,
-            ...validationContext,
-            value,
-            length
-        };
-
-        let maxLengthValue = validationContext.maxLength;
-
-        if (typeof maxLengthValue === 'function') {
-            maxLengthValue = maxLengthValue(validationContext);
-        }
-
+export default function maxLength(maxLengthValue) {
+    return function validateMaxLength(value) {
         if (typeof maxLengthValue !== 'number') {
             throw 'maxLength must be a number';
         }
 
+        let length = value ? value.length : 0;
         let isValid = true;
 
         if (!value) {
@@ -39,8 +15,6 @@ export default function maxLength(maxLengthParam, validatorContext) {
         }
 
         return {
-            ...validationContext,
-            value,
             length,
             maxLength: maxLengthValue,
             isValid

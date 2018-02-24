@@ -1,34 +1,10 @@
-export default function minLength(minLengthParam, validatorContext) {
-    if (typeof minLengthParam === 'object') {
-        validatorContext = minLengthParam;
-
-    } else {
-        validatorContext = {
-            minLength: minLengthParam,
-            ...validatorContext
-        };
-    }
-
-    return function validateMinLength(value, validationContext) {
-        let length = value ? value.length : 0;
-
-        validationContext = {
-            ...validatorContext,
-            ...validationContext,
-            value,
-            length
-        };
-
-        let minLengthValue = validationContext.minLength;
-
-        if (typeof minLengthValue === 'function') {
-            minLengthValue = minLengthValue(validationContext);
-        }
-
+export default function minLength(minLengthValue) {
+    return function validateMinLength(value) {
         if (typeof minLengthValue !== 'number') {
             throw 'minLength must be a number';
         }
 
+        let length = value ? value.length : 0;
         let isValid = true;
 
         if (!value) {
@@ -39,8 +15,6 @@ export default function minLength(minLengthParam, validatorContext) {
         }
 
         return {
-            ...validationContext,
-            value,
             length,
             minLength: minLengthValue,
             isValid
