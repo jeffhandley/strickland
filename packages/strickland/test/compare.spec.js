@@ -1,16 +1,16 @@
 import deepFreeze from 'deep-freeze';
-import compare from '../src/compare';
+import compare, {prepareProps} from '../src/compare';
 
 describe('compare', () => {
     describe('with a single props argument', () => {
         const validate = compare({compare: 5, message: 'Custom message'});
         const result = validate(5);
 
-        it('uses the compare prop', () => {
+        it('sets the compare result prop', () => {
             expect(result.compare).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
         });
     });
@@ -19,11 +19,11 @@ describe('compare', () => {
         const validate = compare(5, {message: 'Custom message'});
         const result = validate(4);
 
-        it('sets the compare prop', () => {
+        it('sets the compare result prop', () => {
             expect(result.compare).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
         });
     });
@@ -78,7 +78,7 @@ describe('compare', () => {
         });
     });
 
-    describe('with a function for the compare value', () => {
+    describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
             const getCompareValue = jest.fn();
             getCompareValue.mockReturnValue(6);
@@ -108,17 +108,33 @@ describe('compare', () => {
             expect(getCompareValue).toHaveBeenCalledTimes(2);
         });
 
-        it('validates using the function result', () => {
-            const getCompareValue = jest.fn();
-            getCompareValue.mockReturnValue(6);
+        describe('validates using the function result', () => {
+            it('when the function returns a compare value', () => {
+                const getCompareValue = jest.fn();
+                getCompareValue.mockReturnValue(6);
 
-            const validate = compare(getCompareValue);
-            const result = validate(6);
+                const validate = compare(getCompareValue);
+                const result = validate(6);
 
-            expect(result).toMatchObject({
-                isValid: true,
-                compare: 6,
-                value: 6
+                expect(result).toMatchObject({
+                    isValid: true,
+                    compare: 6,
+                    value: 6
+                });
+            });
+
+            it('when the function returns a props object', () => {
+                const getCompareProps = jest.fn();
+                getCompareProps.mockReturnValue({compare: 6});
+
+                const validate = compare(getCompareProps);
+                const result = validate(6);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    compare: 6,
+                    value: 6
+                });
             });
         });
 
@@ -126,52 +142,13 @@ describe('compare', () => {
             const getCompareValue = jest.fn();
             getCompareValue.mockReturnValue(6);
 
-            const validate = compare(getCompareValue, {a: 'validator context'});
-            validate(6, {b: 'validation context'});
+            const validate = compare(getCompareValue);
+            validate(6, {contextProp: 'validation context'});
 
-            expect(getCompareValue.mock.calls[0][0]).toMatchObject({
+            expect(getCompareValue).toHaveBeenCalledWith(expect.objectContaining({
                 value: 6,
-                compare: getCompareValue,
-                a: 'validator context',
-                b: 'validation context'
-            });
-        });
-
-        it('validation context can be used to provide a form to get the compare value from', () => {
-            const validateConfirmPassword = compare(({form}) => form.password);
-
-            const formValues = {
-                password: 'marty88'
-            };
-
-            const result = validateConfirmPassword('einstein', {form: formValues});
-
-            expect(result).toMatchObject({
-                isValid: false,
-                value: 'einstein',
-                compare: 'marty88',
-                form: {
-                    password: 'marty88'
-                }
-            });
-        });
-    });
-
-    describe('with props passed into validation', () => {
-        it('allows the compare value to be specified at time of validation, overriding a compare function', () => {
-            let compareValue = 5;
-
-            const validatorProps = {
-                compare: () => compareValue
-            };
-
-            const validate = compare(validatorProps);
-            const result = validate(6, {compare: 6});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                compare: 6
-            });
+                contextProp: 'validation context'
+            }));
         });
     });
 
@@ -188,6 +165,22 @@ describe('compare', () => {
             deepFreeze(props);
 
             expect(() => compare(5, props)(5)).not.toThrow();
+        });
+    });
+
+    describe('does not include validation context props on the result', () => {
+        it('for new props', () => {
+            const validate = compare(5);
+            const result = validate(5, {contextProp: 'validation context'});
+
+            expect(result).not.toHaveProperty('contextProp');
+        });
+
+        it('for props with the same name as other result props', () => {
+            const validate = compare(5);
+            const result = validate(5, {compare: 6});
+
+            expect(result.compare).toBe(5);
         });
     });
 });
