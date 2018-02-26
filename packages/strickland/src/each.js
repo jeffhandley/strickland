@@ -1,18 +1,38 @@
 import validate from './validate';
+import {prepareProps} from './utils';
 
 const initialResult = {
     isValid: true,
     each: []
 };
 
-export default function each(validators) {
-    return function validateEach(value) {
+export default function each(validators, ...params) {
+    return function validateEach(value, context) {
         let result = initialResult;
         let hasPromises = false;
 
+        const validatorProps = prepareProps(
+            {value},
+            [],
+            params,
+            context
+        );
+
+        if (!validators || !validators.length) {
+            return {
+                ...validatorProps,
+                ...initialResult
+            };
+        }
+
+        const validationContext = {
+            ...validatorProps,
+            ...context
+        };
+
         if (Array.isArray(validators)) {
             validators.forEach((validator) => {
-                const nextResult = validate(validator, value);
+                const nextResult = validate(validator, value, validationContext);
                 hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
 
                 result = applyNextResult(result, nextResult);
@@ -26,12 +46,20 @@ export default function each(validators) {
                     Promise.resolve(eachResult)
             );
 
-            result.validateAsync = Promise.all(promises).then(
-                (results) => results.reduce(applyNextResult, initialResult)
-            );
+            result.validateAsync = Promise.all(promises).then((results) => {
+                const resolvedResult = results.reduce(applyNextResult, initialResult);
+
+                return {
+                    ...validatorProps,
+                    ...resolvedResult
+                };
+            });
         }
 
-        return result;
+        return {
+            ...validatorProps,
+            ...result
+        };
     }
 }
 

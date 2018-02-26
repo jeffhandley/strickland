@@ -1,12 +1,38 @@
 import validate from './validate';
+import {prepareProps} from './utils';
 
-export default function some(validators) {
-    return function validateSome(value) {
+const initialResult = {
+    isValid: false,
+    some: []
+};
+
+export default function some(validators, ...params) {
+    return function validateSome(value, context) {
+        const validatorProps = prepareProps(
+            {value},
+            [],
+            params,
+            context
+        );
+
+        if (!validators || !validators.length) {
+            return {
+                ...validatorProps,
+                ...initialResult,
+                isValid: true
+            };
+        }
+
+        const validationContext = {
+            ...validatorProps,
+            ...context
+        };
+
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.some((validator, index) => {
                     const previousResult = currentResult;
-                    const nextResult = validate(validator, value);
+                    const nextResult = validate(validator, value, validationContext);
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
@@ -26,7 +52,10 @@ export default function some(validators) {
                                     }
                                 }
 
-                                return finalResult;
+                                return {
+                                    ...validatorProps,
+                                    ...finalResult
+                                };
                             })
                         );
 
@@ -41,13 +70,12 @@ export default function some(validators) {
             return currentResult;
         }
 
-        let result = {
-            isValid: true,
-            some: []
-        };
+        const result = executeValidators(initialResult, validators);
 
-        result = executeValidators(result, validators);
-        return result;
+        return {
+            ...validatorProps,
+            ...result
+        };
     }
 }
 
@@ -55,7 +83,7 @@ function applyNextResult(previousResult, nextResult) {
     return {
         ...previousResult,
         ...nextResult,
-        isValid: previousResult.isValid && nextResult.isValid,
+        isValid: previousResult.isValid || nextResult.isValid,
         some: [
             ...previousResult.some,
             nextResult

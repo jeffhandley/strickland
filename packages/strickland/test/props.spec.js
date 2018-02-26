@@ -15,7 +15,7 @@ describe('props', () => {
             ]
         };
 
-        const validate = props(personProps);
+        const validate = props(personProps, {validatorProp: 'Validator message'});
         const person = {
             first: '',
             last: 'A'
@@ -58,6 +58,10 @@ describe('props', () => {
                     last: {isValid: true}
                 }
             });
+        });
+
+        it('putting validator props on the result', () => {
+            expect(result).toMatchObject({validatorProp: 'Validator message'});
         });
     });
 
@@ -303,50 +307,34 @@ describe('props', () => {
     });
 
     describe('passes context to the validators', () => {
-        const validatorProps = {validatorProp: 'Validator'};
+        const validator = jest.fn();
 
         const validate = props({
-            first: required({message: 'First'}),
-            last: required({message: 'Last'})
-        }, validatorProps);
+            first: validator
+        }, {validatorProp: 'Validator prop'});
 
         const value = {
-            first: 'A',
-            last: 'B'
+            first: 'A'
         };
 
-        const result = validate(value, {validateProp: 'Validate'});
+        const result = validate(value, {contextProp: 'Context prop'});
 
-        it('from the validator definition', () => {
-            expect(result).toMatchObject({
-                validatorProp: 'Validator',
-                props: {
-                    first: {validatorProp: 'Validator', message: 'First'},
-                    last: {validatorProp: 'Validator', message: 'Last'}
-                }
-            });
-        });
-
-        it('from the validate function', () => {
-            expect(result).toMatchObject({
-                validateProp: 'Validate',
-                props: {
-                    first: {validateProp: 'Validate', message: 'First'},
-                    last: {validateProp: 'Validate', message: 'Last'}
-                }
-            });
+        it('from the validation context', () => {
+            expect(validator).toHaveBeenCalledWith(value.first, expect.objectContaining({
+                contextProp: 'Context prop'
+            }));
         });
     });
 
     describe('allows context to be specified for individual props', () => {
+        const name = jest.fn();
+        const homeCity = jest.fn();
+
         const validate = props({
-            name: required(),
+            name,
             address: {
                 home: {
-                    city: required()
-                },
-                work: {
-                    city: required()
+                    city: homeCity
                 }
             }
         });
@@ -354,33 +342,31 @@ describe('props', () => {
         const value = {
             name: 'Stanford Strickland',
             address: {
-                home: {},
-                work: {}
+                home: {
+                    city: 'Hill Valley'
+                }
             }
         };
 
         const context = {
-            message: 'top-level message',
+            message: 'top-level',
+            topLevelMessage: 'top-level message',
             props: {
                 name: {
-                    message: 'name message'
+                    message: 'name',
+                    nameMessage: 'name message'
                 },
                 address: {
-                    message: 'address message',
+                    message: 'address',
+                    addressMessage: 'address message',
                     props: {
                         home: {
-                            message: 'home message',
+                            message: 'home',
+                            homeMessage: 'home message',
                             props: {
                                 city: {
-                                    message: 'home city message'
-                                }
-                            }
-                        },
-                        work: {
-                            message: 'work message',
-                            props: {
-                                city: {
-                                    message: 'work city message'
+                                    message: 'home city',
+                                    homeCityMessage: 'home city message'
                                 }
                             }
                         }
@@ -389,56 +375,36 @@ describe('props', () => {
             }
         };
 
-        const result = validate(value, context);
+        validate(value, context);
 
-        it('for top-level props, overriding outer context', () => {
-            expect(result).toMatchObject({
-                props: {
-                    name: {
-                        message: 'name message'
-                    },
-                    address: {
-                        message: 'address message'
-                    }
-                },
-                message: 'top-level message'
-            });
+        it('for top-level props', () => {
+            expect(name).toHaveBeenCalledWith(value.name, expect.objectContaining({
+                topLevelMessage: 'top-level message',
+                nameMessage: 'name message',
+                message: 'name'
+            }));
         });
 
-        it('for nested props, overriding outer context and parent context', () => {
-            expect(result).toMatchObject({
-                props: {
-                    address: {
-                        message: 'address message',
-                        props: {
-                            home: {
-                                message: 'home message',
-                                props: {
-                                    city: {
-                                        message: 'home city message'
-                                    }
-                                }
-                            },
-                            work: {
-                                message: 'work message',
-                                props: {
-                                    city: {
-                                        message: 'work city message'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+        it('for nested props', () => {
+            expect(homeCity).toHaveBeenCalledWith(value.address.home.city, expect.objectContaining({
+                topLevelMessage: 'top-level message',
+                addressMessage: 'address message',
+                homeMessage: 'home message',
+                homeCityMessage: 'home city message',
+                message: 'home city'
+            }));
         });
 
         it('without passing props context to the top-level props', () => {
-            expect(result.props.name).not.toHaveProperty('props');
+            expect(name).not.toHaveBeenCalledWith(expect.objectContaining({
+                props: expect.anything()
+            }));
         });
 
         it('without passing props context to the nested props', () => {
-            expect(result.props.address.props.home.props.city).not.toHaveProperty('props');
+            expect(homeCity).not.toHaveBeenCalledWith(expect.objectContaining({
+                props: expect.anything()
+            }));
         });
     });
 
@@ -641,7 +607,23 @@ describe('props', () => {
                 });
             });
 
-            it('puts validate props on the resolved result', () => {
+            it('puts validator props on the resolved result', () => {
+                const validate = props({
+                    firstProp: () => Promise.resolve(true)
+                }, {validatorProp: 'Validator message'});
+
+                const value = {
+                    firstProp: null
+                };
+
+                const result = validate(value);
+
+                return expect(result.validateAsync).resolves.toMatchObject({
+                    validatorProp: 'Validator message'
+                });
+            });
+
+            it('does not put context props on the resolved result', () => {
                 const validate = props({
                     firstProp: () => Promise.resolve(true)
                 });
@@ -652,9 +634,7 @@ describe('props', () => {
 
                 const result = validate(value, {message: 'Message'});
 
-                return expect(result.validateAsync).resolves.toMatchObject({
-                    message: 'Message'
-                });
+                return expect(result.validateAsync).resolves.not.toHaveProperty('message');
             });
         });
 
@@ -710,85 +690,6 @@ describe('props', () => {
                     fourth: 'Fourth'
                 });
             });
-        });
-    });
-
-    describe('readme', () => {
-        // Define the rules for first name, last name, and birthYear
-        const validatePersonProps = props({
-            firstName: every([required(), length(2, 20)]),
-            lastName: every([required(), length(2, 20)]),
-            birthYear: range(1900, 2018)
-        });
-
-        // Create a person
-        const person = {
-            firstName: 'Stanford',
-            lastName: 'Strickland',
-            birthYear: 1925
-        };
-
-        // Provide validation context to the validators
-        const context = {
-            props: {
-                firstName: {maxLength: 25},
-                lastName: {maxLength: 30}
-            }
-        };
-
-        const result = stricklandValidate(validatePersonProps, person, context);
-
-        expect(result).toMatchObject({
-            isValid: true,
-            value: person,
-            props: {
-                firstName: {
-                    isValid: true,
-                    value: 'Stanford',
-                    required: true,
-                    minLength: 2,
-                    maxLength: 25,
-                    every: [
-                        {
-                            isValid: true,
-                            value: 'Stanford',
-                            required: true
-                        },
-                        {
-                            isValid: true,
-                            value: 'Stanford',
-                            minLength: 2,
-                            maxLength: 25
-                        }
-                    ]
-                },
-                lastName: {
-                    isValid: true,
-                    value: 'Strickland',
-                    required: true,
-                    minLength: 2,
-                    maxLength: 30,
-                    every: [
-                        {
-                            isValid: true,
-                            value: 'Strickland',
-                            required: true
-                        },
-                        {
-                            isValid: true,
-                            value: 'Strickland',
-                            minLength: 2,
-                            maxLength: 30
-                        }
-                    ]
-                },
-                birthYear: {
-                    isValid: true,
-                    value: 1925,
-                    min: 1900,
-                    max: 2018
-                }
-            }
         });
     });
 });

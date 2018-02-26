@@ -1,7 +1,7 @@
 import every from './every';
 import props from './props';
 
-export default function validate(validator, value) {
+export default function validate(validator, value, context) {
     let result = true;
 
     if (Array.isArray(validator)) {
@@ -14,7 +14,7 @@ export default function validate(validator, value) {
         throw 'Strickland: The validator passed to validate must be a function, an array (to use every), or an object (to use props). Validator type: ' + typeof(validator);
     }
 
-    result = validator(value);
+    result = validator(value, context);
     return prepareResult(value, result);
 }
 

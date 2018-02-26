@@ -1,17 +1,37 @@
 import validate from './validate';
+import {prepareProps} from './utils';
 
 const initialResult = {
     isValid: true,
     every: []
 };
 
-export default function every(validators) {
-    return function validateEvery(value) {
+export default function every(validators, ...params) {
+    return function validateEvery(value, context) {
+        const validatorProps = prepareProps(
+            {value},
+            [],
+            params,
+            context
+        );
+
+        if (!validators || !validators.length) {
+            return {
+                ...validatorProps,
+                ...initialResult
+            };
+        }
+
+        const validationContext = {
+            ...validatorProps,
+            ...context
+        };
+
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.every((validator, index) => {
                     const previousResult = currentResult;
-                    const nextResult = validate(validator, value);
+                    const nextResult = validate(validator, value, validationContext);
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
@@ -31,7 +51,10 @@ export default function every(validators) {
                                     }
                                 }
 
-                                return finalResult;
+                                return {
+                                    ...validatorProps,
+                                    ...finalResult
+                                };
                             })
                         );
 
@@ -46,7 +69,12 @@ export default function every(validators) {
             return currentResult;
         }
 
-        return executeValidators(initialResult, validators);
+        const result = executeValidators(initialResult, validators);
+
+        return {
+            ...validatorProps,
+            ...result
+        };
     }
 }
 
