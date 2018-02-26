@@ -9,105 +9,6 @@ describe('max', () => {
         });
     });
 
-    describe('with a single props argument', () => {
-        const validate = max({max: 5, message: 'Custom message'});
-        const result = validate(4);
-
-        it('uses the max prop', () => {
-            expect(result.max).toBe(5);
-        });
-
-        it('retains extra props', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with the first argument as a number and the second as an object', () => {
-        const validate = max(5, {message: 'Custom message'});
-        const result = validate(4);
-
-        it('sets the max prop', () => {
-            expect(result.max).toBe(5);
-        });
-
-        it('retains extra props', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with max provided at the time of validation', () => {
-        const validate = max();
-        const result = validate(4, {max: 5, message: 'Custom message'});
-
-        it('sets the max prop', () => {
-            expect(result.max).toBe(5);
-        });
-
-        it('retains extra props', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with max as a function', () => {
-        it('does not call the function during validator construction', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue(6);
-
-            max(getMax);
-            expect(getMax).not.toHaveBeenCalled();
-        });
-
-        it('the function is called at the time of validation', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue(6);
-
-            const validate = max(getMax);
-            validate(0);
-
-            expect(getMax).toHaveBeenCalledTimes(1);
-        });
-
-        it('the function is called every time validation occurs', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue(6);
-
-            const validate = max(getMax);
-            validate(0);
-            validate(0);
-
-            expect(getMax).toHaveBeenCalledTimes(2);
-        });
-
-        it('validates using the function result', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue(6);
-
-            const validate = max(getMax);
-            const result = validate(4);
-
-            expect(result).toMatchObject({
-                isValid: true,
-                max: 6,
-                value: 4
-            });
-        });
-
-        it('validation context is passed to the function', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue(6);
-
-            const validate = max(getMax, {a: 'validator context'});
-            validate(6, {b: 'validation context'});
-
-            expect(getMax.mock.calls[0][0]).toMatchObject({
-                value: 6,
-                max: getMax,
-                a: 'validator context',
-                b: 'validation context'
-            });
-        });
-    });
-
     describe('validates', () => {
         const validate = max(3);
 
@@ -142,16 +43,111 @@ describe('max', () => {
         });
     });
 
-    describe('with props passed into validation', () => {
-        it('allows the max value to be specified at time of validation', () => {
-            const validatorProps = {max: 5};
-            const validate = max(validatorProps);
-            const result = validate(6, {max: 6});
+    describe('with a single props argument', () => {
+        const validate = max({max: 5, message: 'Custom message', isValid: false});
+        const result = validate(4);
 
-            expect(result).toMatchObject({
-                isValid: true,
-                max: 6
+        it('uses the max prop', () => {
+            expect(result.max).toBe(5);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
+        });
+    });
+
+    describe('with the first argument as a number and the second as an object', () => {
+        const validate = max(5, {message: 'Custom message', isValid: true});
+        const result = validate(6);
+
+        it('sets the max result prop', () => {
+            expect(result.max).toBe(5);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
+        });
+    });
+
+    describe('with a function passed to the validator', () => {
+        it('does not call the function during validator construction', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            max(getMax);
+            expect(getMax).not.toHaveBeenCalled();
+        });
+
+        it('the function is called at the time of validation', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            const validate = max(getMax);
+            validate(0);
+
+            expect(getMax).toHaveBeenCalledTimes(1);
+        });
+
+        it('the function is called every time validation occurs', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            const validate = max(getMax);
+            validate(0);
+            validate(0);
+
+            expect(getMax).toHaveBeenCalledTimes(2);
+        });
+
+        describe('validates using the function result', () => {
+            it('when the function returns a max value', () => {
+                const getMax = jest.fn();
+                getMax.mockReturnValue(6);
+
+                const validate = max(getMax);
+                const result = validate(4);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    max: 6,
+                    value: 4
+                });
             });
+
+            it('when the function returns a props object', () => {
+                const getMaxProps = jest.fn();
+                getMaxProps.mockReturnValue({max: 6});
+
+                const validate = max(getMaxProps);
+                const result = validate(4);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    max: 6,
+                    value: 4
+                });
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getMax = jest.fn();
+            getMax.mockReturnValue(6);
+
+            const validate = max(getMax);
+            validate(6, {contextProp: 'validation context'});
+
+            expect(getMax).toHaveBeenCalledWith(expect.objectContaining({
+                value: 6,
+                contextProp: 'validation context'
+            }));
         });
     });
 
@@ -168,6 +164,22 @@ describe('max', () => {
             deepFreeze(props);
 
             expect(() => max(5, props)(5)).not.toThrow();
+        });
+    });
+
+    describe('does not include validation context props on the result', () => {
+        it('for new props', () => {
+            const validate = max(5);
+            const result = validate(5, {contextProp: 'validation context'});
+
+            expect(result).not.toHaveProperty('contextProp');
+        });
+
+        it('for props with the same name as other result props', () => {
+            const validate = max(5);
+            const result = validate(5, {max: 6});
+
+            expect(result.max).toBe(5);
         });
     });
 });

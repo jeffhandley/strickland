@@ -1,12 +1,19 @@
-import {isFalsyButNotZero} from './number';
+import {isFalsyButNotZero, prepareProps} from './utils';
 
-export default function min(minValue) {
-    return function validateMin(value) {
-        if (typeof minValue !== 'number') {
+export default function min(...params) {
+    return function validateMin(value, context) {
+        let isValid = true;
+
+        const props = prepareProps(
+            {value},
+            ['min'],
+            params,
+            context
+        );
+
+        if (typeof props.min !== 'number') {
             throw 'min must be a number';
         }
-
-        let isValid = true;
 
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
@@ -14,12 +21,13 @@ export default function min(minValue) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value < minValue) {
+        } else if (value < props.min) {
             isValid = false;
         }
 
         return {
-            min: minValue,
+            ...props,
+            value,
             isValid
         };
     }

@@ -2,32 +2,6 @@ import deepFreeze from 'deep-freeze';
 import compare, {prepareProps} from '../src/compare';
 
 describe('compare', () => {
-    describe('with a single props argument', () => {
-        const validate = compare({compare: 5, message: 'Custom message'});
-        const result = validate(5);
-
-        it('sets the compare result prop', () => {
-            expect(result.compare).toBe(5);
-        });
-
-        it('spreads the other props onto the result', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with the first argument as a number and the second as an object', () => {
-        const validate = compare(5, {message: 'Custom message'});
-        const result = validate(4);
-
-        it('sets the compare result prop', () => {
-            expect(result.compare).toBe(5);
-        });
-
-        it('spreads the other props onto the result', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
     describe('validates', () => {
         const validate = compare(3);
 
@@ -75,6 +49,40 @@ describe('compare', () => {
                 compare: 3,
                 value: 0
             });
+        });
+    });
+
+    describe('with a single props argument', () => {
+        const validate = compare({compare: 5, message: 'Custom message', isValid: false});
+        const result = validate(5);
+
+        it('uses the compare prop', () => {
+            expect(result.compare).toBe(5);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
+        });
+    });
+
+    describe('with the first argument as a number and the second as an object', () => {
+        const validate = compare(5, {message: 'Custom message', isValid: true});
+        const result = validate(4);
+
+        it('sets the compare result prop', () => {
+            expect(result.compare).toBe(5);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 

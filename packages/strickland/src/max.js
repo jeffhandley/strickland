@@ -1,12 +1,19 @@
-import {isFalsyButNotZero} from './number';
+import {isFalsyButNotZero, prepareProps} from './utils';
 
-export default function max(maxValue) {
-    return function validateMax(value) {
-        if (typeof maxValue !== 'number') {
+export default function max(...params) {
+    return function validateMax(value, context) {
+        let isValid = true;
+
+        const props = prepareProps(
+            {value},
+            ['max'],
+            params,
+            context
+        );
+
+        if (typeof props.max !== 'number') {
             throw 'max must be a number';
         }
-
-        let isValid = true;
 
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
@@ -14,12 +21,13 @@ export default function max(maxValue) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value > maxValue) {
+        } else if (value > props.max) {
             isValid = false;
         }
 
         return {
-            max: maxValue,
+            ...props,
+            value,
             isValid
         };
     }

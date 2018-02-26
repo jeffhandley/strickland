@@ -9,34 +9,71 @@ describe('minLength', () => {
         });
     });
 
-    describe('with a single props argument', () => {
-        const validate = minLength({minLength: 3, message: 'Custom message'});
-        const result = validate('123');
+    describe('validates', () => {
+        const validate = minLength(() => 3);
 
-        it('uses the min prop', () => {
+        it('with the string length equal to the minLength, it is valid', () => {
+            const result = validate('123');
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the string length greater than the minLength, it is valid', () => {
+            const result = validate('1234');
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the string length less than the minLength, it is invalid', () => {
+            const result = validate('12');
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a null value, it is valid', () => {
+            const result = validate(null);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with an undefined value, it is valid', () => {
+            const result = validate();
+            expect(result.isValid).toBe(true);
+        });
+    });
+
+    describe('with a single props argument', () => {
+        const validate = minLength({minLength: 3, message: 'Custom message', isValid: false});
+        const result = validate('1234');
+
+        it('uses the minLength prop', () => {
             expect(result.minLength).toBe(3);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
         });
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = minLength(3, {message: 'Custom message'});
-        const result = validate('123');
+        const validate = minLength(3, {message: 'Custom message', isValid: true});
+        const result = validate('12');
 
-        it('sets the min prop', () => {
+        it('sets the minLength result prop', () => {
             expect(result.minLength).toBe(3);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
     describe('returns the length on the result', () => {
-        const validate = minLength(3);
+        const validate = minLength(5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -74,7 +111,7 @@ describe('minLength', () => {
         });
     });
 
-    describe('with minLength as a function', () => {
+    describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
             const getMinLength = jest.fn();
             getMinLength.mockReturnValue(6);
@@ -98,24 +135,39 @@ describe('minLength', () => {
             getMinLength.mockReturnValue(6);
 
             const validate = minLength(getMinLength);
-            validate('A');
-            validate('A');
+            validate(0);
+            validate(0);
 
             expect(getMinLength).toHaveBeenCalledTimes(2);
         });
 
-        it('validates using the function result', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue(6);
+        describe('validates using the function result', () => {
+            it('when the function returns a minLength value', () => {
+                const getMinLength = jest.fn();
+                getMinLength.mockReturnValue(2);
 
-            const validate = minLength(getMinLength);
-            const result = validate('1234567');
+                const validate = minLength(getMinLength);
+                const result = validate('1234');
 
-            expect(result).toMatchObject({
-                isValid: true,
-                minLength: 6,
-                value: '1234567',
-                length: 7
+                expect(result).toMatchObject({
+                    isValid: true,
+                    minLength: 2,
+                    value: '1234'
+                });
+            });
+
+            it('when the function returns a props object', () => {
+                const getMinLengthProps = jest.fn();
+                getMinLengthProps.mockReturnValue({minLength: 2});
+
+                const validate = minLength(getMinLengthProps);
+                const result = validate('1234');
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    minLength: 2,
+                    value: '1234'
+                });
             });
         });
 
@@ -123,73 +175,25 @@ describe('minLength', () => {
             const getMinLength = jest.fn();
             getMinLength.mockReturnValue(6);
 
-            const validate = minLength(getMinLength, {a: 'validator context'});
-            validate('abcde', {b: 'validation context'});
+            const validate = minLength(getMinLength);
+            validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMinLength.mock.calls[0][0]).toMatchObject({
+            expect(getMinLength).toHaveBeenCalledWith(expect.objectContaining({
                 value: 'abcde',
-                minLength: getMinLength,
-                a: 'validator context',
-                b: 'validation context'
-            });
+                contextProp: 'validation context'
+            }));
         });
 
         it('validation context includes the length', () => {
             const getMinLength = jest.fn();
             getMinLength.mockReturnValue(6);
 
-            const validate = minLength(getMinLength, {a: 'validator context'});
-            validate('abcde', {b: 'validation context'});
+            const validate = minLength(getMinLength);
+            validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMinLength.mock.calls[0][0]).toMatchObject({
-                value: 'abcde',
+            expect(getMinLength).toHaveBeenCalledWith(expect.objectContaining({
                 length: 5,
-                minLength: getMinLength,
-                a: 'validator context',
-                b: 'validation context'
-            });
-        });
-    });
-
-    describe('validates', () => {
-        const validate = minLength(3);
-
-        it('with the string length equal to the minLength, it is valid', () => {
-            const result = validate('123');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with the string length greater than the minLength, it is valid', () => {
-            const result = validate('1234');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with the string length less than the minLength, it is invalid', () => {
-            const result = validate('12');
-            expect(result.isValid).toBe(false);
-        });
-
-        it('with a null value, it is valid', () => {
-            const result = validate(null);
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with an undefined value, it is valid', () => {
-            const result = validate();
-            expect(result.isValid).toBe(true);
-        });
-    });
-
-    describe('with props passed into validation', () => {
-        it('allows the minLength value to be specified at time of validation', () => {
-            const validatorProps = {minLength: 6};
-            const validate = minLength(validatorProps);
-            const result = validate('12345', {minLength: 5});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                minLength: 5
-            });
+            }));
         });
     });
 
@@ -206,6 +210,22 @@ describe('minLength', () => {
             deepFreeze(props);
 
             expect(() => minLength(5, props)('12345')).not.toThrow();
+        });
+    });
+
+    describe('does not include validation context props on the result', () => {
+        it('for new props', () => {
+            const validate = minLength(5);
+            const result = validate(5, {contextProp: 'validation context'});
+
+            expect(result).not.toHaveProperty('contextProp');
+        });
+
+        it('for props with the same name as other result props', () => {
+            const validate = minLength(5);
+            const result = validate(5, {minLength: 6});
+
+            expect(result.minLength).toBe(5);
         });
     });
 });
