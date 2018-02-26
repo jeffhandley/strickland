@@ -23,7 +23,7 @@ describe('every', () => {
             required({message: 'Required'}),
             minLength(2),
             maxLength(4)
-        ]);
+        ], {validatorProp: 'Validator message'});
 
         const value = 'A';
         const result = validate(value);
@@ -59,6 +59,10 @@ describe('every', () => {
                     {isValid: true, maxLength: 4}
                 ]
             });
+        });
+
+        it('putting validator props on the result', () => {
+            expect(result).toMatchObject({validatorProp: 'Validator message'});
         });
     });
 
@@ -122,41 +126,21 @@ describe('every', () => {
     });
 
     describe('passes context to the validators', () => {
-        const validate = every([required({message: 'Required'}), minLength(2)], {validatorProp: 'Validator'});
-        const result = validate('AB', {validateProp: 'Validate'});
+        const validator = jest.fn();
+        const validate = every([validator], {validatorProp: 'Validator message'});
 
-        it('from the validator definition', () => {
-            expect(result).toMatchObject({
-                validatorProp: 'Validator',
-                every: [
-                    {validatorProp: 'Validator', message: 'Required'},
-                    {validatorProp: 'Validator', minLength: 2}
-                ]
-            });
+        validate('AB', {contextProp: 'Context message'});
+
+        it('from the validator props', () => {
+            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
+                validatorProp: 'Validator message'
+            }));
         });
 
-        it('from the validate function', () => {
-            expect(result).toMatchObject({
-                validateProp: 'Validate',
-                every: [
-                    {validateProp: 'Validate', message: 'Required'},
-                    {validateProp: 'Validate', minLength: 2}
-                ]
-            });
-        });
-
-        it('overrides validation props with result props', () => {
-            function validator() {
-                return {
-                    isValid: true,
-                    message: 'From the result'
-                };
-            }
-
-            const validateWithMessage = every([(validator)]);
-            const resultWithMessage = validateWithMessage('AB', {message: 'From validation'})
-
-            expect(resultWithMessage.message).toBe('From the result');
+        it('from the validation context', () => {
+            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
+                contextProp: 'Context message'
+            }));
         });
     });
 
@@ -305,13 +289,22 @@ describe('every', () => {
                 return expect(result.validateAsync).resolves.toMatchObject({value: 'ABC'});
             });
 
-            it('puts validate props on the resolved result', () => {
+            it('puts validator props on the resolved result', () => {
+                const validate = every([
+                    () => Promise.resolve(true)
+                ], {validatorProp: 'Validator message'})
+
+                const result = validate('ABC');
+                return expect(result.validateAsync).resolves.toMatchObject({validatorProp: 'Validator message'});
+            });
+
+            it('does not put context props on the resolved result', () => {
                 const validate = every([
                     () => Promise.resolve(true)
                 ]);
 
                 const result = validate('ABC', {message: 'Message'});
-                return expect(result.validateAsync).resolves.toMatchObject({message: 'Message'});
+                return expect(result.validateAsync).resolves.not.toHaveProperty('message');
             });
         });
 

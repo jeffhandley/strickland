@@ -23,7 +23,7 @@ describe('some', () => {
             required({message: 'Required'}),
             maxLength(4),
             minLength(2)
-        ]);
+        ], {validatorProp: 'Validator message'});
 
         const value = '';
         const result = validate(value);
@@ -37,12 +37,8 @@ describe('some', () => {
         });
 
         it('returning results for invalid validators and the first valid validator', () => {
-            expect(result).toMatchObject({
-                some: [
-                    {isValid: false, message: 'Required'},
-                    {isValid: true, maxLength: 4}
-                ]
-            });
+            expect(result.some[0]).toMatchObject({isValid: false, message: 'Required'});
+            expect(result.some[1]).toMatchObject({isValid: true, maxLength: 4});
         });
 
         it('returning a top-level isValid property (true when any result is valid)', () => {
@@ -57,6 +53,10 @@ describe('some', () => {
                     {isValid: true, message: 'Required'}
                 ]
             });
+        });
+
+        it('putting validator props on the result', () => {
+            expect(result).toMatchObject({validatorProp: 'Validator message'});
         });
     });
 
@@ -118,39 +118,21 @@ describe('some', () => {
     });
 
     describe('passes context to the validators', () => {
-        const validate = some([minLength(2)], {validatorProp: 'Validator'});
-        const result = validate('AB', {validateProp: 'Validate'});
+        const validator = jest.fn();
+        const validate = some([validator], {validatorProp: 'Validator message'});
 
-        it('from the validator definition', () => {
-            expect(result).toMatchObject({
-                validatorProp: 'Validator',
-                some: [
-                    {validatorProp: 'Validator', minLength: 2}
-                ]
-            });
+        validate('AB', {contextProp: 'Context message'});
+
+        it('from the validator props', () => {
+            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
+                validatorProp: 'Validator message'
+            }));
         });
 
-        it('from the validate function', () => {
-            expect(result).toMatchObject({
-                validateProp: 'Validate',
-                some: [
-                    {validateProp: 'Validate', minLength: 2}
-                ]
-            });
-        });
-
-        it('overrides validation props with result props', () => {
-            function validator() {
-                return {
-                    isValid: true,
-                    message: 'From the result'
-                };
-            }
-
-            const validateWithMessage = some([(validator)]);
-            const resultWithMessage = validateWithMessage('AB', {message: 'From validation'})
-
-            expect(resultWithMessage.message).toBe('From the result');
+        it('from the validation context', () => {
+            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
+                contextProp: 'Context message'
+            }));
         });
     });
 
@@ -299,13 +281,22 @@ describe('some', () => {
                 return expect(result.validateAsync).resolves.toMatchObject({value: 'ABC'});
             });
 
-            it('puts validate props on the resolved result', () => {
+            it('puts validator props on the resolved result', () => {
+                const validate = some([
+                    () => Promise.resolve(true)
+                ], {validatorProp: 'Validator message'})
+
+                const result = validate('ABC');
+                return expect(result.validateAsync).resolves.toMatchObject({validatorProp: 'Validator message'});
+            });
+
+            it('does not put context props on the resolved result', () => {
                 const validate = some([
                     () => Promise.resolve(true)
                 ]);
 
                 const result = validate('ABC', {message: 'Message'});
-                return expect(result.validateAsync).resolves.toMatchObject({message: 'Message'});
+                return expect(result.validateAsync).resolves.not.toHaveProperty('message');
             });
         });
 
