@@ -6,7 +6,7 @@ export function isFalsyButNotZero(value) {
     return !value;
 }
 
-export function prepareProps(defaultProps, propNames = [], params = [], context) {
+export function prepareProps(defaultProps, propNames, params, context) {
     let props = {
         ...defaultProps
     };

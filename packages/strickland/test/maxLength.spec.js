@@ -192,7 +192,7 @@ describe('maxLength', () => {
             validate('abcde', {contextProp: 'validation context'});
 
             expect(getMaxLength).toHaveBeenCalledWith(expect.objectContaining({
-                length: 5,
+                length: 5
             }));
         });
     });

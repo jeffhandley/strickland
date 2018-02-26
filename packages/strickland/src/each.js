@@ -25,14 +25,12 @@ export default function each(validators, ...params) {
             };
         }
 
-        if (Array.isArray(validators)) {
-            validators.forEach((validator) => {
-                const nextResult = validate(validator, value, context);
-                hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
+        validators.forEach((validator) => {
+            const nextResult = validate(validator, value, context);
+            hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
 
-                result = applyNextResult(result, nextResult);
-            });
-        }
+            result = applyNextResult(result, nextResult);
+        });
 
         if (hasPromises) {
             const promises = result.each.map((eachResult) =>

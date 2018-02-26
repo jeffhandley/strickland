@@ -1,5 +1,4 @@
 import {prepareProps} from '../src/utils';
-let notDefined;
 
 describe('prepareProps', () => {
     describe('without context', () => {
