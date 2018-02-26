@@ -51,7 +51,6 @@ export default function form(validators, ...params) {
 
         let hasExistingPromises = false;
         let existingPromises;
-        result.existingPromiseNames = [];
 
         if (existingResults) {
             existingPromises = Object.keys(existingResults)
@@ -59,7 +58,6 @@ export default function form(validators, ...params) {
                 .map((fieldName) => {
                     if (existingResults[fieldName].validateAsync instanceof Promise) {
                         hasExistingPromises = true;
-                        result.existingPromiseNames.push(fieldName);
 
                         return existingResults[fieldName].validateAsync.then((resolvedResult) =>
                             convertToFieldResult(fieldName, resolvedResult)
@@ -115,9 +113,11 @@ function applyNextResult(previousResult, nextResult) {
 }
 
 function prepareResult(validatorProps, result, validators, existingResults) {
+    const {props: resultProps, ...otherProps} = result;
+
     let validationResults = {
         ...existingResults,
-        ...result.props
+        ...resultProps
     };
 
     const validationErrors = Object.keys(validationResults)
@@ -136,7 +136,7 @@ function prepareResult(validatorProps, result, validators, existingResults) {
 
     const preparedResult = {
         ...validatorProps,
-        ...result,
+        ...otherProps,
         isValid,
         form: {
             isComplete,

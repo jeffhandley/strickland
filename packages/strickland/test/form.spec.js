@@ -123,6 +123,10 @@ describe('form', () => {
             it('puts validator props on the result', () => {
                 expect(result).toMatchObject({validatorProp: 'Validator message'});
             });
+
+            it('without a props prop on the result', () => {
+                expect(result).not.toHaveProperty('props');
+            });
         });
 
         describe('with existing validationErrors and validationResults on context', () => {
