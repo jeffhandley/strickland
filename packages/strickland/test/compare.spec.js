@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import compare, {prepareProps} from '../src/compare';
+import compare from '../src/compare';
 
 describe('compare', () => {
     describe('validates', () => {

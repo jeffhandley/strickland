@@ -34,9 +34,9 @@ export default function some(validators, ...params) {
                     if (nextResult.validateAsync instanceof Promise) {
                         const previousPromise = previousResult.validateAsync || Promise.resolve(previousResult);
 
-                        currentResult.validateAsync = previousPromise.then((initialResult) =>
+                        currentResult.validateAsync = previousPromise.then((asyncResult) =>
                             nextResult.validateAsync.then((resolvedResult) => {
-                                let finalResult = applyNextResult(initialResult, resolvedResult);
+                                let finalResult = applyNextResult(asyncResult, resolvedResult);
 
                                 if (!finalResult.isValid) {
                                     const remainingValidators = validatorsToExecute.slice(index + 1);

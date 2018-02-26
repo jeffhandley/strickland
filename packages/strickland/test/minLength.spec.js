@@ -192,7 +192,7 @@ describe('minLength', () => {
             validate('abcde', {contextProp: 'validation context'});
 
             expect(getMinLength).toHaveBeenCalledWith(expect.objectContaining({
-                length: 5,
+                length: 5
             }));
         });
     });

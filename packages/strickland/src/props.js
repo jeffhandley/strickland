@@ -29,7 +29,7 @@ export default function props(validators, ...params) {
             result = Object.keys(validators).map((propName) => {
                 const childContext = {
                     ...context,
-                    ...((context && context.props && context.props[propName])|| {})
+                    ...((context && context.props && context.props[propName]) || {})
                 };
 
                 const validatorResult = validate(validators[propName], value[propName], childContext);

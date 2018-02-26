@@ -1,4 +1,4 @@
-import stricklandValidate, {props, every, range, required, minLength, length} from '../src/strickland';
+import {props, required, minLength, length} from '../src/strickland';
 
 describe('props', () => {
     it('returns a validate function', () => {
@@ -317,7 +317,7 @@ describe('props', () => {
             first: 'A'
         };
 
-        const result = validate(value, {contextProp: 'Context prop'});
+        validate(value, {contextProp: 'Context prop'});
 
         it('from the validation context', () => {
             expect(validator).toHaveBeenCalledWith(value.first, expect.objectContaining({
