@@ -22,16 +22,11 @@ export default function every(validators, ...params) {
             };
         }
 
-        const validationContext = {
-            ...validatorProps,
-            ...context
-        };
-
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.every((validator, index) => {
                     const previousResult = currentResult;
-                    const nextResult = validate(validator, value, validationContext);
+                    const nextResult = validate(validator, value, context);
 
                     currentResult = applyNextResult(currentResult, nextResult);
 

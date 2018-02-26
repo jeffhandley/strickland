@@ -3,7 +3,7 @@ import length from '../src/length';
 
 describe('length', () => {
     describe('with a single props argument', () => {
-        const validate = length({minLength: 3, maxLength: 5, message: 'Custom message'});
+        const validate = length({minLength: 3, maxLength: 5, message: 'Custom message', isValid: false});
         const result = validate('1234');
 
         it('uses the min prop', () => {
@@ -14,14 +14,18 @@ describe('length', () => {
             expect(result.maxLength).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
         });
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = length(3, {maxLength: 5, message: 'Custom message'});
-        const result = validate('1234');
+        const validate = length(3, {maxLength: 5, message: 'Custom message', isValid: true});
+        const result = validate('12');
 
         it('sets the min prop', () => {
             expect(result.minLength).toBe(3);
@@ -31,14 +35,18 @@ describe('length', () => {
             expect(result.maxLength).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
     describe('with the first and second arguments as numbers and the third as an object', () => {
-        const validate = length(3, 5, {message: 'Custom message'});
-        const result = validate('1234');
+        const validate = length(3, 5, {message: 'Custom message', isValid: true});
+        const result = validate('12');
 
         it('sets the min prop', () => {
             expect(result.minLength).toBe(3);
@@ -48,8 +56,12 @@ describe('length', () => {
             expect(result.maxLength).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
@@ -140,30 +152,6 @@ describe('length', () => {
     validates('with a props argument', length({minLength: 3, maxLength: 5}));
     validates('with a numeric min and props', length(3, {maxLength: 5}));
     validates('with numeric min and max plus props', length(3, 5, {other: 'other'}));
-
-    describe('with props passed into validation', () => {
-        it('allows the minLength value to be specified at time of validation', () => {
-            const validatorProps = {minLength: 4, maxLength: 6};
-            const validate = length(validatorProps);
-            const result = validate('123', {minLength: 2});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                minLength: 2
-            });
-        });
-
-        it('allows the maxLength value to be specified at time of validation', () => {
-            const validatorProps = {minLength: 4, maxLength: 6};
-            const validate = length(validatorProps);
-            const result = validate('1234567', {maxLength: 8});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                maxLength: 8
-            });
-        });
-    });
 
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
