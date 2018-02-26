@@ -29,12 +29,19 @@ describe('form', () => {
 
     describe('validates forms', () => {
         describe('for a simple form', () => {
+            const firstNameValidator = jest.fn().mockReturnValue(true);
+
             const formValidators = {
-                firstName: required(),
+                firstName: firstNameValidator,
                 lastName: required(),
                 username: required(),
                 password: [required(), minLength(6)],
-                comparePassword: every([required(), compare(({form: {values}}) => values.password)], {fieldName: 'password confirmation'})
+                comparePassword: every(
+                    [
+                        required(),
+                        compare(({form: {values}}) => values.password)
+                    ], {fieldName: 'password confirmation'}
+                )
             };
 
             const formValues = {
@@ -45,7 +52,7 @@ describe('form', () => {
                 comparePassword: 'einstein'
             };
 
-            const validate = form(formValidators);
+            const validate = form(formValidators, {validatorProp: 'Validator message'});
             const result = validate(formValues);
 
             it('validates', () => {
@@ -73,7 +80,7 @@ describe('form', () => {
                 });
             });
 
-            it('includes validationResults on the result', () => {
+            it('includes validationResults on the form result', () => {
                 expect(result.form).toMatchObject({
                     validationResults: {
                         firstName: {isValid: true, value: 'Marty'},
@@ -94,7 +101,7 @@ describe('form', () => {
                 });
             });
 
-            it('allows the default fieldName to be overridden in context', () => {
+            it('allows the default fieldName to be overridden in validator props', () => {
                 expect(result.form).toMatchObject({
                     validationErrors: [
                         {},
@@ -104,23 +111,17 @@ describe('form', () => {
             });
 
             it('includes the form on context for the fields', () => {
-                expect(result.form).toMatchObject({
-                    validationErrors: [
-                        {form: {values: formValues}},
-                        {form: {values: formValues}}
-                    ],
-                    validationResults: {
-                        firstName: {form: {values: formValues}},
-                        lastName: {form: {values: formValues}},
-                        username: {form: {values: formValues}},
-                        password: {form: {values: formValues}},
-                        comparePassword: {form: {values: formValues}}
-                    }
-                });
+                expect(firstNameValidator).toHaveBeenCalledWith(formValues.firstName, expect.objectContaining({
+                    form: {values: formValues}
+                }));
             });
 
             it('the result includes a form.isComplete property set to true', () => {
                 expect(result.form.isComplete).toBe(true);
+            });
+
+            it('puts validator props on the result', () => {
+                expect(result).toMatchObject({validatorProp: 'Validator message'});
             });
         });
 
@@ -218,7 +219,12 @@ describe('form', () => {
                 lastName: required(),
                 username: required(),
                 password: [required(), minLength(6)],
-                comparePassword: every([required(), compare(({form: {values}}) => values.password)], {fieldName: 'password confirmation'})
+                comparePassword: every(
+                    [
+                        required(),
+                        compare(({form: {values}}) => values.password)
+                    ], {fieldName: 'password confirmation'}
+                )
             };
 
             const formValues = {
@@ -262,7 +268,12 @@ describe('form', () => {
                 lastName: required(),
                 username: required(),
                 password: [required(), minLength(6)],
-                comparePassword: every([required(), compare(({value}) => value.password)], {fieldName: 'password confirmation'})
+                comparePassword: every(
+                    [
+                        required(),
+                        compare(({value}) => value.password)
+                    ], {fieldName: 'password confirmation'}
+                )
             };
 
             const formValues = {

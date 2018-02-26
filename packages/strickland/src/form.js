@@ -1,36 +1,34 @@
 import validate from './validate';
+import {prepareProps} from './utils';
 
-export default function form(validators) {
+export default function form(validators, ...params) {
     if (typeof validators !== 'object' || Array.isArray(validators) || !validators) {
         throw 'Strickland: form expects an object';
     }
 
-    return function validateForm(values, context) {
-        context = {
-            ...context,
-            form: {
-                ...(context && context.form),
-                values
-            }
-        };
+    return function validateForm(value, context) {
+        const validatorProps = prepareProps(
+            {value},
+            [],
+            params,
+            context
+        );
 
-        let {
-            validationResults: existingResults,
-            validationErrors, // eslint-disable-line no-unused-vars
-            ...formContext
-        } = context.form;
+        const existingResults = context && context.form && context.form.validationResults;
 
-        if (formContext.fields && !Array.isArray(formContext.fields)) {
-            formContext.fields = [formContext.fields];
+        let formFields = (context && context.form && context.form.fields) || validatorProps.fields;
+
+        if (formFields && !Array.isArray(formFields)) {
+            formFields = [formFields];
         }
 
         function shouldValidateField(fieldName) {
-            return validators[fieldName] && (!formContext.fields || formContext.fields.indexOf(fieldName) !== -1);
+            return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
         }
 
         let fieldValidators = validators;
 
-        if (formContext.fields) {
+        if (formFields) {
             fieldValidators = {};
 
             Object.keys(validators).filter(shouldValidateField).forEach((fieldName) => {
@@ -41,7 +39,15 @@ export default function form(validators) {
             });
         }
 
-        const result = validate(fieldValidators, values);
+        const validationContext = {
+            ...context,
+            form: {
+                ...((context && context.form) || {}),
+                values: value
+            }
+        };
+
+        const result = validate(fieldValidators, value, validationContext);
 
         let hasExistingPromises = false;
         let existingPromises;
@@ -74,24 +80,24 @@ export default function form(validators) {
             if (result.validateAsync instanceof Promise) {
                 result.validateAsync = Promise.all([result.validateAsync, resolveExisting])
                     .then(([resolvedResult, resolvedExisting]) =>
-                        prepareResult(resolvedResult, validators, formContext, resolvedExisting)
+                        prepareResult(validatorProps, resolvedResult, validators, resolvedExisting)
                     );
             } else {
                 const finalResult = {...result};
 
                 result.validateAsync = resolveExisting
                     .then((resolvedExisting) =>
-                        prepareResult(finalResult, validators, formContext, resolvedExisting)
+                        prepareResult(validatorProps, finalResult, validators, resolvedExisting)
                     );
             }
         } else if (result.validateAsync instanceof Promise) {
             result.validateAsync = result.validateAsync
                 .then((resolvedResult) =>
-                    prepareResult(resolvedResult, validators, formContext, existingResults)
+                    prepareResult(validatorProps, resolvedResult, validators, existingResults)
                 );
         }
 
-        return prepareResult(result, validators, formContext, existingResults);
+        return prepareResult(validatorProps, result, validators, existingResults);
     }
 }
 
@@ -108,7 +114,7 @@ function applyNextResult(previousResult, nextResult) {
     };
 }
 
-function prepareResult(result, validators, formContext, existingResults) {
+function prepareResult(validatorProps, result, validators, existingResults) {
     let validationResults = {
         ...existingResults,
         ...result.props
@@ -121,17 +127,15 @@ function prepareResult(result, validators, formContext, existingResults) {
             ...validationResults[fieldName]
         }));
 
-    let isComplete = !(result.validateAsync instanceof Promise);
-
-    if (isComplete && formContext.fields) {
-        isComplete = arraysEqual(Object.keys(validators).sort(), Object.keys(validationResults).sort());
-    }
+    const isComplete = !(result.validateAsync instanceof Promise) &&
+        arraysEqual(Object.keys(validators).sort(), Object.keys(validationResults).sort());
 
     const isValid = isComplete &&
         result.isValid &&
         validationErrors.length === 0;
 
     const preparedResult = {
+        ...validatorProps,
         ...result,
         isValid,
         form: {
