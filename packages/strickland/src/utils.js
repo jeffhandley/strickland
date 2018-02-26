@@ -1,8 +1,19 @@
-export default function prepareProps(propNames = [], params = [], value, context) {
-    let props = {};
+export function isFalsyButNotZero(value) {
+    if (value === 0) {
+        return false;
+    }
+
+    return !value;
+}
+
+export function prepareProps(defaultProps, propNames = [], params = [], context) {
+    let props = {
+        ...defaultProps
+    };
+
     let validationContext = {
-        ...context,
-        value
+        ...defaultProps,
+        ...context
     };
 
     params.forEach((paramValue, paramIndex) => {
@@ -18,15 +29,13 @@ export default function prepareProps(propNames = [], params = [], value, context
                 ...paramValue
             };
         } else if (propName) {
-            props[propName] = paramValue;
+            props = {
+                ...props,
+                [propName]: paramValue
+            };
         }
 
         if (propName) {
-            props = {
-                ...props,
-                [propName]: props[propName]
-            };
-
             validationContext = {
                 ...validationContext,
                 [propName]: props[propName]
@@ -35,7 +44,6 @@ export default function prepareProps(propNames = [], params = [], value, context
     });
 
     return {
-        ...props,
-        value
+        ...props
     };
 }

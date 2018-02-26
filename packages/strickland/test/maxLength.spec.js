@@ -9,29 +9,66 @@ describe('maxLength', () => {
         });
     });
 
+    describe('validates', () => {
+        const validate = maxLength(() => 3);
+
+        it('with the string length equal to the maxLength, it is valid', () => {
+            const result = validate('123');
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the string length less than the maxLength, it is valid', () => {
+            const result = validate('12');
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the string length greater than the maxLength, it is invalid', () => {
+            const result = validate('1234');
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a null value, it is valid', () => {
+            const result = validate(null);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with an undefined value, it is valid', () => {
+            const result = validate();
+            expect(result.isValid).toBe(true);
+        });
+    });
+
     describe('with a single props argument', () => {
-        const validate = maxLength({maxLength: 3, message: 'Custom message'});
+        const validate = maxLength({maxLength: 3, message: 'Custom message', isValid: false});
         const result = validate('123');
 
-        it('uses the min prop', () => {
+        it('uses the maxLength prop', () => {
             expect(result.maxLength).toBe(3);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
         });
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = maxLength(3, {message: 'Custom message'});
-        const result = validate('123');
+        const validate = maxLength(3, {message: 'Custom message', isValid: true});
+        const result = validate('1234');
 
-        it('sets the min prop', () => {
+        it('sets the maxLength result prop', () => {
             expect(result.maxLength).toBe(3);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
@@ -74,7 +111,7 @@ describe('maxLength', () => {
         });
     });
 
-    describe('with maxLength as a function', () => {
+    describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
             const getMaxLength = jest.fn();
             getMaxLength.mockReturnValue(6);
@@ -104,18 +141,33 @@ describe('maxLength', () => {
             expect(getMaxLength).toHaveBeenCalledTimes(2);
         });
 
-        it('validates using the function result', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue(6);
+        describe('validates using the function result', () => {
+            it('when the function returns a maxLength value', () => {
+                const getMaxLength = jest.fn();
+                getMaxLength.mockReturnValue(6);
 
-            const validate = maxLength(getMaxLength);
-            const result = validate('1234');
+                const validate = maxLength(getMaxLength);
+                const result = validate('1234');
 
-            expect(result).toMatchObject({
-                isValid: true,
-                maxLength: 6,
-                value: '1234',
-                length: 4
+                expect(result).toMatchObject({
+                    isValid: true,
+                    maxLength: 6,
+                    value: '1234'
+                });
+            });
+
+            it('when the function returns a props object', () => {
+                const getMaxLengthProps = jest.fn();
+                getMaxLengthProps.mockReturnValue({maxLength: 6});
+
+                const validate = maxLength(getMaxLengthProps);
+                const result = validate('1234');
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    maxLength: 6,
+                    value: '1234'
+                });
             });
         });
 
@@ -123,73 +175,25 @@ describe('maxLength', () => {
             const getMaxLength = jest.fn();
             getMaxLength.mockReturnValue(6);
 
-            const validate = maxLength(getMaxLength, {a: 'validator context'});
-            validate('abcde', {b: 'validation context'});
+            const validate = maxLength(getMaxLength);
+            validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMaxLength.mock.calls[0][0]).toMatchObject({
+            expect(getMaxLength).toHaveBeenCalledWith(expect.objectContaining({
                 value: 'abcde',
-                maxLength: getMaxLength,
-                a: 'validator context',
-                b: 'validation context'
-            });
+                contextProp: 'validation context'
+            }));
         });
 
         it('validation context includes the length', () => {
             const getMaxLength = jest.fn();
             getMaxLength.mockReturnValue(6);
 
-            const validate = maxLength(getMaxLength, {a: 'validator context'});
-            validate('abcde', {b: 'validation context'});
+            const validate = maxLength(getMaxLength);
+            validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMaxLength.mock.calls[0][0]).toMatchObject({
-                value: 'abcde',
+            expect(getMaxLength).toHaveBeenCalledWith(expect.objectContaining({
                 length: 5,
-                maxLength: getMaxLength,
-                a: 'validator context',
-                b: 'validation context'
-            });
-        });
-    });
-
-    describe('validates', () => {
-        const validate = maxLength(() => 3);
-
-        it('with the string length equal to the maxLength, it is valid', () => {
-            const result = validate('123');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with the string length less than the maxLength, it is valid', () => {
-            const result = validate('12');
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with the string length greater than the maxLength, it is invalid', () => {
-            const result = validate('1234');
-            expect(result.isValid).toBe(false);
-        });
-
-        it('with a null value, it is valid', () => {
-            const result = validate(null);
-            expect(result.isValid).toBe(true);
-        });
-
-        it('with an undefined value, it is valid', () => {
-            const result = validate();
-            expect(result.isValid).toBe(true);
-        });
-    });
-
-    describe('with props passed into validation', () => {
-        it('allows the maxLength value to be specified at time of validation', () => {
-            const validatorProps = {maxLength: 5};
-            const validate = maxLength(validatorProps);
-            const result = validate('123456', {maxLength: 6});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                maxLength: 6
-            });
+            }));
         });
     });
 
@@ -206,6 +210,22 @@ describe('maxLength', () => {
             deepFreeze(props);
 
             expect(() => maxLength(5, props)('12345')).not.toThrow();
+        });
+    });
+
+    describe('does not include validation context props on the result', () => {
+        it('for new props', () => {
+            const validate = maxLength(5);
+            const result = validate(5, {contextProp: 'validation context'});
+
+            expect(result).not.toHaveProperty('contextProp');
+        });
+
+        it('for props with the same name as other result props', () => {
+            const validate = maxLength(5);
+            const result = validate(5, {maxLength: 6});
+
+            expect(result.maxLength).toBe(5);
         });
     });
 });

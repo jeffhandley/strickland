@@ -2,113 +2,255 @@ import deepFreeze from 'deep-freeze';
 import required from '../src/required';
 
 describe('required', () => {
-    describe('validation', () => {
+    describe('validates', () => {
         const validate = required();
 
-        it('is not valid for null', () => {
+        it('with a null value, it is invalid', () => {
             const result = validate(null);
             expect(result.isValid).toBe(false);
         });
 
-        it('is not valid for undefined', () => {
+        it('with an undefined value, it is invalid', () => {
             let notDefined;
             const result = validate(notDefined);
             expect(result.isValid).toBe(false);
         });
 
-        it('is not valid for an empty string', () => {
+        it('with an empty string value, it is invalid', () => {
             const result = validate('');
             expect(result.isValid).toBe(false);
         });
 
-        it('is valid for non-empty strings', () => {
+        it('with a non-empty string value, it is valid', () => {
             const result = validate('not empty');
             expect(result.isValid).toBe(true);
         });
 
-        it('is valid for the number 0 (because 0 is indeed a supplied number)', () => {
+        it('with the number 0, it is valid (because 0 is indeed a supplied number)', () => {
             const result = validate(0);
             expect(result.isValid).toBe(true);
         });
 
-        it('is valid for the number 1', () => {
+        it('with the number 1, it is valid', () => {
             const result = validate(1);
             expect(result.isValid).toBe(true);
         });
 
-        it('is valid for boolean true', () => {
+        it('with the boolean true, it is valid', () => {
             const result = validate(true);
             expect(result.isValid).toBe(true);
         });
 
-        it('is not valid for boolean false (supporting scenarios like required checkboxes)', () => {
+        it('with the boolean false, it is invalid (supporting scenarios like required checkboxes)', () => {
             const result = validate(false);
             expect(result.isValid).toBe(false);
         });
     });
 
-    describe('with props', () => {
-        describe('includes a required prop on the result', () => {
-            const validate = required();
+    describe('when the value is not required', () => {
+        const validate = required(false);
 
-            it('when valid', () => {
-                const result = validate('Valid');
-                expect(result.required).toBe(true);
-            });
-
-            it('when invalid', () => {
-                const result = validate('');
-                expect(result.required).toBe(true);
-            });
+        it('with a null value, it is valid', () => {
+            const result = validate(null);
+            expect(result.isValid).toBe(true);
         });
 
-        describe('passes context though to the result', () => {
-            const validate = required({message: 'Required'})
-
-            it('when valid', () => {
-                const result = validate('Valid');
-                expect(result.message).toBe('Required');
-            });
-
-            it('when invalid', () => {
-                const result = validate();
-                expect(result.message).toBe('Required');
-            });
+        it('with an undefined value, it is valid', () => {
+            let notDefined;
+            const result = validate(notDefined);
+            expect(result.isValid).toBe(true);
         });
 
-        describe('overrides isValid prop with the validation result', () => {
-            it('when valid', () => {
-                const validate = required({isValid: false});
-                const result = validate('Valid');
-                expect(result.isValid).toBe(true);
-            });
+        it('with an empty string value, it is valid', () => {
+            const result = validate('');
+            expect(result.isValid).toBe(true);
+        });
 
-            it('when invalid', () => {
-                const validate = required({isValid: true});
-                const result = validate();
-                expect(result.isValid).toBe(false);
-            });
+        it('with a non-empty string value, it is valid', () => {
+            const result = validate('not empty');
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the number 0, it is valid (because 0 is indeed a supplied number)', () => {
+            const result = validate(0);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the number 1, it is valid', () => {
+            const result = validate(1);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the boolean true, it is valid', () => {
+            const result = validate(true);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with the boolean false, it is valid', () => {
+            const result = validate(false);
+            expect(result.isValid).toBe(true);
         });
     });
 
-    describe('with props passed into validation', () => {
-        it('allows message to be specified at time of validation', () => {
-            const validate = required();
-            const result = validate('', {message: 'The value is required'});
+    describe('with a single props argument', () => {
+        const validate = required({message: 'Custom message'});
+        const result = validate('Valid');
 
+        it('sets the required prop to true', () => {
             expect(result).toMatchObject({
-                isValid: false,
-                message: 'The value is required'
+                required: true,
+                value: 'Valid',
+                isValid: true
             });
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with the first argument as true and the second as an object', () => {
+        const validate = required(true, {message: 'Custom message'});
+        const result = validate(4);
+
+        it('sets the required result prop', () => {
+            expect(result.required).toBe(true);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with the first argument as false and the second as an object', () => {
+        const validate = required(false, {message: 'Custom message'});
+        const result = validate(4);
+
+        it('sets the required result prop', () => {
+            expect(result.required).toBe(false);
+        });
+
+        it('spreads the other props onto the result', () => {
+            expect(result.message).toBe('Custom message');
+        });
+    });
+
+    describe('with a function passed to the validator', () => {
+        it('does not call the function during validator construction', () => {
+            const getRequiredProps = jest.fn();
+
+            required(getRequiredProps);
+            expect(getRequiredProps).not.toHaveBeenCalled();
+        });
+
+        it('the function is called at the time of validation', () => {
+            const getRequiredProps = jest.fn();
+            getRequiredProps.mockReturnValue();
+
+            const validate = required(getRequiredProps);
+            validate();
+
+            expect(getRequiredProps).toHaveBeenCalledTimes(1);
+        });
+
+        it('the function is called every time validation occurs', () => {
+            const getRequiredProps = jest.fn();
+            getRequiredProps.mockReturnValue(6);
+
+            const validate = required(getRequiredProps);
+            validate();
+            validate();
+
+            expect(getRequiredProps).toHaveBeenCalledTimes(2);
+        });
+
+        describe('validates using the function result', () => {
+            it('when the function returns true', () => {
+                const getRequired = jest.fn();
+                getRequired.mockReturnValue(true);
+
+                const validate = required(getRequired);
+                const result = validate(4);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    required: true,
+                    value: 4
+                });
+            });
+
+            it('when the function returns false', () => {
+                const getRequired = jest.fn();
+                getRequired.mockReturnValue(false);
+
+                const validate = required(getRequired);
+                const result = validate(4);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    required: false,
+                    value: 4
+                });
+            });
+
+            it('when the function returns a props object', () => {
+                const getRequiredProps = jest.fn();
+                getRequiredProps.mockReturnValue({message: 'Custom message'});
+
+                const validate = required(getRequiredProps);
+                const result = validate(4);
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    required: true,
+                    message: 'Custom message',
+                    value: 4
+                });
+            });
+        });
+
+        it('validation context is passed to the function', () => {
+            const getRequiredProps = jest.fn();
+
+            const validate = required(getRequiredProps);
+            validate(6, {contextProp: 'validation context'});
+
+            expect(getRequiredProps).toHaveBeenCalledWith(expect.objectContaining({
+                value: 6,
+                contextProp: 'validation context'
+            }));
         });
     });
 
     describe('does not mutate props', () => {
-        it('when a props argument is used', () => {
+        it('when a single props argument is used', () => {
+            const props = {required: true};
+            deepFreeze(props);
+
+            expect(() => required(props)(5)).not.toThrow();
+        });
+
+        it('when a required value and props are used', () => {
             const props = {message: 'Custom message'};
             deepFreeze(props);
 
-            expect(() => required(props)('value')).not.toThrow();
+            expect(() => required(true, props)(5)).not.toThrow();
+        });
+    });
+
+    describe('does not include validation context props on the result', () => {
+        it('for new props', () => {
+            const validate = required();
+            const result = validate(5, {contextProp: 'validation context'});
+
+            expect(result).not.toHaveProperty('contextProp');
+        });
+
+        it('for props with the same name as other result props', () => {
+            const validate = required(true);
+            const result = validate(5, {required: false});
+
+            expect(result.required).toBe(true);
         });
     });
 });
