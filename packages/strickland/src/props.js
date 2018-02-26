@@ -8,7 +8,7 @@ const initialResult = {
 
 export default function props(validators, ...params) {
     return function validateProps(value, context) {
-        let validatorProps = prepareProps(
+        const validatorProps = prepareProps(
             {value},
             [],
             params,
