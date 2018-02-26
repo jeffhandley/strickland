@@ -378,106 +378,39 @@ describe('validate', () => {
         });
     });
 
-    describe('with props passed into validation', () => {
+    describe('with validation context', () => {
         it('passes those props into a validator function', () => {
-            let validatedProps;
+            const validator = jest.fn();
+            validate(validator, null, {contextProp: 'Context prop'});
 
-            function validator(value, validateProps) {
-                validatedProps = validateProps;
-            }
-
-            const props = {message: 'validation message'};
-
-            validate(validator, null, props);
-            expect(validatedProps).toMatchObject(props);
+            expect(validator).toHaveBeenCalledWith(null, expect.objectContaining({
+                contextProp: 'Context prop'
+            }));
         });
 
         it('passes those props into each validator in an array', () => {
-            let validatedProps = {
-                first: null,
-                second: null
-            };
+            const validator = jest.fn();
+            validate([validator], null, {contextProp: 'Context prop'});
 
-            function firstValidator(value, validateProps) {
-                validatedProps.first = validateProps;
-                return true;
-            }
-
-            function secondValidator(value, validateProps) {
-                validatedProps.second = validateProps;
-                return true;
-            }
-
-            const rules = [firstValidator, secondValidator];
-            const props = {message: 'validation message'};
-
-            validate(rules, null, props);
-
-            expect(validatedProps).toMatchObject({
-                first: props,
-                second: props
-            });
+            expect(validator).toHaveBeenCalledWith(null, expect.objectContaining({
+                contextProp: 'Context prop'
+            }));
         });
 
         it('passes those props into each validator on an object', () => {
-            let validatedProps = {
-                first: null,
-                second: null
-            };
+            const validator = jest.fn();
+            validate({first: validator}, {first: null}, {contextProp: 'Context prop'});
 
-            function firstValidator(value, validateProps) {
-                validatedProps.first = validateProps;
-                return true;
-            }
-
-            function secondValidator(value, validateProps) {
-                validatedProps.second = validateProps;
-                return true;
-            }
-
-            const rules = {
-                first: firstValidator,
-                second: secondValidator
-            };
-
-            const props = {message: 'validation message'};
-            const value = {
-                first: 'First',
-                second: 'Second'
-            };
-
-            validate(rules, value, props);
-
-            expect(validatedProps).toMatchObject({
-                first: props,
-                second: props
-            });
+            expect(validator).toHaveBeenCalledWith(null, expect.objectContaining({
+                contextProp: 'Context prop'
+            }));
         });
 
-        it('includes those props on the result automatically', () => {
-            let props = {message: 'Message'};
+        it('does not include context props on the result', () => {
+            const validator = jest.fn();
+            const result = validate({first: validator}, null, {contextProp: 'Context prop'});
 
-            function validator() {
-                return true;
-            }
-
-            const result = validate(validator, null, props);
-
-            expect(result).toMatchObject({
-                message: 'Message'
-            });
-        });
-
-        it('overrides result props with the props passed in', () => {
-            function validator() {
-                return {
-                    isValid: true,
-                    message: 'From the result'
-                };
-            }
-
-            const result = validate(validator, null, {message: 'From valdation'});
-            expect(result.message).toBe('From the result');
+            expect(result).not.toHaveProperty('contextProp');
         });
     });
 
@@ -543,9 +476,9 @@ describe('validate', () => {
                 return expect(result).resolves.toMatchObject({value: 'ABC'});
             });
 
-            it('puts validate props on the resolved result', () => {
+            it('does not put context props on the resolved result', () => {
                 const result = validateAsync(() => Promise.resolve(true), 'ABC', {message: 'Message'});
-                return expect(result).resolves.toMatchObject({message: 'Message'});
+                return expect(result).resolves.not.toHaveProperty('message');
             });
         });
 
