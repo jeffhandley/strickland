@@ -117,23 +117,15 @@ describe('some', () => {
         });
     });
 
-    describe('passes context to the validators', () => {
+    it('passes context to the validators', () => {
         const validator = jest.fn();
         const validate = some([validator], {validatorProp: 'Validator message'});
 
         validate('AB', {contextProp: 'Context message'});
 
-        it('from the validator props', () => {
-            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
-                validatorProp: 'Validator message'
-            }));
-        });
-
-        it('from the validation context', () => {
-            expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
-                contextProp: 'Context message'
-            }));
-        });
+        expect(validator).toHaveBeenCalledWith('AB', expect.objectContaining({
+            contextProp: 'Context message'
+        }));
     });
 
     describe('given async validators', () => {

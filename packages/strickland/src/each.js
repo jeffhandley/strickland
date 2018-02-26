@@ -25,14 +25,9 @@ export default function each(validators, ...params) {
             };
         }
 
-        const validationContext = {
-            ...validatorProps,
-            ...context
-        };
-
         if (Array.isArray(validators)) {
             validators.forEach((validator) => {
-                const nextResult = validate(validator, value, validationContext);
+                const nextResult = validate(validator, value, context);
                 hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
 
                 result = applyNextResult(result, nextResult);

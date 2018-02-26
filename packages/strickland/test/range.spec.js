@@ -3,7 +3,7 @@ import range from '../src/range';
 
 describe('range', () => {
     describe('with a single props argument', () => {
-        const validate = range({min: 3, max: 5, message: 'Custom message'});
+        const validate = range({min: 3, max: 5, message: 'Custom message', isValid: false});
         const result = validate(4);
 
         it('uses the min prop', () => {
@@ -14,14 +14,18 @@ describe('range', () => {
             expect(result.max).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(true);
         });
     });
 
     describe('with the first argument as a number and the second as an object', () => {
-        const validate = range(3, {max: 5, message: 'Custom message'});
-        const result = validate(4);
+        const validate = range(3, {max: 5, message: 'Custom message', isValid: true});
+        const result = validate(2);
 
         it('sets the min prop', () => {
             expect(result.min).toBe(3);
@@ -31,14 +35,18 @@ describe('range', () => {
             expect(result.max).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
     describe('with the first and second arguments as numbers and the third as an object', () => {
-        const validate = range(3, 5, {message: 'Custom message'});
-        const result = validate(4);
+        const validate = range(3, 5, {message: 'Custom message', isValid: true});
+        const result = validate(2);
 
         it('sets the min prop', () => {
             expect(result.min).toBe(3);
@@ -48,8 +56,12 @@ describe('range', () => {
             expect(result.max).toBe(5);
         });
 
-        it('retains extra props', () => {
+        it('spreads the other props onto the result', () => {
             expect(result.message).toBe('Custom message');
+        });
+
+        it('overrides the isValid prop with the validation result', () => {
+            expect(result.isValid).toBe(false);
         });
     });
 
@@ -97,30 +109,6 @@ describe('range', () => {
     validates('with a numeric min and props', range(3, {max: 5}));
     validates('with numeric min and max plus props', range(3, 5, {other: 'other'}));
 
-    describe('with props passed into validation', () => {
-        it('allows the min value to be specified at time of validation', () => {
-            const validatorProps = {min: 4, max: 6};
-            const validate = range(validatorProps);
-            const result = validate(3, {min: 2});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                min: 2
-            });
-        });
-
-        it('allows the max value to be specified at time of validation', () => {
-            const validatorProps = {min: 4, max: 6};
-            const validate = range(validatorProps);
-            const result = validate(7, {max: 8});
-
-            expect(result).toMatchObject({
-                isValid: true,
-                max: 8
-            });
-        });
-    });
-
     describe('does not mutate props', () => {
         it('when a single props argument is used', () => {
             const props = {min: 3, max: 5};
@@ -129,7 +117,7 @@ describe('range', () => {
             expect(() => range(props)(4)).not.toThrow();
         });
 
-        it('when a min value and props are used', () => {
+        it('when a min range and props are used', () => {
             const props = {max: 5, message: 'Custom message'};
             deepFreeze(props);
 
