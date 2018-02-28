@@ -43,28 +43,28 @@ const mustExistWithLength5to10 = every([
 const result = validate(mustExistWithLength5to10, '1234');
 
 /*
-result = {
-    isValid: false,
-    value: '1234',
-    required: true,
-    minLength: 5,
-    message: 'Must have at least 5 characters',
-    every: [
-        {
-            isValid: true,
-            value: '1234',
-            required: true,
-            message: 'Required'
-        },
-        {
-            isValid: false,
-            value: '1234',
-            minLength: 5,
-            message: 'Must have at least 5 characters'
-        }
-    ]
-}
-*/
+    result = {
+        isValid: false,
+        value: '1234',
+        required: true,
+        minLength: 5,
+        message: 'Must have at least 5 characters',
+        every: [
+            {
+                isValid: true,
+                value: '1234',
+                required: true,
+                message: 'Required'
+            },
+            {
+                isValid: false,
+                value: '1234',
+                minLength: 5,
+                message: 'Must have at least 5 characters'
+            }
+        ]
+    }
+ */
 ```
 
 There are a few notable characteristics of this result:

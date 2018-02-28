@@ -46,14 +46,14 @@ const result = validate(mustExistWithLength5, '1234', {
 });
 
 /*
-result = {
-    isValid: false,
-    value: '1234',
-    required: true,
-    minLength: 5,
-    message: 'Must have a length of at least 5'
-}
-*/
+    result = {
+        isValid: false,
+        value: '1234',
+        required: true,
+        minLength: 5,
+        message: 'Must have a length of at least 5'
+    }
+ */
 ```
 
 ## Built-In Composition Validators

@@ -29,13 +29,13 @@ const nameRequired = required({
 const result = validate(nameRequired, '');
 
 /*
-result = {
-    isValid: false,
-    value: '',
-    required: true,
-    message: 'Name is required'
-}
-*/
+    result = {
+        isValid: false,
+        value: '',
+        required: true,
+        message: 'Name is required'
+    }
+ */
 ```
 
 The following code illustrates all the ways validator props can be supplied to the `required` validator.

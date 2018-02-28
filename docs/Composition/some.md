@@ -28,25 +28,25 @@ const max5orMin10orValue7 = some([
 const result = validate(max5orMin10, 12);
 
 /*
-result = {
-    isValid: true,
-    value: 12,
-    min: 5,
-    max: 10,
-    some: [
-        {
-            isValid: false,
-            value: 12,
-            max: 5
-        },
-        {
-            isValid: true,
-            value: 12,
-            min: 10
-        }
-    ]
-}
-*/
+    result = {
+        isValid: true,
+        value: 12,
+        min: 5,
+        max: 10,
+        some: [
+            {
+                isValid: false,
+                value: 12,
+                max: 5
+            },
+            {
+                isValid: true,
+                value: 12,
+                min: 10
+            }
+        ]
+    }
+ */
 ```
 
 There are a few notable characteristics of this result:

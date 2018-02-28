@@ -47,34 +47,34 @@ const mustExistWithLength5to10 = each([
 const result = validate(mustExistWithLength5to10, '1234');
 
 /*
-result = {
-    isValid: false,
-    value: '1234',
-    required: true,
-    minLength: 5,
-    message: 'Must have at most 10 characters',
-    each: [
-        {
-            isValid: true,
-            value: '1234',
-            required: true,
-            message: 'Required'
-        },
-        {
-            isValid: false,
-            value: '1234',
-            minLength: 5,
-            message: 'Must have at least 5 characters'
-        },
-        {
-            isValid: true,
-            value: '1234',
-            maxLength: 10,
-            message: 'Must have at most 10 characters'
-        }
-    ]
-}
-*/
+    result = {
+        isValid: false,
+        value: '1234',
+        required: true,
+        minLength: 5,
+        message: 'Must have at most 10 characters',
+        each: [
+            {
+                isValid: true,
+                value: '1234',
+                required: true,
+                message: 'Required'
+            },
+            {
+                isValid: false,
+                value: '1234',
+                minLength: 5,
+                message: 'Must have at least 5 characters'
+            },
+            {
+                isValid: true,
+                value: '1234',
+                maxLength: 10,
+                message: 'Must have at most 10 characters'
+            }
+        ]
+    }
+ */
 ```
 
 There are a few notable characteristics of this result:
