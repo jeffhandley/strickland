@@ -8,9 +8,9 @@ export default function form(validators, ...params) {
 
     return function validateForm(value, context) {
         const validatorProps = getValidatorProps(
-            {value},
             [],
             params,
+            value,
             context
         );
 

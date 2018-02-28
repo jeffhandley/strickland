@@ -1,10 +1,11 @@
-export default function getValidatorProps(defaultProps, propNames, params, context) {
+export default function getValidatorProps(propNames, params, value, context, defaultProps) {
     let props = {
-        ...defaultProps
+        ...defaultProps,
+        value
     };
 
     let validationContext = {
-        ...defaultProps,
+        ...props,
         ...context
     };
 

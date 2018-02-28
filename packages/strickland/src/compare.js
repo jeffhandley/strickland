@@ -5,9 +5,9 @@ export default function compare(...params) {
         let isValid = true;
 
         const props = getValidatorProps(
-            {value},
             ['compare'],
             params,
+            value,
             context
         );
 

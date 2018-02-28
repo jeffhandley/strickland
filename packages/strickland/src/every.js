@@ -9,9 +9,9 @@ const initialResult = {
 export default function every(validators, ...params) {
     return function validateEvery(value, context) {
         const validatorProps = getValidatorProps(
-            {value},
             [],
             params,
+            value,
             context
         );
 

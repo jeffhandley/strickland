@@ -6,10 +6,11 @@ export default function minLength(...params) {
         let length = value ? value.length : 0;
 
         const props = getValidatorProps(
-            {value, length},
             ['minLength'],
             params,
-            context
+            value,
+            context,
+            {length}
         );
 
         if (typeof props.minLength !== 'number') {

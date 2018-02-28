@@ -6,10 +6,11 @@ export default function maxLength(...params) {
         let length = value ? value.length : 0;
 
         const props = getValidatorProps(
-            {value, length},
             ['maxLength'],
             params,
-            context
+            value,
+            context,
+            {length}
         );
 
         if (typeof props.maxLength !== 'number') {
