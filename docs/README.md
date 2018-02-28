@@ -30,7 +30,7 @@
         * [Advanced Object Validation](/docs/Composition/AdvancedObjectValidation.md)
         * [Nested Objects](/docs/Composition/NestedObjects.md)
     * [Array and Object Conventions](/docs/Composition/Conventions.md)
-    * [form](/docs/Composition/Forms.md)
+    * [Form Validation](/docs/Composition/Forms.md)
 * [Async Validation](/docs/Async/README.md)
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
