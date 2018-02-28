@@ -58,7 +58,7 @@ const person = {
 };
 
 validateAsync(validatePerson, person).then((result) => {
-    /*
+/*
     result = {
         isValid: false,
         props: {
@@ -82,7 +82,7 @@ validateAsync(validatePerson, person).then((result) => {
             }
         }
     }
-    */
+ */
 });
 ```
 

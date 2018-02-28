@@ -35,7 +35,7 @@ let result = validate(validatePerson, person, {
     result = {
         isValid: false,
         value: {
-            firstName: 'Strickland'
+            firstName: 'Stanford'
         },
         form: {
             isComplete: false,

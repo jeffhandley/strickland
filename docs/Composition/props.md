@@ -31,7 +31,7 @@ const validateProps = props({
         length((context) => ({
             minLength: context.minLength,
             maxLength: context.maxLength
-        })
+        }))
     ]),
     lastName: every([
         required(),
@@ -47,6 +47,13 @@ const validateProps = props({
 }, {
     message: 'The person must be valid'
 });
+
+// Create a person
+const person = {
+    firstName: 'Stanford',
+    lastName: 'Strickland',
+    birthYear: 1925
+};
 
 const result = validate(validateProps, person, {
     props: {
@@ -92,15 +99,7 @@ const person = {
     birthYear: 1925
 };
 
-// Provide validation context to the validators
-const context = {
-    props: {
-        firstName: {maxLength: 25},
-        lastName: {maxLength: 30}
-    }
-};
-
-const result = validate(validatePersonProps, person, context);
+const result = validate(validatePersonProps, person);
 
 /*
     result = {

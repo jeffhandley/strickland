@@ -7,7 +7,7 @@ Here is a validator that validates every validator in an array, short-circuiting
 ``` jsx
 import validate from './strickland';
 
-export default function every(validators, ...params) {
+export default function every(validators) {
     return function validateEvery(value, context) {
         let result = {
             value,
@@ -51,7 +51,7 @@ const result = validate(mustExistWithLength5, '1234', {
         value: '1234',
         required: true,
         minLength: 5,
-        message: 'Must have a length of at least 5'
+        length: 4
     }
  */
 ```

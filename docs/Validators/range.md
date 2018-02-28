@@ -29,8 +29,8 @@ const b = range({
 });
 
 // As functions that resolve the min and max values
-const c = range((context) =>
-    10,
+const c = range(
+    (context) => 10,
     (context) => 20,
     {message: 'Must be between 10 and 20'}
 );

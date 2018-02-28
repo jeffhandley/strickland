@@ -12,7 +12,7 @@ const atLeast5Chars = each(
         required(),
         minLength(5)
     ],
-    {message: 'Must at least 5 characters'}
+    {message: 'Must have at least 5 characters'}
 );
 
 const result = validate(atLeast5Chars, '1234');

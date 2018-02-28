@@ -13,7 +13,7 @@ function letter(letterParam, validatorProps) {
     return function validateLetter(value, context) {
         // Copy the param instead of overriding
         // `letterParam` with the function result
-        const letterValue = letterParam;
+        let letterValue = letterParam;
 
         if (typeof letterValue === 'function') {
             letterValue = letterValue(context);
