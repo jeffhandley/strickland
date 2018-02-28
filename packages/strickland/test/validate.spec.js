@@ -128,6 +128,20 @@ describe('validate', () => {
                 expect(result.isValid).toBe(false);
             });
         });
+
+        it('passes context through', () => {
+            const rules = jest.fn();
+            validate(rules, null, {contextProp: 'Context'});
+
+            expect(rules).toHaveBeenCalledWith(null, {contextProp: 'Context'});
+        });
+
+        it('defaults context to an object', () => {
+            const rules = jest.fn();
+            validate(rules, 5);
+
+            expect(rules).toHaveBeenCalledWith(5, expect.any(Object));
+        });
     });
 
     describe('with rules array', () => {

@@ -14,7 +14,11 @@ export default function validate(validator, value, context) {
         throw 'Strickland: The validator passed to validate must be a function, an array (to use every), or an object (to use props). Validator type: ' + typeof(validator);
     }
 
-    result = validator(value, context);
+    const validationContext = {
+        ...context
+    };
+
+    result = validator(value, validationContext);
     return prepareResult(value, result);
 }
 
