@@ -92,11 +92,11 @@ function letter(...params) {
     return function validateLetter(value, context) {
         const validatorProps = getValidatorProps(
 
-            {letter: null}, // named props with their default values
+            ['letter'],     // named props, in their param order
             params,         // the param array supplied to the validator
             value,          // the value being validated
-            context         // the validation context
-
+            context,        // the validation context
+            {letter: 'A'}   // default named prop values
         );
 
         return {

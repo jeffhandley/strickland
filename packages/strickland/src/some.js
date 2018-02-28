@@ -9,9 +9,9 @@ const initialResult = {
 export default function some(validators, ...params) {
     return function validateSome(value, context) {
         const validatorProps = getValidatorProps(
-            {value},
             [],
             params,
+            value,
             context
         );
 

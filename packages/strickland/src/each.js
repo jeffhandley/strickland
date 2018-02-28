@@ -12,9 +12,9 @@ export default function each(validators, ...params) {
         let hasPromises = false;
 
         const validatorProps = getValidatorProps(
-            {value},
             [],
             params,
+            value,
             context
         );
 

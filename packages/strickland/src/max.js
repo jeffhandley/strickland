@@ -5,9 +5,9 @@ export default function max(...params) {
         let isValid = true;
 
         const props = getValidatorProps(
-            {value},
             ['max'],
             params,
+            value,
             context
         );
 

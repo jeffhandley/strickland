@@ -6,9 +6,9 @@ import {getValidatorProps} from './utils';
 export default function length(...params) {
     return function validateLength(value, context) {
         const props = getValidatorProps(
-            {value},
             ['min', 'max'],
             params,
+            value,
             context
         );
 

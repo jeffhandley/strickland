@@ -5,9 +5,9 @@ export default function min(...params) {
         let isValid = true;
 
         const props = getValidatorProps(
-            {value},
             ['min'],
             params,
+            value,
             context
         );
 

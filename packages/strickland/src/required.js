@@ -6,10 +6,11 @@ export default function required(...params) {
         let isValid = true;
 
         const props = getValidatorProps(
-            {value, required: true},
             ['required'],
             params,
-            context
+            value,
+            context,
+            {required: true}
         );
 
         if (props.required) {
