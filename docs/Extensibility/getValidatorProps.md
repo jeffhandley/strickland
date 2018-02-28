@@ -44,7 +44,7 @@ function letter(...params) {
         return {
             message: `Must match "${validatorProps.letter}"`,
             ...validatorProps,
-            isValid: (value === letterValue)
+            isValid: (value === validatorProps.letter)
         };
     }
 }

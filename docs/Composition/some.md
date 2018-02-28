@@ -25,14 +25,14 @@ const max5orMin10orValue7 = some([
     compare(7)
 ]);
 
-const result = validate(max5orMin10, 12);
+const result = validate(max5orMin10orValue7, 12);
 
 /*
     result = {
         isValid: true,
         value: 12,
-        min: 5,
-        max: 10,
+        max: 5,
+        min: 10,
         some: [
             {
                 isValid: false,

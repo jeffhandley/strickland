@@ -27,13 +27,13 @@ function usernameIsAvailable(username) {
 const result = validate(usernameIsAvailable, 'marty');
 
 result.validateAsync.then((asyncResult) => {
-    /*
+/*
     asyncResult = {
         isValid: false,
         value: 'marty',
         message: '"marty" is not available'
     }
-    */
+ */
 });
 ```
 
@@ -41,7 +41,7 @@ When a validator returns a `Promise`, the normalized validation result will incl
 
 ## Resolving Async Validators
 
-Because `validate` returns synchronously, your application must recognize when async validation needs to be resolved. The validation result returned from `validate` will only include the `validateAsync` property when a `Promise` needs to be resolved. Applications can simply check the existence of that property and resolve the `Promise` if needed.
+Because `validate` returns synchronously, your application must recognize when async validation needs to be resolved. The validation result returned from `validate` will only include the `validateAsync` property when a `Promise` needs to be resolved. Applications can check if the property is a `Promise` and resolve it if needed.
 
 ``` jsx
 const result = validate(usernameIsAvailable, 'marty');
@@ -49,8 +49,8 @@ const result = validate(usernameIsAvailable, 'marty');
 // The application defines a `handleValidationResult` function
 // to handle validation results when the are completed
 
-if (result.asyncValidation) {
-    result.asyncValidation.then((asyncResult) => handleValidationResult(asyncResult));
+if (result.validateAsync instanceof Promise) {
+    result.validateAsync.then((asyncResult) => handleValidationResult(asyncResult));
 } else {
     handleValidationResult(result);
 }
