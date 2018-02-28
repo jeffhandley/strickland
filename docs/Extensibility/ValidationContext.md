@@ -25,11 +25,11 @@ const validator = letter((context) => context.letter);
 const result = validate(validator, 'B', { letter: 'A' });
 
 /*
-result = {
-    isValid: false,
-    value: 'B'
-}
-*/
+    result = {
+        isValid: false,
+        value: 'B'
+    }
+ */
 ```
 
 Strickland's `validate` function *always* passes a validation context object to the validator so that validators do not need to defend against undefined or null validation context.

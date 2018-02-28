@@ -30,12 +30,12 @@ const validator = letter('B');
 const result = validate(validator, 'A');
 
 /*
-result = {
-    message: 'Must match "B"',
-    isValid: false,
-    value: 'A'
-}
-*/
+    result = {
+        message: 'Must match "B"',
+        isValid: false,
+        value: 'A'
+    }
+ */
 ```
 
 Validation results can include any additional properties that are needed for your application regardless of whether the result is valid. Your application can then decide how and when to consume those properties. As an example, some user interfaces show successful validation messages to give positive feedback to the user.

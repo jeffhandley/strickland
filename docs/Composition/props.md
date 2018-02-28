@@ -103,57 +103,57 @@ const context = {
 const result = validate(validatePersonProps, person, context);
 
 /*
-result = {
-    isValid: true,
-    value: person,
-    props: {
-        firstName: {
-            isValid: true,
-            value: 'Stanford',
-            required: true,
-            minLength: 2,
-            maxLength: 25,
-            every: [
-                {
-                    isValid: true,
-                    value: 'Stanford',
-                    required: true
-                },
-                {
-                    isValid: true,
-                    value: 'Stanford',
-                    minLength: 2,
-                    maxLength: 25
-                }
-            ]
-        },
-        lastName: {
-            isValid: true,
-            value: 'Strickland',
-            required: true,
-            minLength: 2,
-            maxLength: 30,
-            every: [
-                {
-                    isValid: true,
-                    value: 'Strickland',
-                    required: true
-                },
-                {
-                    isValid: true,
-                    value: 'Strickland',
-                    minLength: 2,
-                    maxLength: 30
-                }
-            ]
-        },
-        birthYear: {
-            isValid: true,
-            value: 1925,
-            min: 1900,
-            max: 2018
+    result = {
+        isValid: true,
+        value: person,
+        props: {
+            firstName: {
+                isValid: true,
+                value: 'Stanford',
+                required: true,
+                minLength: 2,
+                maxLength: 25,
+                every: [
+                    {
+                        isValid: true,
+                        value: 'Stanford',
+                        required: true
+                    },
+                    {
+                        isValid: true,
+                        value: 'Stanford',
+                        minLength: 2,
+                        maxLength: 25
+                    }
+                ]
+            },
+            lastName: {
+                isValid: true,
+                value: 'Strickland',
+                required: true,
+                minLength: 2,
+                maxLength: 30,
+                every: [
+                    {
+                        isValid: true,
+                        value: 'Strickland',
+                        required: true
+                    },
+                    {
+                        isValid: true,
+                        value: 'Strickland',
+                        minLength: 2,
+                        maxLength: 30
+                    }
+                ]
+            },
+            birthYear: {
+                isValid: true,
+                value: 1925,
+                min: 1900,
+                max: 2018
+            }
         }
     }
-}
-*/
+ */
 ```

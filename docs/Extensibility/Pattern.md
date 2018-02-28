@@ -48,12 +48,12 @@ const termsEntered = 'N';
 const result = validate(termsAccepted, termsEntered);
 
 /*
-result = {
-    fieldName: 'acceptTerms',
-    message: 'Enter the letter "Y" to accept the terms',
-    letter: 'Y',
-    isValid: false,
-    value: 'N'
-}
-*/
+    result = {
+        fieldName: 'acceptTerms',
+        message: 'Enter the letter "Y" to accept the terms',
+        letter: 'Y',
+        isValid: false,
+        value: 'N'
+    }
+ */
 ```
