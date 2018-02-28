@@ -13,3 +13,5 @@ export {default as props} from './props';
 export {default as range} from './range';
 export {default as required} from './required';
 export {default as some} from './some';
+
+export {getValidatorProps} from './utils';
