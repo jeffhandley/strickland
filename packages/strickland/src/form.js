@@ -1,5 +1,5 @@
 import validate from './validate';
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 export default function form(validators, ...params) {
     if (typeof validators !== 'object' || Array.isArray(validators) || !validators) {
@@ -7,7 +7,7 @@ export default function form(validators, ...params) {
     }
 
     return function validateForm(value, context) {
-        const validatorProps = prepareProps(
+        const validatorProps = getValidatorProps(
             {value},
             [],
             params,

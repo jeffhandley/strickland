@@ -1,10 +1,10 @@
-import {isFalsyButNotZero, prepareProps} from './utils';
+import {isFalsyButNotZero, getValidatorProps} from './utils';
 
 export default function compare(...params) {
     return function validateCompare(value, context) {
         let isValid = true;
 
-        const props = prepareProps(
+        const props = getValidatorProps(
             {value},
             ['compare'],
             params,

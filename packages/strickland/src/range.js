@@ -1,11 +1,11 @@
 import validate from './validate';
 import min from './min';
 import max from './max';
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 export default function length(...params) {
     return function validateLength(value, context) {
-        const props = prepareProps(
+        const props = getValidatorProps(
             {value},
             ['min', 'max'],
             params,
