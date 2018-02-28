@@ -99,7 +99,7 @@ valid results can be returned.
 
 ## each
 
-The `each` validator resolves all async prop validators in parallel. Because `each` will never short-circuit based on validation results, it uses `Promise.all()` to resolve each of the validators. Its async validators can therefore run in parallel, and it may sometimes be beneficial to use `each` explicitly when performing multiple async validations.
+The `each` validator resolves all async prop validators in parallel. Because `each` will never short-circuit based on validation results, it uses `Promise.all()` to resolve the validators. Its async validators can therefore run in parallel, and it may sometimes be beneficial to use `each` explicitly when performing multiple async validations.
 
 ## some
 

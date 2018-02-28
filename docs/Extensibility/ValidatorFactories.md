@@ -6,9 +6,7 @@ Validators often need to be configurable. Instead of always validating that a va
 import validate from 'strickland';
 
 function letter(letterParam) {
-    return function validateLetter(value) {
-        return (value === letterParam);
-    }
+    return (value) => (value === letterParam);
 }
 
 const validator = letter('B');
