@@ -1,5 +1,5 @@
 import validate from './validate';
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: true,
@@ -11,7 +11,7 @@ export default function each(validators, ...params) {
         let result = initialResult;
         let hasPromises = false;
 
-        const validatorProps = prepareProps(
+        const validatorProps = getValidatorProps(
             {value},
             [],
             params,
