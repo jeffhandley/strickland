@@ -1,6 +1,6 @@
-# Extensible Validation Results
+# Validation Result Props
 
-You may have noticed that examples so far have not included any validation messages. Validation messages are often the heart of validation libraries, but Strickland has no concept of them. This ensures you can build your application with the user experience you need, including style and localization of your own messages, without any interference from Strickland or any possibility of a default validation message leaking through.
+You may have noticed that examples so far have not included any validation messages. Validation messages are often the heart of validation libraries, but Strickland has no concept of them. This ensures you can build your application with the user experience you need, including tone and localization of your own messages, without any interference from Strickland or any possibility of a default validation message leaking through.
 
 ***But how do you get validation messages on results?*** As was mentioned in our [core concepts](/docs/Introduction/CoreConcepts.md), a validator can return either a boolean or a validation result object with an `isValid` property. Validation result objects can have additional properties; those properties flow through Strickland's `validate` function to be available to your application.
 
@@ -10,26 +10,29 @@ Let's extend the `letter` validator to include a message property on its result.
 import validate from 'strickland';
 
 function letter(letterParam) {
-    return function validateLetter(value, validationContext) {
-        validationContext = {
-            letter: letterParam,
-            ...validationContext
-        };
+    return function validateLetter(value, context) {
+        // Copy the param instead of overriding
+        // `letterParam` with the function result
+        const letterValue = letterParam;
+
+        if (typeof letterValue === 'function') {
+            letterValue = letterValue(context);
+        }
 
         return {
-            message: `Must match "${validationContext.letter}"`,
-            isValid: (value === validationContext.letter)
+            message: `Must match "${letterValue}"`,
+            isValid: (value === letterValue)
         };
     }
 }
 
-const validator = letter();
-const result = validate(validator, 'A', { letter: 'A' });
+const validator = letter('B');
+const result = validate(validator, 'A');
 
 /*
 result = {
-    message: 'Must match "A"',
-    isValid: true,
+    message: 'Must match "B"',
+    isValid: false,
     value: 'A'
 }
 */
