@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0-beta.1"></a>
+# [2.0.0-beta.1](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.1) (2018-02-28)
+
+
+### Bug Fixes
+
+* always provide a context object from validate ([bbf06b0](https://github.com/jeffhandley/strickland/commit/bbf06b0))
+
+
+### Chores
+
+* remove all traces of context in preparation for a context redesign ([fd3f1f7](https://github.com/jeffhandley/strickland/commit/fd3f1f7))
+
+
+### Features
+
+* add a form validator that can be used for incremental form validation ([c404d50](https://github.com/jeffhandley/strickland/commit/c404d50))
+* add a new prepareProps utility and use it in compare to support props and context ([0562b55](https://github.com/jeffhandley/strickland/commit/0562b55))
+* support props and context on compare, max, maxLength, min, minLength, and required ([0ebe900](https://github.com/jeffhandley/strickland/commit/0ebe900))
+* support props and context on form ([fb3bfa4](https://github.com/jeffhandley/strickland/commit/fb3bfa4))
+* support props and context on length and range ([3fbf417](https://github.com/jeffhandley/strickland/commit/3fbf417))
+* support validator props and context on each, every, some, and props ([2e18237](https://github.com/jeffhandley/strickland/commit/2e18237))
+* updating demo to use form validation ([2ef675d](https://github.com/jeffhandley/strickland/commit/2ef675d))
+
+
+### BREAKING CHANGES
+
+* Validator Context and Validation Context are being removed. A new design will introduce Validator Props and Validation Context, where Validation Context will NOT be spread onto results.
+
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/jeffhandley/strickland/compare/v1.0.0...v1.1.0) (2018-01-21)
 
