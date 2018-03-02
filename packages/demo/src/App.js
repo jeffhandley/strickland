@@ -1,92 +1,7 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import './App.css';
-import validate, {validateAsync, form, every, required, minLength, compare} from 'strickland';
-
-function conditional(shouldValidate, validator) {
-    return function validateConditional(value, validationContext) {
-        if (shouldValidate(value, validationContext)) {
-            return validate(validator, value, validationContext);
-        }
-
-        return true;
-    }
-}
-
-function usernameIsAvailable(username) {
-    console.log('usernameIsAvailable', username);
-
-    return {
-        isValid: false,
-        message: `Checking availability of "${username}"...`,
-        validateAsync: new Promise((resolve) => {
-            setTimeout(() => {
-                const isValid = (username !== 'marty')
-                resolve({
-                    isValid,
-                    message: isValid ? `"${username}" is available` : `Sorry, "${username}" is not available`
-                });
-            }, 2000);
-        })
-    };
-}
-
-const validationRules = form({
-    firstName: required({message: 'Required'}),
-    lastName: [
-        required({message: 'Required'}),
-        minLength(2, {message: 'Must have at least 2 characters'})
-    ],
-    username: [
-        required({message: 'Required'}),
-        minLength(4, {message: 'Must have at least 4 characters'}),
-        conditional(
-            (value, validationContext) => !validationContext.onFieldChange,
-            usernameIsAvailable
-        )
-    ],
-    password: every(
-        [required(), minLength(8)],
-        {message: 'Must have at least 8 characters'}
-    ),
-    confirmPassword: every(
-        [required(), compare(({form}) => form.values.password)],
-        {message: 'Must match password'}
-    )
-});
-
-function getValidationClassName(form, validation, fieldName) {
-    const fieldValidation = validation && validation.form && validation.form.validationResults[fieldName];
-
-    return classnames({
-        'validation-value': !!form[fieldName],
-        'validation-valid': fieldValidation && fieldValidation.isValid,
-        'validation-async': fieldValidation && fieldValidation.validateAsync,
-        'validation-invalid': fieldValidation && !fieldValidation.isValid && !fieldValidation.validateAsync
-    });
-}
-
-function getValidationMessage(validation, fieldName) {
-    const fieldValidation = validation && validation.form && validation.form.validationResults[fieldName];
-
-    if (fieldValidation && !fieldValidation.isValid) {
-        return fieldValidation.message;
-    }
-
-    return null;
-}
-
-function hasValidationResults(validation, fieldName) {
-    if (validation && validation.form) {
-        if (fieldName) {
-            return !!validation.form.validationResults[fieldName];
-        }
-
-        return !!validation.form.isComplete;
-    }
-
-    return false;
-}
+import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
+import validate, {validateAsync} from 'strickland';
 
 class App extends Component {
     constructor(props) {
@@ -99,6 +14,11 @@ class App extends Component {
                 username: '',
                 password: '',
                 confirmPassword: ''
+            },
+            validation: {
+                form: {
+                    validationResults: {}
+                }
             }
         };
 
@@ -123,124 +43,192 @@ class App extends Component {
             password: this.onFieldBlur.bind(this, 'password', null),
             confirmPassword: this.onFieldBlur.bind(this, 'confirmPassword', null)
         };
+    }
 
+    updateField(validation, formValues, fieldName, result) {
+        const context = {
+            ...validation,
+            form: {
+                ...validation.form,
+                fields: [], // no validation; just refresh the result properties
+                validationResults: {
+                    ...validation.form.validationResults,
+                    [fieldName]: result
+                }
+            }
+        };
+
+        if (!result) {
+            delete context.form.validationResults[fieldName];
+        }
+
+        return validate(formValidator, formValues, context);
+    }
+
+    handleAsyncFieldValidation(fieldName, asyncFieldResult) {
+        // Get the form's current state after async validation
+        // (it could have changed during async validation)
+        let {form: currentForm, validation: asyncValidation} = this.state;
+
+        // If the field value still matches what we validated
+        if (asyncFieldResult.value === currentForm[fieldName]) {
+            // Then update the field's result to the async result
+            this.setState({
+                validation: this.updateField(asyncValidation, currentForm, fieldName, asyncFieldResult)
+            });
+        }
     }
 
     onFieldChange(fieldName, fieldContext, {target}) {
-        let {form, validation} = this.state;
+        fieldContext = {...fieldContext};
+        let {validation} = this.state;
         const {value} = target;
 
-        let parsedValue = value;
-
-        fieldContext = {...fieldContext};
-
-        if (fieldContext.trim) {
-            parsedValue = value.trim();
-        }
-
-        form = {
+        // Get the updated form values to persist into state
+        const formValues = {
             ...this.state.form,
             [fieldName]: value
         };
 
+        // Trim the field value if needed
+        const parsedValue = fieldContext.trim ? value.trim() : value;
+
+        // Capture the parsed form for validation
+        // But we won't persist this copy of the form
+        // because we don't want to apply field parsing
+        // while typing; that will happen onblur
         const parsedForm = {
             ...this.state.form,
             [fieldName]: parsedValue
         };
 
-        if (hasValidationResults(validation, fieldName)) {
-            const result = validate(
-                validationRules,
-                parsedForm,
-                {
-                    onFieldChange: true,
-                    form: {
-                        validationResults: validation.form.validationResults,
-                        fields: [
-                            fieldName,
-                            ...((fieldContext.dependents) || [])
-                        ]
-                    }
-                }
-            );
+        // Determine which dependent fields have already been validated
+        // and therefore need to be revalidated
+        const dependents = fieldContext.dependents ?
+            Object.keys(validation.form.validationResults).filter(
+                (field) => fieldContext.dependents.includes(field)
+            ) : [];
 
-            if (result.form.validationResults[fieldName].isValid || !result.form.validationResults[fieldName].isValid) {
-                validation = result;
+        // Validate the form specifying the current field
+        // as well as dependent fields that need re-validated
+        const result = validate(
+            formValidator,
+            parsedForm,
+            {
+                onFieldChange: true,
+                form: {
+                    validationResults: validation.form.validationResults,
+                    fields: [
+                        fieldName,
+                        ...dependents
+                    ]
+                }
             }
+        );
+
+        // Pluck out the result for the current field
+        const fieldResult = result.form.validationResults[fieldName];
+
+        const hasExistingResult = validation.form.validationResults[fieldName];
+        const existingResult = validation.form.validationResults[fieldName] || {};
+
+        const hasAsync = fieldResult.validateAsync || existingResult.validateAsync
+        const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
+
+        if (hasAsync || valueChanged) {
+            validation = this.updateField(validation, parsedForm, fieldName);
         }
 
-        this.setState({form, validation});
+        // So long as there's no async validation, then if the new
+        // result is valid or the previous result was already invalid, set the result
+        if (!hasAsync && (fieldResult.isValid || (hasExistingResult && !existingResult.isValid))) {
+            validation = result;
+        }
+
+        this.setState({form: formValues, validation});
+
+        if (fieldResult.validateAsync) {
+            setTimeout(() => {
+                let {form: formAfterTimeout, validation: validationAfterTimeout} = this.state;
+
+                // If after our idle timeout, the field hasn't yet changed and the field
+                // still hasn't been validated
+                if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
+                    // Update the field's validation state to indicate that
+                    // async validation is underway
+                    this.setState({
+                        validation: this.updateField(validationAfterTimeout, formAfterTimeout, fieldName, fieldResult)
+                    });
+
+                    // Fire off async validation
+                    fieldResult.validateAsync.then(this.handleAsyncFieldValidation.bind(this, fieldName));
+                }
+            }, 1000);
+        }
     }
 
     onFieldBlur(fieldName, fieldContext, {target}) {
-        let {form, validation} = this.state;
+        fieldContext = {...fieldContext};
         const {value} = target;
 
-        let parsedValue = value;
-        fieldContext = {...fieldContext};
+        // Trim the field value if needed
+        const parsedValue = fieldContext.trim ? value.trim() : value;
 
-        if (fieldContext.trim) {
-            parsedValue = value.trim();
+        let formValues = this.state.form;
 
-            form = {
-                ...form,
+        // If trimming changed the value, update the form state
+        if (parsedValue !== value) {
+            formValues = {
+                ...this.state.form,
                 [fieldName]: parsedValue
             };
 
-            this.setState({form});
+            this.setState({form: formValues});
         }
 
-        let result = validate(validationRules, form, {
-            form: {
-                validationResults: validation && validation.form && validation.form.validationResults,
-                fields: [
-                    fieldName,
-                    ...((fieldContext.dependents) || [])
-                ]
-            }
-        });
+        let {validation} = this.state;
 
-        console.log(result.form.validationResults[fieldName].isValid, hasValidationResults(validation, fieldName));
+        // Validate if the field has not been validated yet or the value has changed
+        if (!validation.form.validationResults[fieldName] || validation.form.validationResults[fieldName].value !== parsedValue) {
+            // Determine which dependent fields have already been validated
+            // and therefore need to be revalidated
+            const dependents = fieldContext.dependents ?
+                Object.keys(validation.form.validationResults).filter(
+                    (field) => fieldContext.dependents.includes(field)
+                ) : [];
 
-        // If the field is valid, show validation results on blur
-        // Or, update existing validation results on blur
-        // But don't show initially invalid results on a field on blur
-        if (result.form.validationResults[fieldName].isValid || hasValidationResults(validation, fieldName) || result.validateAsync) {
-            // If the entire form has already been validated, then
-            // we'll revalidate the entire form on each field blur
-            if (hasValidationResults(validation)) {
-                validation = validate(validationRules, form);
-
-                if (validation.validateAsync) {
-                    validation.validateAsync.then((asyncResult) => {
-                        const currentForm = this.state.form;
-
-                        if (currentForm[fieldName] === asyncResult.value[fieldName]) {
-                            this.setState({validation: asyncResult});
-                        }
-                    });
+            // Validate the form specifying the current field
+            // as well as dependent fields that need re-validated
+            validation = validate(formValidator, formValues, {
+                form: {
+                    validationResults: validation.form.validationResults,
+                    fields: [
+                        fieldName,
+                        ...dependents
+                    ]
                 }
-            } else {
-                validation = result;
+            });
 
-                if (result.validateAsync) {
-                    result.validateAsync.then((asyncResult) => {
-                        const currentForm = this.state.form;
-
-                        if (currentForm[fieldName] === asyncResult.value[fieldName]) {
-                            this.setState({validation: asyncResult});
-                        }
-                    });
-                }
-            }
+            this.setState({validation});
         }
 
-        this.setState({validation});
+        // Pluck out the result for the current field
+        const fieldResult = validation.form.validationResults[fieldName];
+
+        // If the field needs async validation, fire it off
+        if (fieldResult.validateAsync) {
+            fieldResult.validateAsync.then(this.handleAsyncFieldValidation.bind(this, fieldName));
+        }
     }
 
     onSubmit() {
-        validateAsync(validationRules, this.state.form).then((validation) => {
-            this.setState({validation});
+        const {form: validatedForm} = this.state;
+        validateAsync(formValidator, validatedForm).then((validation) => {
+            const {form: currentForm} = this.state;
+
+            if (currentForm === validatedForm) {
+                this.setState({validation});
+            }
         });
     }
 

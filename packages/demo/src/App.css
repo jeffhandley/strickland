@@ -22,7 +22,7 @@
 }
 
 .form {
-  width: 200px;
+  width: 300px;
   margin: 0 auto;
 }
 
@@ -32,13 +32,13 @@
 
 .formfield {
   position: relative;
-  width: 200px;
+  width: 300px;
 }
 
 .formfield input {
   padding: 20px 4px;
   margin: 2px;
-  width: 200px;
+  width: 300px;
   font-size: 18px;
   border: 0;
   border-bottom: 1px solid gray;
@@ -53,7 +53,7 @@
   top: 0px;
   bottom: 0;
   left: 0;
-  width: 200px;
+  width: 300px;
   padding: 20px 4px 4px 4px;
   margin: 4px;
   text-align: left;
