@@ -1,5 +1,4 @@
 export {default, validateAsync} from './validate';
-export {default as form} from './form';
 
 export {default as compare} from './compare';
 export {default as each} from './each';
@@ -13,3 +12,6 @@ export {default as props} from './props';
 export {default as range} from './range';
 export {default as required} from './required';
 export {default as some} from './some';
+export {default as form} from './form';
+
+export {getValidatorProps} from './utils';

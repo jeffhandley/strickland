@@ -9,17 +9,13 @@ The values that `required` recognizes as empty and invalid are:
 1. `''` (empty string)
 1. `false`
 
-For all other values, `required` will indicate the result is valid.
+For all other values, including `0` (which is falsy), `required` will indicate the result is valid.
 
 The `false` boolean value being invalid is commonly used to validate that checkboxes must be checked. For example, when a user must accept terms before submitting a form, the `checked` state of the checkbox can be validated with `required`.
 
-## Parameters
+## Named Props
 
-None
-
-## Result Properties
-
-* `required`: A boolean with the value of `true`
+* `required`: A boolean indicating whether or not the value is required (default: `true`)
 
 ## Usage
 
@@ -33,11 +29,55 @@ const nameRequired = required({
 const result = validate(nameRequired, '');
 
 /*
-result = {
-    isValid: false,
-    value: '',
-    required: true,
-    message: 'Name is required'
-}
-*/
+    result = {
+        isValid: false,
+        value: '',
+        required: true,
+        message: 'Name is required'
+    }
+ */
+```
+
+The following code illustrates all the ways validator props can be supplied to the `required` validator.
+
+``` jsx
+// Required by default
+const a = required();
+
+// Specifying false disables this validator
+// useful for dynamic validation scenarios
+const b = required(false);
+
+// Specifying validator props
+const c = required(
+    true,
+    {message: 'Name is required'}
+);
+
+// Using a function to resolve the required prop
+// along with validator props
+const d = required(
+    (context) => true,
+    {message: 'Name is required'}
+);
+
+// Using a function to resolve the required prop
+// along with a function to resolve validator props
+const e = required(
+    (context) => context.required,
+    (context) => ({
+        message: context.required ?
+            'Name is required' :
+            'Name is optional'
+        }
+    )
+);
+
+// Using a function to resolve validator props
+const f = required((context) => ({
+    required: context.required,
+    message: context.required ?
+        'Name is required' :
+        'Name is optional'
+}));
 ```

@@ -4,61 +4,67 @@ The `every` validator is built into Strickland. And it has a couple additional f
 
 ## Parameters
 
-The first parameter to the `every` validator factory is the array of validators. The second parameter is a `validatorContext` that is combined with the `validationContext` supplied to every validator. This allows context common to all validators to be supplied at the time of creation.
+The first parameter to the `every` validator factory is the array of validators. Validator props can also be supplied either as an object or as a function that accepts context and returns a validator props object.
 
 ``` jsx
-const mustExistWithLength5 = every(
+const atLeast5Chars = every(
     [
         required(),
-        maxLength(2)
+        minLength(5)
     ],
-    {message: 'Must have a length of at least 5'}
+    {message: 'Must have at least 5 characters'}
 );
 
-const result = validate(mustExistWithLength5, '1234');
+const result = validate(atLeast5Chars, '1234');
+
+const requiredWithMinLength = every(
+    [
+        required(),
+        minLength((context) => context.minLength)
+    ],
+    (context) => ({message: `Must have at least ${context.minLength} characters`})
+);
 ```
 
 ## Result Properties
 
 * `every`: The array of validation results produced during validation
 
-The `every` validator adds an `every` property to the validation result that provides the detailed validation results of every validator that was validated in the array of validators. Validators that were not executed because of validation failing early will be omitted from this array. The validation result property is named `every` to match the name of the validator (this is a common pattern in Strickland).
-
-## Usage
+The `every` validator adds an `every` property to the validation result with the validation results of every validator that was validated in the array of validators. Validators that were not executed because of validation failing early will be omitted from this array. The validation result property is named `every` to match the name of the validator (this is a common pattern in Strickland).
 
 ``` jsx
 import validate, {every, required, minLength, maxLength} from 'strickland';
 
-const mustExistWithLength5 = every([
+const mustExistWithLength5to10 = every([
     required({message: 'Required'}),
-    minLength(5, {message: 'Must have a length of at least 5'}),
-    maxLength(10, {message: 'Must have a length no greater than 10'})
+    minLength(5, {message: 'Must have at least 5 characters'}),
+    maxLength(10, {message: 'Must have at most 10 characters'})
 ]);
-const result = validate(mustExistWithLength5, '1234');
+const result = validate(mustExistWithLength5to10, '1234');
 
 /*
-result = {
-    isValid: false,
-    value: '1234',
-    required: true,
-    minLength: 5,
-    message: 'Must have a length of at least 5',
-    every: [
-        {
-            isValid: true,
-            value: '1234',
-            required: true,
-            message: 'Required'
-        },
-        {
-            isValid: false,
-            value: '1234',
-            minLength: 5,
-            message: 'Must have a length of at least 5'
-        }
-    ]
-}
-*/
+    result = {
+        isValid: false,
+        value: '1234',
+        required: true,
+        minLength: 5,
+        message: 'Must have at least 5 characters',
+        every: [
+            {
+                isValid: true,
+                value: '1234',
+                required: true,
+                message: 'Required'
+            },
+            {
+                isValid: false,
+                value: '1234',
+                minLength: 5,
+                message: 'Must have at least 5 characters'
+            }
+        ]
+    }
+ */
 ```
 
 There are a few notable characteristics of this result:

@@ -8,16 +8,15 @@ Here is a validator that validates every validator in an array, short-circuiting
 import validate from './strickland';
 
 export default function every(validators) {
-    return function validateEvery(value, validationContext) {
+    return function validateEvery(value, context) {
         let result = {
-            ...validationContext,
             value,
             isValid: true
         };
 
         validators.every((validator) => {
             let validatorResult = validate(
-                validator, value, validationContext
+                validator, value, context
             );
 
             result = {
@@ -34,7 +33,7 @@ export default function every(validators) {
 }
 ```
 
-The `every` validator uses the factory pattern, accepting an array of validators and returning a function to validate every one of the validators. Because validators can accept validation context, those must be accepted and passed through. For consistency, all context properties should be included on the validation result too.
+The `every` validator uses the factory pattern, accepting an array of validators and returning a function to validate every one of the validators. Because validators can accept validation context, those must be accepted and passed through.
 
 Here is how the `every` validator can be used.
 
@@ -47,14 +46,14 @@ const result = validate(mustExistWithLength5, '1234', {
 });
 
 /*
-result = {
-    isValid: false,
-    value: '1234',
-    required: true,
-    minLength: 5,
-    message: 'Must have a length of at least 5'
-}
-*/
+    result = {
+        isValid: false,
+        value: '1234',
+        required: true,
+        minLength: 5,
+        length: 4
+    }
+ */
 ```
 
 ## Built-In Composition Validators

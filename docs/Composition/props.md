@@ -4,17 +4,80 @@ The `props` validator performs validation on every object property for which val
 
 ## Parameters
 
-The first parameter to the `props` validator factory is an object defining the properties to be validated on objects. These properties themselves have values that are validators. The second parameter is a `validatorContext` that is combined with the context supplied to every validator; this allows context common to all validators to be supplied once at the time of creation.
+The first parameter to the `props` validator factory is an object defining the properties to be validated on objects. Validator props can also be supplied either as an object or as a function that accepts context and returns a validator props object.
+
+``` jsx
+import {props} from 'strickland';
+
+const validateProps = props({
+    firstName: every([required(), length(2, 20)]),
+    lastName: every([required(), length(2, 20)]),
+    birthYear: range(1900, 2018)
+}, {
+    message: 'The person must be valid'
+});
+```
 
 ## Validation Context
 
 When validation context needs to be supplied to specific validators, a `props` context can be used with a shape matching how the context should be applied.
 
+``` jsx
+import {props} from 'strickland';
+
+const validateProps = props({
+    firstName: every([
+        required(),
+        length((context) => ({
+            minLength: context.minLength,
+            maxLength: context.maxLength
+        }))
+    ]),
+    lastName: every([
+        required(),
+        length((context) => ({
+            minLength: context.minLength,
+            maxLength: context.maxLength
+        }))
+    ]),
+    birthYear: range((context) => ({
+        min: context.min,
+        max: context.max
+    }))
+}, {
+    message: 'The person must be valid'
+});
+
+// Create a person
+const person = {
+    firstName: 'Stanford',
+    lastName: 'Strickland',
+    birthYear: 1925
+};
+
+const result = validate(validateProps, person, {
+    props: {
+        firstName: {
+            minLength: 5,
+            maxLength: 20
+        },
+        lastName: {
+            minLength: 8,
+            maxLength: 23
+        },
+        birthYear: {
+            min: 1900,
+            max: 2018
+        }
+    }
+});
+```
+
 ## Result Properties
 
 * `props`: An object with properties matching those validated, with the values of the properties representing the validation results produced during validation
 
-The `props` validator adds a `props` property to the validation result that provides the detailed validation results of every property that was validated in the object's validators. The validation result property is named `props` to match the name of the validator (this is a common pattern in Strickland).
+The `props` validator adds a `props` property to the validation result with validation results of every property that was validated in the object's validators. The validation result property is named `props` to match the name of the validator (this is a common pattern in Strickland).
 
 
 ``` jsx
@@ -36,68 +99,60 @@ const person = {
     birthYear: 1925
 };
 
-// Provide validation context to the validators
-const context = {
-    props: {
-        firstName: {maxLength: 25},
-        lastName: {maxLength: 30}
-    }
-};
-
-const result = validate(validatePersonProps, person, context);
+const result = validate(validatePersonProps, person);
 
 /*
-result = {
-    isValid: true,
-    value: person,
-    props: {
-        firstName: {
-            isValid: true,
-            value: 'Stanford',
-            required: true,
-            minLength: 2,
-            maxLength: 25,
-            every: [
-                {
-                    isValid: true,
-                    value: 'Stanford',
-                    required: true
-                },
-                {
-                    isValid: true,
-                    value: 'Stanford',
-                    minLength: 2,
-                    maxLength: 25
-                }
-            ]
-        },
-        lastName: {
-            isValid: true,
-            value: 'Strickland',
-            required: true,
-            minLength: 2,
-            maxLength: 30,
-            every: [
-                {
-                    isValid: true,
-                    value: 'Strickland',
-                    required: true
-                },
-                {
-                    isValid: true,
-                    value: 'Strickland',
-                    minLength: 2,
-                    maxLength: 30
-                }
-            ]
-        },
-        birthYear: {
-            isValid: true,
-            value: 1925,
-            min: 1900,
-            max: 2018
+    result = {
+        isValid: true,
+        value: person,
+        props: {
+            firstName: {
+                isValid: true,
+                value: 'Stanford',
+                required: true,
+                minLength: 2,
+                maxLength: 25,
+                every: [
+                    {
+                        isValid: true,
+                        value: 'Stanford',
+                        required: true
+                    },
+                    {
+                        isValid: true,
+                        value: 'Stanford',
+                        minLength: 2,
+                        maxLength: 25
+                    }
+                ]
+            },
+            lastName: {
+                isValid: true,
+                value: 'Strickland',
+                required: true,
+                minLength: 2,
+                maxLength: 30,
+                every: [
+                    {
+                        isValid: true,
+                        value: 'Strickland',
+                        required: true
+                    },
+                    {
+                        isValid: true,
+                        value: 'Strickland',
+                        minLength: 2,
+                        maxLength: 30
+                    }
+                ]
+            },
+            birthYear: {
+                isValid: true,
+                value: 1925,
+                min: 1900,
+                max: 2018
+            }
         }
     }
-}
-*/
+ */
 ```

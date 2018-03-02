@@ -1,15 +1,16 @@
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 export default function maxLength(...params) {
     return function validateMaxLength(value, context) {
         let isValid = true;
         let length = value ? value.length : 0;
 
-        const props = prepareProps(
-            {value, length},
+        const props = getValidatorProps(
             ['maxLength'],
             params,
-            context
+            value,
+            context,
+            {length}
         );
 
         if (typeof props.maxLength !== 'number') {

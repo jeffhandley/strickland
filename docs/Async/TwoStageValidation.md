@@ -60,29 +60,29 @@ const user = {
 const result = validate(validateUser, user);
 
 /*
-result = {
-    isValid: false,
-    props: {
-        name: {
-            isValid: true,
-            value: 'Marty McFly'
+    result = {
+        isValid: false,
+        props: {
+            name: {
+                isValid: true,
+                value: 'Marty McFly'
+            },
+            username: {
+                isValid: false,
+                value: 'marty',
+                required: true,
+                minLength: 2,
+                maxLength: 20,
+                message: 'Checking availability of "marty"...',
+                validateAsync: Promise.prototype
+            }
         },
-        username: {
-            isValid: false,
-            value: 'marty',
-            required: true,
-            minLength: 2,
-            maxLength: 20,
-            message: 'Checking availability of "marty"...',
-            validateAsync: Promise.prototype
-        }
-    },
-    validateAsync: Promise.prototype
-}
-*/
+        validateAsync: Promise.prototype
+    }
+ */
 
 result.validateAsync.then((asyncResult) => {
-    /*
+/*
     asyncResult = {
         isValid: false,
         props: {
@@ -100,6 +100,6 @@ result.validateAsync.then((asyncResult) => {
             }
         }
     }
-    */
+ */
 });
 ```

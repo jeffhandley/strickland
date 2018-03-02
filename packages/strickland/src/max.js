@@ -1,13 +1,13 @@
-import {isFalsyButNotZero, prepareProps} from './utils';
+import {isFalsyButNotZero, getValidatorProps} from './utils';
 
 export default function max(...params) {
     return function validateMax(value, context) {
         let isValid = true;
 
-        const props = prepareProps(
-            {value},
+        const props = getValidatorProps(
             ['max'],
             params,
+            value,
             context
         );
 

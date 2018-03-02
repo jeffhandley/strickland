@@ -1,15 +1,16 @@
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 let notDefined;
 
 export default function required(...params) {
     return function validateRequired(value, context) {
         let isValid = true;
 
-        const props = prepareProps(
-            {value, required: true},
+        const props = getValidatorProps(
             ['required'],
             params,
-            context
+            value,
+            context,
+            {required: true}
         );
 
         if (props.required) {

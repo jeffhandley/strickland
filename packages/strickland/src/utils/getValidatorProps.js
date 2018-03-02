@@ -1,18 +1,11 @@
-export function isFalsyButNotZero(value) {
-    if (value === 0) {
-        return false;
-    }
-
-    return !value;
-}
-
-export function prepareProps(defaultProps, propNames, params, context) {
+export default function getValidatorProps(propNames, params, value, context, defaultProps) {
     let props = {
-        ...defaultProps
+        ...defaultProps,
+        value
     };
 
     let validationContext = {
-        ...defaultProps,
+        ...props,
         ...context
     };
 

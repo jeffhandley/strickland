@@ -1,63 +1,44 @@
 # Built-In Validator: range
 
-The `range` validator conveniently combines the `min` and `max` validators to check that a value is within a range. Both the `min` and `max` values are inclusive.
+The `range` validator combines the `min` and `max` validators to check that a value is within a range. Both the `min` and `max` values are inclusive.
 
-## Parameters
+## Named Props
 
-* `min`: The minimum value to compare against
-* `max`: The maximum value to compare against
-
-## Result Properties
-
-* `min`: The minimum value that was compared against
-* `max`: The maximum value that was compared against
+* `min`: The minimum value compared against
+* `max`: The maximum value compared against
 
 ## Usage
 
-The following code illustrates all the ways the minimum and maximum values can be supplied.
+The `min` and `max` props can be supplied either as parameters or as named props. Functions can be used to resolve both `min` and `max` as well, and a function can also be used to resolve to an object with named props. There are many combinations that ultimately provide the `min` and `max` values, but the following code illustrates the common usages.
 
 ``` jsx
 import validate, {range} from 'strickland';
 
 // As the first two parameters to the factory
-const a = range(1, 2, {
-    message: 'Must be between 1 and 2'
-});
+const a = range(
+    10,
+    20,
+    {message: 'Must be between 10 and 20'}
+);
 
-// Within the context passed to the factory
+// As named props
 const b = range({
-    min: 1,
-    max: 2,
-    message: 'Must be between 1 and 2'
+    min: 10,
+    max: 20,
+    message: 'Must be between 10 and 20'
 });
 
-// As functions for the first two parameters to the factory
-const c = range(() => 3, () => 4, {
-    message: 'Must be between 3 and 4'
-});
+// As functions that resolve the min and max values
+const c = range(
+    (context) => 10,
+    (context) => 20,
+    {message: 'Must be between 10 and 20'}
+);
 
-// As functions on the context passed to the factory
-const d = range({
-    min: () => 4,
-    max: () => 4,
-    message: 'Must be between 3 and 4'
-});
-
-// As values on the validation context
-const e = validate(range(), 100, {
-    min: 5,
-    max: 6,
-    message: 'Must be between 5 and 6'
-});
-
-// As functions on the validation context
-const f = validate(range(), 100, {
-    min: () => 5,
-    max: () => 6,
-    message: 'Must be between 5 and 6'
-});
+// As a function that resolves to have the named props
+const d = range((context) => ({
+    min: context.min,
+    max: context.max,
+    message: `Must be between ${context.min} and ${context.max}`
+}));
 ```
-
-The `min` and `max` parameters are independent. You can supply either parameter using any of the available methods. For example, you could pass the `min` parameter as the first parameter to the factory but the `max` value as a function on the validation context.
-
-If a non-object value is supplied as the first parameter to the `range` validator factory, it is assumed to be the `min` parameter value.

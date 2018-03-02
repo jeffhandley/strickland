@@ -6,20 +6,18 @@ Validators often need to be configurable. Instead of always validating that a va
 import validate from 'strickland';
 
 function letter(letterParam) {
-    return function validateLetter(value) {
-        return (value === letterParam);
-    }
+    return (value) => (value === letterParam);
 }
 
 const validator = letter('B');
 const result = validate(validator, 'B');
 
 /*
-result = {
-    isValid: true,
-    value: 'B'
-}
-*/
+    result = {
+        isValid: true,
+        value: 'B'
+    }
+ */
 ```
 
 Validator factories simply take advantage of JavaScript's functional nature--in fact, Strickland has no awareness of them. Strickland simply requires that validators are functions that accept a value and return a validation result. You can produce those functions however you'd like, but the validator factory approach is a convenient way to extend the functionality of your validators.

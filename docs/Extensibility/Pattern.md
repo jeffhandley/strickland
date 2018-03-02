@@ -1,34 +1,37 @@
 # Extensibility Pattern
 
-Validator factories are often used to create validators that accept parameters. Validators can also receive validation context passed into Strickland's `validate` function. And validators can include arbitrary properties on validation results.
+Validator factories are often used to create validators that accept parameters. Validators can resolve parameters at the time of validation using validation context. And validators can include arbitrary properties on validation results.
 
 ## Arbitrary Factory and Validation Context Properties
 
-While some validators require specific parameters or context to function, it has become common for validators to accept and return *arbitrary* factory and validation context properties. This provides opportunities for applications to have very rich user experiences.
+While some validators require specific parameters to function, it has become common for validators to accept and return *arbitrary* props on validation results. This provides opportunities for applications to have very rich user experiences.
 
 Consider the following implementation of our `letter` validator.
 
 ``` jsx
-function letter(letterParam, validatorContext) {
-    return function validateLetter(value, validationContext) {
-        validationContext = {
-            letter: letterParam,
-            ...validatorContext,
-            ...validationContext
-        };
+function letter(letterParam, validatorProps) {
+    return function validateLetter(value, context) {
+        // Copy the param instead of overriding
+        // `letterParam` with the function result
+        let letterValue = letterParam;
+
+        if (typeof letterValue === 'function') {
+            letterValue = letterValue(context);
+        }
 
         return {
-            message: `Must match "${validationContext.letter}"`,
-            ...validationContext,
-            isValid: (value === validationContext.letter)
+            message: `Must match "${letterValue}"`,
+            ...validatorProps,
+            letter: letterValue,
+            isValid: (value === letterValue)
         };
     }
 }
 ```
 
-With this approach, the validator can define a default message but allow the message to be overridden either by the validator factory or in the validation context. Plus, arbitrary properties flow through the factory and the context out to the validation result. This approach can unlock many scenarios where applications need to enrich the validation results.
+With this approach, the validator can define a default message but allow the message to be overridden by validator props supplied to the factory. The resolved letter parameter is also echoed in the validation result. Plus, arbitrary properties flow through the factory to the validation result. This approach can unlock many scenarios where applications need to enrich the validation results.
 
-*Note that the `isValid` result property should be applied after spreading the validation context properties. This guards against an application inadvertently passing `isValid` through on the context and overriding the actual validation results.*
+*Note that the `isValid` result property should be applied after spreading the validator props. This guards against an application inadvertently passing `isValid` and overriding the actual validation results.*
 
 Let's see how an application could pass more context through to the `letter` validator to get rich validation results.
 
@@ -42,81 +45,15 @@ const termsAccepted = letter('Y', {
 
 const termsEntered = 'N';
 
-const result = validate(termsAccepted, termsEntered, {
-    formName: 'signupForm'
-});
+const result = validate(termsAccepted, termsEntered);
 
 /*
-result = {
-    letter: 'Y',
-    fieldName: 'acceptTerms',
-    formName: 'signupForm',
-    isValid: false,
-    value: 'N'
-}
-*/
-```
-
-## Validator Context Properties on Validation Results
-
-In the above pattern, the validator context and validation context were composed together at the time of validation and all context properties were included on the validation result.
-
-In our example, this has the by-product of including the `letter` property on the validation result. This by-product can be helpful for applications and sometimes just helpful during application development. In our example, seeing the `letter` property on the validation result would simplify debugging if validation results were not as expected.
-
-## Flexible Validator Factory Parameters
-
-Named parameters are often implemented in JavaScript using objects. We can use the validator context object to support this while still allowing a simple parameter when desired. This is done by simply checking the first parameter's type to see if it is an object.
-
-Let's use this flexibility with the `letter` validator.
-
-``` jsx
-import validate from 'strickland';
-
-function letter(letterParam, validatorContext) {
-    if (typeof letterParam === 'object') {
-        validatorContext = letterParam;
-    } else {
-        validatorContext = {
-            ...validatorContext,
-            letter: letterParam
-        };
+    result = {
+        fieldName: 'acceptTerms',
+        message: 'Enter the letter "Y" to accept the terms',
+        letter: 'Y',
+        isValid: false,
+        value: 'N'
     }
-
-    return function validateLetter(value, validationContext) {
-        validationContext = {
-            ...validatorContext,
-            ...validationContext
-        };
-
-        return {
-            message: `Must match "${validationContext.letter}"`,
-            ...validationContext,
-            isValid: (value === validationContext.letter)
-        };
-    }
-}
-
-const termsAccepted = letter({
-    letter: 'Y',
-    fieldName: 'acceptTerms',
-    message: 'Enter the letter "Y" to accept the terms'
-});
-
-const termsEntered = 'N';
-
-const result = validate(termsAccepted, termsEntered, {
-    formName: 'signupForm'
-});
-
-/*
-result = {
-    letter: 'Y',
-    fieldName: 'acceptTerms',
-    formName: 'signupForm',
-    isValid: false,
-    value: 'N'
-}
-*/
+ */
 ```
-
-Using the above patterns enables your application to use your validators in many different ways, producing rich results while not having to add any specific richness functionality into your validators. This keeps your validators decoupled from any application scenarios or user interface implementation details.

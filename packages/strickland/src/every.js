@@ -1,5 +1,5 @@
 import validate from './validate';
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: true,
@@ -8,10 +8,10 @@ const initialResult = {
 
 export default function every(validators, ...params) {
     return function validateEvery(value, context) {
-        const validatorProps = prepareProps(
-            {value},
+        const validatorProps = getValidatorProps(
             [],
             params,
+            value,
             context
         );
 

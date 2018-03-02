@@ -1,15 +1,16 @@
-import {prepareProps} from './utils';
+import {getValidatorProps} from './utils';
 
 export default function minLength(...params) {
     return function validateMinLength(value, context) {
         let isValid = true;
         let length = value ? value.length : 0;
 
-        const props = prepareProps(
-            {value, length},
+        const props = getValidatorProps(
             ['minLength'],
             params,
-            context
+            value,
+            context,
+            {length}
         );
 
         if (typeof props.minLength !== 'number') {
