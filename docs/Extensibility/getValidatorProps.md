@@ -7,7 +7,11 @@ const letterA = letter('A');
 const letterFromContext = letter((context) => context.letter);
 
 const letterAwithProps = letter('A', {message: 'Must be "A"'});
-const letterFromContextWithProps = letter((context) => context.letter, {fieldName: 'acceptTerms'});
+
+const letterFromContextWithProps = letter(
+    (context) => context.letter,
+    {fieldName: 'acceptTerms'}
+);
 
 const propsFromContext = letter((context) => ({
     letter: context.letter,
@@ -22,7 +26,12 @@ This flexibility is extreme but it can be convenient for applications to be able
 To provide consistently flexible validator factory param handling, Strickland provides a `getValidatorProps` utility function with the following signature:
 
 ``` jsx
-function getValidatorProps(namedProps, validatorParams, value, context, defaultPropValues) { }
+function getValidatorProps(
+    namedProps,
+    validatorParams,
+    value,
+    context,
+    defaultPropValues)
 ```
 
 Let's use `getValidatorProps` in our `letter` validator to support the flexibility illustrated above.
