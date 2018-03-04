@@ -2,14 +2,19 @@
 
 While validators can be executed asynchronously using `validateAsync`, there are scenarios where partial, synchronous results can be valuable in your applications. These scenarios can defer the asynchronous validation until the right time in the user's workflow, achieving two-stage sync/async validation.
 
-We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: **validators can return either a `Promise` or a result object with the `Promise` on the `validateAsync` property.**
+We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: to opt into async validation, validators can return any of the following:
 
-We also know that validators can include additional properties on their validation results; this is still true when one of those properties is a `validateAsync` `Promise`. Those additional properties will be available to the application synchronously, before resolving the asynchronous result.
+* A `Promise` that resolves to a validation result
+* A `function` that returns a validation result (including a `Promise` that resolves to a validation result)
+* A result object with a `Promise` on the `validateAsync` property
+* A result object with a `validateAsync` function
+
+We also know that validators can include additional properties on their validation results; this is still true when one of those properties is `validateAsync`. Those additional properties will be available to the application synchronously, before resolving the asynchronous result.
 
 Let's modify the `usernameIsAvailable` validator to make it return both a synchronous result and an asynchronous result.
 
 ``` jsx
-function usernameIsAvailable(username) {
+function usernameIsAvailableTwoStage(username) {
     if (!username) {
         // Do not check availability of an empty username
 
@@ -23,19 +28,21 @@ function usernameIsAvailable(username) {
     return {
         isValid: false,
         message: `Checking availability of "${username}"...`,
-        validateAsync: new Promise((resolve) => {
-            if (username === 'marty') {
-                resolve({
-                    isValid: false,
-                    message: `"${username}" is not available`
-                });
-            } else {
-                resolve({
-                    isValid: true,
-                    message: `"${username}" is available`
-                });
-            }
-        })
+        validateAsync() {
+            return new Promise((resolve) => {
+                if (username === 'marty') {
+                    resolve({
+                        isValid: false,
+                        message: `"${username}" is not available`
+                    });
+                } else {
+                    resolve({
+                        isValid: true,
+                        message: `"${username}" is available`
+                    });
+                }
+            });
+        }
     };
 }
 ```
@@ -49,7 +56,7 @@ import validate, {required, length} from 'strickland';
 
 const validateUser = {
     name: [required(), length(2, 20)],
-    username: [required(), length(2, 20), usernameIsAvailable]
+    username: [required(), length(2, 20), usernameIsAvailableTwoStage]
 };
 
 const user = {
@@ -74,14 +81,14 @@ const result = validate(validateUser, user);
                 minLength: 2,
                 maxLength: 20,
                 message: 'Checking availability of "marty"...',
-                validateAsync: Promise.prototype
+                validateAsync: [Function]
             }
         },
-        validateAsync: Promise.prototype
+        validateAsync: [Function]
     }
  */
 
-result.validateAsync.then((asyncResult) => {
+result.validateAsync().then((asyncResult) => {
 /*
     asyncResult = {
         isValid: false,

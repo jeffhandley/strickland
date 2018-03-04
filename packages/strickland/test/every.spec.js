@@ -137,14 +137,14 @@ describe('every', () => {
     });
 
     describe('given async validators', () => {
-        describe('returns a validateAsync result prop', () => {
-            it('that is a Promise', () => {
+        describe('returns a validateAsync function', () => {
+            it('that returns a Promise', () => {
                 const validate = every([
                     () => Promise.resolve(true)
                 ]);
 
                 const result = validate();
-                expect(result.validateAsync).toBeInstanceOf(Promise);
+                expect(result.validateAsync()).toBeInstanceOf(Promise);
             });
 
             it('with exclusively nested results', () => {
@@ -156,7 +156,7 @@ describe('every', () => {
 
                 const nestedResult = validateNested('ABC');
 
-                return expect(nestedResult.validateAsync).resolves.toMatchObject({
+                return expect(nestedResult.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     every: [
                         {
@@ -180,7 +180,7 @@ describe('every', () => {
 
                 const result = validate(null);
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     first: 'First',
                     second: 'Second',
                     third: 'Third',
@@ -199,7 +199,7 @@ describe('every', () => {
 
                 const result = validate();
 
-                return expect(result.validateAsync).resolves.not.toHaveProperty('fifth');
+                return expect(result.validateAsync()).resolves.not.toHaveProperty('fifth');
             });
 
             it('that resolve as true', () => {
@@ -208,7 +208,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: true});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
@@ -217,7 +217,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: true});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as false', () => {
@@ -226,7 +226,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: false});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: false});
             });
 
             it('that resolve as an invalid result object', () => {
@@ -235,7 +235,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate();
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: false});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: false});
             });
 
             it('recursively', () => {
@@ -265,7 +265,7 @@ describe('every', () => {
 
                 const result = validate();
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     recursively: 'Yes!',
                     inNestedValidators: 'Yep'
@@ -278,7 +278,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate('ABC');
-                return expect(result.validateAsync).resolves.toMatchObject({value: 'ABC'});
+                return expect(result.validateAsync()).resolves.toMatchObject({value: 'ABC'});
             });
 
             it('puts validator props on the resolved result', () => {
@@ -287,7 +287,7 @@ describe('every', () => {
                 ], {validatorProp: 'Validator message'})
 
                 const result = validate('ABC');
-                return expect(result.validateAsync).resolves.toMatchObject({validatorProp: 'Validator message'});
+                return expect(result.validateAsync()).resolves.toMatchObject({validatorProp: 'Validator message'});
             });
 
             it('does not put context props on the resolved result', () => {
@@ -296,7 +296,7 @@ describe('every', () => {
                 ]);
 
                 const result = validate('ABC', {message: 'Message'});
-                return expect(result.validateAsync).resolves.not.toHaveProperty('message');
+                return expect(result.validateAsync()).resolves.not.toHaveProperty('message');
             });
         });
 
@@ -321,7 +321,7 @@ describe('every', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            it('with sync results in place and Promise results where expected', () => {
+            it('with sync results in place and async results where expected', () => {
                 expect(result).toMatchObject({
                     first: 'First',
                     second: 'Second',
@@ -335,7 +335,7 @@ describe('every', () => {
                             fourth: 'Not yet resolved',
                             every: [
                                 {third: 'Third'},
-                                {validateAsync: Promise.prototype}
+                                {validateAsync: expect.any(Function)}
                             ]
                         }
                     ]
@@ -343,7 +343,7 @@ describe('every', () => {
             });
 
             it('with individual validator promises that will finish their results', () => {
-                return expect(result.every[2].every[1].validateAsync).resolves.toMatchObject({
+                return expect(result.every[2].every[1].validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     fourth: 'Fourth'
                 });

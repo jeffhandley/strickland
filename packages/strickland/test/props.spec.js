@@ -409,8 +409,8 @@ describe('props', () => {
     });
 
     describe('given async validators', () => {
-        describe('returns a validateAsync result prop', () => {
-            it('that is a Promise', () => {
+        describe('returns a validateAsync function', () => {
+            it('that returns a Promise', () => {
                 const validate = props({
                     firstProp: () => Promise.resolve(true)
                 });
@@ -420,7 +420,7 @@ describe('props', () => {
                 };
 
                 const result = validate(value);
-                expect(result.validateAsync).toBeInstanceOf(Promise);
+                expect(result.validateAsync()).toBeInstanceOf(Promise);
             });
 
             it('with exclusively nested results', () => {
@@ -438,7 +438,7 @@ describe('props', () => {
 
                 const nestedResult = validateNested(value);
 
-                return expect(nestedResult.validateAsync).resolves.toMatchObject({
+                return expect(nestedResult.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     props: {
                         firstProp: {
@@ -472,7 +472,7 @@ describe('props', () => {
 
                 const result = validate(value);
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     props: {
                         firstProp: {isValid: false, first: 'First'},
                         secondProp: {isValid: false, second: 'Second'},
@@ -493,7 +493,7 @@ describe('props', () => {
                 };
 
                 const result = validate(value);
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: true});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as a valid result object', () => {
@@ -506,7 +506,7 @@ describe('props', () => {
                 };
 
                 const result = validate(value);
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: true});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as false', () => {
@@ -519,7 +519,7 @@ describe('props', () => {
                 };
 
                 const result = validate(value);
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: false});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: false});
             });
 
             it('that resolve as an invalid result object', () => {
@@ -532,7 +532,7 @@ describe('props', () => {
                 };
 
                 const result = validate(value);
-                return expect(result.validateAsync).resolves.toMatchObject({isValid: false});
+                return expect(result.validateAsync()).resolves.toMatchObject({isValid: false});
             });
 
             it('recursively', () => {
@@ -572,7 +572,7 @@ describe('props', () => {
 
                 const result = validate(value);
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     props: {
                         firstProp: {recursively: 'Yes!'},
@@ -600,7 +600,7 @@ describe('props', () => {
 
                 const result = validate(value);
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     value: {
                         firstProp: 'ABC'
                     }
@@ -618,7 +618,7 @@ describe('props', () => {
 
                 const result = validate(value);
 
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     validatorProp: 'Validator message'
                 });
             });
@@ -634,7 +634,7 @@ describe('props', () => {
 
                 const result = validate(value, {message: 'Message'});
 
-                return expect(result.validateAsync).resolves.not.toHaveProperty('message');
+                return expect(result.validateAsync()).resolves.not.toHaveProperty('message');
             });
         });
 
@@ -671,11 +671,11 @@ describe('props', () => {
                 expect(result).toMatchObject({
                     props: {
                         firstProp: {first: 'First'},
-                        secondProp: {validateAsync: Promise.prototype},
+                        secondProp: {validateAsync: expect.any(Function)},
                         nestedProp: {
                             props: {
                                 thirdProp: {third: 'Third'},
-                                fourthProp: {validateAsync: Promise.prototype},
+                                fourthProp: {validateAsync: expect.any(Function)},
                                 fifthProp: {fifth: 'Fifth'}
                             }
                         },
@@ -685,7 +685,7 @@ describe('props', () => {
             });
 
             it('with individual validator promises that will finish their results', () => {
-                return expect(result.props.nestedProp.props.fourthProp.validateAsync).resolves.toMatchObject({
+                return expect(result.props.nestedProp.props.fourthProp.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     fourth: 'Fourth'
                 });

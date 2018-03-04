@@ -9,7 +9,6 @@ const initialResult = {
 export default function each(validators, ...params) {
     return function validateEach(value, context) {
         let result = initialResult;
-        let hasPromises = false;
 
         const validatorProps = getValidatorProps(
             [],
@@ -25,28 +24,31 @@ export default function each(validators, ...params) {
             };
         }
 
+        let hasAsyncResults = false;
         validators.forEach((validator) => {
             const nextResult = validate(validator, value, context);
-            hasPromises = hasPromises || nextResult.validateAsync instanceof Promise;
+            hasAsyncResults = hasAsyncResults || nextResult.validateAsync;
 
             result = applyNextResult(result, nextResult);
         });
 
-        if (hasPromises) {
-            const promises = result.each.map((eachResult) =>
-                eachResult.validateAsync instanceof Promise ?
-                    eachResult.validateAsync :
-                    Promise.resolve(eachResult)
-            );
+        if (hasAsyncResults) {
+            result.validateAsync = function resolveAsync() {
+                const promises = result.each.map(
+                    (eachResult) => Promise.resolve(
+                        eachResult.validateAsync ? eachResult.validateAsync() : eachResult
+                    )
+                );
 
-            result.validateAsync = Promise.all(promises).then((results) => {
-                const resolvedResult = results.reduce(applyNextResult, initialResult);
+                return Promise.all(promises).then((results) => {
+                    const resolvedResult = results.reduce(applyNextResult, initialResult);
 
-                return {
-                    ...validatorProps,
-                    ...resolvedResult
-                };
-            });
+                    return {
+                        ...validatorProps,
+                        ...resolvedResult
+                    };
+                });
+            }
         }
 
         return {

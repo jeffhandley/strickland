@@ -5,7 +5,7 @@ function usernameIsAvailable(username) {
     return {
         isValid: false,
         message: `Checking availability of "${username}"...`,
-        validateAsync: new Promise((resolve) => {
+        validateAsync: () => new Promise((resolve) => {
             setTimeout(() => {
                 const isValid = (username !== 'marty')
                 resolve({

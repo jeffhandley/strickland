@@ -483,7 +483,7 @@ describe('form', () => {
                         lastName: {isValid: true},
                         username: {
                             isValid: false,
-                            validateAsync: Promise.resolve({
+                            validateAsync: () => Promise.resolve({
                                 isValid: true,
                                 usernameAvailable: true
                             })
@@ -503,12 +503,12 @@ describe('form', () => {
                 expect(result.form.isComplete).toBe(false);
             });
 
-            it('the result includes a validateAsync promise', () => {
-                expect(result.validateAsync).toBeInstanceOf(Promise);
+            it('the result includes a validateAsync function that returns a Promise', () => {
+                expect(result.validateAsync()).toBeInstanceOf(Promise);
             });
 
             it('validateAsync resolves to the final result', () => {
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     form: {
                         isComplete: true,
@@ -571,11 +571,11 @@ describe('form', () => {
             });
 
             it('the result includes a validateAsync promise', () => {
-                expect(result.validateAsync).toBeInstanceOf(Promise);
+                expect(result.validateAsync()).toBeInstanceOf(Promise);
             });
 
             it('validateAsync resolves to the final result', () => {
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     form: {
                         isComplete: true,
@@ -621,7 +621,10 @@ describe('form', () => {
                     validationResults: {
                         firstName: {isValid: true},
                         lastName: {isValid: true},
-                        password: {isValid: false, validateAsync: Promise.resolve({isValid: true, passwordComplex: true})},
+                        password: {
+                            isValid: false,
+                            validateAsync: () => Promise.resolve({isValid: true, passwordComplex: true})
+                        },
                         comparePassword: {isValid: true}
                     }
                 }
@@ -630,7 +633,7 @@ describe('form', () => {
             const result = validate(formValues, validationContext);
 
             it('validateAsync resolves to the final result', () => {
-                return expect(result.validateAsync).resolves.toMatchObject({
+                return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     form: {
                         isComplete: true,

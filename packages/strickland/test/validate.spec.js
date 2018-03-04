@@ -18,8 +18,16 @@ describe('validate', () => {
             expect(() => validate('string')).toThrow();
         });
 
-        it('with a result containing a validateAsync prop that is not a Promise', () => {
+        it('with a result containing a validateAsync prop that is true', () => {
+            expect(() => validate(() => ({validateAsync: true}))).toThrow();
+        });
+
+        it('with a result containing a validateAsync prop that is false', () => {
             expect(() => validate(() => ({validateAsync: false}))).toThrow();
+        });
+
+        it('with a result containing a validateAsync prop that is an object', () => {
+            expect(() => validate(() => ({validateAsync: {isValid: false}}))).toThrow();
         });
     });
 
@@ -429,27 +437,210 @@ describe('validate', () => {
     });
 
     describe('given async validators', () => {
-        it('returns a result with a validateAsync Promise if the validator returns a Promise', () => {
-            const result = validate(() => Promise.resolve());
-            expect(result.validateAsync).toBeInstanceOf(Promise);
+        describe('when the result is a Promise', () => {
+            describe('resolving to true', () => {
+                const result = validate(() => Promise.resolve(true));
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is a valid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: true
+                    });
+                });
+            });
+
+            describe('resolving to false', () => {
+                const result = validate(() => Promise.resolve(false));
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is an invalid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: false
+                    });
+                });
+            });
+
+            describe('resolving to a result object', () => {
+                const result = validate(() => Promise.resolve({isValid: true, message: 'async validation'}));
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is an invalid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: true,
+                        message: 'async validation'
+                    });
+                });
+            });
         });
 
-        it('returns a result with a validateAsync Promise if the validator returns a validateAsync result prop', () => {
-            const result = validate(() => ({validateAsync: Promise.resolve()}));
-            expect(result.validateAsync).toBeInstanceOf(Promise);
+        describe('when the result is a function', () => {
+            describe('returning true', () => {
+                const result = validate(() => () => true);
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is a valid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: true
+                    });
+                });
+            });
+
+            describe('returning false', () => {
+                const result = validate(() => () => false);
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is an invalid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: false
+                    });
+                });
+            });
+
+            describe('returning a result object', () => {
+                const result = validate(() => () => ({isValid: true, message: 'async validation'}));
+
+                it('returns a result object with a validateAsync function', () => {
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validateAsync: expect.any(Function)
+                    });
+                });
+
+                it('the validateAsync function returns a Promise', () => {
+                    expect(result.validateAsync()).toBeInstanceOf(Promise);
+                });
+
+                it('the async result is an invalid result', () => {
+                    return expect(result.validateAsync()).resolves.toMatchObject({
+                        isValid: true,
+                        message: 'async validation'
+                    });
+                });
+            });
+
+            describe('returning a Promise', () => {
+                describe('resolving to true', () => {
+                    const result = validate(() => () => Promise.resolve(true));
+
+                    it('returns a result object with a validateAsync function', () => {
+                        expect(result).toMatchObject({
+                            isValid: false,
+                            validateAsync: expect.any(Function)
+                        });
+                    });
+
+                    it('the validateAsync function returns a Promise', () => {
+                        expect(result.validateAsync()).toBeInstanceOf(Promise);
+                    });
+
+                    it('the async result is a valid result', () => {
+                        return expect(result.validateAsync()).resolves.toMatchObject({
+                            isValid: true
+                        });
+                    });
+                });
+
+                describe('resolving to false', () => {
+                    const result = validate(() => () => Promise.resolve(false));
+
+                    it('returns a result object with a validateAsync function', () => {
+                        expect(result).toMatchObject({
+                            isValid: false,
+                            validateAsync: expect.any(Function)
+                        });
+                    });
+
+                    it('the validateAsync function returns a Promise', () => {
+                        expect(result.validateAsync()).toBeInstanceOf(Promise);
+                    });
+
+                    it('the async result is an invalid result', () => {
+                        return expect(result.validateAsync()).resolves.toMatchObject({
+                            isValid: false
+                        });
+                    });
+                });
+
+                describe('resolving to a result object', () => {
+                    const result = validate(() => () => Promise.resolve({isValid: true, message: 'async validation'}));
+
+                    it('returns a result object with a validateAsync function', () => {
+                        expect(result).toMatchObject({
+                            isValid: false,
+                            validateAsync: expect.any(Function)
+                        });
+                    });
+
+                    it('the validateAsync function returns a Promise', () => {
+                        expect(result.validateAsync()).toBeInstanceOf(Promise);
+                    });
+
+                    it('the async result is an invalid result', () => {
+                        return expect(result.validateAsync()).resolves.toMatchObject({
+                            isValid: true,
+                            message: 'async validation'
+                        });
+                    });
+                });
+            });
         });
 
-        it('validateAsync returns a Promise if the validator returns a Promise', () => {
-            const result = validateAsync(() => Promise.resolve());
-            expect(result).toBeInstanceOf(Promise);
-        });
+        describe('validateAsync resolves results automatically', () => {
+            it('that are not async', () => {
+                const result = validateAsync(() => true);
+                return expect(result).resolves.toMatchObject({isValid: true});
+            });
 
-        it('validateAsync returns a Promise even if the validator did not', () => {
-            const result = validateAsync(() => true);
-            expect(result).toBeInstanceOf(Promise);
-        });
-
-        describe('resolves results', () => {
             it('that resolve as true', () => {
                 const result = validateAsync(() => Promise.resolve(true));
                 return expect(result).resolves.toMatchObject({isValid: true});
@@ -496,7 +687,7 @@ describe('validate', () => {
             });
         });
 
-        describe('can return a partial result object', () => {
+        describe('validate can return a partial result object', () => {
             const validator = () => Promise.resolve({
                 isValid: true,
                 message: 'Resolved the promise'
@@ -512,52 +703,28 @@ describe('validate', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            describe('with a validateAsync result prop', () => {
-                it('that resolves the result promise', () => {
-                    return expect(result.validateAsync).resolves.toMatchObject({
+            it('where the partial result can include other props', () => {
+                function partialWithProps() {
+                    return {
+                        validateAsync: Promise.resolve(true),
+                        message: 'Validating...'
+                    };
+                }
+
+                const partialResult = validate(partialWithProps);
+                expect(partialResult.message).toBe('Validating...');
+            });
+
+            it('where the partial result can be valid', () => {
+                function partialIsValid() {
+                    return {
                         isValid: true,
-                        message: 'Resolved the promise'
-                    });
-                });
+                        validateAsync: Promise.resolve(false)
+                    };
+                }
 
-                it('where the partial result can include other props', () => {
-                    function partialWithProps() {
-                        return {
-                            validateAsync: Promise.resolve(true),
-                            message: 'Validating...'
-                        };
-                    }
-
-                    const partialResult = validate(partialWithProps);
-                    expect(partialResult.message).toBe('Validating...');
-                });
-
-                it('where the partial result can be valid', () => {
-                    function partialIsValid() {
-                        return {
-                            isValid: true,
-                            validateAsync: Promise.resolve(false)
-                        };
-                    }
-
-                    const partialResult = validate(partialIsValid);
-                    expect(partialResult.isValid).toBe(true);
-                });
-
-                it('where a valid partial result can resolve to invalid', () => {
-                    function partialIsValid() {
-                        return {
-                            isValid: true,
-                            validateAsync: Promise.resolve(false)
-                        };
-                    }
-
-                    const partialResult = validate(partialIsValid);
-
-                    return partialResult.validateAsync.then((finalResult) => {
-                        expect(finalResult.isValid).toBe(false);
-                    });
-                });
+                const partialResult = validate(partialIsValid);
+                expect(partialResult.isValid).toBe(true);
             });
         });
     });
