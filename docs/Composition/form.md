@@ -1,4 +1,4 @@
-# Validating Forms
+# Form Validation
 
 Let's face it: we're trying to validate forms in the user interface. Yes, Strickland is decoupled from the UI and it _can_ be used in other scenarios (like APIs), but form validation is the primary use case.
 
@@ -166,6 +166,9 @@ The `form.fields` context prop indicates which field(s) to validate.
 * If `form.fields` is a string, it is treated as a single field
 * If `form.fields` is an array, all items are treated as field names
 * If `form.fields` is not supplied, all fields are validated
+* If `form.fields` is an _empty_ array, no fields are validated
+
+In all cases, the rest of the form validation results will be refreshed, including the `validationErrors` array and the possible `validateAsync` function that captures remaining async validation.
 
 ### Previous Validation Results: `form.validationResults`
 
