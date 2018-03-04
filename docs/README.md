@@ -33,7 +33,7 @@
     * [form](/docs/Composition/Forms.md)
 * [Async Validation](/docs/Async/README.md)
     * [Resolving Async Validation](/docs/Async/ResolvingAsyncValidation.md)
-    * [Deferring Async Validation](/docs/Async/DeferringAsyncValidation.md)
+    * [Deferred Async Validation](/docs/Async/DeferredAsyncValidation.md)
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
 * [Wrap-Up](/docs/WrapUp.md)
