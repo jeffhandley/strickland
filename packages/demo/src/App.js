@@ -161,7 +161,7 @@ class App extends Component {
                     });
 
                     // Fire off async validation
-                    fieldResult.validateAsync.then(this.handleAsyncFieldValidation.bind(this, fieldName));
+                    fieldResult.validateAsync().then(this.handleAsyncFieldValidation.bind(this, fieldName));
                 }
             }, 1000);
         }
@@ -217,7 +217,7 @@ class App extends Component {
 
         // If the field needs async validation, fire it off
         if (fieldResult.validateAsync) {
-            fieldResult.validateAsync.then(this.handleAsyncFieldValidation.bind(this, fieldName));
+            fieldResult.validateAsync().then(this.handleAsyncFieldValidation.bind(this, fieldName));
         }
     }
 

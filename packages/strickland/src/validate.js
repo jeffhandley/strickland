@@ -25,38 +25,47 @@ export default function validate(validator, value, context) {
 export function validateAsync(...validateParams) {
     const result = validate(...validateParams);
 
-    if (result.validateAsync instanceof Promise) {
-        return result.validateAsync;
+    if (typeof result.validateAsync === 'function') {
+        return result.validateAsync();
     }
 
     return Promise.resolve(result);
 }
 
 function prepareResult(value, result) {
-    if (!result) {
-        result = {isValid: false};
+    let preparedResult = result;
 
-    } else if (typeof result === 'boolean') {
-        result = {isValid: result};
+    if (!preparedResult) {
+        preparedResult = {isValid: false};
 
-    } else if (result instanceof Promise) {
-        result = {
+    } else if (typeof preparedResult === 'boolean') {
+        preparedResult = {isValid: preparedResult};
+
+    } else if (typeof preparedResult === 'function' || preparedResult instanceof Promise) {
+        preparedResult = {
             isValid: false,
-            validateAsync: result
+            validateAsync: preparedResult
         };
     }
 
-    if (typeof result.validateAsync !== 'undefined') {
-        if (result.validateAsync instanceof Promise) {
-            result.validateAsync = result.validateAsync.then(prepareResult.bind(null, value));
-        } else {
-            throw 'Strickland: The validator returned a `validateAsync` prop that was not a Promise';
-        }
+    if (preparedResult.validateAsync instanceof Promise) {
+        const promise = preparedResult.validateAsync;
+        preparedResult.validateAsync = () => promise;
+    }
+
+    if (typeof preparedResult.validateAsync === 'function') {
+        const resultValidateAsync = preparedResult.validateAsync;
+
+        preparedResult.validateAsync = () => Promise.resolve(resultValidateAsync()).then(
+            prepareResult.bind(null, value)
+        );
+    } else if (typeof preparedResult.validateAsync !== 'undefined') {
+        throw 'Strickland: validateAsync must be either a Promise or a function';
     }
 
     return {
-        ...result,
-        isValid: !!result.isValid,
+        ...preparedResult,
+        isValid: !!preparedResult.isValid,
         value
     };
 }

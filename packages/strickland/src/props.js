@@ -22,7 +22,7 @@ export default function props(validators, ...params) {
             };
         }
 
-        let hasPromises = false;
+        let hasAsyncResults = false;
         let result = initialResult;
 
         if (value && validators && typeof validators === 'object') {
@@ -33,7 +33,7 @@ export default function props(validators, ...params) {
                 };
 
                 const validatorResult = validate(validators[propName], value[propName], childContext);
-                hasPromises = hasPromises || validatorResult.validateAsync instanceof Promise;
+                hasAsyncResults = hasAsyncResults || validatorResult.validateAsync;
 
                 return {
                     isValid: validatorResult.isValid,
@@ -45,34 +45,30 @@ export default function props(validators, ...params) {
 
             const propNames = Object.keys(result.props);
 
-            if (hasPromises) {
-                const promiseResults = propNames.map((propName) =>
-                    result.props[propName].validateAsync instanceof Promise ?
-                        result.props[propName].validateAsync.then((resolvedResult) => (
-                            {
-                                isValid: resolvedResult.isValid,
-                                props: {
-                                    [propName]: resolvedResult
-                                }
-                            }
-                        )) :
-                        {
-                            isValid: result.props[propName].isValid,
+            if (hasAsyncResults) {
+                result.validateAsync = function resolveAsync() {
+                    const promises = propNames.map(
+                        (propName) => Promise.resolve(
+                            result.props[propName].validateAsync ?
+                                result.props[propName].validateAsync() :
+                                result.props[propName]
+                        ).then((eachResult) => ({
+                            isValid: eachResult.isValid,
                             props: {
-                                [propName]: result.props[propName]
+                                [propName]: eachResult
                             }
-                        }
-                );
+                        }))
+                    );
 
-                result.validateAsync = Promise.all(promiseResults).then((resolvedResults) => {
-                    const finalResult = resolvedResults.reduce(applyNextResult, initialResult);
+                    return Promise.all(promises).then((results) => {
+                        const resolvedResult = results.reduce(applyNextResult, initialResult);
 
-                    return {
-                        ...validatorProps,
-                        ...finalResult
-                    };
-                });
-
+                        return {
+                            ...validatorProps,
+                            ...resolvedResult
+                        };
+                    });
+                }
             }
         }
 

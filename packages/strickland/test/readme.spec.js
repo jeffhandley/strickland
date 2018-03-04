@@ -1435,7 +1435,7 @@ describe('readme', () => {
 
                 const result = validate(usernameIsAvailable, 'marty');
 
-                return result.validateAsync.then((asyncResult) => {
+                result.validateAsync().then((asyncResult) => {
                     expect(asyncResult).toMatchObject({
                         isValid: false,
                         value: 'marty',
@@ -1450,8 +1450,8 @@ describe('readme', () => {
                 const result = validate(usernameIsAvailable, 'marty');
                 const handleValidationResult = jest.fn();
 
-                if (result.validateAsync instanceof Promise) {
-                    return result.validateAsync.then((asyncResult) => handleValidationResult(asyncResult)).then(() => {
+                if (result.validateAsync) {
+                    return result.validateAsync().then((asyncResult) => handleValidationResult(asyncResult)).then(() => {
                         expect(handleValidationResult).toHaveBeenCalledWith(expect.objectContaining({
                             isValid: false,
                             value: 'marty',
@@ -1462,6 +1462,35 @@ describe('readme', () => {
                     handleValidationResult(result);
                     expect(handleValidationResult).not.toHaveBeenCalled(); // test should not reach here
                 }
+            });
+
+            it('deferring async validation', () => {
+                function usernameIsAvailableDeferred(username) {
+                    return function validateUsernameAsync() {
+                        return new Promise((resolve) => {
+                            if (username === 'marty') {
+                                // Resolve to an invalid validation result object
+                                resolve({
+                                    isValid: false,
+                                    message: `"${username}" is not available`
+                                });
+                            }
+
+                            // Resolve to a boolean
+                            resolve(true);
+                        });
+                    }
+                }
+
+                const result = validate(usernameIsAvailableDeferred, 'marty');
+
+                result.validateAsync().then((asyncResult) => {
+                    expect(asyncResult).toMatchObject({
+                        isValid: false,
+                        value: 'marty',
+                        message: '"marty" is not available'
+                    });
+                });
             });
 
             it('validateAsync', () => {
@@ -1577,19 +1606,21 @@ describe('readme', () => {
                 return {
                     isValid: false,
                     message: `Checking availability of "${username}"...`,
-                    validateAsync: new Promise((resolve) => {
-                        if (username === 'marty') {
-                            resolve({
-                                isValid: false,
-                                message: `"${username}" is not available`
-                            });
-                        } else {
-                            resolve({
-                                isValid: true,
-                                message: `"${username}" is available`
-                            });
-                        }
-                    })
+                    validateAsync() {
+                        return new Promise((resolve) => {
+                            if (username === 'marty') {
+                                resolve({
+                                    isValid: false,
+                                    message: `"${username}" is not available`
+                                });
+                            } else {
+                                resolve({
+                                    isValid: true,
+                                    message: `"${username}" is available`
+                                });
+                            }
+                        });
+                    }
                 };
             }
 
@@ -1620,17 +1651,17 @@ describe('readme', () => {
                             minLength: 2,
                             maxLength: 20,
                             message: 'Checking availability of "marty"...',
-                            validateAsync: expect.any(Promise)
+                            validateAsync: expect.any(Function)
                         }
                     },
-                    validateAsync: expect.any(Promise)
+                    validateAsync: expect.any(Function)
                 });
             });
 
             it('second stage', () => {
                 expect.assertions(1);
 
-                return result.validateAsync.then((asyncResult) => {
+                return result.validateAsync().then((asyncResult) => {
                     expect(asyncResult).toMatchObject({
                         isValid: false,
                         props: {

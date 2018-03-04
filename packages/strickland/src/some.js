@@ -31,28 +31,30 @@ export default function some(validators, ...params) {
 
                     currentResult = applyNextResult(currentResult, nextResult);
 
-                    if (nextResult.validateAsync instanceof Promise) {
-                        const previousPromise = previousResult.validateAsync || Promise.resolve(previousResult);
+                    if (nextResult.validateAsync) {
+                        const previousAsync = previousResult.validateAsync || (() => Promise.resolve(previousResult));
 
-                        currentResult.validateAsync = previousPromise.then((asyncResult) =>
-                            nextResult.validateAsync.then((resolvedResult) => {
-                                let finalResult = applyNextResult(asyncResult, resolvedResult);
+                        currentResult.validateAsync = function resolveAsync() {
+                            return previousAsync().then((asyncResult) =>
+                                nextResult.validateAsync().then((resolvedResult) => {
+                                    let finalResult = applyNextResult(asyncResult, resolvedResult);
 
-                                if (!finalResult.isValid) {
-                                    const remainingValidators = validatorsToExecute.slice(index + 1);
-                                    finalResult = executeValidators(finalResult, remainingValidators);
+                                    if (!finalResult.isValid) {
+                                        const remainingValidators = validatorsToExecute.slice(index + 1);
+                                        finalResult = executeValidators(finalResult, remainingValidators);
 
-                                    if (finalResult.validateAsync) {
-                                        return finalResult.validateAsync;
+                                        if (finalResult.validateAsync) {
+                                            return finalResult.validateAsync();
+                                        }
                                     }
-                                }
 
-                                return {
-                                    ...validatorProps,
-                                    ...finalResult
-                                };
-                            })
-                        );
+                                    return {
+                                        ...validatorProps,
+                                        ...finalResult
+                                    };
+                                })
+                            );
+                        }
 
                         // Break out of the loop to prevent subsequent validation from occurring
                         return true;
