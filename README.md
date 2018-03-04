@@ -106,7 +106,7 @@ const result = validate(letterA, 'B');
         * [Advanced Object Validation](http://strickland.io/docs/Composition/AdvancedObjectValidationhtmld)
         * [Nested Objects](http://strickland.io/docs/Composition/NestedObjects.html)
     * [Array and Object Conventions](http://strickland.io/docs/Composition/Conventions.html)
-    * [form](http://strickland.io/docs/Composition/Forms.html)
+    * [Form Validation](http://strickland.io/docs/Composition/form.html)
 * [Async Validation](http://strickland.io/docs/Async/index.html)
     * [Resolving Async Validation](http://strickland.io/docs/Async/ResolvingAsyncValidation.html)
     * [Deferred Async Validation](http://strickland.io/docs/Async/DeferredAsyncValidation.html)
