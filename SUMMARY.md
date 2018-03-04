@@ -32,6 +32,7 @@
     * [Array and Object Conventions](/docs/Composition/Conventions.md)
     * [form](/docs/Composition/Forms.md)
 * [Async Validation](/docs/Async/README.md)
+    * [Deferring](/docs/Async/Deferring.md)
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
 * [Wrap-Up](/docs/WrapUp.md)
