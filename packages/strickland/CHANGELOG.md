@@ -3,8 +3,8 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="2.0.0-beta.1"></a>
-# [2.0.0-beta.1](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.1) (2018-02-28)
+<a name="2.0.0-beta.2"></a>
+# [2.0.0-beta.2](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.2) (2018-03-04)
 
 
 ### Bug Fixes
@@ -31,6 +31,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### BREAKING CHANGES
 
 * Validator Context and Validation Context are being removed. A new design will introduce Validator Props and Validation Context, where Validation Context will NOT be spread onto results.
+* The validateAsync result prop is now a function instead of a Promise. The function will return a Promise, allowing the Promise to be deferred until validateAsync is called.  Validators can now return either a Promise or a function to opt into async validation, or put either a Promise or a function on the result as the validateAsync result prop.  Results will always be normalized to have validateAsync be a function that returns a Promise.
 
 
 

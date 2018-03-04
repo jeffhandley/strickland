@@ -1,13 +1,13 @@
 {
   "name": "demo",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.0.17",
-    "strickland": "^1.1.0"
+    "strickland": "^2.0.0-beta.2"
   },
   "scripts": {
     "start": "react-scripts start",

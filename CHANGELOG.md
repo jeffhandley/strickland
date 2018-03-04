@@ -3,8 +3,8 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="2.0.0-beta.1"></a>
-# [2.0.0-beta.1](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.1) (2018-02-28)
+<a name="2.0.0-beta.2"></a>
+# [2.0.0-beta.2](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.2) (2018-03-04)
 
 
 ### Bug Fixes
@@ -20,17 +20,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * add a form validator that can be used for incremental form validation ([c404d50](https://github.com/jeffhandley/strickland/commit/c404d50))
-* add a new prepareProps utility and use it in compare to support props and context ([0562b55](https://github.com/jeffhandley/strickland/commit/0562b55))
-* support props and context on compare, max, maxLength, min, minLength, and required ([0ebe900](https://github.com/jeffhandley/strickland/commit/0ebe900))
-* support props and context on form ([fb3bfa4](https://github.com/jeffhandley/strickland/commit/fb3bfa4))
-* support props and context on length and range ([3fbf417](https://github.com/jeffhandley/strickland/commit/3fbf417))
-* support validator props and context on each, every, some, and props ([2e18237](https://github.com/jeffhandley/strickland/commit/2e18237))
-* updating demo to use form validation ([2ef675d](https://github.com/jeffhandley/strickland/commit/2ef675d))
+* add a new prepareProps utility and use it in compare to support props and context ([b8e1c00](https://github.com/jeffhandley/strickland/commit/b8e1c00))
+* support deferred async validation ([f48694a](https://github.com/jeffhandley/strickland/commit/f48694a))
+* support props and context on compare, max, maxLength, min, minLength, and required ([1c705cd](https://github.com/jeffhandley/strickland/commit/1c705cd))
+* support props and context on form ([e9fa448](https://github.com/jeffhandley/strickland/commit/e9fa448))
+* support props and context on length and range ([6292b02](https://github.com/jeffhandley/strickland/commit/6292b02))
+* support validator props and context on each, every, some, and props ([ce80a29](https://github.com/jeffhandley/strickland/commit/ce80a29))
+* updating demo to use form validation ([7393155](https://github.com/jeffhandley/strickland/commit/7393155))
 
 
 ### BREAKING CHANGES
 
 * Validator Context and Validation Context are being removed. A new design will introduce Validator Props and Validation Context, where Validation Context will NOT be spread onto results.
+* The validateAsync result prop is now a function instead of a Promise. The function will return a Promise, allowing the Promise to be deferred until validateAsync is called.  Validators can now return either a Promise or a function to opt into async validation, or put either a Promise or a function on the result as the validateAsync result prop.  Results will always be normalized to have validateAsync be a function that returns a Promise.
 
 
 
