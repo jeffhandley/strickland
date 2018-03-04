@@ -109,7 +109,7 @@ const result = validate(letterA, 'B');
     * [Form Validation](http://strickland.io/docs/Composition/Forms.html)
 * [Async Validation](http://strickland.io/docs/Async/index.html)
     * [Resolving Async Validation](http://strickland.io/docs/Async/ResolvingAsyncValidation.html)
-    * [Deferring Async Validation](http://strickland.io/docs/Async/DeferringAsyncValidation.html)
+    * [Deferred Async Validation](http://strickland.io/docs/Async/DeferredAsyncValidation.html)
     * [Async Validator Arrays and Objects](http://strickland.io/docs/Async/ValidatorArraysAndObjects.html)
     * [Two-Stage Sync/Async Validation](http://strickland.io/docs/Async/TwoStageValidation.html)
 * [Wrap-Up](http://strickland.io/docs/WrapUp.html)
