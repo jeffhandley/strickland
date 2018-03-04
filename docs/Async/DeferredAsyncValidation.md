@@ -1,4 +1,4 @@
-# Deferring Async Validation
+# Deferred Async Validation
 
 When a validator returns a `Promise`, the code within the `Promise` will be evaluated regardless of the application invoking the `validateAsync` function. This is desired in some cases to begin resolving async validation eagerly so that async results are ready when `validateAsync()` is invoked. In other cases though, `validateAsync` will not be called until later in the workflow and the async result will not be consumed.
 
