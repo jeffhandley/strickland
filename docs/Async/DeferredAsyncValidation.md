@@ -39,5 +39,5 @@ result.validateAsync().then((asyncResult) => {
 
 Aside from the validator returning a `function`, the rest of the workflow is exactly the same, and this was completely transparent to the application.
 
-If the execution of the `Promise` is expensive, it is recommended to wrap the `Promise` in a function to defer the execution.
+If the execution of the `Promise` is expensive, it is recommended to wrap the `Promise` in a function to defer its execution.
 
