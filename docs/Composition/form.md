@@ -1,4 +1,4 @@
-# Form Validation
+# Built-In Validator: form
 
 Let's face it: we're trying to validate forms in the user interface. Yes, Strickland is decoupled from the UI and it _can_ be used in other scenarios (like APIs), but form validation is the primary use case.
 
