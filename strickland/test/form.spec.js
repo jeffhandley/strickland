@@ -455,14 +455,14 @@ describe('form', () => {
             });
         });
 
-        describe('when async validation remains', () => {
-            const formValidators = {
+        describe('when async validation remains from existing results', () => {
+            const validate = form({
                 firstName: required(),
                 lastName: required(),
                 username: required(),
                 password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => values.password)]
-            };
+            });
 
             const formValues = {
                 firstName: 'Marty',
@@ -471,8 +471,6 @@ describe('form', () => {
                 password: 'einstein',
                 comparePassword: 'einstein'
             };
-
-            const validate = form(formValidators);
 
             const validationContext = {
                 form: {
@@ -505,6 +503,12 @@ describe('form', () => {
 
             it('the result includes a validateAsync function that returns a Promise', () => {
                 expect(result.validateAsync()).toBeInstanceOf(Promise);
+            });
+
+            it('the validationErrors array does not include fields that have async validation remaining', () => {
+                expect(result.form.validationErrors).not.toContainEqual(expect.objectContaining({
+                    validateAsync: expect.any(Function)
+                }));
             });
 
             it('validateAsync resolves to the final result', () => {
@@ -631,6 +635,12 @@ describe('form', () => {
             };
 
             const result = validate(formValues, validationContext);
+
+            it('validationErrors does not contain results where async validation remains', () => {
+                expect(result.form.validationErrors).not.toContainEqual(expect.objectContaining({
+                    validateAsync: expect.any(Function)
+                }));
+            });
 
             it('validateAsync resolves to the final result', () => {
                 return expect(result.validateAsync()).resolves.toMatchObject({

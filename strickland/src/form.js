@@ -103,6 +103,7 @@ function prepareResult(validatorProps, result, validators, existingResults) {
 
     const validationErrors = Object.keys(validationResults)
         .filter((fieldName) => !validationResults[fieldName].isValid)
+        .filter((fieldName) => !validationResults[fieldName].validateAsync)
         .map((fieldName) => ({
             fieldName,
             ...validationResults[fieldName]
