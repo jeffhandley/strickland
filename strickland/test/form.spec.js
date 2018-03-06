@@ -240,7 +240,7 @@ describe('form', () => {
             };
 
             const validate = form(formValidators);
-            const result = validate(formValues, {form: {fields: 'username'}});
+            const result = validate(formValues, {form: {fields: ['username']}});
 
             it('validates', () => {
                 expect(result).toMatchObject({
@@ -339,7 +339,7 @@ describe('form', () => {
 
             const validationContext = {
                 form: {
-                    fields: 'password',
+                    fields: ['password'],
                     validationErrors: [
                         {fieldName: 'firstName', isValid: false},
                         {fieldName: 'username', isValid: false},
@@ -408,7 +408,7 @@ describe('form', () => {
 
             const validationContext = {
                 form: {
-                    fields: 'password',
+                    fields: ['password'],
                     validationErrors: [],
                     validationResults: {
                         firstName: {isValid: true},
@@ -438,7 +438,7 @@ describe('form', () => {
             it('form.isComplete remains false even if there are the same number of validation results as there are fields, but when the validation results are for different fields', () => {
                 const secondValidationContext = {
                     form: {
-                        fields: 'password',
+                        fields: ['password'],
                         validationErrors: [],
                         validationResults: {
                             firstName: {isValid: true},
@@ -474,7 +474,7 @@ describe('form', () => {
 
             const validationContext = {
                 form: {
-                    fields: 'comparePassword',
+                    fields: ['comparePassword'],
                     validationErrors: [],
                     validationResults: {
                         firstName: {isValid: true},
@@ -553,7 +553,7 @@ describe('form', () => {
 
             const validationContext = {
                 form: {
-                    fields: 'username',
+                    fields: ['username'],
                     validationErrors: [],
                     validationResults: {
                         firstName: {isValid: true},
@@ -620,7 +620,7 @@ describe('form', () => {
 
             const validationContext = {
                 form: {
-                    fields: 'username',
+                    fields: ['username'],
                     validationErrors: [],
                     validationResults: {
                         firstName: {isValid: true},
@@ -688,7 +688,7 @@ describe('form', () => {
             it('the overall result is valid if all results are valid', () => {
                 const validationContext = {
                     form: {
-                        fields: 'comparePassword',
+                        fields: ['comparePassword'],
                         validationErrors: [],
                         validationResults: {
                             firstName: {isValid: true},
@@ -707,7 +707,7 @@ describe('form', () => {
             it('the overall result is invalid if some results are invalid', () => {
                 const validationContext = {
                     form: {
-                        fields: 'comparePassword',
+                        fields: ['comparePassword'],
                         validationErrors: [],
                         validationResults: {
                             firstName: {isValid: true},
@@ -726,7 +726,7 @@ describe('form', () => {
             it('the result includes a form.isComplete property set to true', () => {
                 const validationContext = {
                     form: {
-                        fields: 'comparePassword',
+                        fields: ['comparePassword'],
                         validationErrors: [],
                         validationResults: {
                             firstName: {isValid: true},
