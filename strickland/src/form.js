@@ -6,6 +6,19 @@ export default function form(validators, ...params) {
         throw 'Strickland: form expects an object';
     }
 
+    function shouldValidateField(fields, appliedContext, fieldName) {
+        const formFields = (
+            appliedContext &&
+            appliedContext.form &&
+            appliedContext.form.fields
+        ) || fields;
+
+        return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
+    }
+
+    const shouldNotValidateField = (fields, appliedContext, fieldName) =>
+        !shouldValidateField(fields, appliedContext, fieldName);
+
     return function validateForm(value, context) {
         const validatorProps = getValidatorProps(
             [],
@@ -14,18 +27,8 @@ export default function form(validators, ...params) {
             context
         );
 
-        let formFields = (context && context.form && context.form.fields) || validatorProps.fields;
-
-        if (formFields && !Array.isArray(formFields)) {
-            formFields = [formFields];
-        }
-
-        function shouldValidateField(fieldName) {
-            return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
-        }
-
         const fieldValidators = Object.keys(validators)
-            .filter(shouldValidateField)
+            .filter(shouldValidateField.bind(null, validatorProps.fields, context))
             .reduce((previousValidators, fieldName) => ({
                 ...previousValidators,
                 [fieldName]: validators[fieldName]
@@ -40,11 +43,10 @@ export default function form(validators, ...params) {
         };
 
         const result = validate(fieldValidators, value, validationContext);
-
         const existingResults = (context && context.form && context.form.validationResults) || {};
 
         const existingResultFields = Object.keys(existingResults)
-            .filter((fieldName) => !shouldValidateField(fieldName));
+            .filter(shouldNotValidateField.bind(null, validatorProps.fields, context));
 
         const hasExistingAsyncResults = existingResultFields
             .some((fieldName) => existingResults[fieldName].validateAsync);

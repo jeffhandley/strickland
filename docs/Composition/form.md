@@ -163,8 +163,7 @@ result = validate(validatePerson, person, {
 
 The `form.fields` context prop indicates which field(s) to validate.
 
-* If `form.fields` is a string, it is treated as a single field
-* If `form.fields` is an array, all items are treated as field names
+* If `form.fields` is an array of strings, all items are treated as field names
 * If `form.fields` is not supplied, all fields are validated
 * If `form.fields` is an _empty_ array, no fields are validated
 
