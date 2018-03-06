@@ -24,18 +24,12 @@ export default function form(validators, ...params) {
             return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
         }
 
-        let fieldValidators = validators;
-
-        if (formFields) {
-            fieldValidators = {};
-
-            Object.keys(validators).filter(shouldValidateField).forEach((fieldName) => {
-                fieldValidators = {
-                    ...fieldValidators,
-                    [fieldName]: validators[fieldName]
-                };
-            });
-        }
+        const fieldValidators = Object.keys(validators)
+            .filter(shouldValidateField)
+            .reduce((previousValidators, fieldName) => ({
+                ...previousValidators,
+                [fieldName]: validators[fieldName]
+            }), {});
 
         const validationContext = {
             ...context,
@@ -48,11 +42,17 @@ export default function form(validators, ...params) {
         const result = validate(fieldValidators, value, validationContext);
 
         const existingResults = (context && context.form && context.form.validationResults) || {};
-        const existingResultFields = Object.keys(existingResults).filter((fieldName) => !shouldValidateField(fieldName));
-        const hasExistingAsyncResults = existingResultFields.some((fieldName) => existingResults[fieldName].validateAsync);
+
+        const existingResultFields = Object.keys(existingResults)
+            .filter((fieldName) => !shouldValidateField(fieldName));
+
+        const hasExistingAsyncResults = existingResultFields
+            .some((fieldName) => existingResults[fieldName].validateAsync);
 
         if (hasExistingAsyncResults || result.validateAsync) {
-            const capturedResult = {...result}; // ensure the captured result doesn't gain the validateAsync function
+            // ensure the captured result doesn't gain the validateAsync function
+            const capturedResult = {...result};
+
             const resultValidateAsync = capturedResult.validateAsync || (() => capturedResult);
 
             result.validateAsync = function resolveAsync() {
@@ -61,10 +61,15 @@ export default function form(validators, ...params) {
                         existingResults[fieldName].validateAsync ?
                             existingResults[fieldName].validateAsync() :
                             existingResults[fieldName]
-                    ).then((eachResult) => convertToFieldResult(fieldName, eachResult)));
+                    ).then((eachResult) => ({
+                        [fieldName]: eachResult
+                    })));
 
                 const resolveExistingResults = Promise.all(existingResultPromises).then(
-                    (resolvedResults) => resolvedResults.reduce(applyNextResult, {})
+                    (resolvedResults) => resolvedResults.reduce((previousResult, nextResult) => ({
+                        ...previousResult,
+                        ...nextResult
+                    }), {})
                 );
 
                 const resultPromise = Promise.resolve(resultValidateAsync());
@@ -78,19 +83,6 @@ export default function form(validators, ...params) {
 
         return prepareResult(validatorProps, result, validators, existingResults);
     }
-}
-
-function convertToFieldResult(fieldName, validationResult) {
-    return {
-        [fieldName]: validationResult
-    };
-}
-
-function applyNextResult(previousResult, nextResult) {
-    return {
-        ...previousResult,
-        ...nextResult
-    };
 }
 
 function prepareResult(validatorProps, result, validators, existingResults) {
