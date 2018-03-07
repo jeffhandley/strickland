@@ -49,6 +49,10 @@
     background-color: #1F3244;
 }
 
+.book-body .body-inner {
+    overflow-y: scroll;
+}
+
 .markdown-section {
     color: #1F3244;
 }
