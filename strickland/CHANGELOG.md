@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0-beta.3"></a>
+# [2.0.0-beta.3](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2018-03-07)
+
+
+### Bug Fixes
+
+* form validationErrors should not contain results with async validation remaining ([ebbcc7b](https://github.com/jeffhandley/strickland/commit/ebbcc7b))
+* simply form.fields by not allowing string values (instead, always arrays) ([e468ace](https://github.com/jeffhandley/strickland/commit/e468ace))
+
+
+### Features
+
+* allow individual form fields to be validated asynchronously ([de59286](https://github.com/jeffhandley/strickland/commit/de59286))
+
+
+
+
 <a name="2.0.0-beta.2"></a>
 # [2.0.0-beta.2](https://github.com/jeffhandley/strickland/compare/v1.1.0...v2.0.0-beta.2) (2018-03-04)
 
