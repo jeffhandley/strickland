@@ -1,12 +1,32 @@
 # Built-In Validator: form
 
-Let's face it: we're trying to validate forms in the user interface. Yes, Strickland is decoupled from the UI and it _can_ be used in other scenarios (like APIs), but form validation is the primary use case.
+The `form` validator performs validation on every field of a form for which validators are defined. The field validators are supplied as an object with the shape matching the form values object.
 
-With the `props` validator, Strickland gets pretty close to providing form validation; it just falls short in one key way. The `props` validator is great if the entire form is being validated in one shot, but it doesn't support validating field-by-field. You can certainly build a `props` validator object and conditionally pluck props off of it and dynamically build your `props` validator. It works; it's just a lot of work.
+## Parameters
 
-To simplify this scenario, Strickland provides a `form` validator that behaves similarly to `props`, but it has additional features for field-by-field validation where a form's validation results are built up incrementally.
+The first parameter to the `form` validator factory is an object defining the properties to be validated on objects. Validator props can also be supplied either as an object or as a function that accepts context and returns a validator props object.
 
-Let's take a look.
+## Validation Context
+
+### Which Fields to Validate: `form.fields`
+
+The `form.fields` context prop indicates which field(s) to validate.
+
+* If `form.fields` is an array of strings, all items are treated as field names
+* If `form.fields` is not supplied, all fields are validated
+* If `form.fields` is an _empty_ array, no fields are validated
+
+In all cases, the rest of the form validation results will be refreshed, including the `validationErrors` array and the possible `validateAsync` function that captures remaining async validation.
+
+### Previous Validation Results: `form.validationResults`
+
+Validation results from earlier validation can be supplied using `form.validationResults`. These existing results will be retained, but any fields that are re-validated will be overwritten with their new results.
+
+## Result Properties
+
+* `form.validationResults`: An object with properties matching those validated, with the values of the properties representing the validation results. If the `form.validationResults` and `form.fields` context props were used, then previous validation results that were not re-validated will be retained.
+* `form.validationErrors`: An array of validation results that are invalid, but excluding results where async validation remains to be completed.
+* `form.isComplete`: A boolean indicating whether the entire form has been validated. `true` when `form.validationResults` contains results for all field validators and none of those results has a `validateAsync` yet to be resolved.
 
 ``` jsx
 import validate, {
@@ -157,22 +177,6 @@ result = validate(validatePerson, person, {
  */
 ```
 
-## Form Context Props
-
-### Which Fields to Validate: `form.fields`
-
-The `form.fields` context prop indicates which field(s) to validate.
-
-* If `form.fields` is an array of strings, all items are treated as field names
-* If `form.fields` is not supplied, all fields are validated
-* If `form.fields` is an _empty_ array, no fields are validated
-
-In all cases, the rest of the form validation results will be refreshed, including the `validationErrors` array and the possible `validateAsync` function that captures remaining async validation.
-
-### Previous Validation Results: `form.validationResults`
-
-Validation results from earlier validation can be supplied using `form.validationResults`. These existing results will be retained, but any fields that are re-validated will be overwritten with their new results.
-
 ## Async Validation
 
 Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `props` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
@@ -181,13 +185,15 @@ Async validation works naturally with the `form` validator. Any validator within
 
 By default, the `validateAsync` function returned on the validation result will resolve async validation for all fields that have remaining async validation. But, the `validateAsync` function also accepts a context parameter that allows specific fields to be resolved using the same `form.fields` behavior defined above.
 
+``` jsx
+// Execute async validation only for the username field
+result.validateAsync({
+    form: {
+        fields: ['username']
+    }
+});
+```
 
 ### Two-Stage Validation
 
 [Two-Stage Validation](/../Async/TwoStageValidation.md) is commonly used with forms where standard validation occurs synchronously with results immediately rendered, but async validation that calls an API will be rendered when the response comes back.
-
-### Timing Pitfall
-
-A common pitfall with async validation on forms is to ensure a field's value hasn't changed during async validation. When your application receives async validation results, be sure to check that the current value still matches the value that was validated before rendering the validation result.
-
-Fortunately, every validation result from Strickland includes the `value` that was validated as a result prop, making this straightforward.
