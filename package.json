@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "demo": "cd demo && npm start",
-    "prepublish": "cp README.md strickland",
+    "prepublish": "cp README.md strickland && cp CHANGELOG.md docs",
     "publish": "lerna publish --conventional-commits",
     "publish:prerelease": "npm run publish -- --cd-version=prerelease",
     "postinstall": "lerna bootstrap",
