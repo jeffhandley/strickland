@@ -37,4 +37,4 @@
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
 * [Wrap-Up](/docs/WrapUp.md)
-* [Changelog](/docs/CHANGELOG.md)
+* [Change Log](/docs/CHANGELOG.md)
