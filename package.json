@@ -5,6 +5,7 @@
     "demo": "cd demo && npm start",
     "prepublish": "cp README.md strickland",
     "publish": "lerna publish --conventional-commits",
+    "publish:prerelease": "npm run publish -- --cd-version=prerelease",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"
