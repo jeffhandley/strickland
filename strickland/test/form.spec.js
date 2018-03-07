@@ -1,4 +1,4 @@
-import {form, every, required, minLength, compare} from '../src/strickland';
+import {form, every, required, minLength, compare, validateAsync} from '../src/strickland';
 
 describe('form', () => {
     describe('throws', () => {
@@ -460,7 +460,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength(8)],
+                password: [required(), minLength(8), () => () => ({isValid: true, passwordComplex: true})],
                 comparePassword: [required(), compare(({form: {values}}) => values.password)]
             });
 
@@ -486,7 +486,13 @@ describe('form', () => {
                                 usernameAvailable: true
                             })
                         },
-                        password: {isValid: true}
+                        password: {
+                            isValid: false,
+                            validateAsync: () => Promise.resolve({
+                                isValid: true,
+                                passwordComplex: true
+                            })
+                        }
                     }
                 }
             };
@@ -524,7 +530,56 @@ describe('form', () => {
                                 isValid: true,
                                 usernameAvailable: true
                             },
-                            password: {isValid: true},
+                            password: {
+                                isValid: true,
+                                passwordComplex: true
+                            },
+                            comparePassword: {isValid: true}
+                        }
+                    }
+                });
+            });
+
+            it('validateAsync can resolve individual fields', () => {
+                return expect(result.validateAsync({form: {fields: ['username']}})).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            firstName: {isValid: true},
+                            lastName: {isValid: true},
+                            username: {
+                                isValid: true,
+                                usernameAvailable: true
+                            },
+                            password: {
+                                isValid: false,
+                                validateAsync: expect.any(Function)
+                            },
+                            comparePassword: {isValid: true}
+                        }
+                    }
+                });
+            });
+
+            it('individual fields can be validated using the strickland validateAsync helper', () => {
+                return expect(validateAsync(validate, formValues, validationContext)).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            firstName: {isValid: true},
+                            lastName: {isValid: true},
+                            username: {
+                                isValid: false,
+                                validateAsync: expect.any(Function)
+                            },
+                            password: {
+                                isValid: false,
+                                validateAsync: expect.any(Function)
+                            },
                             comparePassword: {isValid: true}
                         }
                     }

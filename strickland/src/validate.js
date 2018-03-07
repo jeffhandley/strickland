@@ -22,11 +22,11 @@ export default function validate(validator, value, context) {
     return prepareResult(value, result);
 }
 
-export function validateAsync(...validateParams) {
-    const result = validate(...validateParams);
+export function validateAsync(validator, value, context) {
+    const result = validate(validator, value, context);
 
     if (typeof result.validateAsync === 'function') {
-        return result.validateAsync();
+        return result.validateAsync(context);
     }
 
     return Promise.resolve(result);
@@ -56,7 +56,7 @@ function prepareResult(value, result) {
     if (typeof preparedResult.validateAsync === 'function') {
         const resultValidateAsync = preparedResult.validateAsync;
 
-        preparedResult.validateAsync = () => Promise.resolve(resultValidateAsync()).then(
+        preparedResult.validateAsync = (...asyncParams) => Promise.resolve(resultValidateAsync(...asyncParams)).then(
             prepareResult.bind(null, value)
         );
     } else if (typeof preparedResult.validateAsync !== 'undefined') {
