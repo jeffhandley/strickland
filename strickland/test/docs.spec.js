@@ -1,6 +1,6 @@
 import validate, {getValidatorProps, validateAsync, required, compare, min, max, range, minLength, maxLength, length, every, each, some, props, form} from '../src/strickland';
 
-describe('readme', () => {
+describe('docs', () => {
     describe('introduction', () => {
         describe('validators', () => {
             it('As an arrow function', () => {
@@ -1266,151 +1266,6 @@ describe('readme', () => {
             const result = validate(validatePerson, person);
             expect(result.isValid).toBe(false);
         });
-
-        describe('form', () => {
-            const validatePerson = form({
-                firstName: [required(), length(2, 20)],
-                lastName: [required(), length(2, 20)],
-                birthYear: range(1900, 2018)
-            });
-
-            // Initialize the person with only a firstName
-            let person = {
-                firstName: 'Stanford'
-            };
-
-            // Validate the firstName field
-            let result = validate(validatePerson, person, {
-                form: {
-                    fields: ['firstName']
-                }
-            });
-
-            it('validates firstName', () => {
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: {
-                        firstName: 'Stanford'
-                    },
-                    form: {
-                        isComplete: false,
-                        validationResults: {
-                            firstName: {
-                                isValid: true,
-                                value: 'Stanford',
-                                required: true,
-                                minLength: 2,
-                                maxLength: 20
-                            }
-                        },
-                        validationErrors: []
-                    }
-                });
-            });
-
-            it('validates lastName', () => {
-                // Add the lastName field
-                person = {
-                    firstName: 'Stanford',
-                    lastName: 'Strickland'
-                };
-
-                // Validate the lastName field, build on
-                // previous form validation results
-                result = validate(validatePerson, person, {
-                    form: {
-                        ...result.form,
-                        fields: ['lastName']
-                    }
-                });
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: {
-                        firstName: 'Stanford',
-                        lastName: 'Strickland'
-                    },
-                    form: {
-                        isComplete: false,
-                        validationResults: {
-                            firstName: {
-                                isValid: true,
-                                value: 'Stanford',
-                                required: true,
-                                minLength: 2,
-                                maxLength: 20
-                            },
-                            lastName: {
-                                isValid: true,
-                                value: 'Strickland',
-                                required: true,
-                                minLength: 2,
-                                maxLength: 20
-                            }
-                        },
-                        validationErrors: []
-                    }
-                });
-            });
-
-            it('validates birthYear', () => {
-                // Add a birthYear (that is invalid)
-                person = {
-                    ...person,
-                    birthYear: 2020
-                };
-
-                // Validate the birthYear field
-                result = validate(validatePerson, person, {
-                    form: {
-                        ...result.form,
-                        fields: ['birthYear']
-                    }
-                });
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: {
-                        firstName: 'Stanford',
-                        lastName: 'Strickland'
-                    },
-                    form: {
-                        isComplete: true,
-                        validationResults: {
-                            firstName: {
-                                isValid: true,
-                                value: 'Stanford',
-                                required: true,
-                                minLength: 2,
-                                maxLength: 20
-                            },
-                            lastName: {
-                                isValid: true,
-                                value: 'Strickland',
-                                required: true,
-                                minLength: 2,
-                                maxLength: 20
-                            },
-                            birthYear: {
-                                isValid: false,
-                                value: 2020,
-                                min: 1900,
-                                max: 2018
-                            }
-                        },
-                        validationErrors: [
-                            {
-                                fieldName: 'birthYear',
-                                isValid: false,
-                                value: 2020,
-                                min: 1900,
-                                max: 2018
-                            }
-                        ]
-                    }
-                });
-            });
-        });
     });
 
     describe('async validation', () => {
@@ -1679,6 +1534,180 @@ describe('readme', () => {
                             }
                         }
                     });
+                });
+            });
+
+            describe('race conditions', () => {
+                it('handled in application code', () => {
+                    expect.assertions(1);
+                    const resultUsed = jest.fn();
+
+                    const validateUsername = [required(), length(2, 20), usernameIsAvailableTwoStage];
+
+                    let username = 'marty';
+                    let usernameResult = validate(validateUsername, username);
+
+                    username = 'mcfly';
+
+                    if (usernameResult.validateAsync) {
+                        return usernameResult.validateAsync().then((asyncResult) => {
+                            if (asyncResult.value === username) {
+                                // this will not be reached since
+                                // the username has changed
+                                usernameResult = asyncResult;
+                                resultUsed();
+                            }
+
+                            expect(resultUsed).not.toHaveBeenCalled();
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+    describe('form validation', () => {
+        const validatePerson = form({
+            firstName: [required(), length(2, 20)],
+            lastName: [required(), length(2, 20)],
+            birthYear: range(1900, 2018)
+        });
+
+        // Initialize the person with only a firstName
+        let person = {
+            firstName: 'Stanford'
+        };
+
+        // Validate the firstName field
+        let result = validate(validatePerson, person, {
+            form: {
+                fields: ['firstName']
+            }
+        });
+
+        describe('form', () => {
+            it('validates firstName', () => {
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: {
+                        firstName: 'Stanford'
+                    },
+                    form: {
+                        isComplete: false,
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            }
+                        },
+                        validationErrors: []
+                    }
+                });
+            });
+
+            it('validates lastName', () => {
+                // Add the lastName field
+                person = {
+                    firstName: 'Stanford',
+                    lastName: 'Strickland'
+                };
+
+                // Validate the lastName field, build on
+                // previous form validation results
+                result = validate(validatePerson, person, {
+                    form: {
+                        ...result.form,
+                        fields: ['lastName']
+                    }
+                });
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: {
+                        firstName: 'Stanford',
+                        lastName: 'Strickland'
+                    },
+                    form: {
+                        isComplete: false,
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            },
+                            lastName: {
+                                isValid: true,
+                                value: 'Strickland',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            }
+                        },
+                        validationErrors: []
+                    }
+                });
+            });
+
+            it('validates birthYear', () => {
+                // Add a birthYear (that is invalid)
+                person = {
+                    ...person,
+                    birthYear: 2020
+                };
+
+                // Validate the birthYear field
+                result = validate(validatePerson, person, {
+                    form: {
+                        ...result.form,
+                        fields: ['birthYear']
+                    }
+                });
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: {
+                        firstName: 'Stanford',
+                        lastName: 'Strickland'
+                    },
+                    form: {
+                        isComplete: true,
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            },
+                            lastName: {
+                                isValid: true,
+                                value: 'Strickland',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            },
+                            birthYear: {
+                                isValid: false,
+                                value: 2020,
+                                min: 1900,
+                                max: 2018
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'birthYear',
+                                isValid: false,
+                                value: 2020,
+                                min: 1900,
+                                max: 2018
+                            }
+                        ]
+                    }
                 });
             });
         });
