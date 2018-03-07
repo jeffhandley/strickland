@@ -21,7 +21,7 @@ Using Strickland's built-in validators, and its extensibility and composability,
 1. **[Arrays of Validators](/docs/Composition/ArraysOfValidators.md)** can be composed together to validate a value against multiple validators
 1. **[Validating Objects](/docs/Composition/ValidatingObjects.md)** is done by building objects that define how object props should be validated
 1. **[Array and Object Conventions](/docs/Composition/Conventions.md)** enable terse and natural definitions of complex compositions
-1. **[Form Validation](/docs/Composition/form.md)** is simplified with a built-in form validator that supports incremental, field-by-field validation
+1. **[Form Validation](/docs/Composition/form.md)** supports form-level or field-level validation
 
 ## Async Validation
 
