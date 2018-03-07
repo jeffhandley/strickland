@@ -175,7 +175,14 @@ Validation results from earlier validation can be supplied using `form.validatio
 
 ## Async Validation
 
-Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `props` and other composition validators, an async validator within a form will result in a `validateAsync` prop on the form validation results.
+Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `props` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
+
+### Executing `validateAsync` for Specific Fields
+
+By default, the `validateAsync` function returned on the validation result will resolve async validation for all fields that have remaining async validation. But, the `validateAsync` function also accepts a context parameter that allows specific fields to be resolved using the same `form.fields` behavior defined above.
+
+
+### Two-Stage Validation
 
 [Two-Stage Validation](/../Async/TwoStageValidation.md) is commonly used with forms where standard validation occurs synchronously with results immediately rendered, but async validation that calls an API will be rendered when the response comes back.
 
