@@ -106,13 +106,16 @@ const result = validate(letterA, 'B');
         * [Advanced Object Validation](http://strickland.io/docs/Composition/AdvancedObjectValidationhtmld)
         * [Nested Objects](http://strickland.io/docs/Composition/NestedObjects.html)
     * [Array and Object Conventions](http://strickland.io/docs/Composition/Conventions.html)
-    * [Form Validation](http://strickland.io/docs/Composition/form.html)
 * [Async Validation](http://strickland.io/docs/Async/index.html)
     * [Resolving Async Validation](http://strickland.io/docs/Async/ResolvingAsyncValidation.html)
     * [Deferred Async Validation](http://strickland.io/docs/Async/DeferredAsyncValidation.html)
     * [Async Validator Arrays and Objects](http://strickland.io/docs/Async/ValidatorArraysAndObjects.html)
     * [Two-Stage Sync/Async Validation](http://strickland.io/docs/Async/TwoStageValidation.html)
+    * [Race Conditions](http://strickland.io/docs/Async/RaceConditions.html)
+* [Form Validation](http://strickland.io/docs/Forms/index.html)
+    * [form](http://strickland.io/docs/Forms/form.html)
 * [Wrap-Up](http://strickland.io/docs/WrapUp.html)
+* [Change Log](http://strickland.io/docs/CHANGELOG.html)
 
 ## License
 

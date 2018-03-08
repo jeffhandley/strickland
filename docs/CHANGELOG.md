@@ -26,7 +26,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* always provide a context object from validate ([b6ee1a8](https://github.com/jeffhandley/strickland/commit/b6ee1a8))
+* always provide a context object from validate ([bbf06b0](https://github.com/jeffhandley/strickland/commit/bbf06b0))
+
+
+### Chores
+
+* remove all traces of context in preparation for a context redesign ([fd3f1f7](https://github.com/jeffhandley/strickland/commit/fd3f1f7))
 
 
 ### Features
@@ -43,6 +48,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### BREAKING CHANGES
 
+* Validator Context and Validation Context are being removed. A new design will introduce Validator Props and Validation Context, where Validation Context will NOT be spread onto results.
 * The validateAsync result prop is now a function instead of a Promise. The function will return a Promise, allowing the Promise to be deferred until validateAsync is called.  Validators can now return either a Promise or a function to opt into async validation, or put either a Promise or a function on the result as the validateAsync result prop.  Results will always be normalized to have validateAsync be a function that returns a Promise.
 
 
