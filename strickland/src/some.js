@@ -11,9 +11,9 @@ export default function someValidator(validators, validatorProps) {
     }
 
     return function validateSome(value, context) {
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
         if (!validators || !validators.length) {
             return {

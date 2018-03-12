@@ -275,7 +275,7 @@ describe('form', () => {
                 comparePassword: every(
                     [
                         required(),
-                        compare(({value}) => ({compare: value.password}))
+                        compare(({form: {values}}) => ({compare: values.password}))
                     ], {fieldName: 'password confirmation'}
                 )
             };

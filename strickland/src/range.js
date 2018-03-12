@@ -4,9 +4,9 @@ import maxValidator from './max';
 
 export default function rangeValidator(validatorProps) {
     return function validateRange(value, context) {
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
         const {min, max} = props;
 

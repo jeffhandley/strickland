@@ -6,9 +6,9 @@ export default function formValidator(validators, validatorProps) {
     }
 
     return function validateForm(value, context) {
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
         const fieldValidators = Object.keys(validators)
             .filter(shouldValidateField.bind(null, validators, props, context))
@@ -37,7 +37,7 @@ function shouldValidateField(validators, props, context, fieldName) {
         context &&
         context.form &&
         context.form.fields
-    ) || props.fields;
+    ) || (props && props.fields);
 
     return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
 }

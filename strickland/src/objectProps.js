@@ -11,9 +11,9 @@ export default function objectPropsValidator(validators, validatorProps) {
     }
 
     return function validateObjectProps(value, context) {
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
         if (!validators || !Object.keys(validators).length) {
             return {

@@ -3,9 +3,9 @@ export default function minLengthValidator(validatorProps) {
         let isValid = true;
         let length = value ? value.length : 0;
 
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps({...context, length}) :
-            validatorProps) || {};
+            validatorProps;
 
         const {minLength} = props;
 

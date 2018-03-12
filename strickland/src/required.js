@@ -4,11 +4,11 @@ export default function requiredValidator(validatorProps) {
     return function validateRequired(value, context) {
         let isValid = true;
 
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
-        const {required = true} = props;
+        const {required = true} = props || {};
 
         if (required) {
             if (value === null || value === notDefined) {

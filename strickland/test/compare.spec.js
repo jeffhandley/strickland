@@ -2,6 +2,16 @@ import deepFreeze from 'deep-freeze';
 import compare from '../src/compare';
 
 describe('compare', () => {
+    describe('throws', () => {
+        it('if the compare value is not defined', () => {
+            expect(() => compare()()).toThrow();
+        });
+
+        it('if a props function does not define a compare value', () => {
+            expect(() => compare(() => ({}))()).toThrow();
+        });
+    });
+
     describe('validates', () => {
         const validate = compare({compare: 3});
 

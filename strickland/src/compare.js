@@ -2,11 +2,15 @@ import {isFalsyButNotZero} from './utils';
 
 export default function compareValidator(validatorProps) {
     return function validateCompare(value, context) {
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
-            validatorProps) || {};
+            validatorProps;
 
-        const {compare} = props;
+        const {compare} = props || {};
+
+        if (typeof compare === 'undefined') {
+            throw 'Strickland: The `compare` validator requires a `compare` property';
+        }
 
         let isValid = true;
 

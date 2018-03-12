@@ -6,9 +6,9 @@ export default function lengthValidator(validatorProps) {
     return function validateLength(value, context) {
         let length = value ? value.length : 0;
 
-        const props = (typeof validatorProps === 'function' ?
+        const props = typeof validatorProps === 'function' ?
             validatorProps({...context, length}) :
-            validatorProps) || {};
+            validatorProps;
 
         const {minLength, maxLength} = props;
 
