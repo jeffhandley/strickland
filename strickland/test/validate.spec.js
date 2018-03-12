@@ -709,8 +709,32 @@ describe('validate', () => {
                 });
             });
 
+            it('fetches the value 3 times (before sync validation, before async validation, after async validation)', () => {
+                const getValue = jest.fn().mockReturnValue('ABC');
+
+                return validateAsync(() => Promise.resolve(true), getValue)
+                    .then(() => expect(getValue).toHaveBeenCalledTimes(3));
+            });
+
+            it('rejecting the result if the value changes before async validation', () => {
+                const getValue = jest.fn()
+                    .mockReturnValueOnce('ABC')
+                    .mockReturnValue('DEF');
+
+                const result = validateAsync(
+                    () => Promise.resolve(true),
+                    getValue
+                );
+
+                return expect(result).rejects.toMatchObject({
+                    value: 'ABC',
+                    validateAsync: expect.any(Function)
+                });
+            });
+
             it('rejecting the result if the value changes during async validation', () => {
                 const getValue = jest.fn()
+                    .mockReturnValueOnce('ABC')
                     .mockReturnValueOnce('ABC')
                     .mockReturnValue('DEF');
 

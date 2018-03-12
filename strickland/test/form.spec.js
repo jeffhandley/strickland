@@ -124,6 +124,14 @@ describe('form', () => {
                 expect(result).toMatchObject({validatorProp: 'Validator message'});
             });
 
+            it('resolving validator props from a function', () => {
+                const getProps = jest.fn();
+                const context = {contextProp: 'context'};
+                form({}, getProps)(null, context);
+
+                expect(getProps).toHaveBeenCalledWith(context);
+            });
+
             it('without an objectProps prop on the result', () => {
                 expect(result).not.toHaveProperty('objectProps');
             });
@@ -383,6 +391,43 @@ describe('form', () => {
                     username: {isValid: false},
                     password: {isValid: false, minLength: 8, value: 'marty88'},
                     comparePassword: {isValid: false}
+                });
+            });
+
+            describe('with an existing result as null', () => {
+                const contextWithNullResult = {
+                    form: {
+                        fields: ['password'],
+                        validationErrors: [
+                            {fieldName: 'firstName', isValid: false},
+                            {fieldName: 'username', isValid: false},
+                            {fieldName: 'password', isValid: false},
+                            {fieldName: 'comparePassword', isValid: false}
+                        ],
+                        validationResults: {
+                            firstName: {isValid: false},
+                            lastName: {isValid: true, alreadyValidated: true},
+                            username: null,
+                            password: {isValid: false},
+                            comparePassword: {isValid: false}
+                        }
+                    }
+                };
+
+                const updatedResult = validate(formValues, contextWithNullResult);
+
+                it('the result is removed', () => {
+                    expect(updatedResult.form.validationResults).not.toHaveProperty('username');
+                });
+
+                it('the corresponding error is removed', () => {
+                    expect(updatedResult.form.validationErrors).not.toContainEqual(expect.objectContaining({
+                        fieldName: 'username'
+                    }));
+                });
+
+                it('isComplete is set to false', () => {
+                    expect(updatedResult.form.isComplete).toBe(false);
                 });
             });
         });
@@ -795,6 +840,174 @@ describe('form', () => {
                 const result = validate(formValues, validationContext);
 
                 expect(result.form.isComplete).toBe(true);
+            });
+        });
+    });
+
+    describe('helper functions', () => {
+        it('clearResults', () => {
+            const result = form({}).clearResults();
+
+            expect(result).toEqual({
+                form: {
+                    validationResults: {},
+                    validationErrors: []
+                }
+            });
+        });
+
+        it('validateFields', () => {
+            const formValidator = form({
+                firstName: () => true,
+                lastName: () => false
+            });
+
+            const value = {
+                firstName: 'Stanford',
+                lastName: 'Strickland'
+            };
+
+            const initialResult = formValidator.clearResults();
+
+            const result = formValidator.validateFields(
+                initialResult,
+                value,
+                ['lastName']
+            );
+
+            expect(result).toEqual({
+                form: {
+                    validationResults: {
+                        lastName: {
+                            isValid: false,
+                            value: 'Strickland'
+                        }
+                    },
+                    validationErrors: [
+                        {
+                            fieldName: 'lastName',
+                            isValid: false,
+                            value: 'Strickland'
+                        }
+                    ],
+                    isComplete: false
+                },
+                value,
+                isValid: false
+            });
+        });
+
+        describe('updateFieldResult', () => {
+            const formValidator = form({
+                firstName: () => true,
+                lastName: () => false
+            });
+
+            const value = {
+                firstName: 'Stanford',
+                lastName: 'Strickland'
+            };
+
+            const initialResult = {
+                form: {
+                    validationResults: {
+                        lastName: {
+                            isValid: false,
+                            value: 'Strickland'
+                        }
+                    },
+                    validationErrors: [
+                        {
+                            fieldName: 'lastName',
+                            isValid: false,
+                            value: 'Strickland'
+                        }
+                    ],
+                    isComplete: false
+                },
+                value,
+                isValid: false
+            };
+
+            it('adds new results', () => {
+                const firstName = {
+                    isValid: true,
+                    value: 'Stanford'
+                };
+
+                const result = formValidator.updateFieldResult(initialResult, 'firstName', firstName);
+
+                expect(result).toEqual({
+                    form: {
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford'
+                            },
+                            lastName: {
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'lastName',
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        ],
+                        isComplete: true
+                    },
+                    value,
+                    isValid: false
+                });
+            });
+
+            it('updates existing results', () => {
+                const lastName = {
+                    isValid: false,
+                    value: 'Strickland',
+                    updatedResult: true
+                };
+
+                const result = formValidator.updateFieldResult(initialResult, 'lastName', lastName);
+
+                expect(result).toEqual({
+                    form: {
+                        validationResults: {
+                            lastName: {
+                                isValid: false,
+                                value: 'Strickland',
+                                updatedResult: true
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'lastName',
+                                isValid: false,
+                                value: 'Strickland',
+                                updatedResult: true
+                            }
+                        ],
+                        isComplete: false
+                    },
+                    value,
+                    isValid: false
+                });
+            });
+
+            it('removes existing results', () => {
+                const result = formValidator.updateFieldResult(initialResult, 'lastName', null);
+
+                expect(result).toEqual({
+                    form: {
+                        validationResults: {},
+                        validationErrors: [],
+                        isComplete: false
+                    },
+                    value,
+                    isValid: false
+                });
             });
         });
     });

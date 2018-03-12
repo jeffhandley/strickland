@@ -62,6 +62,14 @@ describe('some', () => {
         it('putting validator props on the result', () => {
             expect(result).toMatchObject({validatorProp: 'Validator message'});
         });
+
+        it('resolving validator props from a function', () => {
+            const getProps = jest.fn();
+            const context = {contextProp: 'context'};
+            some([], getProps)(null, context);
+
+            expect(getProps).toHaveBeenCalledWith(context);
+        });
     });
 
     describe('with nested rules arrays', () => {

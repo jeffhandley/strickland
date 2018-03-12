@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
-import validate, {validateAsync} from 'strickland';
+import {validateAsync} from 'strickland';
 
 class App extends Component {
     constructor(props) {
@@ -15,11 +15,7 @@ class App extends Component {
                 password: '',
                 confirmPassword: ''
             },
-            validation: {
-                form: {
-                    validationResults: {}
-                }
-            }
+            validation: formValidator.clearResults()
         };
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -45,38 +41,12 @@ class App extends Component {
         };
     }
 
-    updateField(validation, formValues, fieldName, result) {
-        const context = {
-            ...validation,
-            form: {
-                ...validation.form,
-                fields: [], // no validation; just refresh the result properties
-                validationResults: {
-                    ...validation.form.validationResults,
-                    [fieldName]: result
-                }
-            }
-        };
-
-        if (!result) {
-            delete context.form.validationResults[fieldName];
-        }
-
-        return validate(formValidator, formValues, context);
-    }
-
     handleAsyncFieldValidation(fieldName, asyncFieldResult) {
-        // Get the form's current state after async validation
-        // (it could have changed during async validation)
-        let {form: currentForm, validation: asyncValidation} = this.state;
+        let {validation} = this.state;
 
-        // If the field value still matches what we validated
-        if (asyncFieldResult.value === currentForm[fieldName]) {
-            // Then update the field's result to the async result
-            this.setState({
-                validation: this.updateField(asyncValidation, currentForm, fieldName, asyncFieldResult)
-            });
-        }
+        this.setState({
+            validation: formValidator.updateFieldResult(validation, fieldName, asyncFieldResult)
+        });
     }
 
     onFieldChange(fieldName, fieldContext, {target}) {
@@ -111,19 +81,10 @@ class App extends Component {
 
         // Validate the form specifying the current field
         // as well as dependent fields that need re-validated
-        const result = validate(
-            formValidator,
+        const result = formValidator.validateFields(
+            validation,
             parsedForm,
-            {
-                onFieldChange: true,
-                form: {
-                    validationResults: validation.form.validationResults,
-                    fields: [
-                        fieldName,
-                        ...dependents
-                    ]
-                }
-            }
+            [fieldName, ...dependents]
         );
 
         // Pluck out the result for the current field
@@ -136,7 +97,7 @@ class App extends Component {
         const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
 
         if (hasAsync || valueChanged) {
-            validation = this.updateField(validation, parsedForm, fieldName);
+            validation = formValidator.updateFieldResult(validation, fieldName);
         }
 
         // So long as there's no async validation, then if the new
@@ -157,11 +118,13 @@ class App extends Component {
                     // Update the field's validation state to indicate that
                     // async validation is underway
                     this.setState({
-                        validation: this.updateField(validationAfterTimeout, formAfterTimeout, fieldName, fieldResult)
+                        validation: formValidator.updateFieldResult(validationAfterTimeout, fieldName, fieldResult)
                     });
 
                     // Fire off async validation
-                    fieldResult.validateAsync().then(this.handleAsyncFieldValidation.bind(this, fieldName));
+                    fieldResult.validateAsync(() => this.state.form[fieldName])
+                        .then(this.handleAsyncFieldValidation.bind(this, fieldName))
+                        .catch(() => {});
                 }
             }, 1000);
         }
@@ -199,15 +162,11 @@ class App extends Component {
 
             // Validate the form specifying the current field
             // as well as dependent fields that need re-validated
-            validation = validate(formValidator, formValues, {
-                form: {
-                    validationResults: validation.form.validationResults,
-                    fields: [
-                        fieldName,
-                        ...dependents
-                    ]
-                }
-            });
+            validation = formValidator.validateFields(
+                validation,
+                formValues,
+                [fieldName, ...dependents]
+            );
 
             this.setState({validation});
         }
@@ -217,19 +176,16 @@ class App extends Component {
 
         // If the field needs async validation, fire it off
         if (fieldResult.validateAsync) {
-            fieldResult.validateAsync().then(this.handleAsyncFieldValidation.bind(this, fieldName));
+            fieldResult.validateAsync(() => this.state.form[fieldName])
+                .then(this.handleAsyncFieldValidation.bind(this, fieldName))
+                .catch(() => {});
         }
     }
 
     onSubmit() {
-        const {form: validatedForm} = this.state;
-        validateAsync(formValidator, validatedForm).then((validation) => {
-            const {form: currentForm} = this.state;
-
-            if (currentForm === validatedForm) {
-                this.setState({validation});
-            }
-        });
+        validateAsync(formValidator, () => this.state.form)
+            .then((validation) => this.setState({validation}))
+            .catch(() => {});
     }
 
     render() {

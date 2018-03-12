@@ -5,7 +5,7 @@ export default function formValidator(validators, validatorProps) {
         throw 'Strickland: The `form` validator expects an object';
     }
 
-    return function validateForm(value, context) {
+    function validateForm(value, context) {
         const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
             validatorProps;
@@ -30,6 +30,50 @@ export default function formValidator(validators, validatorProps) {
 
         return prepareResult(validators, props, existingResults, result);
     }
+
+    validateForm.clearResults = function clearResults() {
+        return {
+            form: {
+                validationResults: {},
+                validationErrors: []
+            }
+        };
+    };
+
+    validateForm.validateFields = function validateField(result, formValues, fields) {
+        const context = {
+            ...result,
+            form: {
+                ...result.form,
+                fields
+            }
+        };
+
+        return validate(validateForm, formValues, context);
+    };
+
+    validateForm.updateFieldResult = function updateFieldResult(result, fieldName, fieldResult) {
+        const formValues = {
+            ...result.value,
+            [fieldName]: (fieldResult && fieldResult.value) || result.value[fieldName]
+        };
+
+        const context = {
+            ...result,
+            form: {
+                ...result.form,
+                fields: [], // no validation; just refresh the result properties
+                validationResults: {
+                    ...result.form.validationResults,
+                    [fieldName]: fieldResult
+                }
+            }
+        };
+
+        return validate(validateForm, formValues, context);
+    };
+
+    return validateForm;
 }
 
 function shouldValidateField(validators, props, context, fieldName) {
@@ -45,8 +89,15 @@ function shouldValidateField(validators, props, context, fieldName) {
 function prepareResult(validators, props, existingResults, result) {
     let {objectProps, validateAsync, ...otherProps} = result;
 
+    const existingDefinedResults = Object.keys(existingResults)
+        .map((fieldName) => existingResults[fieldName] ? ({[fieldName]: existingResults[fieldName]}) : {})
+        .reduce((definedResults, fieldResult) => ({
+            ...definedResults,
+            ...fieldResult
+        }), {});
+
     let validationResults = {
-        ...existingResults,
+        ...existingDefinedResults,
         ...objectProps
     };
 
@@ -58,23 +109,23 @@ function prepareResult(validators, props, existingResults, result) {
             ...validationResults[fieldName]
         }));
 
-    const existingResultFields = Object.keys(existingResults)
+    const existingResultFields = Object.keys(existingDefinedResults)
         .filter((fieldName) => !objectProps[fieldName]);
 
     const hasExistingAsyncResults = existingResultFields
-        .some((fieldName) => existingResults[fieldName].validateAsync);
+        .some((fieldName) => existingDefinedResults[fieldName].validateAsync);
 
     if (hasExistingAsyncResults || validateAsync) {
         const resultValidateAsync = validateAsync || (() => result);
 
         validateAsync = function resolveAsync(asyncValue, asyncContext) {
             function resolveFieldResult(fieldName) {
-                const shouldResolve = existingResults[fieldName].validateAsync &&
+                const shouldResolve = existingDefinedResults[fieldName].validateAsync &&
                     shouldValidateField(validators, props, asyncContext, fieldName);
 
                 const fieldPromise = shouldResolve ?
-                    existingResults[fieldName].validateAsync() :
-                    Promise.resolve(existingResults[fieldName]);
+                    existingDefinedResults[fieldName].validateAsync() :
+                    Promise.resolve(existingDefinedResults[fieldName]);
 
                 return fieldPromise.then((fieldResult) => ({
                     [fieldName]: fieldResult

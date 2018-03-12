@@ -89,6 +89,14 @@ describe('objectProps', () => {
         it('putting validator props on the result', () => {
             expect(result).toMatchObject({validatorProp: 'Validator message'});
         });
+
+        it('resolving validator props from a function', () => {
+            const getProps = jest.fn();
+            const context = {contextProp: 'context'};
+            objectProps({}, getProps)(null, context);
+
+            expect(getProps).toHaveBeenCalledWith(context);
+        });
     });
 
     describe('with empty rules', () => {

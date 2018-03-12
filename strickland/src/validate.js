@@ -53,38 +53,55 @@ function prepareResult(value, result) {
         };
     }
 
-    if (preparedResult.validateAsync instanceof Promise) {
-        const promise = preparedResult.validateAsync;
-        preparedResult.validateAsync = () => promise;
-    }
-
-    if (typeof preparedResult.validateAsync === 'function') {
-        const resultValidateAsync = preparedResult.validateAsync;
-
-        preparedResult.validateAsync = function resolveAsync(asyncValue, asyncContext) {
-            return Promise.resolve(resultValidateAsync(value, asyncContext))
-                .then(prepareResult.bind(null, value))
-                .then((asyncResult) => {
-                    if (typeof asyncValue === 'function') {
-                        const resolvedAsyncValue = asyncValue();
-
-                        // If the value changed during async validation
-                        // then reject the async result
-                        if (asyncResult.value !== resolvedAsyncValue) {
-                            throw asyncResult;
-                        }
-                    }
-
-                    return asyncResult;
-                });
-        }
-    } else if (typeof preparedResult.validateAsync !== 'undefined') {
-        throw 'Strickland: validateAsync must be either a Promise or a function';
-    }
-
-    return {
+    preparedResult = {
         ...preparedResult,
         isValid: !!preparedResult.isValid,
         value
     };
+
+    return wrapValidateAsync(value, preparedResult);
+}
+
+function wrapValidateAsync(value, result) {
+    if (result.validateAsync instanceof Promise) {
+        const promise = result.validateAsync;
+        result.validateAsync = () => promise;
+    }
+
+    if (typeof result.validateAsync === 'function') {
+        const resultValidateAsync = result.validateAsync;
+
+        return {
+            ...result,
+            validateAsync(asyncValue, asyncContext) {
+                if (typeof asyncValue === 'function') {
+                    const valueBeforeAsync = asyncValue();
+
+                    if (valueBeforeAsync !== value) {
+                        return Promise.reject(result);
+                    }
+                }
+
+                return Promise.resolve(resultValidateAsync(value, asyncContext))
+                    .then(prepareResult.bind(null, value))
+                    .then((asyncResult) => {
+                        if (typeof asyncValue === 'function') {
+                            const valueAfterAsync = asyncValue();
+
+                            // If the value changed during async validation
+                            // then reject the async result
+                            if (valueAfterAsync !== value) {
+                                throw asyncResult;
+                            }
+                        }
+
+                        return asyncResult;
+                    });
+            }
+        };
+    } else if (typeof result.validateAsync !== 'undefined') {
+        throw 'Strickland: validateAsync must be either a Promise or a function';
+    }
+
+    return result;
 }
