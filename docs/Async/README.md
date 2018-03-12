@@ -1,6 +1,6 @@
-# Async Validators
+# Async Validation
 
-If you have wondered how async validators work with Strickland, you will be delighted at how simple they are: **a validator can use a `Promise`.**
+If you have wondered how async validation works with Strickland, you will be delighted at how simple it is: **a validator can use a `Promise`.**
 
 Similar to how `validate` normalizes a boolean into validation result with an `isValid` property, a `Promise` is normalized into a validation result with a `validateAsync` property. The normalized `validateAsync` property is a function that returns a `Promise` resolving to the async result.
 
