@@ -86,7 +86,6 @@ const result = validate(letterA, 'B');
     * [Validation Context](http://strickland.io/docs/Extensibility/ValidationContext.html)
     * [Validation Result Props](http://strickland.io/docs/Extensibility/ValidationResults.html)
     * [Extensibility Pattern](http://strickland.io/docs/Extensibility/Pattern.html)
-    * [getValidatorProps](http://strickland.io/docs/Extensibility/getValidatorProps.html)
 * [Built-In Validators](http://strickland.io/docs/Validators/index.html)
     * [required](http://strickland.io/docs/Validators/required.html)
     * [compare](http://strickland.io/docs/Validators/compare.html)

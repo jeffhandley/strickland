@@ -1,16 +1,16 @@
-import validate, {getValidatorProps, validateAsync, required, compare, min, max, range, minLength, maxLength, length, every, each, some, props, form} from '../src/strickland';
+import validate, {validateAsync, required, compare, min, max, range, minLength, maxLength, length, every, each, some, props, form} from '../src/strickland';
 
 describe('docs', () => {
     describe('introduction', () => {
         describe('validators', () => {
-            it('As an arrow function', () => {
+            it('as an arrow function', () => {
                 expect(() => {
                     // eslint-disable-next-line no-unused-vars
                     const letterA = (value) => (value === 'A');
                 }).not.toThrow();
             });
 
-            it('As a traditional function', () => {
+            it('as a traditional function', () => {
                 expect(() => {
                     // eslint-disable-next-line no-unused-vars
                     function letterA(value) {
@@ -31,7 +31,7 @@ describe('docs', () => {
         });
 
         describe('validation results', () => {
-            it('As a boolean', () => {
+            it('as a boolean', () => {
                 function letterA(value) {
                     return (value === 'A');
                 }
@@ -44,7 +44,7 @@ describe('docs', () => {
                 });
             });
 
-            it('As an object', () => {
+            it('as an object', () => {
                 function letterA(value) {
                     return {
                         isValid: (value === 'A')
@@ -63,11 +63,11 @@ describe('docs', () => {
 
     describe('extensibility', () => {
         it('validator factories', () => {
-            function letter(letterParam) {
-                return (value) => (value === letterParam);
+            function letterValidator({letter}) {
+                return (value) => value === letter;
             }
 
-            const validator = letter('B');
+            const validator = letterValidator({letter: 'B'});
             const result = validate(validator, 'B');
 
             expect(result).toMatchObject({
@@ -77,78 +77,89 @@ describe('docs', () => {
         });
 
         it('validation context', () => {
-            function letter(letterParam) {
+            function letterValidator(validatorProps) {
                 return function validateLetter(value, context) {
-                    // Copy the param instead of overriding
-                    // `letterParam` with the function result
-                    let letterValue = letterParam;
+                    // Be sure not to overwrite the original
+                    // validatorProps variable
+                    let resolvedProps = validatorProps;
 
-                    if (typeof letterValue === 'function') {
-                        letterValue = letterValue(context);
+                    if (typeof resolvedProps === 'function') {
+                        resolvedProps = resolvedProps(context);
                     }
 
-                    return (value === letterValue);
+                    resolvedProps = resolvedProps || {};
+
+                    const {letter} = resolvedProps;
+                    return (value === letter);
                 }
             }
 
-            const validator = letter((context) => context.letter);
-            const result = validate(validator, 'B', { letter: 'A' });
+            const validator = letterValidator((context) => ({letter: context.letter}));
+            const result = validate(validator, 'B', {letter: 'B'});
 
             expect(result).toMatchObject({
-                isValid: false,
+                isValid: true,
                 value: 'B'
             });
         });
 
         it('validation result props', () => {
-            function letter(letterParam) {
+            function letterValidator(validatorProps) {
                 return function validateLetter(value, context) {
-                    // Copy the param instead of overriding
-                    // `letterParam` with the function result
-                    let letterValue = letterParam;
+                    // Be sure not to overwrite the original
+                    // validatorProps variable
+                    let resolvedProps = validatorProps;
 
-                    if (typeof letterValue === 'function') {
-                        letterValue = letterValue(context);
+                    if (typeof resolvedProps === 'function') {
+                        resolvedProps = resolvedProps(context);
                     }
 
+                    resolvedProps = resolvedProps || {};
+
+                    const {letter} = resolvedProps;
+
                     return {
-                        message: `Must match "${letterValue}"`,
-                        isValid: (value === letterValue)
+                        isValid: (value === letter),
+                        message: `Must match "${letter}"`
                     };
                 }
             }
 
-            const validator = letter('B');
+            const validator = letterValidator({letter: 'B'});
             const result = validate(validator, 'A');
 
             expect(result).toMatchObject({
-                message: 'Must match "B"',
                 isValid: false,
+                message: 'Must match "B"',
                 value: 'A'
             });
         });
 
         it('pattern', () => {
-            function letter(letterParam, validatorProps) {
+            function letterValidator(validatorProps) {
                 return function validateLetter(value, context) {
-                    // Copy the param instead of overriding
-                    // `letterParam` with the function result
-                    let letterValue = letterParam;
+                    // Be sure not to overwrite the original
+                    // validatorProps variable
+                    let resolvedProps = validatorProps;
 
-                    if (typeof letterValue === 'function') {
-                        letterValue = letterValue(context);
+                    if (typeof resolvedProps === 'function') {
+                        resolvedProps = resolvedProps(context);
                     }
 
+                    resolvedProps = resolvedProps || {};
+
+                    const {letter} = resolvedProps;
+
                     return {
-                        message: `Must match "${letterValue}"`,
-                        ...validatorProps,
-                        letter: letterValue,
-                        isValid: (value === letterValue)
+                        message: `Must match "${letter}"`,
+                        ...resolvedProps,
+                        isValid: (value === letter)
                     };
                 }
             }
 
-            const termsAccepted = letter('Y', {
+            const termsAccepted = letterValidator({
+                letter: 'Y',
                 fieldName: 'acceptTerms',
                 message: 'Enter the letter "Y" to accept the terms'
             });
@@ -158,212 +169,79 @@ describe('docs', () => {
             const result = validate(termsAccepted, termsEntered);
 
             expect(result).toMatchObject({
+                letter: 'Y',
                 fieldName: 'acceptTerms',
                 message: 'Enter the letter "Y" to accept the terms',
-                letter: 'Y',
                 isValid: false,
                 value: 'N'
-            });
-        });
-
-        describe('getValidatorProps', () => {
-            function letter(...params) {
-                return function validateLetter(value, context) {
-                    const validatorProps = getValidatorProps(
-
-                        ['letter'], // named props, in their param order
-                        params, // the param array supplied to the validator
-                        value, // the value being validated
-                        context, // the validation context
-                        {letter: 'A'} // default named prop values
-                    );
-
-                    return {
-                        message: `Must match "${validatorProps.letter}"`,
-                        ...validatorProps,
-                        isValid: (value === validatorProps.letter)
-                    };
-                }
-            }
-
-            it('letter A', () => {
-                const letterA = letter('A');
-                const result = validate(letterA, 'B');
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: 'B',
-                    letter: 'A'
-                });
-            });
-
-            it('letter from context', () => {
-                const letterFromContext = letter((context) => context.letter);
-                const result = validate(letterFromContext, 'B', {letter: 'C'});
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: 'B',
-                    letter: 'C'
-                });
-            });
-
-            it('letter A with props', () => {
-                const letterAwithProps = letter('A', {message: 'Must be "A"'});
-                const result = validate(letterAwithProps, 'B');
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: 'B',
-                    letter: 'A',
-                    message: 'Must be "A"'
-                });
-            });
-
-            it('letter from context with props', () => {
-                const letterFromContextWithProps = letter((context) => context.letter, {fieldName: 'acceptTerms'});
-                const result = validate(letterFromContextWithProps, 'N', {letter: 'Y'});
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: 'N',
-                    letter: 'Y',
-                    fieldName: 'acceptTerms'
-                });
-            });
-
-            it('props from context', () => {
-                const propsFromContext = letter((context) => ({
-                    letter: context.letter,
-                    message: `Must be "${context.letter}"`
-                }));
-
-                const result = validate(propsFromContext, 'B', {letter: 'C'});
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: 'B',
-                    letter: 'C',
-                    message: 'Must be "C"'
-                });
             });
         });
     });
 
     describe('validators', () => {
         describe('required', () => {
-            it('usage', () => {
-                const nameRequired = required({
-                    message: 'Name is required'
+            describe('usage', () => {
+                it('nameRequired example', () => {
+                    const nameRequired = required({
+                        message: 'Name is required'
+                    });
+
+                    const result = validate(nameRequired, '');
+
+                    expect(result).toMatchObject({
+                        required: true,
+                        message: 'Name is required',
+                        isValid: false,
+                        value: ''
+                    });
                 });
 
-                const result = validate(nameRequired, '');
-
-                expect(result).toMatchObject({
-                    isValid: false,
-                    value: '',
-                    required: true,
-                    message: 'Name is required'
-                });
-            });
-
-            describe('validator props', () => {
                 it('required by default', () => {
                     const a = required();
                     expect(validate(a, '')).toMatchObject({
-                        isValid: false,
-                        required: true
-                    })
-                });
-
-                it('specifying false', () => {
-                    const b = required(false);
-                    expect(validate(b, '')).toMatchObject({
-                        isValid: true,
-                        required: false
-                    })
-                });
-
-                it('specifying validator props', () => {
-                    const c = required(
-                        true,
-                        {message: 'Name is required'}
-                    );
-
-                    expect(validate(c, '')).toMatchObject({
-                        isValid: false,
                         required: true,
-                        message: 'Name is required'
+                        isValid: false
+                    })
+                });
+
+                it('supplying the `required` named prop', () => {
+                    const b = required({
+                        required: true,
+                        message: '"Name" is required'
+                    });
+
+                    expect(validate(b, '')).toMatchObject({
+                        required: true,
+                        message: '"Name" is required',
+                        isValid: false
                     })
                 });
 
                 it('using a function to resolve the required prop along with validator props', () => {
-                    const d = required(
-                        (/*context*/) => true,
-                        {message: 'Name is required'}
-                    );
-
-                    expect(validate(d, '')).toMatchObject({
-                        isValid: false,
-                        required: true,
-                        message: 'Name is required'
-                    })
-                });
-
-                it('using a function to resolve the required prop along with a function to resolve validator props', () => {
-                    const e = required(
-                        (context) => context.required,
-                        (context) => ({
-                            message: context.required ?
-                                'Name is required' :
-                                'Name is optional'
-                        }
-                        )
-                    );
-
-                    expect(validate(e, '', {required: true})).toMatchObject({
-                        isValid: false,
-                        required: true,
-                        message: 'Name is required'
-                    })
-
-                    expect(validate(e, '', {required: false})).toMatchObject({
-                        isValid: true,
-                        required: false,
-                        message: 'Name is optional'
-                    })
-                });
-
-                it('using a function to resolve validator props', () => {
-                    const f = required((context) => ({
+                    const c = required((context) => ({
                         required: context.required,
                         message: context.required ?
-                            'Name is required' :
-                            'Name is optional'
+                            '"Name" is required' :
+                            '"Name" is optional'
                     }));
 
-                    expect(validate(f, '', {required: true})).toMatchObject({
-                        isValid: false,
+                    expect(validate(c, '', {required: true})).toMatchObject({
                         required: true,
-                        message: 'Name is required'
-                    })
-
-                    expect(validate(f, '', {required: false})).toMatchObject({
-                        isValid: true,
-                        required: false,
-                        message: 'Name is optional'
+                        message: '"Name" is required',
+                        isValid: false
                     })
                 });
             });
         });
 
         describe('compare', () => {
-            it('as the first parameter to the factory', () => {
-                const a = compare('A', {
+            it('as a named prop', () => {
+                const letterA = compare({
+                    compare: 'A',
                     message: 'Must be the letter "A"'
                 });
 
-                expect(validate(a, 'Z')).toMatchObject({
+                expect(validate(letterA, 'Z')).toMatchObject({
                     isValid: false,
                     compare: 'A',
                     value: 'Z',
@@ -371,41 +249,13 @@ describe('docs', () => {
                 });
             });
 
-            it('as a named prop', () => {
-                const b = compare({
-                    compare: 'B',
-                    message: 'Must be the letter "B"'
-                });
-
-                expect(validate(b, 'Z')).toMatchObject({
-                    isValid: false,
-                    compare: 'B',
-                    value: 'Z',
-                    message: 'Must be the letter "B"'
-                });
-            });
-
-            it('as a function that resolves to the comparison value', () => {
-                const c = compare(
-                    (/*context*/) => 'C',
-                    {message: 'Must match C'}
-                );
-
-                expect(validate(c, 'Z')).toMatchObject({
-                    isValid: false,
-                    compare: 'C',
-                    value: 'Z',
-                    message: 'Must match C'
-                });
-            });
-
             it('as a function that resolves to have the named prop', () => {
-                const d = compare((context) => ({
+                const letterValidator = compare((context) => ({
                     compare: context.compare,
                     message: `Must match "${context.compare}"`
                 }));
 
-                expect(validate(d, 'Z', {compare: 'Y'})).toMatchObject({
+                expect(validate(letterValidator, 'Z', {compare: 'Y'})).toMatchObject({
                     isValid: false,
                     compare: 'Y',
                     value: 'Z',
@@ -415,27 +265,13 @@ describe('docs', () => {
         });
 
         describe('min', () => {
-            it('as the first parameter to the factory', () => {
-                const a = min(
-                    1,
-                    {message: 'Must be at least 1'}
-                );
-
-                expect(validate(a, 5)).toMatchObject({
-                    isValid: true,
-                    value: 5,
-                    min: 1,
-                    message: 'Must be at least 1'
-                });
-            });
-
             it('as a named prop', () => {
-                const b = min({
+                const minOf2 = min({
                     min: 2,
                     message: 'Must be at least 2'}
                 );
 
-                expect(validate(b, 5)).toMatchObject({
+                expect(validate(minOf2, 5)).toMatchObject({
                     isValid: true,
                     value: 5,
                     min: 2,
@@ -443,27 +279,13 @@ describe('docs', () => {
                 });
             });
 
-            it('as a function that resolves to the min value', () => {
-                const c = min((/*context*/) =>
-                    3,
-                {message: 'Must be at least 3'}
-                );
-
-                expect(validate(c, 5)).toMatchObject({
-                    isValid: true,
-                    value: 5,
-                    min: 3,
-                    message: 'Must be at least 3'
-                });
-            });
-
             it('as a function that resolves to have the named prop', () => {
-                const d = min((context) => ({
+                const minValidator = min((context) => ({
                     min: context.min,
                     message: `Must be at least ${context.min}`
                 }));
 
-                expect(validate(d, 5, {min: 4})).toMatchObject({
+                expect(validate(minValidator, 5, {min: 4})).toMatchObject({
                     isValid: true,
                     value: 5,
                     min: 4,
@@ -473,27 +295,13 @@ describe('docs', () => {
         });
 
         describe('max', () => {
-            it('as the first parameter to the factory', () => {
-                const a = max(
-                    1,
-                    {message: 'Must be at most 1'}
-                );
-
-                expect(validate(a, 5)).toMatchObject({
-                    isValid: false,
-                    value: 5,
-                    max: 1,
-                    message: 'Must be at most 1'
-                });
-            });
-
             it('as a named prop', () => {
-                const b = max({
+                const maxOf2 = max({
                     max: 2,
                     message: 'Must be at most 2'}
                 );
 
-                expect(validate(b, 5)).toMatchObject({
+                expect(validate(maxOf2, 5)).toMatchObject({
                     isValid: false,
                     value: 5,
                     max: 2,
@@ -501,27 +309,13 @@ describe('docs', () => {
                 });
             });
 
-            it('as a function that resolves to the max value', () => {
-                const c = max((/*context*/) =>
-                    3,
-                {message: 'Must be at most 3'}
-                );
-
-                expect(validate(c, 5)).toMatchObject({
-                    isValid: false,
-                    value: 5,
-                    max: 3,
-                    message: 'Must be at most 3'
-                });
-            });
-
             it('as a function that resolves to have the named prop', () => {
-                const d = max((context) => ({
+                const maxValidator = max((context) => ({
                     max: context.max,
                     message: `Must be at most ${context.max}`
                 }));
 
-                expect(validate(d, 5, {max: 4})).toMatchObject({
+                expect(validate(maxValidator, 5, {max: 4})).toMatchObject({
                     isValid: false,
                     value: 5,
                     max: 4,
@@ -531,46 +325,14 @@ describe('docs', () => {
         });
 
         describe('range', () => {
-            it('as the first two parameters to the factory', () => {
-                const a = range(
-                    10,
-                    20,
-                    {message: 'Must be between 10 and 20'}
-                );
-
-                expect(validate(a, 5)).toMatchObject({
-                    isValid: false,
-                    value: 5,
-                    min: 10,
-                    max: 20,
-                    message: 'Must be between 10 and 20'
-                });
-            });
-
             it('as named props', () => {
-                const b = range({
+                const between10and20 = range({
                     min: 10,
                     max: 20,
                     message: 'Must be between 10 and 20'
                 });
 
-                expect(validate(b, 5)).toMatchObject({
-                    isValid: false,
-                    value: 5,
-                    min: 10,
-                    max: 20,
-                    message: 'Must be between 10 and 20'
-                });
-            });
-
-            it('as functions that resolve the min and max values', () => {
-                const c = range(
-                    (/*context*/) => 10,
-                    (/*context*/) => 20,
-                    {message: 'Must be between 10 and 20'}
-                );
-
-                expect(validate(c, 5)).toMatchObject({
+                expect(validate(between10and20, 5)).toMatchObject({
                     isValid: false,
                     value: 5,
                     min: 10,
@@ -580,13 +342,13 @@ describe('docs', () => {
             });
 
             it('as a function that resolves to have the named props', () => {
-                const d = range((context) => ({
+                const rangeValidator = range((context) => ({
                     min: context.min,
                     max: context.max,
                     message: `Must be between ${context.min} and ${context.max}`
                 }));
 
-                expect(validate(d, 5, {min: 10, max: 20})).toMatchObject({
+                expect(validate(rangeValidator, 5, {min: 10, max: 20})).toMatchObject({
                     isValid: false,
                     value: 5,
                     min: 10,
@@ -597,55 +359,27 @@ describe('docs', () => {
         });
 
         describe('minLength', () => {
-            it('as the first parameter to the factory', () => {
-                const a = minLength(
-                    1,
-                    {message: 'Must have a length of at least 1'}
-                );
-
-                expect(validate(a, 'ABCDE')).toMatchObject({
-                    isValid: true,
-                    value: 'ABCDE',
-                    minLength: 1,
-                    message: 'Must have a length of at least 1'
-                });
-            });
-
             it('as a named prop', () => {
-                const b = minLength({
+                const minLengthOf2 = minLength({
                     minLength: 2,
                     message: 'Must have a length of at least 2'
                 });
 
-                expect(validate(b, 'ABCDE')).toMatchObject({
+                expect(validate(minLengthOf2, 'ABCDE')).toMatchObject({
                     isValid: true,
                     value: 'ABCDE',
                     minLength: 2,
                     message: 'Must have a length of at least 2'
-                });
-            });
-
-            it('as a function that resolves to the minLength value', () => {
-                const c = minLength(
-                    (/*context*/) => 3,
-                    {message: 'Must have a length of at least 3'}
-                );
-
-                expect(validate(c, 'ABCDE')).toMatchObject({
-                    isValid: true,
-                    value: 'ABCDE',
-                    minLength: 3,
-                    message: 'Must have a length of at least 3'
                 });
             });
 
             it('as a function that resolves to have the named prop', () => {
-                const d = minLength((context) => ({
+                const minLengthValidator = minLength((context) => ({
                     minLength: context.minLength,
                     message: `Must have a length of at least ${context.minLength}`
                 }));
 
-                expect(validate(d, 'ABCDE', {minLength: 4})).toMatchObject({
+                expect(validate(minLengthValidator, 'ABCDE', {minLength: 4})).toMatchObject({
                     isValid: true,
                     value: 'ABCDE',
                     minLength: 4,
@@ -655,55 +389,27 @@ describe('docs', () => {
         });
 
         describe('maxLength', () => {
-            it('as the first parameter to the factory', () => {
-                const a = maxLength(
-                    1,
-                    {message: 'Must have a length of at most 1'}
-                );
-
-                expect(validate(a, 'ABCDE')).toMatchObject({
-                    isValid: false,
-                    value: 'ABCDE',
-                    maxLength: 1,
-                    message: 'Must have a length of at most 1'
-                });
-            });
-
             it('as a named prop', () => {
-                const b = maxLength({
+                const maxLengthOf2 = maxLength({
                     maxLength: 2,
                     message: 'Must have a length of at most 2'
                 });
 
-                expect(validate(b, 'ABCDE')).toMatchObject({
+                expect(validate(maxLengthOf2, 'ABCDE')).toMatchObject({
                     isValid: false,
                     value: 'ABCDE',
                     maxLength: 2,
                     message: 'Must have a length of at most 2'
-                });
-            });
-
-            it('as a function that resolves to the maxLength value', () => {
-                const c = maxLength(
-                    (/*context*/) => 3,
-                    {message: 'Must have a length of at most 3'}
-                );
-
-                expect(validate(c, 'ABCDE')).toMatchObject({
-                    isValid: false,
-                    value: 'ABCDE',
-                    maxLength: 3,
-                    message: 'Must have a length of at most 3'
                 });
             });
 
             it('as a function that resolves to have the named prop', () => {
-                const d = maxLength((context) => ({
+                const maxLengthValidator = maxLength((context) => ({
                     maxLength: context.maxLength,
                     message: `Must have a length of at most ${context.maxLength}`
                 }));
 
-                expect(validate(d, 'ABCDE', {maxLength: 4})).toMatchObject({
+                expect(validate(maxLengthValidator, 'ABCDE', {maxLength: 4})).toMatchObject({
                     isValid: false,
                     value: 'ABCDE',
                     maxLength: 4,
@@ -713,46 +419,14 @@ describe('docs', () => {
         });
 
         describe('length', () => {
-            it('as the first two parameters to the factory', () => {
-                const a = length(
-                    10,
-                    20,
-                    {message: 'Must have a length between 10 and 20'}
-                );
-
-                expect(validate(a, 'ABCDE')).toMatchObject({
-                    isValid: false,
-                    value: 'ABCDE',
-                    minLength: 10,
-                    maxLength: 20,
-                    message: 'Must have a length between 10 and 20'
-                });
-            });
-
             it('as named props', () => {
-                const b = length({
+                const maxLengthBetween10and20 = length({
                     minLength: 10,
                     maxLength: 20,
                     message: 'Must have a length between 10 and 20'
                 });
 
-                expect(validate(b, 'ABCDE')).toMatchObject({
-                    isValid: false,
-                    value: 'ABCDE',
-                    minLength: 10,
-                    maxLength: 20,
-                    message: 'Must have a length between 10 and 20'
-                });
-            });
-
-            it('as functions that resolve the minLength and maxLength values', () => {
-                const c = length(
-                    (/*context*/) => 10,
-                    (/*context*/) => 20,
-                    {message: 'Must have a length between 10 and 20'}
-                );
-
-                expect(validate(c, 'ABCDE')).toMatchObject({
+                expect(validate(maxLengthBetween10and20, 'ABCDE')).toMatchObject({
                     isValid: false,
                     value: 'ABCDE',
                     minLength: 10,
@@ -762,13 +436,13 @@ describe('docs', () => {
             });
 
             it('as a function that resolves to have the named props', () => {
-                const d = length((context) => ({
+                const lengthValidator = length((context) => ({
                     minLength: context.minLength,
                     maxLength: context.maxLength,
                     message: `Must have a length between ${context.minLength} and ${context.maxLength}`
                 }));
 
-                expect(validate(d, 'ABCDE', {minLength: 10, maxLength: 20})).toMatchObject({
+                expect(validate(lengthValidator, 'ABCDE', {minLength: 10, maxLength: 20})).toMatchObject({
                     isValid: false,
                     value: 'ABCDE',
                     minLength: 10,
@@ -806,7 +480,11 @@ describe('docs', () => {
                 }
             }
 
-            const mustExistWithLength5 = everyValidator([required(), minLength(5)]);
+            const mustExistWithLength5 = everyValidator([
+                required(),
+                minLength({minLength: 5})
+            ]);
+
             const result = validate(mustExistWithLength5, '1234', {
                 message: 'Must have a length of at least 5'
             });
@@ -825,7 +503,7 @@ describe('docs', () => {
                 const atLeast5Chars = every(
                     [
                         required(),
-                        minLength(5)
+                        minLength({minLength: 5})
                     ],
                     {message: 'Must have at least 5 characters'}
                 );
@@ -846,7 +524,7 @@ describe('docs', () => {
                 const requiredWithMinLength = every(
                     [
                         required(),
-                        minLength((context) => context.minLength)
+                        minLength((context) => ({minLength: context.minLength}))
                     ],
                     (context) => ({message: `Must have at least ${context.minLength} characters`})
                 );
@@ -866,8 +544,8 @@ describe('docs', () => {
             it('mustExistWithLength5to10', () => {
                 const mustExistWithLength5to10 = every([
                     required({message: 'Required'}),
-                    minLength(5, {message: 'Must have at least 5 characters'}),
-                    maxLength(10, {message: 'Must have at most 10 characters'})
+                    minLength({minLength: 5, message: 'Must have at least 5 characters'}),
+                    maxLength({maxLength: 10, message: 'Must have at most 10 characters'})
                 ]);
 
                 const result = validate(mustExistWithLength5to10, '1234');
@@ -901,7 +579,7 @@ describe('docs', () => {
                 const atLeast5Chars = each(
                     [
                         required(),
-                        minLength(5)
+                        minLength({minLength: 5})
                     ],
                     {message: 'Must have at least 5 characters'}
                 );
@@ -922,7 +600,7 @@ describe('docs', () => {
                 const requiredWithMinLength = each(
                     [
                         required(),
-                        minLength((context) => context.minLength)
+                        minLength((context) => ({minLength: context.minLength}))
                     ],
                     (context) => ({message: `Must have at least ${context.minLength} characters`})
                 );
@@ -942,8 +620,8 @@ describe('docs', () => {
             it('mustExistWithLength5to10', () => {
                 const mustExistWithLength5to10 = each([
                     required({message: 'Required'}),
-                    minLength(5, {message: 'Must have at least 5 characters'}),
-                    maxLength(10, {message: 'Must have at most 10 characters'})
+                    minLength({minLength: 5, message: 'Must have at least 5 characters'}),
+                    maxLength({maxLength: 10, message: 'Must have at most 10 characters'})
                 ]);
 
                 const result = validate(mustExistWithLength5to10, '1234');
@@ -980,9 +658,9 @@ describe('docs', () => {
 
         describe('some', () => {
             const max5orMin10orValue7 = some([
-                max(5),
-                min(10),
-                compare(7)
+                max({max: 5}),
+                min({min: 10}),
+                compare({compare: 7})
             ]);
 
             const result = validate(max5orMin10orValue7, 12);
@@ -1010,9 +688,9 @@ describe('docs', () => {
         describe('props', () => {
             it('parameters', () => {
                 const validateProps = props({
-                    firstName: every([required(), length(2, 20)]),
-                    lastName: every([required(), length(2, 20)]),
-                    birthYear: range(1900, 2018)
+                    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
+                    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
+                    birthYear: range({min: 1900, max: 2018})
                 }, {
                     message: 'The person must be valid'
                 });
@@ -1094,9 +772,9 @@ describe('docs', () => {
             it('result properties', () => {
                 // Define the rules for first name, last name, and birthYear
                 const validatePersonProps = props({
-                    firstName: every([required(), length(2, 20)]),
-                    lastName: every([required(), length(2, 20)]),
-                    birthYear: range(1900, 2018)
+                    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
+                    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
+                    birthYear: range({min: 1900, max: 2018})
                 });
 
                 // Create a person
@@ -1166,9 +844,9 @@ describe('docs', () => {
         it('advanced object validation', () => {
             // Define the rules for first name, last name, and birthYear
             const validatePersonProps = props({
-                firstName: every([required(), length(2, 20)]),
-                lastName: every([required(), length(2, 20)]),
-                birthYear: range(1900, 2018)
+                firstName: every([required(), length({minLength: 2, maxLength: 20})]),
+                lastName: every([required(), length({minLength: 2, maxLength: 20})]),
+                birthYear: range({min: 1900, max: 2018})
             });
 
             function stanfordStricklandBornIn1925(person) {
@@ -1206,14 +884,14 @@ describe('docs', () => {
 
         it('nested objects', () => {
             const validatePerson = props({
-                name: every([required(), length(5, 40)]),
+                name: every([required(), length({minLength: 5, maxLength: 40})]),
                 address: props({
                     street: props({
-                        number: every([required(), range(1, 99999)]),
-                        name: every([required(), length(2, 40)])
+                        number: every([required(), range({min: 1, max: 99999})]),
+                        name: every([required(), length({minLength: 2, maxLength: 40})])
                     }),
                     city: required(),
-                    state: every([required(), length(2, 2)])
+                    state: every([required(), length({minLength: 2, maxLength: 2})])
                 })
             });
 
@@ -1237,19 +915,19 @@ describe('docs', () => {
             const validatePerson = [
                 required(),
                 {
-                    name: [required(), length(5, 40)],
+                    name: [required(), length({minLength: 5, maxLength: 40})],
                     address: [
                         required(),
                         {
                             street: [
                                 required(),
                                 {
-                                    number: [required(), range(1, 99999)],
-                                    name: [required(), length(2, 40)]
+                                    number: [required(), range({min: 1, max: 99999})],
+                                    name: [required(), length({minLength: 2, maxLength: 40})]
                                 }
                             ],
                             city: required(),
-                            state: [required(), length(2, 2)]
+                            state: [required(), length({minLength: 2, maxLength: 2})]
                         }
                     ]
                 }
@@ -1389,21 +1067,23 @@ describe('docs', () => {
             const validatePerson = {
                 name: [
                     required(),
-                    length(2, 20, {
+                    length({
+                        minLength: 2,
+                        maxLength: 20,
                         message: 'Name must be 2-20 characters'
                     })
                 ],
                 username: [
                     required(),
-                    length(2, 20),
+                    length({minLength: 2, maxLength: 20}),
                     usernameIsAvailable
                 ],
                 address: [
                     required({message: 'Address is required'}),
                     {
-                        street: [required(), length(2, 40)],
-                        city: [required(), length(2, 40)],
-                        state: [required(), length(2, 2)]
+                        street: [required(), length({minLength: 2, maxLength: 40})],
+                        city: [required(), length({minLength: 2, maxLength: 40})],
+                        state: [required(), length({minLength: 2, maxLength: 2})]
                     },
                     validateCity
                 ]
@@ -1480,8 +1160,15 @@ describe('docs', () => {
             }
 
             const validateUser = {
-                name: [required(), length(2, 20)],
-                username: [required(), length(2, 20), usernameIsAvailableTwoStage]
+                name: [
+                    required(),
+                    length({minLength: 2, maxLength: 20})
+                ],
+                username: [
+                    required(),
+                    length({minLength: 2, maxLength: 20}),
+                    usernameIsAvailableTwoStage
+                ]
             };
 
             const user = {
@@ -1542,7 +1229,7 @@ describe('docs', () => {
                     expect.assertions(1);
                     const resultUsed = jest.fn();
 
-                    const validateUsername = [required(), length(2, 20), usernameIsAvailableTwoStage];
+                    const validateUsername = [required(), length({minLength: 2, maxLength: 20}), usernameIsAvailableTwoStage];
 
                     let username = 'marty';
                     let usernameResult = validate(validateUsername, username);
@@ -1568,9 +1255,9 @@ describe('docs', () => {
 
     describe('form validation', () => {
         const validatePerson = form({
-            firstName: [required(), length(2, 20)],
-            lastName: [required(), length(2, 20)],
-            birthYear: range(1900, 2018)
+            firstName: [required(), length({minLength: 2, maxLength: 20})],
+            lastName: [required(), length({minLength: 2, maxLength: 20})],
+            birthYear: range({min: 1900, max: 2018})
         });
 
         // Initialize the person with only a firstName

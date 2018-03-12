@@ -1,23 +1,23 @@
 import validate from './validate';
-import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: true,
     props: {}
 };
 
-export default function props(validators, ...params) {
+export default function propsValidator(validators, validatorProps) {
+    if (typeof validators !== 'object' || Array.isArray(validators) || !validators) {
+        throw 'Strickland: The `props` validator expects an object';
+    }
+
     return function validateProps(value, context) {
-        const validatorProps = getValidatorProps(
-            [],
-            params,
-            value,
-            context
-        );
+        const props = (typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps) || {};
 
         if (!validators || !Object.keys(validators).length) {
             return {
-                ...validatorProps,
+                ...props,
                 ...initialResult
             };
         }
@@ -64,7 +64,7 @@ export default function props(validators, ...params) {
                         const resolvedResult = results.reduce(applyNextResult, initialResult);
 
                         return {
-                            ...validatorProps,
+                            ...props,
                             ...resolvedResult
                         };
                     });
@@ -73,7 +73,7 @@ export default function props(validators, ...params) {
         }
 
         return {
-            ...validatorProps,
+            ...props,
             ...result
         };
     }

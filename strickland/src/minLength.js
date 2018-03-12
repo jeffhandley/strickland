@@ -1,33 +1,29 @@
-import {getValidatorProps} from './utils';
-
-export default function minLength(...params) {
+export default function minLengthValidator(validatorProps) {
     return function validateMinLength(value, context) {
         let isValid = true;
         let length = value ? value.length : 0;
 
-        const props = getValidatorProps(
-            ['minLength'],
-            params,
-            value,
-            context,
-            {length}
-        );
+        const props = (typeof validatorProps === 'function' ?
+            validatorProps({...context, length}) :
+            validatorProps) || {};
 
-        if (typeof props.minLength !== 'number') {
-            throw 'minLength must be a number';
+        const {minLength} = props;
+
+        if (typeof minLength !== 'number') {
+            throw 'Strickland: The `minLength` validator requires a numeric `minLength` property';
         }
 
         if (!value) {
             // Empty values are always valid except with the required validator
 
-        } else if (length < props.minLength) {
+        } else if (length < minLength) {
             isValid = false;
         }
 
         return {
             ...props,
-            length,
-            isValid
+            isValid,
+            length
         };
     }
 }

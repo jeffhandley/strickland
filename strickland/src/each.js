@@ -1,28 +1,21 @@
 import validate from './validate';
-import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: true,
     each: []
 };
 
-export default function each(validators, ...params) {
+export default function eachValidator(validators, validatorProps) {
+    if (!validators || !Array.isArray(validators)) {
+        throw 'Strickland: The `each` validator expects an array of validators';
+    }
+
     return function validateEach(value, context) {
         let result = initialResult;
 
-        const validatorProps = getValidatorProps(
-            [],
-            params,
-            value,
-            context
-        );
-
-        if (!validators || !validators.length) {
-            return {
-                ...validatorProps,
-                ...initialResult
-            };
-        }
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
 
         let hasAsyncResults = false;
         validators.forEach((validator) => {
@@ -44,7 +37,7 @@ export default function each(validators, ...params) {
                     const resolvedResult = results.reduce(applyNextResult, initialResult);
 
                     return {
-                        ...validatorProps,
+                        ...props,
                         ...resolvedResult
                     };
                 });
@@ -52,7 +45,7 @@ export default function each(validators, ...params) {
         }
 
         return {
-            ...validatorProps,
+            ...props,
             ...result
         };
     }

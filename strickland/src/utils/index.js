@@ -1,4 +1,7 @@
-import {default as getValidatorProps} from './getValidatorProps';
+export function isFalsyButNotZero(value) {
+    if (value === 0) {
+        return false;
+    }
 
-export {isFalsyButNotZero} from './number';
-export {getValidatorProps};
+    return !value;
+}

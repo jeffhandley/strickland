@@ -15,7 +15,8 @@ export default function validate(validator, value, context) {
     }
 
     const validationContext = {
-        ...context
+        ...context,
+        value
     };
 
     result = validator(value, validationContext);

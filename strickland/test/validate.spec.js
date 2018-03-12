@@ -141,14 +141,26 @@ describe('validate', () => {
             const rules = jest.fn();
             validate(rules, null, {contextProp: 'Context'});
 
-            expect(rules).toHaveBeenCalledWith(null, {contextProp: 'Context'});
+            expect(rules).toHaveBeenCalledWith(null, expect.objectContaining({contextProp: 'Context'}));
         });
 
-        it('defaults context to an object', () => {
+        it('adds the value to an existing context', () => {
+            const rules = jest.fn();
+            validate(rules, 5, {contextProp: 'Context'});
+
+            expect(rules).toHaveBeenCalledWith(5, expect.objectContaining({
+                contextProp: 'Context',
+                value: 5
+            }));
+        });
+
+        it('creates a context with the value', () => {
             const rules = jest.fn();
             validate(rules, 5);
 
-            expect(rules).toHaveBeenCalledWith(5, expect.any(Object));
+            expect(rules).toHaveBeenCalledWith(5, expect.objectContaining({
+                value: 5
+            }));
         });
     });
 
@@ -232,7 +244,7 @@ describe('validate', () => {
         describe('where each property defines rules', () => {
             const rules = {
                 firstName: required(),
-                lastName: [required(), minLength(2)]
+                lastName: [required(), minLength({minLength: 2})]
             };
 
             const value = {

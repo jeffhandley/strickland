@@ -55,8 +55,15 @@ In the following example, the application will render the partial, synchronous v
 import validate, {required, length} from 'strickland';
 
 const validateUser = {
-    name: [required(), length(2, 20)],
-    username: [required(), length(2, 20), usernameIsAvailableTwoStage]
+    name: [
+        required(),
+        length({minLength: 2, maxLength: 20})
+    ],
+    username: [
+        required(),
+        length({minLength: 2, maxLength: 20}),
+        usernameIsAvailableTwoStage
+    ]
 };
 
 const user = {

@@ -1,18 +1,17 @@
-import {isFalsyButNotZero, getValidatorProps} from './utils';
+import {isFalsyButNotZero} from './utils';
 
-export default function min(...params) {
+export default function minValidator(validatorProps) {
     return function validateMin(value, context) {
         let isValid = true;
 
-        const props = getValidatorProps(
-            ['min'],
-            params,
-            value,
-            context
-        );
+        const props = (typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps) || {};
 
-        if (typeof props.min !== 'number') {
-            throw 'min must be a number';
+        const {min} = props;
+
+        if (typeof min !== 'number') {
+            throw 'Strickland: The `min` validator requires a numeric `min` property';
         }
 
         if (isFalsyButNotZero(value)) {
@@ -21,13 +20,12 @@ export default function min(...params) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value < props.min) {
+        } else if (value < min) {
             isValid = false;
         }
 
         return {
             ...props,
-            value,
             isValid
         };
     }

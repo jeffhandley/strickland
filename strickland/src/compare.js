@@ -1,26 +1,26 @@
-import {isFalsyButNotZero, getValidatorProps} from './utils';
+import {isFalsyButNotZero} from './utils';
 
-export default function compare(...params) {
+export default function compareValidator(validatorProps) {
     return function validateCompare(value, context) {
-        let isValid = true;
+        const props = (typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps) || {};
 
-        const props = getValidatorProps(
-            ['compare'],
-            params,
-            value,
-            context
-        );
+        const {compare} = props;
+
+        let isValid = true;
 
         if (isFalsyButNotZero(value)) {
             // Empty values are always valid except with the required validator
 
-        } else if (value !== props.compare) {
+        } else if (value !== compare) {
             isValid = false;
         }
 
         return {
             ...props,
-            isValid
+            isValid,
+            compare
         };
     }
 }

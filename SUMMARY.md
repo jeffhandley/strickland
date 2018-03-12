@@ -10,7 +10,6 @@
     * [Validation Context](/docs/Extensibility/ValidationContext.md)
     * [Validation Result Props](/docs/Extensibility/ValidationResultProps.md)
     * [Extensibility Pattern](/docs/Extensibility/Pattern.md)
-    * [getValidatorProps](/docs/Extensibility/getValidatorProps.md)
 * [Built-In Validators](/docs/Validators/README.md)
     * [required](/docs/Validators/required.md)
     * [compare](/docs/Validators/compare.md)

@@ -8,14 +8,14 @@ import validate, {
 } from 'strickland';
 
 const validatePerson = props({
-    name: every([required(), length(5, 40)]),
+    name: every([required(), length({minLength: 5, maxLength: 40})]),
     address: props({
         street: props({
-            number: every([required(), range(1, 99999)]),
-            name: every([required(), length(2, 40)])
+            number: every([required(), range({min: 1, max: 99999})]),
+            name: every([required(), length({minLength: 2, maxLength: 40})])
         }),
         city: required(),
-        state: every([required(), length(2, 2)])
+        state: every([required(), length({minLength: 2, maxLength: 2})])
     })
 });
 

@@ -10,7 +10,7 @@ The first parameter to the `each` validator factory is the array of validators. 
 const atLeast5Chars = each(
     [
         required(),
-        minLength(5)
+        minLength({minLength: 5})
     ],
     {message: 'Must have at least 5 characters'}
 );
@@ -20,7 +20,7 @@ const result = validate(atLeast5Chars, '1234');
 const requiredWithMinLength = each(
     [
         required(),
-        minLength((context) => context.minLength)
+        minLength((context) => ({minLength: context.minLength}))
     ],
     (context) => ({message: `Must have at least ${context.minLength} characters`})
 );
@@ -41,8 +41,8 @@ import validate, {
 
 const mustExistWithLength5to10 = each([
     required({message: 'Required'}),
-    minLength(5, {message: 'Must have at least 5 characters'}),
-    maxLength(10, {message: 'Must have at most 10 characters'})
+    minLength({minLength: 5, message: 'Must have at least 5 characters'}),
+    maxLength({maxLength: 10, message: 'Must have at most 10 characters'})
 ]);
 const result = validate(mustExistWithLength5to10, '1234');
 

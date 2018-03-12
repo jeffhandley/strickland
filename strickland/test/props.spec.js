@@ -1,8 +1,34 @@
 import {props, required, minLength, length} from '../src/strickland';
 
 describe('props', () => {
+    describe('throws', () => {
+        it('with undefined rules', () => {
+            expect(() => props()).toThrow();
+        });
+
+        it('with null rules', () => {
+            expect(() => props(null)).toThrow();
+        });
+
+        it('with numeric rules', () => {
+            expect(() => props(1)).toThrow();
+        });
+
+        it('with string rules', () => {
+            expect(() => props('string')).toThrow();
+        });
+
+        it('with an array for rules', () => {
+            expect(() => props([{}])).toThrow();
+        });
+
+        it('with a function for rules', () => {
+            expect(() => props(required())).toThrow();
+        });
+    });
+
     it('returns a validate function', () => {
-        const validate = props();
+        const validate = props({});
         expect(validate).toBeInstanceOf(Function);
     });
 
@@ -11,7 +37,7 @@ describe('props', () => {
             first: required({message: 'First: required'}),
             last: [
                 required({message: 'Last: required'}),
-                minLength(2, {message: 'Last: minLength'})
+                minLength({minLength: 2, message: 'Last: minLength'})
             ]
         };
 
@@ -66,7 +92,7 @@ describe('props', () => {
     });
 
     describe('with empty rules', () => {
-        const validate = props();
+        const validate = props({});
         const result = validate({});
 
         it('returns valid results', () => {
@@ -84,7 +110,7 @@ describe('props', () => {
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             },
             workAddress: {
                 street: {
@@ -92,7 +118,7 @@ describe('props', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             }
         });
 
@@ -225,7 +251,7 @@ describe('props', () => {
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             },
             workAddress: {
                 street: {
@@ -233,7 +259,7 @@ describe('props', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             }
         });
 
@@ -585,24 +611,6 @@ describe('props', () => {
                                 }
                             }
                         }
-                    }
-                });
-            });
-
-            it('puts the value on the resolved result', () => {
-                const validate = props({
-                    firstProp: () => Promise.resolve(true)
-                });
-
-                const value = {
-                    firstProp: 'ABC'
-                };
-
-                const result = validate(value);
-
-                return expect(result.validateAsync()).resolves.toMatchObject({
-                    value: {
-                        firstProp: 'ABC'
                     }
                 });
             });
