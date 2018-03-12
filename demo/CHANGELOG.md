@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+    <a name="2.0.0-beta.5"></a>
+# [2.0.0-beta.5](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2018-03-12)
+
+
+
+
+**Note:** Version bump only for package demo
+
     <a name="2.0.0-beta.4"></a>
 # [2.0.0-beta.4](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.1...v2.0.0-beta.4) (2018-03-12)
 
@@ -37,7 +45,7 @@ Additionally, the `props` validator was badly named.  The "props" concept is use
 
 
 
-    <a name="2.0.0-beta.3"></a>
+<a name="2.0.0-beta.3"></a>
 # [2.0.0-beta.3](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2018-03-07)
 
 
