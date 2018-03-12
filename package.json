@@ -7,7 +7,7 @@
     "updatedocs": "cp README.md strickland && cp CHANGELOG.md docs",
     "prepublish": "npm run build && npm run updatedocs",
     "release": "lerna publish --conventional-commits",
-    "prerelease": "npm run release -- --cd-version=prerelease",
+    "prerelease": "lerna publish --conventional-commits --cd-version=prerelease",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"
