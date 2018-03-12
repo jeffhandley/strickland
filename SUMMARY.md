@@ -38,5 +38,8 @@
     * [Automatic Race Condition Handling](/docs/Async/AutomaticRaceConditionHandling.md)
 * [Form Validation](/docs/Forms/README.md)
     * [form](/docs/Forms/form.md)
+    * [validateFields](/docs/Forms/validateFields.md)
+    * [emptyResults](/docs/Forms/emptyResults.md)
+    * [updateFieldResult](/docs/Forms/updateFieldResult.md)
 * [Wrap-Up](/docs/WrapUp.md)
 * [Change Log](/docs/CHANGELOG.md)
