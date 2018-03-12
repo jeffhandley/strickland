@@ -38,6 +38,28 @@ describe('minLength', () => {
         });
     });
 
+    describe('with a numeric argument', () => {
+        it('validates using the minLength value argument', () => {
+            const validate = minLength(5);
+            const result = validate('1234');
+
+            expect(result).toMatchObject({
+                minLength: 5,
+                isValid: false
+            });
+        });
+
+        it('validates using the minLength value resolved from a function', () => {
+            const validate = minLength(() => 5);
+            const result = validate('1234');
+
+            expect(result).toMatchObject({
+                minLength: 5,
+                isValid: false
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = minLength({minLength: 3, message: 'Custom message', isValid: false});
         const result = validate('1234');

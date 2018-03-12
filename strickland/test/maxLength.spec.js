@@ -38,6 +38,28 @@ describe('maxLength', () => {
         });
     });
 
+    describe('with a numeric argument', () => {
+        it('validates using the maxLength value argument', () => {
+            const validate = maxLength(5);
+            const result = validate('123456');
+
+            expect(result).toMatchObject({
+                maxLength: 5,
+                isValid: false
+            });
+        });
+
+        it('validates using the maxLength value resolved from a function', () => {
+            const validate = maxLength(() => 5);
+            const result = validate('123456');
+
+            expect(result).toMatchObject({
+                maxLength: 5,
+                isValid: false
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = maxLength({maxLength: 3, message: 'Custom message', isValid: false});
         const result = validate('123');

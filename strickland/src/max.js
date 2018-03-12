@@ -4,9 +4,15 @@ export default function maxValidator(validatorProps) {
     return function validateMax(value, context) {
         let isValid = true;
 
-        const props = typeof validatorProps === 'function' ?
+        let props = typeof validatorProps === 'function' ?
             validatorProps(context) :
             validatorProps;
+
+        if (typeof props === 'number') {
+            props = {
+                max: props
+            };
+        }
 
         const {max} = props;
 

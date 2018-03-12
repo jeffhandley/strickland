@@ -60,6 +60,28 @@ describe('compare', () => {
         });
     });
 
+    describe('with a value argument', () => {
+        it('validates using the compare value argument', () => {
+            const validate = compare(5);
+            const result = validate(4);
+
+            expect(result).toMatchObject({
+                compare: 5,
+                isValid: false
+            });
+        });
+
+        it('validates using the compare value resolved from a function', () => {
+            const validate = compare(() => 5);
+            const result = validate(4);
+
+            expect(result).toMatchObject({
+                compare: 5,
+                isValid: false
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = compare({compare: 5, message: 'Custom message', isValid: false});
         const result = validate(5);

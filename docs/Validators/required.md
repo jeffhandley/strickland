@@ -16,6 +16,7 @@ The `false` boolean value being invalid is commonly used to validate that checkb
 ## Named Props
 
 * `required`: A boolean indicating whether or not the value is required (default: `true`)
+    * If the parameter supplied is a boolean, it will be used as the `required` named prop
 
 ## Usage
 
@@ -44,11 +45,19 @@ The `required` validator respects a named prop of `required` that indicates whet
 // Required by default
 const a = required();
 
+// The required param specified as a boolean
+const requiredField = required(true);
+const optionalField = required(false);
+
 // Supplying the `required` named prop
-const b = required({
+const nameRequired = required({
     required: true,
     message: '"Name" is required'
 });
+
+// Using a function to resolve the required prop
+// as a boolean value
+const b = required((context) => context.required);
 
 // Using a function to resolve the required prop
 // along with a function to resolve validator props

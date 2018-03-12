@@ -92,6 +92,52 @@ describe('required', () => {
         });
     });
 
+    describe('with a required boolean argument', () => {
+        describe('set to false', () => {
+            it('validates using the required value argument', () => {
+                const validate = required(false);
+                const result = validate('');
+
+                expect(result).toMatchObject({
+                    required: false,
+                    isValid: true
+                });
+            });
+
+            it('validates using the required value resolved from a function', () => {
+                const validate = required(() => false);
+                const result = validate('');
+
+                expect(result).toMatchObject({
+                    required: false,
+                    isValid: true
+                });
+            });
+        });
+
+        describe('set to true', () => {
+            it('validates using the required value argument', () => {
+                const validate = required(true);
+                const result = validate('');
+
+                expect(result).toMatchObject({
+                    required: true,
+                    isValid: false
+                });
+            });
+
+            it('validates using the required value resolved from a function', () => {
+                const validate = required(() => true);
+                const result = validate('');
+
+                expect(result).toMatchObject({
+                    required: true,
+                    isValid: false
+                });
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = required({message: 'Custom message'});
         const result = validate('Valid');

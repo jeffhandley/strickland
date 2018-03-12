@@ -4,9 +4,15 @@ export default function minValidator(validatorProps) {
     return function validateMin(value, context) {
         let isValid = true;
 
-        const props = typeof validatorProps === 'function' ?
+        let props = typeof validatorProps === 'function' ?
             validatorProps(context) :
             validatorProps;
+
+        if (typeof props === 'number') {
+            props = {
+                min: props
+            };
+        }
 
         const {min} = props;
 

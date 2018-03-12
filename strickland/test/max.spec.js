@@ -43,6 +43,28 @@ describe('max', () => {
         });
     });
 
+    describe('with a numeric argument', () => {
+        it('validates using the max value argument', () => {
+            const validate = max(5);
+            const result = validate(6);
+
+            expect(result).toMatchObject({
+                max: 5,
+                isValid: false
+            });
+        });
+
+        it('validates using the max value resolved from a function', () => {
+            const validate = max(() => 5);
+            const result = validate(6);
+
+            expect(result).toMatchObject({
+                max: 5,
+                isValid: false
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = max({max: 5, message: 'Custom message', isValid: false});
         const result = validate(4);

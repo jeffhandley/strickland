@@ -4,9 +4,15 @@ export default function requiredValidator(validatorProps) {
     return function validateRequired(value, context) {
         let isValid = true;
 
-        const props = typeof validatorProps === 'function' ?
+        let props = typeof validatorProps === 'function' ?
             validatorProps(context) :
             validatorProps;
+
+        if (typeof props === 'boolean') {
+            props = {
+                required: props
+            };
+        }
 
         const {required = true} = props || {};
 

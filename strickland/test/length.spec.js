@@ -2,6 +2,10 @@ import deepFreeze from 'deep-freeze';
 import length from '../src/length';
 
 describe('length', () => {
+    describe('with numeric arguments', () => {
+
+    });
+
     describe('with a props argument', () => {
         const validate = length({minLength: 3, maxLength: 5, message: 'Custom message', isValid: false});
         const result = validate('1234');
