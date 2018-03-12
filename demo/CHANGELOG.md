@@ -3,7 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="2.0.0-beta.3"></a>
+    <a name="2.0.0-beta.4"></a>
+# [2.0.0-beta.4](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.1...v2.0.0-beta.4) (2018-03-12)
+
+
+### Features
+
+* simplification of the API and rename of props to objectProps ([4129242](https://github.com/jeffhandley/strickland/commit/4129242))
+
+
+### BREAKING CHANGES
+
+* The `getValidatorProps` approach was causing some usability troubles:
+
+1. Constructing validators became unpredictable
+* The built-in validators were quite powerful, yes, but they were simply _too_ flexible
+* The overabundance of flexibility made it hard to grok what was happening because there was too much magic
+2. Creating validators became too difficult
+* It raised the bar too high for validator authors to adopt the same level of magic flexibility
+* And it was unclear what would happen if some validators did not adhere
+
+To address these issues:
+
+1. Validators no longer take ordinal params in the flexible way -- instead, there's just a single props object supplied
+2. That props param can be a function that returns the props object
+3. Context is passed to said function, but there's just a single props object/function now instead of a magic chain of them
+4. The `validate` function reliably puts `value` on context and the result props -- no validators are responsible for doing that
+
+Even though using a props object parameter is more verbose for basic scenarios, it makes the API more predictable and therefore approachable.
+
+Additionally, the `props` validator was badly named.  The "props" concept is used throughout Strickland and the name collision between concept and validator was hard to keep clear.  It is now named `objectProps`.
+
+
+
+
+    <a name="2.0.0-beta.3"></a>
 # [2.0.0-beta.3](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2018-03-07)
 
 
