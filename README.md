@@ -101,7 +101,7 @@ const result = validate(letterA, 'B');
         * [each](http://strickland.io/docs/Composition/each.html)
         * [some](http://strickland.io/docs/Composition/some.html)
     * [Validating Objects](http://strickland.io/docs/Composition/ValidatingObjects.html)
-        * [props](http://strickland.io/docs/Composition/props.html)
+        * [objectProps](http://strickland.io/docs/Composition/objectProps.html)
         * [Advanced Object Validation](http://strickland.io/docs/Composition/AdvancedObjectValidationhtmld)
         * [Nested Objects](http://strickland.io/docs/Composition/NestedObjects.html)
     * [Array and Object Conventions](http://strickland.io/docs/Composition/Conventions.html)
