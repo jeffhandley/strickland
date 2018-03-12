@@ -1,23 +1,23 @@
 import validate from './validate';
-import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: false,
     some: []
 };
 
-export default function some(validators, ...params) {
+export default function someValidator(validators, validatorProps) {
+    if (!validators || !Array.isArray(validators)) {
+        throw 'Strickland: some expects an array of validators';
+    }
+
     return function validateSome(value, context) {
-        const validatorProps = getValidatorProps(
-            [],
-            params,
-            value,
-            context
-        );
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
 
         if (!validators || !validators.length) {
             return {
-                ...validatorProps,
+                ...props,
                 ...initialResult,
                 isValid: true
             };
@@ -49,7 +49,7 @@ export default function some(validators, ...params) {
                                     }
 
                                     return {
-                                        ...validatorProps,
+                                        ...props,
                                         ...finalResult
                                     };
                                 })
@@ -70,7 +70,7 @@ export default function some(validators, ...params) {
         const result = executeValidators(initialResult, validators);
 
         return {
-            ...validatorProps,
+            ...props,
             ...result
         };
     }

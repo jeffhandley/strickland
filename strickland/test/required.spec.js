@@ -48,7 +48,7 @@ describe('required', () => {
     });
 
     describe('when the value is not required', () => {
-        const validate = required(false);
+        const validate = required({required: false});
 
         it('with a null value, it is valid', () => {
             const result = validate(null);
@@ -92,42 +92,15 @@ describe('required', () => {
         });
     });
 
-    describe('with a single props argument', () => {
+    describe('with a props argument', () => {
         const validate = required({message: 'Custom message'});
         const result = validate('Valid');
 
         it('sets the required prop to true', () => {
             expect(result).toMatchObject({
                 required: true,
-                value: 'Valid',
                 isValid: true
             });
-        });
-
-        it('spreads the other props onto the result', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with the first argument as true and the second as an object', () => {
-        const validate = required(true, {message: 'Custom message'});
-        const result = validate(4);
-
-        it('sets the required result prop', () => {
-            expect(result.required).toBe(true);
-        });
-
-        it('spreads the other props onto the result', () => {
-            expect(result.message).toBe('Custom message');
-        });
-    });
-
-    describe('with the first argument as false and the second as an object', () => {
-        const validate = required(false, {message: 'Custom message'});
-        const result = validate(4);
-
-        it('sets the required result prop', () => {
-            expect(result.required).toBe(false);
         });
 
         it('spreads the other props onto the result', () => {
@@ -164,48 +137,17 @@ describe('required', () => {
             expect(getRequiredProps).toHaveBeenCalledTimes(2);
         });
 
-        describe('validates using the function result', () => {
-            it('when the function returns true', () => {
-                const getRequired = jest.fn();
-                getRequired.mockReturnValue(true);
+        it('validates using the function result', () => {
+            const getRequiredProps = jest.fn();
+            getRequiredProps.mockReturnValue({message: 'Custom message'});
 
-                const validate = required(getRequired);
-                const result = validate(4);
+            const validate = required(getRequiredProps);
+            const result = validate(4);
 
-                expect(result).toMatchObject({
-                    isValid: true,
-                    required: true,
-                    value: 4
-                });
-            });
-
-            it('when the function returns false', () => {
-                const getRequired = jest.fn();
-                getRequired.mockReturnValue(false);
-
-                const validate = required(getRequired);
-                const result = validate(4);
-
-                expect(result).toMatchObject({
-                    isValid: true,
-                    required: false,
-                    value: 4
-                });
-            });
-
-            it('when the function returns a props object', () => {
-                const getRequiredProps = jest.fn();
-                getRequiredProps.mockReturnValue({message: 'Custom message'});
-
-                const validate = required(getRequiredProps);
-                const result = validate(4);
-
-                expect(result).toMatchObject({
-                    isValid: true,
-                    required: true,
-                    message: 'Custom message',
-                    value: 4
-                });
+            expect(result).toMatchObject({
+                isValid: true,
+                required: true,
+                message: 'Custom message'
             });
         });
 
@@ -216,26 +158,16 @@ describe('required', () => {
             validate(6, {contextProp: 'validation context'});
 
             expect(getRequiredProps).toHaveBeenCalledWith(expect.objectContaining({
-                value: 6,
                 contextProp: 'validation context'
             }));
         });
     });
 
     describe('does not mutate props', () => {
-        it('when a single props argument is used', () => {
-            const props = {required: true};
-            deepFreeze(props);
+        const props = {required: true};
+        deepFreeze(props);
 
-            expect(() => required(props)(5)).not.toThrow();
-        });
-
-        it('when a required value and props are used', () => {
-            const props = {message: 'Custom message'};
-            deepFreeze(props);
-
-            expect(() => required(true, props)(5)).not.toThrow();
-        });
+        expect(() => required(props)(5)).not.toThrow();
     });
 
     describe('does not include validation context props on the result', () => {
@@ -247,7 +179,7 @@ describe('required', () => {
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = required(true);
+            const validate = required();
             const result = validate(5, {required: false});
 
             expect(result.required).toBe(true);

@@ -40,7 +40,11 @@ Here is how the `every` validator can be used.
 ``` jsx
 import validate, {every, required, minLength} from 'strickland';
 
-const mustExistWithLength5 = every([required(), minLength(5)]);
+const mustExistWithLength5 = every([
+    required(),
+    minLength({minLength: 5})
+]);
+
 const result = validate(mustExistWithLength5, '1234', {
     message: 'Must have a length of at least 5'
 });

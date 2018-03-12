@@ -1,26 +1,19 @@
 import validate from './validate';
-import {getValidatorProps} from './utils';
 
 const initialResult = {
     isValid: true,
     every: []
 };
 
-export default function every(validators, ...params) {
-    return function validateEvery(value, context) {
-        const validatorProps = getValidatorProps(
-            [],
-            params,
-            value,
-            context
-        );
+export default function everyValidator(validators, validatorProps) {
+    if (!validators || !Array.isArray(validators)) {
+        throw 'Strickland: The `every` validator expects an array of validators';
+    }
 
-        if (!validators || !validators.length) {
-            return {
-                ...validatorProps,
-                ...initialResult
-            };
-        }
+    return function validateEvery(value, context) {
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
 
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
@@ -48,7 +41,7 @@ export default function every(validators, ...params) {
                                     }
 
                                     return {
-                                        ...validatorProps,
+                                        ...props,
                                         ...finalResult
                                     };
                                 })
@@ -69,7 +62,7 @@ export default function every(validators, ...params) {
         const result = executeValidators(initialResult, validators);
 
         return {
-            ...validatorProps,
+            ...props,
             ...result
         };
     }

@@ -1,15 +1,19 @@
 import {each, required, minLength, maxLength} from '../src/strickland';
 
 describe('each', () => {
-    it('returns a validate function', () => {
-        const validate = each();
-        expect(validate).toBeInstanceOf(Function);
+    describe('throws', () => {
+        it('when no validators are specified', () => {
+            expect(() => each()).toThrow();
+        });
+
+        it('when validators is a function', () => {
+            expect(() => each(() => true)).toThrow();
+        });
     });
 
-    it('defaults to valid when there are no validators', () => {
-        const validate = each();
-        const result = validate();
-        expect(result.isValid).toBe(true);
+    it('returns a validate function', () => {
+        const validate = each([]);
+        expect(validate).toBeInstanceOf(Function);
     });
 
     it('defaults to valid when validators is empty', () => {
@@ -21,8 +25,8 @@ describe('each', () => {
     describe('validates', () => {
         const validate = each([
             required({message: 'Required'}),
-            minLength(2),
-            maxLength(4)
+            minLength({minLength: 2}),
+            maxLength({maxLength: 4})
         ], {validatorProp: 'Validator message'});
 
         const value = 'A';
@@ -71,8 +75,8 @@ describe('each', () => {
         const validate = each([
             required({message: 'Required'}),
             each([
-                minLength(2),
-                maxLength(4)
+                minLength({minLength: 2}),
+                maxLength({maxLength: 4})
             ])
         ]);
 

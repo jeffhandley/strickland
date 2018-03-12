@@ -8,10 +8,8 @@ export {default as max} from './max';
 export {default as maxLength} from './maxLength';
 export {default as min} from './min';
 export {default as minLength} from './minLength';
-export {default as props} from './props';
+export {default as objectProps} from './objectProps';
 export {default as range} from './range';
 export {default as required} from './required';
 export {default as some} from './some';
 export {default as form} from './form';
-
-export {getValidatorProps} from './utils';

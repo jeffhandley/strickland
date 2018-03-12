@@ -1,18 +1,17 @@
-import {isFalsyButNotZero, getValidatorProps} from './utils';
+import {isFalsyButNotZero} from './utils';
 
-export default function max(...params) {
+export default function maxValidator(validatorProps) {
     return function validateMax(value, context) {
         let isValid = true;
 
-        const props = getValidatorProps(
-            ['max'],
-            params,
-            value,
-            context
-        );
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
 
-        if (typeof props.max !== 'number') {
-            throw 'max must be a number';
+        const {max} = props;
+
+        if (typeof max !== 'number') {
+            throw 'Strickland: The `max` validator requires a numeric `max` property';
         }
 
         if (isFalsyButNotZero(value)) {
@@ -21,13 +20,12 @@ export default function max(...params) {
         } else if (typeof value !== 'number') {
             isValid = false;
 
-        } else if (value > props.max) {
+        } else if (value > max) {
             isValid = false;
         }
 
         return {
             ...props,
-            value,
             isValid
         };
     }

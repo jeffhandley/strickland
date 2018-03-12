@@ -1,8 +1,34 @@
-import {props, required, minLength, length} from '../src/strickland';
+import {objectProps, required, minLength, length} from '../src/strickland';
 
-describe('props', () => {
+describe('objectProps', () => {
+    describe('throws', () => {
+        it('with undefined rules', () => {
+            expect(() => objectProps()).toThrow();
+        });
+
+        it('with null rules', () => {
+            expect(() => objectProps(null)).toThrow();
+        });
+
+        it('with numeric rules', () => {
+            expect(() => objectProps(1)).toThrow();
+        });
+
+        it('with string rules', () => {
+            expect(() => objectProps('string')).toThrow();
+        });
+
+        it('with an array for rules', () => {
+            expect(() => objectProps([{}])).toThrow();
+        });
+
+        it('with a function for rules', () => {
+            expect(() => objectProps(required())).toThrow();
+        });
+    });
+
     it('returns a validate function', () => {
-        const validate = props();
+        const validate = objectProps({});
         expect(validate).toBeInstanceOf(Function);
     });
 
@@ -11,11 +37,11 @@ describe('props', () => {
             first: required({message: 'First: required'}),
             last: [
                 required({message: 'Last: required'}),
-                minLength(2, {message: 'Last: minLength'})
+                minLength({minLength: 2, message: 'Last: minLength'})
             ]
         };
 
-        const validate = props(personProps, {validatorProp: 'Validator message'});
+        const validate = objectProps(personProps, {validatorProp: 'Validator message'});
         const person = {
             first: '',
             last: 'A'
@@ -29,7 +55,7 @@ describe('props', () => {
 
         it('returning results for all props', () => {
             expect(result).toMatchObject({
-                props: {
+                objectProps: {
                     first: {isValid: false},
                     last: {isValid: false}
                 }
@@ -53,7 +79,7 @@ describe('props', () => {
             const validResult = validate(validPerson);
             expect(validResult).toMatchObject({
                 isValid: true,
-                props: {
+                objectProps: {
                     first: {isValid: true},
                     last: {isValid: true}
                 }
@@ -66,25 +92,25 @@ describe('props', () => {
     });
 
     describe('with empty rules', () => {
-        const validate = props();
+        const validate = objectProps({});
         const result = validate({});
 
         it('returns valid results', () => {
             expect(result.isValid).toBe(true);
         });
 
-        it('returns empty props', () => {
-            expect(result.props).toEqual({});
+        it('returns empty objectProps', () => {
+            expect(result.objectProps).toEqual({});
         });
     });
 
     describe('with nested rules objects', () => {
-        const validate = props({
+        const validate = objectProps({
             name: required(),
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             },
             workAddress: {
                 street: {
@@ -92,11 +118,11 @@ describe('props', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             }
         });
 
-        it('returns props in the shape of the rules', () => {
+        it('returns objectProps in the shape of the rules', () => {
             const value = {
                 name: 'Name',
                 homeAddress: {
@@ -116,11 +142,11 @@ describe('props', () => {
 
             const result = validate(value);
 
-            expect(result.props).toMatchObject({
+            expect(result.objectProps).toMatchObject({
                 name: {isValid: true},
                 homeAddress: {
                     isValid: true,
-                    props: {
+                    objectProps: {
                         street: {isValid: true},
                         city: {isValid: true},
                         state: {isValid: true}
@@ -128,10 +154,10 @@ describe('props', () => {
                 },
                 workAddress: {
                     isValid: true,
-                    props: {
+                    objectProps: {
                         street: {
                             isValid: true,
-                            props: {
+                            objectProps: {
                                 number: {isValid: true},
                                 name: {isValid: true}
                             }
@@ -165,11 +191,11 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: true,
-                props: {
+                objectProps: {
                     homeAddress: {isValid: true},
                     workAddress: {
                         isValid: true,
-                        props: {
+                        objectProps: {
                             street: {isValid: true}
                         }
                     }
@@ -199,16 +225,16 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                props: {
+                objectProps: {
                     homeAddress: {
                         isValid: false
                     },
                     workAddress: {
                         isValid: false,
-                        props: {
+                        objectProps: {
                             street: {
                                 isValid: false,
-                                props: {
+                                objectProps: {
                                     name: {isValid: false}
                                 }
                             }
@@ -220,12 +246,12 @@ describe('props', () => {
     });
 
     describe('when properties are missing from the value', () => {
-        const validate = props({
+        const validate = objectProps({
             name: required(),
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             },
             workAddress: {
                 street: {
@@ -233,7 +259,7 @@ describe('props', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length(2, 2)]
+                state: [required(), length({minLength: 2, maxLength: 2})]
             }
         });
 
@@ -249,11 +275,11 @@ describe('props', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                props: {
+                objectProps: {
                     name: {isValid: false},
                     homeAddress: {
                         isValid: false,
-                        props: {
+                        objectProps: {
                             street: {isValid: false},
                             city: {isValid: false},
                             state: {isValid: false}
@@ -261,10 +287,10 @@ describe('props', () => {
                     },
                     workAddress: {
                         isValid: false,
-                        props: {
+                        objectProps: {
                             street: {
                                 isValid: false,
-                                props: {
+                                objectProps: {
                                     number: {isValid: false},
                                     name: {isValid: false}
                                 }
@@ -285,7 +311,7 @@ describe('props', () => {
             };
 
             const result = validate(value);
-            expect(result.props.homeAddress.isValid).toBe(true);
+            expect(result.objectProps.homeAddress.isValid).toBe(true);
         });
 
         it('sets missing nested object properties to valid', () => {
@@ -295,21 +321,21 @@ describe('props', () => {
 
             const result = validate(value);
 
-            expect(result.props.workAddress.props.street.isValid).toBe(true);
+            expect(result.objectProps.workAddress.objectProps.street.isValid).toBe(true);
         });
 
-        it('does not create props for missing nested object properties', () => {
+        it('does not create objectProps for missing nested object properties', () => {
             const value = {};
             const result = validate(value);
 
-            expect(result.props).not.toHaveProperty('workAddress.props.street.results');
+            expect(result.objectProps).not.toHaveProperty('workAddress.objectProps.street.results');
         });
     });
 
     describe('passes context to the validators', () => {
         const validator = jest.fn();
 
-        const validate = props({
+        const validate = objectProps({
             first: validator
         }, {validatorProp: 'Validator prop'});
 
@@ -330,7 +356,7 @@ describe('props', () => {
         const name = jest.fn();
         const homeCity = jest.fn();
 
-        const validate = props({
+        const validate = objectProps({
             name,
             address: {
                 home: {
@@ -351,7 +377,7 @@ describe('props', () => {
         const context = {
             message: 'top-level',
             topLevelMessage: 'top-level message',
-            props: {
+            objectProps: {
                 name: {
                     message: 'name',
                     nameMessage: 'name message'
@@ -359,11 +385,11 @@ describe('props', () => {
                 address: {
                     message: 'address',
                     addressMessage: 'address message',
-                    props: {
+                    objectProps: {
                         home: {
                             message: 'home',
                             homeMessage: 'home message',
-                            props: {
+                            objectProps: {
                                 city: {
                                     message: 'home city',
                                     homeCityMessage: 'home city message'
@@ -395,15 +421,15 @@ describe('props', () => {
             }));
         });
 
-        it('without passing props context to the top-level props', () => {
+        it('without passing objectProps context to the top-level props', () => {
             expect(name).not.toHaveBeenCalledWith(expect.objectContaining({
-                props: expect.anything()
+                objectProps: expect.anything()
             }));
         });
 
-        it('without passing props context to the nested props', () => {
+        it('without passing objectProps context to the nested props', () => {
             expect(homeCity).not.toHaveBeenCalledWith(expect.objectContaining({
-                props: expect.anything()
+                objectProps: expect.anything()
             }));
         });
     });
@@ -411,7 +437,7 @@ describe('props', () => {
     describe('given async validators', () => {
         describe('returns a validateAsync function', () => {
             it('that returns a Promise', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(true)
                 });
 
@@ -424,8 +450,8 @@ describe('props', () => {
             });
 
             it('with exclusively nested results', () => {
-                const validateNested = props({
-                    firstProp: props({
+                const validateNested = objectProps({
+                    firstProp: objectProps({
                         secondProp: () => Promise.resolve(true)
                     })
                 });
@@ -440,10 +466,10 @@ describe('props', () => {
 
                 return expect(nestedResult.validateAsync()).resolves.toMatchObject({
                     isValid: true,
-                    props: {
+                    objectProps: {
                         firstProp: {
                             isValid: true,
-                            props: {
+                            objectProps: {
                                 secondProp: {isValid: true}
                             }
                         }
@@ -453,8 +479,8 @@ describe('props', () => {
         });
 
         describe('resolves results', () => {
-            it('resolves props result, even when some are invalid', () => {
-                const validate = props({
+            it('resolves objectProps result, even when some are invalid', () => {
+                const validate = objectProps({
                     firstProp: () => ({isValid: false, first: 'First'}),
                     secondProp: () => Promise.resolve({isValid: false, second: 'Second'}),
                     thirdProp: () => ({isValid: false, third: 'Third'}),
@@ -473,7 +499,7 @@ describe('props', () => {
                 const result = validate(value);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
-                    props: {
+                    objectProps: {
                         firstProp: {isValid: false, first: 'First'},
                         secondProp: {isValid: false, second: 'Second'},
                         thirdProp: {isValid: false, third: 'Third'},
@@ -484,7 +510,7 @@ describe('props', () => {
             });
 
             it('that resolve as true', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(true)
                 });
 
@@ -497,7 +523,7 @@ describe('props', () => {
             });
 
             it('that resolve as a valid result object', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve({isValid: true})
                 });
 
@@ -510,7 +536,7 @@ describe('props', () => {
             });
 
             it('that resolve as false', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(false)
                 });
 
@@ -523,7 +549,7 @@ describe('props', () => {
             });
 
             it('that resolve as an invalid result object', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve({isValid: false})
                 });
 
@@ -536,7 +562,7 @@ describe('props', () => {
             });
 
             it('recursively', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(
                         Promise.resolve(
                             Promise.resolve({
@@ -545,11 +571,11 @@ describe('props', () => {
                             })
                         )
                     ),
-                    secondProp: props({
+                    secondProp: objectProps({
                         thirdProp: () => Promise.resolve(
                             Promise.resolve(true)
                         ),
-                        fourthProp: props({
+                        fourthProp: objectProps({
                             fifthProp: () => Promise.resolve(
                                 Promise.resolve({
                                     isValid: true,
@@ -574,12 +600,12 @@ describe('props', () => {
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
-                    props: {
+                    objectProps: {
                         firstProp: {recursively: 'Yes!'},
                         secondProp: {
-                            props: {
+                            objectProps: {
                                 fourthProp: {
-                                    props: {
+                                    objectProps: {
                                         fifthProp: {inNestedValidators: 'Yep'}
                                     }
                                 }
@@ -589,26 +615,8 @@ describe('props', () => {
                 });
             });
 
-            it('puts the value on the resolved result', () => {
-                const validate = props({
-                    firstProp: () => Promise.resolve(true)
-                });
-
-                const value = {
-                    firstProp: 'ABC'
-                };
-
-                const result = validate(value);
-
-                return expect(result.validateAsync()).resolves.toMatchObject({
-                    value: {
-                        firstProp: 'ABC'
-                    }
-                });
-            });
-
             it('puts validator props on the resolved result', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(true)
                 }, {validatorProp: 'Validator message'});
 
@@ -624,7 +632,7 @@ describe('props', () => {
             });
 
             it('does not put context props on the resolved result', () => {
-                const validate = props({
+                const validate = objectProps({
                     firstProp: () => Promise.resolve(true)
                 });
 
@@ -639,10 +647,10 @@ describe('props', () => {
         });
 
         describe('returns a partial result object', () => {
-            const validate = props({
+            const validate = objectProps({
                 firstProp: () => ({isValid: true, first: 'First'}),
                 secondProp: () => Promise.resolve({isValid: true, second: 'Second'}),
-                nestedProp: props({
+                nestedProp: objectProps({
                     thirdProp: () => ({isValid: true, third: 'Third'}),
                     fourthProp: () => Promise.resolve({isValid: true, fourth: 'Fourth'}),
                     fifthProp: () => ({isValid: true, fifth: 'Fifth'})
@@ -669,11 +677,11 @@ describe('props', () => {
 
             it('with sync results in place and Promise results where expected', () => {
                 expect(result).toMatchObject({
-                    props: {
+                    objectProps: {
                         firstProp: {first: 'First'},
                         secondProp: {validateAsync: expect.any(Function)},
                         nestedProp: {
-                            props: {
+                            objectProps: {
                                 thirdProp: {third: 'Third'},
                                 fourthProp: {validateAsync: expect.any(Function)},
                                 fifthProp: {fifth: 'Fifth'}
@@ -685,7 +693,7 @@ describe('props', () => {
             });
 
             it('with individual validator promises that will finish their results', () => {
-                return expect(result.props.nestedProp.props.fourthProp.validateAsync()).resolves.toMatchObject({
+                return expect(result.objectProps.nestedProp.objectProps.fourthProp.validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     fourth: 'Fourth'
                 });

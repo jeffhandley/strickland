@@ -34,9 +34,15 @@ import validate, {
 } from 'strickland';
 
 const validatePerson = form({
-    firstName: [required(), length(2, 20)],
-    lastName: [required(), length(2, 20)],
-    birthYear: range(1900, 2018)
+    firstName: [
+        required(),
+        length({minLength: 2, maxLength: 20})
+    ],
+    lastName: [
+        required(),
+        length({minLength: 2, maxLength: 20})
+    ],
+    birthYear: range({min: 1900, max: 2018})
 });
 
 // Initialize the person with only a firstName
@@ -179,7 +185,7 @@ result = validate(validatePerson, person, {
 
 ## Async Validation
 
-Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `props` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
+Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `objectProps` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
 
 ### Executing `validateAsync` for Specific Fields
 

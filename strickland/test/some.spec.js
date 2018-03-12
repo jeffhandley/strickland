@@ -1,15 +1,19 @@
 import {some, required, minLength, maxLength} from '../src/strickland';
 
 describe('some', () => {
-    it('returns a validate function', () => {
-        const validate = some();
-        expect(validate).toBeInstanceOf(Function);
+    describe('throws', () => {
+        it('when no validators are specified', () => {
+            expect(() => some()).toThrow();
+        });
+
+        it('when validators is a function', () => {
+            expect(() => some(() => true)).toThrow();
+        });
     });
 
-    it('defaults to valid when there are no validators', () => {
-        const validate = some();
-        const result = validate();
-        expect(result.isValid).toBe(true);
+    it('returns a validate function', () => {
+        const validate = some([]);
+        expect(validate).toBeInstanceOf(Function);
     });
 
     it('defaults to valid when validators is empty', () => {
@@ -21,8 +25,8 @@ describe('some', () => {
     describe('validates', () => {
         const validate = some([
             required({message: 'Required'}),
-            maxLength(4),
-            minLength(2)
+            maxLength({maxLength: 4}),
+            minLength({minLength: 2})
         ], {validatorProp: 'Validator message'});
 
         const value = '';
@@ -63,8 +67,8 @@ describe('some', () => {
     describe('with nested rules arrays', () => {
         const validate = some([
             some([
-                minLength(2),
-                maxLength(4)
+                minLength({minLength: 2}),
+                maxLength({maxLength: 4})
             ])
         ]);
 

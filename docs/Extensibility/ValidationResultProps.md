@@ -4,35 +4,39 @@ You may have noticed that examples so far have not included any validation messa
 
 ***But how do you get validation messages on results?*** As was mentioned in our [core concepts](/docs/Introduction/CoreConcepts.md), a validator can return either a boolean or a validation result object with an `isValid` property. Validation result objects can have additional properties; those properties flow through Strickland's `validate` function to be available to your application.
 
-Let's extend the `letter` validator to include a message property on its result.
+Let's extend the letter validator to include a message prop on its result.
 
 ``` jsx
 import validate from 'strickland';
 
-function letter(letterParam) {
+function letterValidator(validatorProps) {
     return function validateLetter(value, context) {
-        // Copy the param instead of overriding
-        // `letterParam` with the function result
-        let letterValue = letterParam;
+        // Be sure not to overwrite the original
+        // validatorProps variable
+        let resolvedProps = validatorProps;
 
-        if (typeof letterValue === 'function') {
-            letterValue = letterValue(context);
+        if (typeof resolvedProps === 'function') {
+            resolvedProps = resolvedProps(context);
         }
 
+        resolvedProps = resolvedProps || {};
+
+        const {letter} = resolvedProps;
+
         return {
-            message: `Must match "${letterValue}"`,
-            isValid: (value === letterValue)
+            isValid: (value === letter),
+            message: `Must match "${letter}"`
         };
     }
 }
 
-const validator = letter('B');
+const validator = letterValidator({letter: 'B'});
 const result = validate(validator, 'A');
 
 /*
     result = {
-        message: 'Must match "B"',
         isValid: false,
+        message: 'Must match "B"',
         value: 'A'
     }
  */

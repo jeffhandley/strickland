@@ -5,7 +5,11 @@ A common pitfall with async validation is to ensure the value hasn't changed dur
 Let's take a look at handling this race condition in application code:
 
 ``` jsx
-const validateUsername = [required(), length(2, 20), usernameIsAvailableTwoStage];
+const validateUsername = [
+    required(),
+    length({minLength: 2, maxLength: 20}),
+    usernameIsAvailableTwoStage
+];
 
 let username = 'marty';
 let usernameResult = validate(validateUsername, username);

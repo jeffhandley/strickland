@@ -1,21 +1,17 @@
 import validate from './validate';
-import {getValidatorProps} from './utils';
 
-export default function form(validators, ...params) {
+export default function formValidator(validators, validatorProps) {
     if (typeof validators !== 'object' || Array.isArray(validators) || !validators) {
-        throw 'Strickland: form expects an object';
+        throw 'Strickland: The `form` validator expects an object';
     }
 
     return function validateForm(value, context) {
-        const validatorProps = getValidatorProps(
-            [],
-            params,
-            value,
-            context
-        );
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
 
         const fieldValidators = Object.keys(validators)
-            .filter(shouldValidateField.bind(null, validators, validatorProps, context))
+            .filter(shouldValidateField.bind(null, validators, props, context))
             .reduce((previousValidators, fieldName) => ({
                 ...previousValidators,
                 [fieldName]: validators[fieldName]
@@ -32,26 +28,26 @@ export default function form(validators, ...params) {
         const result = validate(fieldValidators, value, validationContext);
         const existingResults = (context && context.form && context.form.validationResults) || {};
 
-        return prepareResult(validators, validatorProps, existingResults, result);
+        return prepareResult(validators, props, existingResults, result);
     }
 }
 
-function shouldValidateField(validators, validatorProps, context, fieldName) {
+function shouldValidateField(validators, props, context, fieldName) {
     const formFields = (
         context &&
         context.form &&
         context.form.fields
-    ) || validatorProps.fields;
+    ) || (props && props.fields);
 
     return validators[fieldName] && (!formFields || formFields.indexOf(fieldName) !== -1);
 }
 
-function prepareResult(validators, validatorProps, existingResults, result) {
-    let {props: resultProps, validateAsync, ...otherProps} = result;
+function prepareResult(validators, props, existingResults, result) {
+    let {objectProps, validateAsync, ...otherProps} = result;
 
     let validationResults = {
         ...existingResults,
-        ...resultProps
+        ...objectProps
     };
 
     const validationErrors = Object.keys(validationResults)
@@ -63,7 +59,7 @@ function prepareResult(validators, validatorProps, existingResults, result) {
         }));
 
     const existingResultFields = Object.keys(existingResults)
-        .filter((fieldName) => !resultProps[fieldName]);
+        .filter((fieldName) => !objectProps[fieldName]);
 
     const hasExistingAsyncResults = existingResultFields
         .some((fieldName) => existingResults[fieldName].validateAsync);
@@ -74,7 +70,7 @@ function prepareResult(validators, validatorProps, existingResults, result) {
         validateAsync = function resolveAsync(context) {
             function resolveFieldResult(fieldName) {
                 const shouldResolve = existingResults[fieldName].validateAsync &&
-                    shouldValidateField(validators, validatorProps, context, fieldName);
+                    shouldValidateField(validators, props, context, fieldName);
 
                 const fieldPromise = shouldResolve ?
                     existingResults[fieldName].validateAsync() :
@@ -98,7 +94,7 @@ function prepareResult(validators, validatorProps, existingResults, result) {
 
             return Promise.all([resultPromise, resolveExistingResults])
                 .then(([resolvedResult, resolvedExistingResults]) =>
-                    prepareResult(validators, validatorProps, resolvedExistingResults, resolvedResult)
+                    prepareResult(validators, props, resolvedExistingResults, resolvedResult)
                 );
         }
     }
@@ -111,7 +107,7 @@ function prepareResult(validators, validatorProps, existingResults, result) {
         validationErrors.length === 0;
 
     const preparedResult = {
-        ...validatorProps,
+        ...props,
         ...otherProps,
         isValid,
         form: {

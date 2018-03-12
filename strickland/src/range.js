@@ -1,20 +1,18 @@
 import validate from './validate';
-import min from './min';
-import max from './max';
-import {getValidatorProps} from './utils';
+import minValidator from './min';
+import maxValidator from './max';
 
-export default function length(...params) {
-    return function validateLength(value, context) {
-        const props = getValidatorProps(
-            ['min', 'max'],
-            params,
-            value,
-            context
-        );
+export default function rangeValidator(validatorProps) {
+    return function validateRange(value, context) {
+        const props = typeof validatorProps === 'function' ?
+            validatorProps(context) :
+            validatorProps;
+
+        const {min, max} = props;
 
         const result = validate([
-            min(props.min),
-            max(props.max)
+            minValidator({min}),
+            maxValidator({max})
         ], value, context);
 
         return {

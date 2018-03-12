@@ -141,14 +141,26 @@ describe('validate', () => {
             const rules = jest.fn();
             validate(rules, null, {contextProp: 'Context'});
 
-            expect(rules).toHaveBeenCalledWith(null, {contextProp: 'Context'});
+            expect(rules).toHaveBeenCalledWith(null, expect.objectContaining({contextProp: 'Context'}));
         });
 
-        it('defaults context to an object', () => {
+        it('adds the value to an existing context', () => {
+            const rules = jest.fn();
+            validate(rules, 5, {contextProp: 'Context'});
+
+            expect(rules).toHaveBeenCalledWith(5, expect.objectContaining({
+                contextProp: 'Context',
+                value: 5
+            }));
+        });
+
+        it('creates a context with the value', () => {
             const rules = jest.fn();
             validate(rules, 5);
 
-            expect(rules).toHaveBeenCalledWith(5, expect.any(Object));
+            expect(rules).toHaveBeenCalledWith(5, expect.objectContaining({
+                value: 5
+            }));
         });
     });
 
@@ -232,7 +244,7 @@ describe('validate', () => {
         describe('where each property defines rules', () => {
             const rules = {
                 firstName: required(),
-                lastName: [required(), minLength(2)]
+                lastName: [required(), minLength({minLength: 2})]
             };
 
             const value = {
@@ -242,17 +254,17 @@ describe('validate', () => {
 
             const result = validate(rules, value);
 
-            it('returns props on the result', () => {
-                expect(result.props).not.toBeUndefined();
+            it('returns objectProps on the result', () => {
+                expect(result.objectProps).not.toBeUndefined();
             });
 
-            it('returns props in the shape of the rules', () => {
-                const keys = Object.keys(result.props);
+            it('returns objectProps in the shape of the rules', () => {
+                const keys = Object.keys(result.objectProps);
                 expect(keys).toEqual(['firstName', 'lastName']);
             });
 
-            it('returns props being the results of the rules', () => {
-                expect(result.props).toMatchObject({
+            it('returns objectProps being the results of the rules', () => {
+                expect(result.objectProps).toMatchObject({
                     firstName: {
                         isValid: true,
                         value: 'First'
@@ -330,7 +342,7 @@ describe('validate', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                props: {
+                objectProps: {
                     name: {isValid: true},
                     workAddress: {
                         isValid: false,
@@ -353,9 +365,9 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                props: {
+                objectProps: {
                     workAddress: {
-                        props: {
+                        objectProps: {
                             street: {
                                 isValid: false,
                                 message: 'Street is required'
@@ -390,7 +402,7 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                props: {
+                objectProps: {
                     workAddress: {
                         isValid: false,
                         message: 'Work address must be on a St.'

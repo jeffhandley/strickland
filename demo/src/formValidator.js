@@ -21,28 +21,28 @@ export default form({
     firstName: required({message: 'Required'}),
     lastName: [
         required({message: 'Required'}),
-        minLength(2, {message: 'Must have at least 2 characters'})
+        minLength({minLength: 2, message: 'Must have at least 2 characters'})
     ],
     username: [
         required({message: 'Required'}),
-        minLength(4, {message: 'Must have at least 4 characters'}),
+        minLength({minLength: 4, message: 'Must have at least 4 characters'}),
         usernameIsAvailable
     ],
     password: every(
-        [required(), minLength(8)],
+        [required(), minLength({minLength: 8})],
         {message: 'Must have at least 8 characters'}
     ),
     confirmPassword: every(
-        [required(), compare(({form}) => form.values.password)],
+        [required(), compare(({form: {values: {password}}}) => ({compare: password}))],
         {message: 'Must match password'}
     )
 });
 
-export function getValidationClassName(form, validation, fieldName) {
+export function getValidationClassName(formValues, validation, fieldName) {
     const fieldValidation = validation && validation.form && validation.form.validationResults[fieldName];
 
     return classnames({
-        'validation-value': !!form[fieldName],
+        'validation-value': !!formValues[fieldName],
         'validation-valid': fieldValidation && fieldValidation.isValid,
         'validation-async': fieldValidation && fieldValidation.validateAsync,
         'validation-invalid': fieldValidation && !fieldValidation.isValid && !fieldValidation.validateAsync

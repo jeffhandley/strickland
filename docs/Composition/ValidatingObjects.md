@@ -11,9 +11,15 @@ import validate, {
 
 // Define the rules for first name, last name, and birthYear
 const validateProps = {
-    firstName: every([required(), length(2, 20)]),
-    lastName: every([required(), length(2, 20)]),
-    birthYear: range(1900, 2018)
+    firstName: every([
+        required(),
+        length({minLength: 2, maxLength: 20})
+    ]),
+    lastName: every([
+        required(),
+        length({minLength: 2, maxLength: 20})
+    ]),
+    birthYear: range({min: 1900, max: 2018})
 };
 
 // Create a person
@@ -24,30 +30,30 @@ const person = {
 };
 
 // Validate the person's properties
-const props = {
+const personProps = {
     firstName: validate(validateProps.firstName, person.firstName),
     lastName: validate(validateProps.lastName, person.lastName),
     birthYear: validate(validateProps.birthYear, person.birthYear)
 };
 ```
 
-With this example, we have very primitive object property validation. The `props` output includes the validation results for each property, but there isn't anything providing a top-level `isValid` prop on the results. Let's add that in.
+With this example, we have very primitive object property validation. The `personProps` output includes the validation results for each property, but there isn't anything providing a top-level `isValid` prop on the results. Let's add that in.
 
 ``` jsx
 // Validate the person's properties
-const props = {
+const personProps = {
     firstName: validate(rules.firstName, person.firstName),
     lastName: validate(rules.lastName, person.lastName),
     birthYear: validate(rules.birthYear, person.birthYear)
 };
 
-// Create a top-level result including the results from the props
+// Create a top-level result including the results from personProps
 const result = {
-    props,
+    personProps,
     isValid: (
-        props.firstName.isValid &&
-        props.lastName.isValid &&
-        props.birthYear.isValid
+        personProps.firstName.isValid &&
+        personProps.lastName.isValid &&
+        personProps.birthYear.isValid
     ),
     value: person
 };
@@ -55,8 +61,4 @@ const result = {
 
 The top-level result also includes the `value` to be consistent with the output of other validators.
 
-At this point, we can see a pattern where we would want a validator to iterate over the properties that have validators, validate each of those properties, and compose a final validation result for all props. Indeed, Strickland has such a validator built-in called `props`.
-
-## Built-In Object Validation
-
-* [props](props.md)
+At this point, we can see a pattern where we would want a validator to iterate over the properties that have validators, validate each of those properties, and compose a final validation result for all props. Indeed, Strickland has such a validator built-in called `objectProps`.

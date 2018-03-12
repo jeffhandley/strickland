@@ -1,15 +1,19 @@
 import {every, required, minLength, maxLength} from '../src/strickland';
 
 describe('every', () => {
-    it('returns a validate function', () => {
-        const validate = every();
-        expect(validate).toBeInstanceOf(Function);
+    describe('throws', () => {
+        it('when no validators are specified', () => {
+            expect(() => every()).toThrow();
+        });
+
+        it('when validators is a function', () => {
+            expect(() => every(() => true)).toThrow();
+        });
     });
 
-    it('defaults to valid when there are no validators', () => {
-        const validate = every();
-        const result = validate();
-        expect(result.isValid).toBe(true);
+    it('returns a validate function', () => {
+        const validate = every([]);
+        expect(validate).toBeInstanceOf(Function);
     });
 
     it('defaults to valid when validators is empty', () => {
@@ -21,8 +25,8 @@ describe('every', () => {
     describe('validates', () => {
         const validate = every([
             required({message: 'Required'}),
-            minLength(2),
-            maxLength(4)
+            minLength({minLength: 2}),
+            maxLength({maxLength: 4})
         ], {validatorProp: 'Validator message'});
 
         const value = 'A';
@@ -70,8 +74,8 @@ describe('every', () => {
         const validate = every([
             required({message: 'Required'}),
             [
-                minLength(2),
-                maxLength(4)
+                minLength({minLength: 2}),
+                maxLength({maxLength: 4})
             ]
         ]);
 

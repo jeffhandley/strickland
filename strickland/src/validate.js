@@ -1,5 +1,5 @@
 import every from './every';
-import props from './props';
+import objectProps from './objectProps';
 
 export default function validate(validator, value, context) {
     let result = true;
@@ -7,15 +7,16 @@ export default function validate(validator, value, context) {
     if (Array.isArray(validator)) {
         validator = every(validator);
     } else if (typeof validator === 'object' && validator) {
-        validator = props(validator);
+        validator = objectProps(validator);
     }
 
     if (typeof validator !== 'function') {
-        throw 'Strickland: The validator passed to validate must be a function, an array (to use every), or an object (to use props). Validator type: ' + typeof(validator);
+        throw 'Strickland: The validator passed to validate must be a function, an array (to use every), or an object (to use objectProps). Validator type: ' + typeof(validator);
     }
 
     const validationContext = {
-        ...context
+        ...context,
+        value
     };
 
     result = validator(value, validationContext);
