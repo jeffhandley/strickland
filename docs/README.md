@@ -25,7 +25,7 @@
         * [each](/docs/Composition/each.md)
         * [some](/docs/Composition/some.md)
     * [Validating Objects](/docs/Composition/ValidatingObjects.md)
-        * [props](/docs/Composition/props.md)
+        * [objectProps](/docs/Composition/objectProps.md)
         * [Advanced Object Validation](/docs/Composition/AdvancedObjectValidation.md)
         * [Nested Objects](/docs/Composition/NestedObjects.md)
     * [Array and Object Conventions](/docs/Composition/Conventions.md)

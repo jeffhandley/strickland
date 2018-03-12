@@ -179,7 +179,7 @@ result = validate(validatePerson, person, {
 
 ## Async Validation
 
-Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `props` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
+Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `objectProps` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
 
 ### Executing `validateAsync` for Specific Fields
 

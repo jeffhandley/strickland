@@ -1,4 +1,4 @@
-import validate, {validateAsync, required, compare, min, max, range, minLength, maxLength, length, every, each, some, props, form} from '../src/strickland';
+import validate, {validateAsync, required, compare, min, max, range, minLength, maxLength, length, every, each, some, objectProps, form} from '../src/strickland';
 
 describe('docs', () => {
     describe('introduction', () => {
@@ -685,9 +685,9 @@ describe('docs', () => {
             });
         });
 
-        describe('props', () => {
+        describe('objectProps', () => {
             it('parameters', () => {
-                const validateProps = props({
+                const validateProps = objectProps({
                     firstName: every([required(), length({minLength: 2, maxLength: 20})]),
                     lastName: every([required(), length({minLength: 2, maxLength: 20})]),
                     birthYear: range({min: 1900, max: 2018})
@@ -704,7 +704,7 @@ describe('docs', () => {
             });
 
             it('validation context', () => {
-                const validateProps = props({
+                const validateProps = objectProps({
                     firstName: every([
                         required(),
                         length((context) => ({
@@ -735,7 +735,7 @@ describe('docs', () => {
                 };
 
                 const result = validate(validateProps, person, {
-                    props: {
+                    objectProps: {
                         firstName: {
                             minLength: 5,
                             maxLength: 20
@@ -752,7 +752,7 @@ describe('docs', () => {
                 });
 
                 expect(result).toMatchObject({
-                    props: {
+                    objectProps: {
                         firstName: {
                             minLength: 5,
                             maxLength: 20
@@ -771,7 +771,7 @@ describe('docs', () => {
 
             it('result properties', () => {
                 // Define the rules for first name, last name, and birthYear
-                const validatePersonProps = props({
+                const validatePersonProps = objectProps({
                     firstName: every([required(), length({minLength: 2, maxLength: 20})]),
                     lastName: every([required(), length({minLength: 2, maxLength: 20})]),
                     birthYear: range({min: 1900, max: 2018})
@@ -789,7 +789,7 @@ describe('docs', () => {
                 expect(result).toMatchObject({
                     isValid: true,
                     value: person,
-                    props: {
+                    objectProps: {
                         firstName: {
                             isValid: true,
                             value: 'Stanford',
@@ -843,7 +843,7 @@ describe('docs', () => {
 
         it('advanced object validation', () => {
             // Define the rules for first name, last name, and birthYear
-            const validatePersonProps = props({
+            const validatePersonProps = objectProps({
                 firstName: every([required(), length({minLength: 2, maxLength: 20})]),
                 lastName: every([required(), length({minLength: 2, maxLength: 20})]),
                 birthYear: range({min: 1900, max: 2018})
@@ -883,10 +883,10 @@ describe('docs', () => {
         });
 
         it('nested objects', () => {
-            const validatePerson = props({
+            const validatePerson = objectProps({
                 name: every([required(), length({minLength: 5, maxLength: 40})]),
-                address: props({
-                    street: props({
+                address: objectProps({
+                    street: objectProps({
                         number: every([required(), range({min: 1, max: 99999})]),
                         name: every([required(), length({minLength: 2, maxLength: 40})])
                     }),
@@ -1102,7 +1102,7 @@ describe('docs', () => {
             return validateAsync(validatePerson, person).then((result) => {
                 expect(result).toMatchObject({
                     isValid: false,
-                    props: {
+                    objectProps: {
                         name: {
                             isValid: true,
                             value: 'Marty McFly'
@@ -1115,7 +1115,7 @@ describe('docs', () => {
                         address: {
                             isValid: false,
                             message: 'Hill Valley is in California',
-                            props: {
+                            objectProps: {
                                 street: {isValid: true},
                                 city: {isValid: true},
                                 state: {isValid: true}
@@ -1181,7 +1181,7 @@ describe('docs', () => {
             it('first stage', () => {
                 expect(result).toMatchObject({
                     isValid: false,
-                    props: {
+                    objectProps: {
                         name: {
                             isValid: true,
                             value: 'Marty McFly'
@@ -1206,7 +1206,7 @@ describe('docs', () => {
                 return result.validateAsync().then((asyncResult) => {
                     expect(asyncResult).toMatchObject({
                         isValid: false,
-                        props: {
+                        objectProps: {
                             name: {
                                 isValid: true,
                                 value: 'Marty McFly'

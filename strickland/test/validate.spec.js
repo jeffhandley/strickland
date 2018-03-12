@@ -254,17 +254,17 @@ describe('validate', () => {
 
             const result = validate(rules, value);
 
-            it('returns props on the result', () => {
-                expect(result.props).not.toBeUndefined();
+            it('returns objectProps on the result', () => {
+                expect(result.objectProps).not.toBeUndefined();
             });
 
-            it('returns props in the shape of the rules', () => {
-                const keys = Object.keys(result.props);
+            it('returns objectProps in the shape of the rules', () => {
+                const keys = Object.keys(result.objectProps);
                 expect(keys).toEqual(['firstName', 'lastName']);
             });
 
-            it('returns props being the results of the rules', () => {
-                expect(result.props).toMatchObject({
+            it('returns objectProps being the results of the rules', () => {
+                expect(result.objectProps).toMatchObject({
                     firstName: {
                         isValid: true,
                         value: 'First'
@@ -342,7 +342,7 @@ describe('validate', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                props: {
+                objectProps: {
                     name: {isValid: true},
                     workAddress: {
                         isValid: false,
@@ -365,9 +365,9 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                props: {
+                objectProps: {
                     workAddress: {
-                        props: {
+                        objectProps: {
                             street: {
                                 isValid: false,
                                 message: 'Street is required'
@@ -402,7 +402,7 @@ describe('validate', () => {
             const result = validate(rules, value);
 
             expect(result).toMatchObject({
-                props: {
+                objectProps: {
                     workAddress: {
                         isValid: false,
                         message: 'Work address must be on a St.'

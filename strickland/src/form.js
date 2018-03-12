@@ -43,11 +43,11 @@ function shouldValidateField(validators, props, context, fieldName) {
 }
 
 function prepareResult(validators, props, existingResults, result) {
-    let {props: resultProps, validateAsync, ...otherProps} = result;
+    let {objectProps, validateAsync, ...otherProps} = result;
 
     let validationResults = {
         ...existingResults,
-        ...resultProps
+        ...objectProps
     };
 
     const validationErrors = Object.keys(validationResults)
@@ -59,7 +59,7 @@ function prepareResult(validators, props, existingResults, result) {
         }));
 
     const existingResultFields = Object.keys(existingResults)
-        .filter((fieldName) => !resultProps[fieldName]);
+        .filter((fieldName) => !objectProps[fieldName]);
 
     const hasExistingAsyncResults = existingResultFields
         .some((fieldName) => existingResults[fieldName].validateAsync);

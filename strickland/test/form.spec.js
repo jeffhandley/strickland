@@ -124,8 +124,8 @@ describe('form', () => {
                 expect(result).toMatchObject({validatorProp: 'Validator message'});
             });
 
-            it('without a props prop on the result', () => {
-                expect(result).not.toHaveProperty('props');
+            it('without an objectProps prop on the result', () => {
+                expect(result).not.toHaveProperty('objectProps');
             });
         });
 

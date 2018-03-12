@@ -4,11 +4,11 @@ With the composable nature of Strickland, it is very easy to perform advanced ob
 
 ``` jsx
 import validate, {
-    props, required, length, range, every
+    objectProps, required, length, range, every
 } from 'strickland';
 
 // Define the rules for first name, last name, and birthYear
-const validatePersonProps = props({
+const validatePersonProps = objectProps({
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
     birthYear: range(1900, 2018)
@@ -59,7 +59,7 @@ In this example, the following will be validated (in this order):
 
 Here are some notes should anything have been invalid:
 
-1. If the `person` was empty, neither the props nor `stanfordStricklandBornIn1925` would be validated
+1. If the `person` was empty, neither the object props nor `stanfordStricklandBornIn1925` would be validated
 1. If the `firstName` prop was empty, its length would not be validated
 1. If the `lastName` prop was empty, its length would not be validated
 1. If the `firstName`, `lastName`, or `birthYear` props were invalid, `stanfordStricklandBornIn1925` would not be validated

@@ -7,7 +7,7 @@ The examples we've seen so far only validate single values against single valida
     * [each](../Composition/each.md)
     * [some](../Composition/some.md)
 * [Validating Objects](ValidatingObjects.md)
-    * [With the props Validator](../Validators/props.md)
+    * [With the objectProps Validator](../Validators/objectProps.md)
     * [Advanced Object Validation](AdvancedObjectValidation.md)
     * [Nested Objects](NestedObjects.md)
 * [Array and Object Conventions](Conventions.md)
