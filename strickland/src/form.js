@@ -67,10 +67,10 @@ function prepareResult(validators, props, existingResults, result) {
     if (hasExistingAsyncResults || validateAsync) {
         const resultValidateAsync = validateAsync || (() => result);
 
-        validateAsync = function resolveAsync(context) {
+        validateAsync = function resolveAsync(asyncValue, asyncContext) {
             function resolveFieldResult(fieldName) {
                 const shouldResolve = existingResults[fieldName].validateAsync &&
-                    shouldValidateField(validators, props, context, fieldName);
+                    shouldValidateField(validators, props, asyncContext, fieldName);
 
                 const fieldPromise = shouldResolve ?
                     existingResults[fieldName].validateAsync() :

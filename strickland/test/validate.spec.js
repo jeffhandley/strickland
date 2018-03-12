@@ -697,6 +697,32 @@ describe('validate', () => {
                 const result = validateAsync(() => Promise.resolve(true), 'ABC', {message: 'Message'});
                 return expect(result).resolves.not.toHaveProperty('message');
             });
+
+            it('consuming the value from a value function', () => {
+                const result = validateAsync(
+                    () => Promise.resolve(true),
+                    () => 'ABC'
+                );
+
+                return expect(result).resolves.toMatchObject({
+                    value: 'ABC'
+                });
+            });
+
+            it('rejecting the result if the value changes during async validation', () => {
+                const getValue = jest.fn()
+                    .mockReturnValueOnce('ABC')
+                    .mockReturnValue('DEF');
+
+                const result = validateAsync(
+                    () => Promise.resolve(true),
+                    getValue
+                );
+
+                return expect(result).rejects.toMatchObject({
+                    value: 'ABC'
+                });
+            });
         });
 
         describe('validate can return a partial result object', () => {

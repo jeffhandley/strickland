@@ -24,10 +24,14 @@ export default function validate(validator, value, context) {
 }
 
 export function validateAsync(validator, value, context) {
-    const result = validate(validator, value, context);
+    const syncValue = typeof value === 'function' ?
+        value() :
+        value;
+
+    const result = validate(validator, syncValue, context);
 
     if (typeof result.validateAsync === 'function') {
-        return result.validateAsync(context);
+        return result.validateAsync(value, context);
     }
 
     return Promise.resolve(result);
@@ -57,9 +61,23 @@ function prepareResult(value, result) {
     if (typeof preparedResult.validateAsync === 'function') {
         const resultValidateAsync = preparedResult.validateAsync;
 
-        preparedResult.validateAsync = (...asyncParams) => Promise.resolve(resultValidateAsync(...asyncParams)).then(
-            prepareResult.bind(null, value)
-        );
+        preparedResult.validateAsync = function resolveAsync(asyncValue, asyncContext) {
+            return Promise.resolve(resultValidateAsync(value, asyncContext))
+                .then(prepareResult.bind(null, value))
+                .then((asyncResult) => {
+                    if (typeof asyncValue === 'function') {
+                        const resolvedAsyncValue = asyncValue();
+
+                        // If the value changed during async validation
+                        // then reject the async result
+                        if (asyncResult.value !== resolvedAsyncValue) {
+                            throw asyncResult;
+                        }
+                    }
+
+                    return asyncResult;
+                });
+        }
     } else if (typeof preparedResult.validateAsync !== 'undefined') {
         throw 'Strickland: validateAsync must be either a Promise or a function';
     }

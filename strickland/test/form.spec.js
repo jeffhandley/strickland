@@ -541,7 +541,7 @@ describe('form', () => {
             });
 
             it('validateAsync can resolve individual fields', () => {
-                return expect(result.validateAsync({form: {fields: ['username']}})).resolves.toMatchObject({
+                return expect(result.validateAsync(() => formValues, {form: {fields: ['username']}})).resolves.toMatchObject({
                     isValid: false,
                     form: {
                         isComplete: false,

@@ -1379,6 +1379,78 @@ describe('docs', () => {
                         });
                     }
                 });
+
+                it('automatic race condition handling', () => {
+                    expect.assertions(2);
+
+                    const validateUsername = [
+                        required(),
+                        length({minLength: 2, maxLength: 20}),
+                        usernameIsAvailableTwoStage
+                    ];
+
+                    let username = 'marty';
+                    let usernameResult = validate(validateUsername, username);
+
+                    username = 'mcfly';
+
+                    const accepted = jest.fn();
+                    const rejected = jest.fn();
+
+                    if (usernameResult.validateAsync) {
+                        return usernameResult.validateAsync(() => username)
+                            .then((asyncResult) => {
+                                usernameResult = asyncResult;
+                                accepted();
+                            })
+                            .catch((rejectedResult) => {
+                                // the asyncResult result will be rejected
+                                // because the value has changed
+                                rejected(rejectedResult);
+                            })
+                            .then(() => {
+                                expect(accepted).not.toHaveBeenCalled();
+                                expect(rejected).toHaveBeenCalledWith(expect.objectContaining({
+                                    value: 'marty',
+                                    isValid: false
+                                }));
+                            });
+                    }
+                });
+
+                it('automatic race condition handling in validateAsync', () => {
+                    expect.assertions(2);
+
+                    const validateUsername = [
+                        required(),
+                        length({minLength: 2, maxLength: 20}),
+                        usernameIsAvailableTwoStage
+                    ];
+
+                    let username = 'marty';
+
+                    const accepted = jest.fn();
+                    const rejected = jest.fn();
+
+                    const promise = validateAsync(validateUsername, () => username)
+                        .then((asyncResult) => {
+                            // async validation completed
+                            accepted(asyncResult);
+                        })
+                        .catch((rejectedResult) => {
+                            // async validation rejected
+                            rejected(rejectedResult);
+                        });
+
+                    username = 'mcfly';
+
+                    return promise.then(() => {
+                        expect(accepted).not.toHaveBeenCalled();
+                        expect(rejected).toHaveBeenCalledWith(expect.objectContaining({
+                            value: 'marty'
+                        }));
+                    });
+                });
             });
         });
     });

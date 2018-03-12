@@ -35,6 +35,7 @@
     * [Async Validator Arrays and Objects](/docs/Async/ValidatorArraysAndObjects.md)
     * [Two-Stage Sync/Async Validation](/docs/Async/TwoStageValidation.md)
     * [Race Conditions](/docs/Async/RaceConditions.md)
+    * [Automatic Race Condition Handling](/docs/Async/AutomaticRaceConditionHandling.md)
 * [Form Validation](/docs/Forms/README.md)
     * [form](/docs/Forms/form.md)
 * [Wrap-Up](/docs/WrapUp.md)

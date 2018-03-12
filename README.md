@@ -111,6 +111,7 @@ const result = validate(letterA, 'B');
     * [Async Validator Arrays and Objects](http://strickland.io/docs/Async/ValidatorArraysAndObjects.html)
     * [Two-Stage Sync/Async Validation](http://strickland.io/docs/Async/TwoStageValidation.html)
     * [Race Conditions](http://strickland.io/docs/Async/RaceConditions.html)
+    * [Automatic Race Condition Handling](http://strickland.io/docs/Async/AutomaticRaceConditionHandling.html)
 * [Form Validation](http://strickland.io/docs/Forms/index.html)
     * [form](http://strickland.io/docs/Forms/form.html)
 * [Wrap-Up](http://strickland.io/docs/WrapUp.html)
