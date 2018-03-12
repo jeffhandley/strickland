@@ -1605,6 +1605,94 @@ describe('docs', () => {
                     }
                 });
             });
+
+            describe('validateFields', () => {
+                let validationResult;
+
+                it('first field', () => {
+                    // Validate the firstName field
+                    validationResult = validatePerson.validateFields(person, ['firstName']);
+
+                    expect(validationResult).toMatchObject({
+                        form: {
+                            validationResults: {
+                                firstName: {isValid: true}
+                            }
+                        }
+                    });
+                });
+
+                it('additional fields', () => {
+                    validationResult = validatePerson.validateFields(person, ['lastName'], validationResult)
+
+                    expect(validationResult).toMatchObject({
+                        form: {
+                            validationResults: {
+                                firstName: {isValid: true},
+                                lastName: {isValid: true}
+                            }
+                        }
+                    });
+                });
+            });
+
+            it('emptyResults', () => {
+                let validationResult = validatePerson.emptyResults();
+
+                expect(validationResult).toEqual({
+                    form: {
+                        validationResults: {},
+                        validationErrors: [],
+                        isComplete: false
+                    }
+                });
+            });
+
+            it('updateFieldResult', () => {
+                // Validate the firstName field
+                let stanfordStrickland = {
+                    firstName: 'Stanford',
+                    lastName: 'Strickland',
+                    birthYear: 1925
+                };
+
+                let stanfordResult = validate(validatePerson, stanfordStrickland);
+
+                let firstNameResult = {
+                    isValid: false,
+                    value: 'Stanford',
+                    message: 'The service does not allow a first name of "Stanford"'
+                };
+
+                stanfordResult = validatePerson.updateFieldResult(stanfordResult, 'firstName', firstNameResult);
+
+                expect(stanfordResult).toMatchObject({
+                    form: {
+                        validationResults: {
+                            firstName: {
+                                isValid: false,
+                                value: 'Stanford',
+                                message: 'The service does not allow a first name of "Stanford"'
+                            },
+                            lastName: {
+                                isValid: true
+                            },
+                            birthYear: {
+                                isValid: true
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'firstName',
+                                isValid: false,
+                                value: 'Stanford',
+                                message: 'The service does not allow a first name of "Stanford"'
+                            }
+                        ],
+                        isComplete: true
+                    }
+                });
+            });
         });
     });
 });

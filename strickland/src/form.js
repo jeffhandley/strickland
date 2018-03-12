@@ -31,16 +31,19 @@ export default function formValidator(validators, validatorProps) {
         return prepareResult(validators, props, existingResults, result);
     }
 
-    validateForm.clearResults = function clearResults() {
+    validateForm.emptyResults = function emptyResults() {
         return {
             form: {
                 validationResults: {},
-                validationErrors: []
+                validationErrors: [],
+                isComplete: false
             }
         };
     };
 
-    validateForm.validateFields = function validateField(result, formValues, fields) {
+    validateForm.validateFields = function validateField(formValues, fields, result) {
+        result = result || validateForm.emptyResults();
+
         const context = {
             ...result,
             form: {

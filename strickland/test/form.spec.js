@@ -845,18 +845,19 @@ describe('form', () => {
     });
 
     describe('helper functions', () => {
-        it('clearResults', () => {
-            const result = form({}).clearResults();
+        it('emptyResults', () => {
+            const result = form({}).emptyResults();
 
             expect(result).toEqual({
                 form: {
                     validationResults: {},
-                    validationErrors: []
+                    validationErrors: [],
+                    isComplete: false
                 }
             });
         });
 
-        it('validateFields', () => {
+        describe('validateFields', () => {
             const formValidator = form({
                 firstName: () => true,
                 lastName: () => false
@@ -867,33 +868,76 @@ describe('form', () => {
                 lastName: 'Strickland'
             };
 
-            const initialResult = formValidator.clearResults();
-
-            const result = formValidator.validateFields(
-                initialResult,
-                value,
-                ['lastName']
-            );
-
-            expect(result).toEqual({
-                form: {
-                    validationResults: {
-                        lastName: {
-                            isValid: false,
-                            value: 'Strickland'
+            it('with existing results', () => {
+                const initialResult = {
+                    form: {
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford'
+                            }
                         }
+                    }
+                };
+
+                const result = formValidator.validateFields(
+                    value,
+                    ['lastName'],
+                    initialResult
+                );
+
+                expect(result).toEqual({
+                    form: {
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford'
+                            },
+                            lastName: {
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'lastName',
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        ],
+                        isComplete: true
                     },
-                    validationErrors: [
-                        {
-                            fieldName: 'lastName',
-                            isValid: false,
-                            value: 'Strickland'
-                        }
-                    ],
-                    isComplete: false
-                },
-                value,
-                isValid: false
+                    value,
+                    isValid: false
+                });
+            });
+
+            it('without existing results', () => {
+                const result = formValidator.validateFields(
+                    value,
+                    ['lastName']
+                );
+
+                expect(result).toEqual({
+                    form: {
+                        validationResults: {
+                            lastName: {
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'lastName',
+                                isValid: false,
+                                value: 'Strickland'
+                            }
+                        ],
+                        isComplete: false
+                    },
+                    value,
+                    isValid: false
+                });
             });
         });
 
