@@ -25,6 +25,16 @@ export default form({
     ],
     username: [
         required({message: 'Required'}),
+        (value) => {
+            if (value && value.trim().indexOf(' ') > -1) {
+                return {
+                    isValid: false,
+                    message: 'Cannot contain spaces'
+                };
+            }
+
+            return true;
+        },
         minLength({minLength: 4, message: 'Must have at least 4 characters'}),
         usernameIsAvailable
     ],
