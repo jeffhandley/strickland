@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0-rc.0"></a>
+# [2.0.0-rc.0](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-rc.0) (2018-03-13)
+
+
+### Features
+
+* add clearResults, validateField, updateFieldResult helpers on form ([3b2be71](https://github.com/jeffhandley/strickland/commit/3b2be71))
+* change updateFieldResult to updateFieldResults (supporting multiple fields) ([fa8859b](https://github.com/jeffhandley/strickland/commit/fa8859b))
+
+
+
+
 <a name="2.0.0-beta.5"></a>
 # [2.0.0-beta.5](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2018-03-12)
 
