@@ -1,10 +1,8 @@
 # Deferred Async Validation
 
-When a validator returns a `Promise`, the code within the `Promise` will be evaluated regardless of the application invoking the `validateAsync` function. This is desired in some cases to begin resolving async validation eagerly so that async results are ready when `validateAsync()` is invoked. In other cases though, `validateAsync` will not be called until later in the workflow and the async result will not be consumed.
+When a validator returns a `Promise`, the `Promise` will begin resolution immediately, before the application invokes the `validateAsync` function. This is desired in some cases to begin resolving async validation eagerly so that async results are ready when `validateAsync()` is invoked. In other cases, the application may not call `validateAsync` until later in the workflow and the initial async result might not even be consumed.
 
-If the execution of the `Promise` is expensive, it is recommended to wrap the `Promise` in a function to defer its execution.
-
-To defer async validation until `validateAsync()` is called, validators can return a `function` that returns the async validation result. While the `validateAsync` function can return any validation result, it's common to have the function return a `Promise` to perform actual async validation. Let's modify the `usernameIsAvailable` validator to not begin async validation until invoked by the application by wrapping the `Promise` in a `function`.
+To defer async validation until `validateAsync()` is called, validators can return a `function` that returns the async validation result `Promise`. Let's modify the `usernameIsAvailable` validator to defer async validation in this way.
 
 ``` jsx
 import validate from 'strickland';
