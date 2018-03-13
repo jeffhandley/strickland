@@ -4,7 +4,7 @@ import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import {connect, Provider} from 'react-redux';
 import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
-import {validateAsync} from 'strickland';
+import validate from 'strickland';
 
 const fieldContext = {
     firstName: {
@@ -194,9 +194,14 @@ function onFieldBlur(fieldName, value) {
 
 function onFormSubmit() {
     return (dispatch, getState) => {
-        validateAsync(formValidator, () => getState().form)
-            .then((validation) => dispatch(onValidationChanged(validation)))
-            .catch(() => {});
+        const result = validate(formValidator, getState().form);
+        dispatch(onValidationChanged(result));
+
+        if (result.validateAsync) {
+            result.validateAsync(() => getState().form)
+                .then((validation) => dispatch(onValidationChanged(validation)))
+                .catch(() => {});
+        }
     };
 }
 

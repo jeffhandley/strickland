@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
-import {validateAsync} from 'strickland';
+import validate from 'strickland';
 
 class App extends Component {
     constructor(props) {
@@ -184,9 +184,14 @@ class App extends Component {
     }
 
     onSubmit() {
-        validateAsync(formValidator, () => this.state.form)
-            .then((validation) => this.setState({validation}))
-            .catch(() => {});
+        const validation = validate(formValidator, this.state.form);
+        this.setState({validation});
+
+        if (validation.validateAsync) {
+            validation.validateAsync(() => this.state.form)
+                .then((asyncValidation) => this.setState({validation: asyncValidation}))
+                .catch(() => {});
+        }
     }
 
     render() {
