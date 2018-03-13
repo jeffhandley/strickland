@@ -91,9 +91,11 @@ function onFieldValueChanged(fieldName, value, applyParsing) {
 
 function onFieldValidateAsync(fieldName, fieldResult) {
     return (dispatch, getState) => {
-        fieldResult.validateAsync(() => getState().parsedForm[fieldName])
-            .then((asyncFieldResult) => dispatch(onFieldResultUpdated(fieldName, asyncFieldResult)))
-            .catch(() => {});
+        if (fieldResult.validateAsync) {
+            fieldResult.validateAsync(() => getState().parsedForm[fieldName])
+                .then((asyncFieldResult) => dispatch(onFieldResultUpdated(fieldName, asyncFieldResult)))
+                .catch(() => {});
+        }
     };
 }
 
@@ -153,20 +155,18 @@ function onFieldChanged(fieldName, value) {
             dispatch(onFieldResultUpdated(fieldName, null));
         }
 
-        if (fieldResult.validateAsync) {
-            setTimeout(() => {
-                let {parsedForm: formAfterTimeout, validation: validationAfterTimeout} = getState();
+        setTimeout(() => {
+            let {parsedForm: formAfterTimeout, validation: validationAfterTimeout} = getState();
 
-                // If after our idle timeout, the field hasn't yet changed and the field
-                // still hasn't been validated
-                if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
-                    // Update the field's validation state to indicate that
-                    // async validation is underway
-                    dispatch(onFieldResultUpdated(fieldName, fieldResult));
-                    dispatch(onFieldValidateAsync(fieldName, fieldResult));
-                }
-            }, 1000);
-        }
+            // If after our idle timeout, the field hasn't yet changed and the field
+            // still hasn't been validated
+            if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
+                // Update the field's validation state to indicate that
+                // async validation is underway
+                dispatch(onFieldResultUpdated(fieldName, fieldResult));
+                dispatch(onFieldValidateAsync(fieldName, fieldResult));
+            }
+        }, 1000);
     };
 }
 
@@ -184,11 +184,7 @@ function onFieldBlur(fieldName, value) {
 
         // Pluck out the result for the current field
         const fieldResult = validation.form.validationResults[fieldName];
-
-        // If the field needs async validation, fire it off
-        if (fieldResult.validateAsync) {
-            dispatch(onFieldValidateAsync(fieldName, fieldResult));
-        }
+        dispatch(onFieldValidateAsync(fieldName, fieldResult));
     };
 }
 

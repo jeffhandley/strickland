@@ -107,28 +107,28 @@ class App extends Component {
 
         this.setState({form: formValues, validation});
 
-        if (fieldResult.validateAsync) {
-            setTimeout(() => {
-                let {form: formAfterTimeout, validation: validationAfterTimeout} = this.state;
+        setTimeout(() => {
+            let {form: formAfterTimeout, validation: validationAfterTimeout} = this.state;
 
-                // If after our idle timeout, the field hasn't yet changed and the field
-                // still hasn't been validated
-                if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
-                    // Update the field's validation state to indicate that
-                    // async validation is underway
-                    this.setState({
-                        validation: formValidator.updateFieldResults(
-                            validationAfterTimeout, {[fieldName]: fieldResult}
-                        )
-                    });
+            // If after our idle timeout, the field hasn't yet changed and the field
+            // still hasn't been validated
+            if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
+                // Update the field's validation state to indicate that
+                // async validation is underway
+                this.setState({
+                    validation: formValidator.updateFieldResults(
+                        validationAfterTimeout, {[fieldName]: fieldResult}
+                    )
+                });
 
-                    // Fire off async validation
+                // Fire off async validation
+                if (fieldResult.validateAsync) {
                     fieldResult.validateAsync(() => this.state.form[fieldName])
                         .then(this.handleAsyncFieldValidation.bind(this, fieldName))
                         .catch(() => {});
                 }
-            }, 1000);
-        }
+            }
+        }, 1000);
     }
 
     onFieldBlur(fieldName, fieldContext, {target}) {

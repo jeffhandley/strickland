@@ -36,7 +36,11 @@ export default form({
             return true;
         },
         minLength({minLength: 4, message: 'Must have at least 4 characters'}),
-        usernameIsAvailable
+        usernameIsAvailable,
+        (username) => ({
+            isValid: true,
+            successMessage: `"${username}" is available`
+        })
     ],
     password: every(
         [required(), minLength(8)],
@@ -64,5 +68,7 @@ export function getValidationMessage(validation, fieldName) {
 
     if (fieldValidation && !fieldValidation.isValid) {
         return fieldValidation.message;
+    } else if (fieldValidation) {
+        return fieldValidation.successMessage;
     }
 }
