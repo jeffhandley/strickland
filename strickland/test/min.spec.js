@@ -53,16 +53,6 @@ describe('min', () => {
                 isValid: false
             });
         });
-
-        it('validates using the min value resolved from a function', () => {
-            const validate = min(() => 5);
-            const result = validate(4);
-
-            expect(result).toMatchObject({
-                min: 5,
-                isValid: false
-            });
-        });
     });
 
     describe('with a props argument', () => {

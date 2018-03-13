@@ -7,10 +7,21 @@ The `range` validator combines the `min` and `max` validators to check that a va
 * `min`: The minimum value compared against
 * `max`: The maximum value compared against
 
+## Parameters
+
+The `range` validator supports three parameter signatures:
+
+1. `range(min, max)` where the `min` and `max` named props are specified as values
+1. `range(propsObject)` where the props object contains `min` and `max` named props
+1. `range(propsFunction)` where the props function returns a props object with `min` and `max` named props
+
 ## Usage
 
 ``` jsx
 import validate, {range} from 'strickland';
+
+// As value parameters
+const between5and20 = range(5, 10);
 
 // As named props
 const between10and20 = range({

@@ -48,16 +48,6 @@ describe('maxLength', () => {
                 isValid: false
             });
         });
-
-        it('validates using the maxLength value resolved from a function', () => {
-            const validate = maxLength(() => 5);
-            const result = validate('123456');
-
-            expect(result).toMatchObject({
-                maxLength: 5,
-                isValid: false
-            });
-        });
     });
 
     describe('with a props argument', () => {

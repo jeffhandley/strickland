@@ -103,16 +103,6 @@ describe('required', () => {
                     isValid: true
                 });
             });
-
-            it('validates using the required value resolved from a function', () => {
-                const validate = required(() => false);
-                const result = validate('');
-
-                expect(result).toMatchObject({
-                    required: false,
-                    isValid: true
-                });
-            });
         });
 
         describe('set to true', () => {

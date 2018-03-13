@@ -2,11 +2,20 @@ import validate from './validate';
 import minValidator from './min';
 import maxValidator from './max';
 
-export default function rangeValidator(validatorProps) {
+export default function rangeValidator(validatorProps, maxProp) {
     return function validateRange(value, context) {
-        const props = typeof validatorProps === 'function' ?
-            validatorProps(context) :
-            validatorProps;
+        let props;
+
+        if (typeof validatorProps === 'function') {
+            props = validatorProps(context);
+        } else if (typeof validatorProps === 'number' && typeof maxProp === 'number') {
+            props = {
+                min: validatorProps,
+                max: maxProp
+            };
+        } else {
+            props = validatorProps;
+        }
 
         const {min, max} = props;
 

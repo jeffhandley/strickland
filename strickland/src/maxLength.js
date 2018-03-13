@@ -1,16 +1,16 @@
 export default function maxLengthValidator(validatorProps) {
     return function validateMaxLength(value, context) {
-        let isValid = true;
         let length = value ? value.length : 0;
+        let props;
 
-        let props = typeof validatorProps === 'function' ?
-            validatorProps({...context, length}) :
-            validatorProps;
-
-        if (typeof props === 'number') {
+        if (typeof validatorProps === 'function') {
+            props = validatorProps({...context, length});
+        } else if (typeof validatorProps === 'number') {
             props = {
-                maxLength: props
+                maxLength: validatorProps
             };
+        } else {
+            props = validatorProps
         }
 
         const {maxLength} = props;
@@ -18,6 +18,8 @@ export default function maxLengthValidator(validatorProps) {
         if (typeof maxLength !== 'number') {
             throw 'Strickland: The `maxLength` validator requires a numeric `maxLength` property';
         }
+
+        let isValid = true;
 
         if (!value) {
             // Empty values are always valid except with the required validator

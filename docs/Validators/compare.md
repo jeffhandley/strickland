@@ -5,27 +5,31 @@ The `compare` validator is quite similar to the letter validator we've built in 
 ## Named Props
 
 * `compare`: The value compared against
-    * If the parameter supplied is not an object, it will be used as the `compare` named prop
+
+## Parameters
+
+The `compare` validator supports three parameter signatures:
+
+1. `compare(value)` where the value is used as the `compare` named prop
+1. `compare(propsObject)` where the props object contains a `compare` named prop
+1. `compare(propsFunction)` where the props function returns a props object with a `compare` named prop
 
 ## Usage
 
 ``` jsx
 import validate, {compare} from 'strickland';
 
-// Using a non-object param to specify the compare value
+// As a value parameter
 const letterA = compare('A');
 
-// Using a named prop
+// As a named prop
 const letterB = compare({
     compare: 'B',
     message: 'Must be the letter "B"'
 });
 
-// Using a function that resolves to specify the compare value
-const letterValidatorA = compare((context) => context.compare);
-
 // Using a function that resolves to have the named prop
-const letterValidatorB = compare((context) => ({
+const letterValidator = compare((context) => ({
     compare: context.compare,
     message: `Must match "${context.compare}"`
 }));

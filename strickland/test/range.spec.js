@@ -2,6 +2,19 @@ import deepFreeze from 'deep-freeze';
 import range from '../src/range';
 
 describe('range', () => {
+    describe('with numeric arguments', () => {
+        it('validates using the value arguments', () => {
+            const validate = range(5, 10);
+            const result = validate(4);
+
+            expect(result).toMatchObject({
+                min: 5,
+                max: 10,
+                isValid: false
+            });
+        });
+    });
+
     describe('with a props argument', () => {
         const validate = range({min: 3, max: 5, message: 'Custom message', isValid: false});
         const result = validate(4);

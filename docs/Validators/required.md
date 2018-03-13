@@ -45,23 +45,18 @@ The `required` validator respects a named prop of `required` that indicates whet
 // Required by default
 const a = required();
 
-// The required param specified as a boolean
+// As a value parameter
 const requiredField = required(true);
 const optionalField = required(false);
 
-// Supplying the `required` named prop
+// As a named prop
 const nameRequired = required({
     required: true,
     message: '"Name" is required'
 });
 
-// Using a function to resolve the required prop
-// as a boolean value
-const b = required((context) => context.required);
-
-// Using a function to resolve the required prop
-// along with a function to resolve validator props
-const c = required((context) => ({
+// As a function that resolves to have the named prop
+const requiredValidator = required((context) => ({
     required: context.required,
     message: context.required ?
         '"Name" is required' :

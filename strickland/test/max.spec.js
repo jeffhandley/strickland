@@ -53,16 +53,6 @@ describe('max', () => {
                 isValid: false
             });
         });
-
-        it('validates using the max value resolved from a function', () => {
-            const validate = max(() => 5);
-            const result = validate(6);
-
-            expect(result).toMatchObject({
-                max: 5,
-                isValid: false
-            });
-        });
     });
 
     describe('with a props argument', () => {

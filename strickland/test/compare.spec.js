@@ -70,16 +70,6 @@ describe('compare', () => {
                 isValid: false
             });
         });
-
-        it('validates using the compare value resolved from a function', () => {
-            const validate = compare(() => 5);
-            const result = validate(4);
-
-            expect(result).toMatchObject({
-                compare: 5,
-                isValid: false
-            });
-        });
     });
 
     describe('with a props argument', () => {

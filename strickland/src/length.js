@@ -2,13 +2,21 @@ import validate from './validate';
 import minLengthValidator from './minLength';
 import maxLengthValidator from './maxLength';
 
-export default function lengthValidator(validatorProps) {
+export default function lengthValidator(validatorProps, maxLengthProp) {
     return function validateLength(value, context) {
         let length = value ? value.length : 0;
+        let props;
 
-        const props = typeof validatorProps === 'function' ?
-            validatorProps({...context, length}) :
-            validatorProps;
+        if (typeof validatorProps === 'function') {
+            props = validatorProps({...context, length});
+        } else if (typeof validatorProps === 'number' && typeof maxLengthProp === 'number') {
+            props = {
+                minLength: validatorProps,
+                maxLength: maxLengthProp
+            };
+        } else {
+            props = validatorProps;
+        }
 
         const {minLength, maxLength} = props;
 

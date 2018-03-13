@@ -7,10 +7,21 @@ The `length` validator combines the `minLength` and `maxLength` validators to ch
 * `minLength`: The minimum value compared against
 * `maxLength`: The maximum value compared against
 
+## Parameters
+
+The `length` validator supports three parameter signatures:
+
+1. `length(minLength, maxLength)` where the `minLength` and `maxLength` named props are specified as values
+1. `length(propsObject)` where the props object contains `minLength` and `maxLength` named props
+1. `length(propsFunction)` where the props function returns a props object with `minLength` and `maxLength` named props
+
 ## Usage
 
 ``` jsx
 import validate, {length} from 'strickland';
+
+// As value parameters
+const maxLengthBetween5and10 = length(5, 10);
 
 // As named props
 const maxLengthBetween10and20 = length({

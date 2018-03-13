@@ -48,16 +48,6 @@ describe('minLength', () => {
                 isValid: false
             });
         });
-
-        it('validates using the minLength value resolved from a function', () => {
-            const validate = minLength(() => 5);
-            const result = validate('1234');
-
-            expect(result).toMatchObject({
-                minLength: 5,
-                isValid: false
-            });
-        });
     });
 
     describe('with a props argument', () => {

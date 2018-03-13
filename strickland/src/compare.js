@@ -2,14 +2,16 @@ import {isFalsyButNotZero} from './utils';
 
 export default function compareValidator(validatorProps) {
     return function validateCompare(value, context) {
-        let props = typeof validatorProps === 'function' ?
-            validatorProps(context) :
-            validatorProps;
+        let props;
 
-        if (typeof props !== 'object') {
+        if (typeof validatorProps === 'function') {
+            props = validatorProps(context);
+        } else if (typeof validatorProps !== 'object') {
             props = {
-                compare: props
+                compare: validatorProps
             };
+        } else {
+            props = validatorProps
         }
 
         const {compare} = props;

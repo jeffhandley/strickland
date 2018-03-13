@@ -5,14 +5,21 @@ The `minLength` validator checks that a string value has a length at least the m
 ## Named Props
 
 * `minLength`: The minimum length compared against
-    * If the parameter supplied is numeric, it will be used as the `minLength` named prop
+
+## Parameters
+
+The `minLength` validator supports three parameter signatures:
+
+1. `minLength(value)` where the value is used as the `minLength` named prop
+1. `minLength(propsObject)` where the props object contains a `minLength` named prop
+1. `minLength(propsFunction)` where the props function returns a props object with a `minLength` named prop
 
 ## Usage
 
 ``` jsx
 import validate, {minLength} from 'strickland';
 
-// Using a numeric param to specify the minLength value
+// As a value parameter
 const minLengthOf3 = minLength(3);
 
 // As a named prop
@@ -21,11 +28,8 @@ const minLengthOf2 = minLength({
     message: 'Must have a length of at least 2'
 });
 
-// Using a function that resolves to specify the max value
-const minLengthValidatorA = max((context) => context.minLength);
-
 // As a function that resolves to have the named prop
-const minLengthValidatorB = minLength((context) => ({
+const minLengthValidator = minLength((context) => ({
     minLength: context.minLength,
     message: `Must have a length of at least ${context.minLength}`
 }));

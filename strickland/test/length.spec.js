@@ -3,7 +3,16 @@ import length from '../src/length';
 
 describe('length', () => {
     describe('with numeric arguments', () => {
+        it('validates using the value arguments', () => {
+            const validate = length(5, 10);
+            const result = validate('1234');
 
+            expect(result).toMatchObject({
+                minLength: 5,
+                maxLength: 10,
+                isValid: false
+            });
+        });
     });
 
     describe('with a props argument', () => {
