@@ -43,7 +43,7 @@ Additionally, the `props` validator was badly named.  The "props" concept is use
 
 
 
-    <a name="2.0.0-beta.5"></a>
+<a name="2.0.0-beta.5"></a>
 # [2.0.0-beta.5](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2018-03-12)
 
 
