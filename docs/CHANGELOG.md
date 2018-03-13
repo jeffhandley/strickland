@@ -3,7 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="2.0.0-beta.5"></a>
+    <a name="2.0.0-rc.0"></a>
+# [2.0.0-rc.0](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-rc.0) (2018-03-13)
+
+
+### Features
+
+* add clearResults, validateField, updateFieldResult helpers on form ([3b2be71](https://github.com/jeffhandley/strickland/commit/3b2be71))
+* automatic race condition handling in async validation ([e56dfcb](https://github.com/jeffhandley/strickland/commit/e56dfcb))
+* change updateFieldResult to updateFieldResults (supporting multiple fields) ([fa8859b](https://github.com/jeffhandley/strickland/commit/fa8859b))
+* improve the form.validateFields API; rename form.clearResults to form.emptyResults; allow validateFields against empty results; add docs ([aa3f41b](https://github.com/jeffhandley/strickland/commit/aa3f41b))
+* simplification of the API and rename of props to objectProps ([a948986](https://github.com/jeffhandley/strickland/commit/a948986))
+* support simpler params for compare, min, max, minLength, maxLength, and required validators ([df1107e](https://github.com/jeffhandley/strickland/commit/df1107e))
+* support value parameters for length and range; no longer support functions that return value parameters ([7ef2630](https://github.com/jeffhandley/strickland/commit/7ef2630))
+
+
+### BREAKING CHANGES
+
+* The `getValidatorProps` approach was causing some usability troubles:
+
+1. Constructing validators became unpredictable
+* The built-in validators were quite powerful, yes, but they were simply _too_ flexible
+* The overabundance of flexibility made it hard to grok what was happening because there was too much magic
+2. Creating validators became too difficult
+* It raised the bar too high for validator authors to adopt the same level of magic flexibility
+* And it was unclear what would happen if some validators did not adhere
+
+To address these issues:
+
+1. Validators no longer take ordinal params in the flexible way -- instead, there's just a single props object supplied
+2. That props param can be a function that returns the props object
+3. Context is passed to said function, but there's just a single props object/function now instead of a magic chain of them
+4. The `validate` function reliably puts `value` on context and the result props -- no validators are responsible for doing that
+
+Even though using a props object parameter is more verbose for basic scenarios, it makes the API more predictable and therefore approachable.
+
+Additionally, the `props` validator was badly named.  The "props" concept is used throughout Strickland and the name collision between concept and validator was hard to keep clear.  It is now named `objectProps`.
+
+
+
+
+    <a name="2.0.0-beta.5"></a>
 # [2.0.0-beta.5](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2018-03-12)
 
 
