@@ -21,7 +21,7 @@ The `range` validator supports three parameter signatures:
 import validate, {range} from 'strickland';
 
 // As value parameters
-const between5and20 = range(5, 10);
+const between5and10 = range(5, 10);
 
 // As named props
 const between10and20 = range({
