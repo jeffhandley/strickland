@@ -16,7 +16,14 @@ The `false` boolean value being invalid is commonly used to validate that checkb
 ## Named Props
 
 * `required`: A boolean indicating whether or not the value is required (default: `true`)
-    * If the parameter supplied is a boolean, it will be used as the `required` named prop
+
+## Parameters
+
+The `required` validator supports three parameter signatures:
+
+1. `required(requiredValue)` where the value is used as the `required` named prop
+1. `required(propsObject)` where the props object contains a `required` named prop
+1. `required(propsFunction)` where the props function returns a props object with a `required` named prop
 
 ## Usage
 
