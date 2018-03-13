@@ -244,7 +244,7 @@ describe('validate', () => {
         describe('where each property defines rules', () => {
             const rules = {
                 firstName: required(),
-                lastName: [required(), minLength({minLength: 2})]
+                lastName: [required(), minLength(2)]
             };
 
             const value = {

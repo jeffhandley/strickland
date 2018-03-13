@@ -10,9 +10,9 @@ The first parameter to the `objectProps` validator factory is an object defining
 import {objectProps} from 'strickland';
 
 const validateProps = objectProps({
-    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
-    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
-    birthYear: range({min: 1900, max: 2018})
+    firstName: every([required(), length(2, 20)]),
+    lastName: every([required(), length(2, 20)]),
+    birthYear: range(1900, 2018)
 }, {
     message: 'The person must be valid'
 });
@@ -87,9 +87,9 @@ import validate, {
 
 // Define the rules for first name, last name, and birthYear
 const validatePersonProps = objectProps({
-    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
-    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
-    birthYear: range({min: 1900, max: 2018})
+    firstName: every([required(), length(2, 20)]),
+    lastName: every([required(), length(2, 20)]),
+    birthYear: range(1900, 2018)
 });
 
 // Create a person

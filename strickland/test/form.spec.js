@@ -35,7 +35,7 @@ describe('form', () => {
                 firstName: firstNameValidator,
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 6})],
+                password: [required(), minLength(6)],
                 comparePassword: every(
                     [
                         required(),
@@ -134,7 +134,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 6})],
+                password: [required(), minLength(6)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 
@@ -222,7 +222,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 6})],
+                password: [required(), minLength(6)],
                 comparePassword: every(
                     [
                         required(),
@@ -271,7 +271,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 6})],
+                password: [required(), minLength(6)],
                 comparePassword: every(
                     [
                         required(),
@@ -323,7 +323,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 8})],
+                password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 
@@ -392,7 +392,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: [required(), () => Promise.resolve({isValid: true, usernameAvailable: true})],
-                password: [required(), minLength({minLength: 8})],
+                password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 
@@ -460,7 +460,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 8}), () => () => ({isValid: true, passwordComplex: true})],
+                password: [required(), minLength(8), () => () => ({isValid: true, passwordComplex: true})],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             });
 
@@ -592,7 +592,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: [required(), () => Promise.resolve({isValid: true, usernameAvailable: true})],
-                password: [required(), minLength({minLength: 8})],
+                password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 
@@ -659,7 +659,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: [required(), () => Promise.resolve({isValid: true, usernameAvailable: true})],
-                password: [required(), minLength({minLength: 8})],
+                password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 
@@ -726,7 +726,7 @@ describe('form', () => {
                 firstName: required(),
                 lastName: required(),
                 username: required(),
-                password: [required(), minLength({minLength: 8})],
+                password: [required(), minLength(8)],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             };
 

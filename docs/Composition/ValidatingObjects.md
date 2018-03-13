@@ -13,13 +13,13 @@ import validate, {
 const validateProps = {
     firstName: every([
         required(),
-        length({minLength: 2, maxLength: 20})
+        length(2, 20)
     ]),
     lastName: every([
         required(),
-        length({minLength: 2, maxLength: 20})
+        length(2, 20)
     ]),
-    birthYear: range({min: 1900, max: 2018})
+    birthYear: range(1900, 2018)
 };
 
 // Create a person

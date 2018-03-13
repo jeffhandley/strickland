@@ -37,7 +37,7 @@ describe('range', () => {
     });
 
     describe('validates', () => {
-        const validate = range({min: 3, max: 5});
+        const validate = range(3, 5);
 
         it('with the value equal to the min, it is valid', () => {
             const result = validate(3);

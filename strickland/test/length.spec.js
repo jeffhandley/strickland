@@ -37,7 +37,7 @@ describe('length', () => {
     });
 
     describe('returns the length on the result', () => {
-        const validate = length({minLength: 3, maxLength: 5});
+        const validate = length(3, 5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -76,7 +76,7 @@ describe('length', () => {
     });
 
     describe('validates', () => {
-        const validate = length({minLength: 3, maxLength: 5});
+        const validate = length(3, 5);
 
         it('with the length equal to the min, it is valid', () => {
             const result = validate('123');

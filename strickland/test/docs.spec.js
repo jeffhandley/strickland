@@ -545,7 +545,7 @@ describe('docs', () => {
 
             const mustExistWithLength5 = everyValidator([
                 required(),
-                minLength({minLength: 5})
+                minLength(5)
             ]);
 
             const result = validate(mustExistWithLength5, '1234', {
@@ -566,7 +566,7 @@ describe('docs', () => {
                 const atLeast5Chars = every(
                     [
                         required(),
-                        minLength({minLength: 5})
+                        minLength(5)
                     ],
                     {message: 'Must have at least 5 characters'}
                 );
@@ -642,7 +642,7 @@ describe('docs', () => {
                 const atLeast5Chars = each(
                     [
                         required(),
-                        minLength({minLength: 5})
+                        minLength(5)
                     ],
                     {message: 'Must have at least 5 characters'}
                 );
@@ -721,9 +721,9 @@ describe('docs', () => {
 
         describe('some', () => {
             const max5orMin10orValue7 = some([
-                max({max: 5}),
-                min({min: 10}),
-                compare({compare: 7})
+                max(5),
+                min(10),
+                compare(7)
             ]);
 
             const result = validate(max5orMin10orValue7, 12);
@@ -753,13 +753,13 @@ describe('docs', () => {
             const validateProps = {
                 firstName: every([
                     required(),
-                    length({minLength: 2, maxLength: 20})
+                    length(2, 20)
                 ]),
                 lastName: every([
                     required(),
-                    length({minLength: 2, maxLength: 20})
+                    length(2, 20)
                 ]),
-                birthYear: range({min: 1900, max: 2018})
+                birthYear: range(1900, 2018)
             };
 
             // Create a person
@@ -808,9 +808,9 @@ describe('docs', () => {
         describe('objectProps', () => {
             it('parameters', () => {
                 const validateProps = objectProps({
-                    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
-                    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
-                    birthYear: range({min: 1900, max: 2018})
+                    firstName: every([required(), length(2, 20)]),
+                    lastName: every([required(), length(2, 20)]),
+                    birthYear: range(1900, 2018)
                 }, {
                     message: 'The person must be valid'
                 });
@@ -892,9 +892,9 @@ describe('docs', () => {
             it('result properties', () => {
                 // Define the rules for first name, last name, and birthYear
                 const validatePersonProps = objectProps({
-                    firstName: every([required(), length({minLength: 2, maxLength: 20})]),
-                    lastName: every([required(), length({minLength: 2, maxLength: 20})]),
-                    birthYear: range({min: 1900, max: 2018})
+                    firstName: every([required(), length(2, 20)]),
+                    lastName: every([required(), length(2, 20)]),
+                    birthYear: range(1900, 2018)
                 });
 
                 // Create a person
@@ -966,13 +966,13 @@ describe('docs', () => {
             const validatePersonProps = objectProps({
                 firstName: every([
                     required(),
-                    length({minLength: 2, maxLength: 20})
+                    length(2, 20)
                 ]),
                 lastName: every([
                     required(),
-                    length({minLength: 2, maxLength: 20})
+                    length(2, 20)
                 ]),
-                birthYear: range({min: 1900, max: 2018})
+                birthYear: range(1900, 2018)
             });
 
             function stanfordStricklandBornIn1925(person) {
@@ -1010,14 +1010,14 @@ describe('docs', () => {
 
         it('nested objects', () => {
             const validatePerson = objectProps({
-                name: every([required(), length({minLength: 5, maxLength: 40})]),
+                name: every([required(), length(5, 40)]),
                 address: objectProps({
                     street: objectProps({
-                        number: every([required(), range({min: 1, max: 99999})]),
-                        name: every([required(), length({minLength: 2, maxLength: 40})])
+                        number: every([required(), range(1, 99999)]),
+                        name: every([required(), length(2, 40)])
                     }),
                     city: required(),
-                    state: every([required(), length({minLength: 2, maxLength: 2})])
+                    state: every([required(), length(2, 2)])
                 })
             });
 
@@ -1041,19 +1041,19 @@ describe('docs', () => {
             const validatePerson = [
                 required(),
                 {
-                    name: [required(), length({minLength: 5, maxLength: 40})],
+                    name: [required(), length(5, 40)],
                     address: [
                         required(),
                         {
                             street: [
                                 required(),
                                 {
-                                    number: [required(), range({min: 1, max: 99999})],
-                                    name: [required(), length({minLength: 2, maxLength: 40})]
+                                    number: [required(), range(1, 99999)],
+                                    name: [required(), length(2, 40)]
                                 }
                             ],
                             city: required(),
-                            state: [required(), length({minLength: 2, maxLength: 2})]
+                            state: [required(), length(2, 2)]
                         }
                     ]
                 }
@@ -1201,15 +1201,15 @@ describe('docs', () => {
                 ],
                 username: [
                     required(),
-                    length({minLength: 2, maxLength: 20}),
+                    length(2, 20),
                     usernameIsAvailable
                 ],
                 address: [
                     required({message: 'Address is required'}),
                     {
-                        street: [required(), length({minLength: 2, maxLength: 40})],
-                        city: [required(), length({minLength: 2, maxLength: 40})],
-                        state: [required(), length({minLength: 2, maxLength: 2})]
+                        street: [required(), length(2, 40)],
+                        city: [required(), length(2, 40)],
+                        state: [required(), length(2, 2)]
                     },
                     validateCity
                 ]
@@ -1288,11 +1288,11 @@ describe('docs', () => {
             const validateUser = {
                 name: [
                     required(),
-                    length({minLength: 2, maxLength: 20})
+                    length(2, 20)
                 ],
                 username: [
                     required(),
-                    length({minLength: 2, maxLength: 20}),
+                    length(2, 20),
                     usernameIsAvailableTwoStage
                 ]
             };
@@ -1357,7 +1357,7 @@ describe('docs', () => {
 
                     const validateUsername = [
                         required(),
-                        length({minLength: 2, maxLength: 20}),
+                        length(2, 20),
                         usernameIsAvailableTwoStage
                     ];
 
@@ -1387,13 +1387,13 @@ describe('docs', () => {
         const validatePerson = form({
             firstName: [
                 required(),
-                length({minLength: 2, maxLength: 20})
+                length(2, 20)
             ],
             lastName: [
                 required(),
-                length({minLength: 2, maxLength: 20})
+                length(2, 20)
             ],
-            birthYear: range({min: 1900, max: 2018})
+            birthYear: range(1900, 2018)
         });
 
         // Initialize the person with only a firstName

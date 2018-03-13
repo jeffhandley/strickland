@@ -4,13 +4,13 @@ import max from '../src/max';
 describe('max', () => {
     describe('throws', () => {
         it('when max is non-numeric', () => {
-            const validate = max({max: 'non-numeric'});
+            const validate = max('non-numeric');
             expect(() => validate()).toThrow();
         });
     });
 
     describe('validates', () => {
-        const validate = max({max: 3});
+        const validate = max(3);
 
         it('with the value equal to the max, it is valid', () => {
             const result = validate(3);
@@ -74,39 +74,39 @@ describe('max', () => {
 
     describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue({max: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({max: 6});
 
-            max(getMax);
-            expect(getMax).not.toHaveBeenCalled();
+            max(getProps);
+            expect(getProps).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue({max: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({max: 6});
 
-            const validate = max(getMax);
+            const validate = max(getProps);
             validate(0);
 
-            expect(getMax).toHaveBeenCalledTimes(1);
+            expect(getProps).toHaveBeenCalledTimes(1);
         });
 
         it('the function is called every time validation occurs', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue({max: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({max: 6});
 
-            const validate = max(getMax);
+            const validate = max(getProps);
             validate(0);
             validate(0);
 
-            expect(getMax).toHaveBeenCalledTimes(2);
+            expect(getProps).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            const getMaxProps = jest.fn();
-            getMaxProps.mockReturnValue({max: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({max: 6});
 
-            const validate = max(getMaxProps);
+            const validate = max(getProps);
             const result = validate(4);
 
             expect(result).toMatchObject({
@@ -116,13 +116,13 @@ describe('max', () => {
         });
 
         it('validation context is passed to the function', () => {
-            const getMax = jest.fn();
-            getMax.mockReturnValue({max: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({max: 6});
 
-            const validate = max(getMax);
+            const validate = max(getProps);
             validate(6, {contextProp: 'validation context'});
 
-            expect(getMax).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 contextProp: 'validation context'
             }));
         });
@@ -137,15 +137,15 @@ describe('max', () => {
 
     describe('does not include validation context props on the result', () => {
         it('for new props', () => {
-            const validate = max({max: 5});
+            const validate = max(5);
             const result = validate(5, {contextProp: 'validation context'});
 
             expect(result).not.toHaveProperty('contextProp');
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = max({max: 5});
-            const result = validate(5, {max: 6});
+            const validate = max(5);
+            const result = validate(6, {max: 7});
 
             expect(result.max).toBe(5);
         });

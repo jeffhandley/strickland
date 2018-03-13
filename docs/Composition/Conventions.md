@@ -14,19 +14,19 @@ import validate, {required, length, range} from 'strickland';
 const validatePerson = [
     required(),
     {
-        name: [required(), length({minLength: 5, maxLength: 40})],
+        name: [required(), length(5, 40)],
         address: [
             required(),
             {
                 street: [
                     required(),
                     {
-                        number: [required(), range({min: 1, max: 99999})],
-                        name: [required(), length({minLength: 2, maxLength: 40})]
+                        number: [required(), range(1, 99999)],
+                        name: [required(), length(2, 40)]
                     }
                 ],
                 city: required(),
-                state: [required(), length({minLength: 2, maxLength: 2})]
+                state: [required(), length(2, 2)]
             }
         ]
     }

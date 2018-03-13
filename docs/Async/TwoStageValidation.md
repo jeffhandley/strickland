@@ -57,11 +57,11 @@ import validate, {required, length} from 'strickland';
 const validateUser = {
     name: [
         required(),
-        length({minLength: 2, maxLength: 20})
+        length(2, 20)
     ],
     username: [
         required(),
-        length({minLength: 2, maxLength: 20}),
+        length(2, 20),
         usernameIsAvailableTwoStage
     ]
 };

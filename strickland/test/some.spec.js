@@ -25,8 +25,8 @@ describe('some', () => {
     describe('validates', () => {
         const validate = some([
             required({message: 'Required'}),
-            maxLength({maxLength: 4}),
-            minLength({minLength: 2})
+            maxLength(4),
+            minLength(2)
         ], {validatorProp: 'Validator message'});
 
         const value = '';
@@ -67,8 +67,8 @@ describe('some', () => {
     describe('with nested rules arrays', () => {
         const validate = some([
             some([
-                minLength({minLength: 2}),
-                maxLength({maxLength: 4})
+                minLength(2),
+                maxLength(4)
             ])
         ]);
 

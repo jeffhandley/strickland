@@ -10,7 +10,7 @@ The first parameter to the `each` validator factory is the array of validators. 
 const atLeast5Chars = each(
     [
         required(),
-        minLength({minLength: 5})
+        minLength(5)
     ],
     {message: 'Must have at least 5 characters'}
 );

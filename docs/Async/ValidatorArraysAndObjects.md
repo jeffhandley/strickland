@@ -35,15 +35,15 @@ const validatePerson = {
     ],
     username: [
         required(),
-        length({minLength: 2, maxLength: 20}),
+        length(2, 20),
         usernameIsAvailable
     ],
     address: [
         required({message: 'Address is required'}),
         {
-            street: [required(), length({minLength: 2, maxLength: 40})],
-            city: [required(), length({minLength: 2, maxLength: 40})],
-            state: [required(), length({minLength: 2, maxLength: 2})]
+            street: [required(), length(2, 40)],
+            city: [required(), length(2, 40)],
+            state: [required(), length(2, 2)]
         },
         validateCity
     ]

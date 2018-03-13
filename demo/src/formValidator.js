@@ -29,7 +29,7 @@ export default form({
         usernameIsAvailable
     ],
     password: every(
-        [required(), minLength({minLength: 8})],
+        [required(), minLength(8)],
         {message: 'Must have at least 8 characters'}
     ),
     confirmPassword: every(

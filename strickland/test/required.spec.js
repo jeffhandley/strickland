@@ -146,38 +146,38 @@ describe('required', () => {
 
     describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
-            const getRequiredProps = jest.fn();
+            const getProps = jest.fn();
 
-            required(getRequiredProps);
-            expect(getRequiredProps).not.toHaveBeenCalled();
+            required(getProps);
+            expect(getProps).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
-            const getRequiredProps = jest.fn();
-            getRequiredProps.mockReturnValue();
+            const getProps = jest.fn();
+            getProps.mockReturnValue();
 
-            const validate = required(getRequiredProps);
+            const validate = required(getProps);
             validate();
 
-            expect(getRequiredProps).toHaveBeenCalledTimes(1);
+            expect(getProps).toHaveBeenCalledTimes(1);
         });
 
         it('the function is called every time validation occurs', () => {
-            const getRequiredProps = jest.fn();
-            getRequiredProps.mockReturnValue(6);
+            const getProps = jest.fn();
+            getProps.mockReturnValue(6);
 
-            const validate = required(getRequiredProps);
+            const validate = required(getProps);
             validate();
             validate();
 
-            expect(getRequiredProps).toHaveBeenCalledTimes(2);
+            expect(getProps).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            const getRequiredProps = jest.fn();
-            getRequiredProps.mockReturnValue({message: 'Custom message'});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({message: 'Custom message'});
 
-            const validate = required(getRequiredProps);
+            const validate = required(getProps);
             const result = validate(4);
 
             expect(result).toMatchObject({
@@ -188,12 +188,12 @@ describe('required', () => {
         });
 
         it('validation context is passed to the function', () => {
-            const getRequiredProps = jest.fn();
+            const getProps = jest.fn();
 
-            const validate = required(getRequiredProps);
+            const validate = required(getProps);
             validate(6, {contextProp: 'validation context'});
 
-            expect(getRequiredProps).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 contextProp: 'validation context'
             }));
         });

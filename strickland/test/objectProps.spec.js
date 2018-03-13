@@ -110,7 +110,7 @@ describe('objectProps', () => {
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length({minLength: 2, maxLength: 2})]
+                state: [required(), length(2, 2)]
             },
             workAddress: {
                 street: {
@@ -118,7 +118,7 @@ describe('objectProps', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length({minLength: 2, maxLength: 2})]
+                state: [required(), length(2, 2)]
             }
         });
 
@@ -251,7 +251,7 @@ describe('objectProps', () => {
             homeAddress: {
                 street: required(),
                 city: required(),
-                state: [required(), length({minLength: 2, maxLength: 2})]
+                state: [required(), length(2, 2)]
             },
             workAddress: {
                 street: {
@@ -259,7 +259,7 @@ describe('objectProps', () => {
                     name: required()
                 },
                 city: required(),
-                state: [required(), length({minLength: 2, maxLength: 2})]
+                state: [required(), length(2, 2)]
             }
         });
 

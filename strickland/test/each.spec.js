@@ -25,8 +25,8 @@ describe('each', () => {
     describe('validates', () => {
         const validate = each([
             required({message: 'Required'}),
-            minLength({minLength: 2}),
-            maxLength({maxLength: 4})
+            minLength(2),
+            maxLength(4)
         ], {validatorProp: 'Validator message'});
 
         const value = 'A';
@@ -75,8 +75,8 @@ describe('each', () => {
         const validate = each([
             required({message: 'Required'}),
             each([
-                minLength({minLength: 2}),
-                maxLength({maxLength: 4})
+                minLength(2),
+                maxLength(4)
             ])
         ]);
 

@@ -42,7 +42,7 @@ import validate, {every, required, minLength} from 'strickland';
 
 const mustExistWithLength5 = every([
     required(),
-    minLength({minLength: 5})
+    minLength(5)
 ]);
 
 const result = validate(mustExistWithLength5, '1234', {

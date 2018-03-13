@@ -4,13 +4,13 @@ import minLength from '../src/minLength';
 describe('minLength', () => {
     describe('throws', () => {
         it('when minLength is non-numeric', () => {
-            const validate = minLength({minLength: 'non-numeric'});
+            const validate = minLength('non-numeric');
             expect(() => validate()).toThrow();
         });
     });
 
     describe('validates', () => {
-        const validate = minLength({minLength: 3});
+        const validate = minLength(3);
 
         it('with the string length equal to the minLength, it is valid', () => {
             const result = validate('123');
@@ -68,7 +68,7 @@ describe('minLength', () => {
     });
 
     describe('returns the length on the result', () => {
-        const validate = minLength({minLength: 5});
+        const validate = minLength(5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -108,39 +108,39 @@ describe('minLength', () => {
 
     describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue({minLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 6});
 
-            minLength(getMinLength);
-            expect(getMinLength).not.toHaveBeenCalled();
+            minLength(getProps);
+            expect(getProps).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue({minLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 6});
 
-            const validate = minLength(getMinLength);
+            const validate = minLength(getProps);
             validate('A');
 
-            expect(getMinLength).toHaveBeenCalledTimes(1);
+            expect(getProps).toHaveBeenCalledTimes(1);
         });
 
         it('the function is called every time validation occurs', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue({minLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 6});
 
-            const validate = minLength(getMinLength);
+            const validate = minLength(getProps);
             validate(0);
             validate(0);
 
-            expect(getMinLength).toHaveBeenCalledTimes(2);
+            expect(getProps).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            const getMinLengthProps = jest.fn();
-            getMinLengthProps.mockReturnValue({minLength: 2});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 2});
 
-            const validate = minLength(getMinLengthProps);
+            const validate = minLength(getProps);
             const result = validate('1234');
 
             expect(result).toMatchObject({
@@ -150,25 +150,25 @@ describe('minLength', () => {
         });
 
         it('validation context is passed to the function', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue({minLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 6});
 
-            const validate = minLength(getMinLength);
+            const validate = minLength(getProps);
             validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMinLength).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 contextProp: 'validation context'
             }));
         });
 
         it('validation context includes the length', () => {
-            const getMinLength = jest.fn();
-            getMinLength.mockReturnValue({minLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({minLength: 6});
 
-            const validate = minLength(getMinLength);
+            const validate = minLength(getProps);
             validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMinLength).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 length: 5
             }));
         });
@@ -183,15 +183,15 @@ describe('minLength', () => {
 
     describe('does not include validation context props on the result', () => {
         it('for new props', () => {
-            const validate = minLength({minLength: 5});
+            const validate = minLength(5);
             const result = validate(5, {contextProp: 'validation context'});
 
             expect(result).not.toHaveProperty('contextProp');
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = minLength({minLength: 5});
-            const result = validate(5, {minLength: 6});
+            const validate = minLength(5);
+            const result = validate(6, {minLength: 7});
 
             expect(result.minLength).toBe(5);
         });

@@ -4,13 +4,13 @@ import min from '../src/min';
 describe('min', () => {
     describe('throws', () => {
         it('when min is non-numeric', () => {
-            const validate = min({min: 'non-numeric'});
+            const validate = min('non-numeric');
             expect(() => validate()).toThrow();
         });
     });
 
     describe('validates', () => {
-        const validate = min({min: 3});
+        const validate = min(3);
 
         it('with the value equal to the min, it is valid', () => {
             const result = validate(3);
@@ -74,39 +74,39 @@ describe('min', () => {
 
     describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
-            const getMin = jest.fn();
-            getMin.mockReturnValue(6);
+            const getProps = jest.fn();
+            getProps.mockReturnValue(6);
 
-            min(getMin);
-            expect(getMin).not.toHaveBeenCalled();
+            min(getProps);
+            expect(getProps).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
-            const getMin = jest.fn();
-            getMin.mockReturnValue({min: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({min: 6});
 
-            const validate = min(getMin);
+            const validate = min(getProps);
             validate(0);
 
-            expect(getMin).toHaveBeenCalledTimes(1);
+            expect(getProps).toHaveBeenCalledTimes(1);
         });
 
         it('the function is called every time validation occurs', () => {
-            const getMin = jest.fn();
-            getMin.mockReturnValue({min: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({min: 6});
 
-            const validate = min(getMin);
+            const validate = min(getProps);
             validate(0);
             validate(0);
 
-            expect(getMin).toHaveBeenCalledTimes(2);
+            expect(getProps).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            const getMaxProps = jest.fn();
-            getMaxProps.mockReturnValue({min: 4});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({min: 4});
 
-            const validate = min(getMaxProps);
+            const validate = min(getProps);
             const result = validate(6);
 
             expect(result).toMatchObject({
@@ -116,13 +116,13 @@ describe('min', () => {
         });
 
         it('validation context is passed to the function', () => {
-            const getMin = jest.fn();
-            getMin.mockReturnValue({min: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({min: 6});
 
-            const validate = min(getMin);
+            const validate = min(getProps);
             validate(6, {contextProp: 'validation context'});
 
-            expect(getMin).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 contextProp: 'validation context'
             }));
         });
@@ -137,15 +137,15 @@ describe('min', () => {
 
     describe('does not include validation context props on the result', () => {
         it('for new props', () => {
-            const validate = min({min: 5});
+            const validate = min(5);
             const result = validate(5, {contextProp: 'validation context'});
 
             expect(result).not.toHaveProperty('contextProp');
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = min({min: 5});
-            const result = validate(5, {min: 6});
+            const validate = min(5);
+            const result = validate(6, {min: 7});
 
             expect(result.min).toBe(5);
         });

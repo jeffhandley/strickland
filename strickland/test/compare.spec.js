@@ -13,7 +13,7 @@ describe('compare', () => {
     });
 
     describe('validates', () => {
-        const validate = compare({compare: 3});
+        const validate = compare(3);
 
         it('with the value equal to the compare, it is valid', () => {
             const result = validate(3);
@@ -41,7 +41,7 @@ describe('compare', () => {
         });
 
         it('comparing against 0', () => {
-            const validateAgainst0 = compare({compare: 0});
+            const validateAgainst0 = compare(0);
             const result = validateAgainst0(1);
 
             expect(result).toMatchObject({
@@ -120,10 +120,10 @@ describe('compare', () => {
         });
 
         it('validates using the function result', () => {
-            const getCompareProps = jest.fn();
-            getCompareProps.mockReturnValue({compare: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({compare: 6});
 
-            const validate = compare(getCompareProps);
+            const validate = compare(getProps);
             const result = validate(6);
 
             expect(result).toMatchObject({
@@ -154,15 +154,15 @@ describe('compare', () => {
 
     describe('does not include validation context props on the result', () => {
         it('for new props', () => {
-            const validate = compare({compare: 5});
+            const validate = compare(5);
             const result = validate(5, {contextProp: 'validation context'});
 
             expect(result).not.toHaveProperty('contextProp');
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = compare({compare: 5});
-            const result = validate(5, {compare: 6});
+            const validate = compare(5);
+            const result = validate(6, {compare: 7});
 
             expect(result.compare).toBe(5);
         });

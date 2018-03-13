@@ -7,7 +7,7 @@ Let's take a look at handling this race condition in application code:
 ``` jsx
 const validateUsername = [
     required(),
-    length({minLength: 2, maxLength: 20}),
+    length(2, 20),
     usernameIsAvailableTwoStage
 ];
 

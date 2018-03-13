@@ -20,9 +20,9 @@ import validate, {
 } from 'strickland';
 
 const max5orMin10orValue7 = some([
-    max({max: 5}),
-    min({min: 10}),
-    compare({compare: 7})
+    max(5),
+    min(10),
+    compare(7)
 ]);
 
 const result = validate(max5orMin10orValue7, 12);

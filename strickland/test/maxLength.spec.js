@@ -4,13 +4,13 @@ import maxLength from '../src/maxLength';
 describe('maxLength', () => {
     describe('throws', () => {
         it('when maxLength is non-numeric', () => {
-            const validate = maxLength({maxLength: 'non-numeric'});
+            const validate = maxLength('non-numeric');
             expect(() => validate()).toThrow();
         });
     });
 
     describe('validates', () => {
-        const validate = maxLength({maxLength: 3});
+        const validate = maxLength(3);
 
         it('with the string length equal to the maxLength, it is valid', () => {
             const result = validate('123');
@@ -68,7 +68,7 @@ describe('maxLength', () => {
     });
 
     describe('returns the length on the result', () => {
-        const validate = maxLength({maxLength: 5});
+        const validate = maxLength(5);
 
         it('when the value is a string', () => {
             const result = validate('1234');
@@ -108,39 +108,39 @@ describe('maxLength', () => {
 
     describe('with a function passed to the validator', () => {
         it('does not call the function during validator construction', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            maxLength(getMaxLength);
-            expect(getMaxLength).not.toHaveBeenCalled();
+            maxLength(getProps);
+            expect(getProps).not.toHaveBeenCalled();
         });
 
         it('the function is called at the time of validation', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            const validate = maxLength(getMaxLength);
+            const validate = maxLength(getProps);
             validate('A');
 
-            expect(getMaxLength).toHaveBeenCalledTimes(1);
+            expect(getProps).toHaveBeenCalledTimes(1);
         });
 
         it('the function is called every time validation occurs', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            const validate = maxLength(getMaxLength);
+            const validate = maxLength(getProps);
             validate(0);
             validate(0);
 
-            expect(getMaxLength).toHaveBeenCalledTimes(2);
+            expect(getProps).toHaveBeenCalledTimes(2);
         });
 
         it('validates using the function result', () => {
-            const getMaxLengthProps = jest.fn();
-            getMaxLengthProps.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            const validate = maxLength(getMaxLengthProps);
+            const validate = maxLength(getProps);
             const result = validate('1234');
 
             expect(result).toMatchObject({
@@ -150,25 +150,25 @@ describe('maxLength', () => {
         });
 
         it('validation context is passed to the function', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            const validate = maxLength(getMaxLength);
+            const validate = maxLength(getProps);
             validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMaxLength).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 contextProp: 'validation context'
             }));
         });
 
         it('validation context includes the length', () => {
-            const getMaxLength = jest.fn();
-            getMaxLength.mockReturnValue({maxLength: 6});
+            const getProps = jest.fn();
+            getProps.mockReturnValue({maxLength: 6});
 
-            const validate = maxLength(getMaxLength);
+            const validate = maxLength(getProps);
             validate('abcde', {contextProp: 'validation context'});
 
-            expect(getMaxLength).toHaveBeenCalledWith(expect.objectContaining({
+            expect(getProps).toHaveBeenCalledWith(expect.objectContaining({
                 length: 5
             }));
         });
@@ -183,15 +183,15 @@ describe('maxLength', () => {
 
     describe('does not include validation context props on the result', () => {
         it('for new props', () => {
-            const validate = maxLength({maxLength: 5});
+            const validate = maxLength(5);
             const result = validate(5, {contextProp: 'validation context'});
 
             expect(result).not.toHaveProperty('contextProp');
         });
 
         it('for props with the same name as other result props', () => {
-            const validate = maxLength({maxLength: 5});
-            const result = validate(5, {maxLength: 6});
+            const validate = maxLength(5);
+            const result = validate(6, {maxLength: 7});
 
             expect(result.maxLength).toBe(5);
         });
