@@ -2,12 +2,13 @@
   "name": "strickland-root",
   "private": true,
   "scripts": {
-    "build": "cd strickland && npm run build",
+    "build": "npm run lint && npm run test",
     "demo": "cd demo && npm start",
     "updatedocs": "cp README.md strickland && cp CHANGELOG.md docs",
-    "prepublish": "npm run build && npm run updatedocs",
-    "release": "lerna publish --conventional-commits",
-    "prerelease": "lerna publish --conventional-commits --cd-version=prerelease",
+    "prepublish:release": "lerna bootstrap && npm run build && npm run updatedocs",
+    "publish:release": "lerna publish --conventional-commits",
+    "prepublish:prerelease": "lerna bootstrap && npm run build && npm run updatedocs",
+    "publish:prerelease": "lerna publish --conventional-commits --cd-version=prerelease",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "lerna run lint"

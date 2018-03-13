@@ -15,7 +15,7 @@ class App extends Component {
                 password: '',
                 confirmPassword: ''
             },
-            validation: formValidator.clearResults()
+            validation: formValidator.emptyResults()
         };
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -82,9 +82,9 @@ class App extends Component {
         // Validate the form specifying the current field
         // as well as dependent fields that need re-validated
         const result = formValidator.validateFields(
-            validation,
             parsedForm,
-            [fieldName, ...dependents]
+            [fieldName, ...dependents],
+            validation
         );
 
         // Pluck out the result for the current field
@@ -163,9 +163,9 @@ class App extends Component {
             // Validate the form specifying the current field
             // as well as dependent fields that need re-validated
             validation = formValidator.validateFields(
-                validation,
                 formValues,
-                [fieldName, ...dependents]
+                [fieldName, ...dependents],
+                validation
             );
 
             this.setState({validation});

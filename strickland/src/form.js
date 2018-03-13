@@ -41,7 +41,7 @@ export default function formValidator(validators, validatorProps) {
         };
     };
 
-    validateForm.validateFields = function validateField(formValues, fields, result) {
+    validateForm.validateFields = function validateFields(formValues, fields, result) {
         result = result || validateForm.emptyResults();
 
         const context = {
