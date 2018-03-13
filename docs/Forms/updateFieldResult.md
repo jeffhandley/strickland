@@ -1,4 +1,4 @@
-# Form Validation Helper: updateFieldResult
+# Form Validation Helper: `updateFieldResult`
 
 In some scenarios, validation results need to be produced outside the flow of calling into Strickland to perform validation. For example, an API call might perform server-side validation and return validation results that need to be populated into your application's validation result state.
 

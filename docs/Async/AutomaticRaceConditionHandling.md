@@ -30,7 +30,7 @@ if (usernameResult.validateAsync) {
 }
 ```
 
-## The `validateAsync` Helper
+## Async Validation Helper: `validateAsync`
 
 The `validateAsync` function exported from Strickland supports this same feature. Instead of passing the value to be validated, pass a function that returns the current value. If the value changes during async validation, the result `Promise` will reject.
 

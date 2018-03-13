@@ -1,4 +1,4 @@
-# Form Validation Helper: validateFields
+# Form Validation Helper: `validateFields`
 
 We saw that the `form` validator supports the ability to perform field-level validation in addition to form-level validation. To validate one or some fields, an array of field names can be supplied in the validation context. While straightforward, this code is verbose. For that reason, Strickland's `form` validator provides a `validateFields` helper function.
 

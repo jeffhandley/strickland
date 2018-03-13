@@ -1,4 +1,4 @@
-# Form Validation Helper: emptyResults
+# Form Validation Helper: `emptyResults`
 
 Applications that maintain validation state for interaction generally need to initialize the state with an empty validation result. Strickland's `form` validator provides an `emptyResults()` helper function to simplify that need.
 
