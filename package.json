@@ -2,7 +2,8 @@
   "name": "strickland-root",
   "private": true,
   "scripts": {
-    "build": "npm run lint && npm run test",
+    "build": "npm run lint && npm run test && lerna run build --scope strickland",
+    "predemo": "lerna run build --scope strickland",
     "demo": "cd demo && npm start",
     "updatedocs": "cp README.md strickland && cp CHANGELOG.md docs",
     "prepublish:release": "lerna bootstrap && npm run build && npm run updatedocs",

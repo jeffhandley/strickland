@@ -55,11 +55,14 @@ export default function formValidator(validators, validatorProps) {
         return validate(validateForm, formValues, context);
     };
 
-    validateForm.updateFieldResult = function updateFieldResult(result, fieldName, fieldResult) {
-        const formValues = {
-            ...result.value,
-            [fieldName]: (fieldResult && fieldResult.value) || result.value[fieldName]
-        };
+    validateForm.updateFieldResults = function updateFieldResults(result, fieldResults) {
+        const formValues = Object.keys(fieldResults)
+            .filter((fieldName) => fieldResults[fieldName])
+            .map((fieldName) => ({[fieldName]: fieldResults[fieldName].value}))
+            .reduce((existingValues, fieldValue) => ({
+                ...existingValues,
+                ...fieldValue
+            }), result.value);
 
         const context = {
             ...result,
@@ -68,7 +71,7 @@ export default function formValidator(validators, validatorProps) {
                 fields: [], // no validation; just refresh the result properties
                 validationResults: {
                     ...result.form.validationResults,
-                    [fieldName]: fieldResult
+                    ...fieldResults
                 }
             }
         };

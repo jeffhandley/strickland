@@ -40,6 +40,6 @@
     * [form](/docs/Forms/form.md)
     * [validateFields](/docs/Forms/validateFields.md)
     * [emptyResults](/docs/Forms/emptyResults.md)
-    * [updateFieldResult](/docs/Forms/updateFieldResult.md)
+    * [updateFieldResults](/docs/Forms/updateFieldResults.md)
 * [Wrap-Up](/docs/WrapUp.md)
 * [Change Log](/docs/CHANGELOG.md)

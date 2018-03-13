@@ -45,7 +45,7 @@ class App extends Component {
         let {validation} = this.state;
 
         this.setState({
-            validation: formValidator.updateFieldResult(validation, fieldName, asyncFieldResult)
+            validation: formValidator.updateFieldResults(validation, {[fieldName]: asyncFieldResult})
         });
     }
 
@@ -97,7 +97,7 @@ class App extends Component {
         const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
 
         if (hasAsync || valueChanged) {
-            validation = formValidator.updateFieldResult(validation, fieldName);
+            validation = formValidator.updateFieldResults(validation, {[fieldName]: null});
         }
 
         // So long as there's no async validation, then if the new
@@ -118,7 +118,9 @@ class App extends Component {
                     // Update the field's validation state to indicate that
                     // async validation is underway
                     this.setState({
-                        validation: formValidator.updateFieldResult(validationAfterTimeout, fieldName, fieldResult)
+                        validation: formValidator.updateFieldResults(
+                            validationAfterTimeout, {[fieldName]: fieldResult}
+                        )
                     });
 
                     // Fire off async validation

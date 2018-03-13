@@ -1648,7 +1648,7 @@ describe('docs', () => {
                 });
             });
 
-            it('updateFieldResult', () => {
+            describe('updateFieldResults', () => {
                 // Validate the firstName field
                 let stanfordStrickland = {
                     firstName: 'Stanford',
@@ -1664,33 +1664,47 @@ describe('docs', () => {
                     message: 'The service does not allow a first name of "Stanford"'
                 };
 
-                stanfordResult = validatePerson.updateFieldResult(stanfordResult, 'firstName', firstNameResult);
+                it('updates field results', () => {
+                    stanfordResult = validatePerson.updateFieldResults(
+                        stanfordResult,
+                        {firstName: firstNameResult}
+                    );
 
-                expect(stanfordResult).toMatchObject({
-                    form: {
-                        validationResults: {
-                            firstName: {
-                                isValid: false,
-                                value: 'Stanford',
-                                message: 'The service does not allow a first name of "Stanford"'
+                    expect(stanfordResult).toMatchObject({
+                        form: {
+                            validationResults: {
+                                firstName: {
+                                    isValid: false,
+                                    value: 'Stanford',
+                                    message: 'The service does not allow a first name of "Stanford"'
+                                },
+                                lastName: {
+                                    isValid: true
+                                },
+                                birthYear: {
+                                    isValid: true
+                                }
                             },
-                            lastName: {
-                                isValid: true
-                            },
-                            birthYear: {
-                                isValid: true
-                            }
-                        },
-                        validationErrors: [
-                            {
-                                fieldName: 'firstName',
-                                isValid: false,
-                                value: 'Stanford',
-                                message: 'The service does not allow a first name of "Stanford"'
-                            }
-                        ],
-                        isComplete: true
-                    }
+                            validationErrors: [
+                                {
+                                    fieldName: 'firstName',
+                                    isValid: false,
+                                    value: 'Stanford',
+                                    message: 'The service does not allow a first name of "Stanford"'
+                                }
+                            ],
+                            isComplete: true
+                        }
+                    });
+                });
+
+                it('removes field results', () => {
+                    stanfordResult = validatePerson.updateFieldResults(
+                        stanfordResult,
+                        {firstName: null}
+                    );
+
+                    expect(stanfordResult.form.validationResults).not.toHaveProperty('firstName');
                 });
             });
         });

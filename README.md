@@ -116,7 +116,7 @@ const result = validate(letterA, 'B');
     * [form](https://strickland.io/docs/Forms/form.html)
     * [validateFields](https://strickland.io/docs/Forms/validateFields.html)
     * [emptyResults](https://strickland.io/docs/Forms/emptyResults.html)
-    * [updateFieldResult](https://strickland.io/docs/Forms/updateFieldResult.html)
+    * [updateFieldResults](https://strickland.io/docs/Forms/updateFieldResults.html)
 * [Wrap-Up](https://strickland.io/docs/WrapUp.html)
 * [Change Log](https://strickland.io/docs/CHANGELOG.html)
 

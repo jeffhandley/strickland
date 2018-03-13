@@ -941,7 +941,7 @@ describe('form', () => {
             });
         });
 
-        describe('updateFieldResult', () => {
+        describe('updateFieldResults', () => {
             const formValidator = form({
                 firstName: () => true,
                 lastName: () => false
@@ -979,7 +979,7 @@ describe('form', () => {
                     value: 'Stanford'
                 };
 
-                const result = formValidator.updateFieldResult(initialResult, 'firstName', firstName);
+                const result = formValidator.updateFieldResults(initialResult, {firstName});
 
                 expect(result).toEqual({
                     form: {
@@ -1014,7 +1014,7 @@ describe('form', () => {
                     updatedResult: true
                 };
 
-                const result = formValidator.updateFieldResult(initialResult, 'lastName', lastName);
+                const result = formValidator.updateFieldResults(initialResult, {lastName});
 
                 expect(result).toEqual({
                     form: {
@@ -1041,7 +1041,7 @@ describe('form', () => {
             });
 
             it('removes existing results', () => {
-                const result = formValidator.updateFieldResult(initialResult, 'lastName', null);
+                const result = formValidator.updateFieldResults(initialResult, {lastName: null});
 
                 expect(result).toEqual({
                     form: {
