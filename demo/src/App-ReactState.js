@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
 import {validateAsync} from 'strickland';
 
@@ -61,7 +60,7 @@ class App extends Component {
         };
 
         // Trim the field value if needed
-        const parsedValue = fieldContext.trim ? value.trim() : value;
+        const parsedValue = fieldContext.trim ? value.trim().replace(/\s+/g, ' ') : value;
 
         // Capture the parsed form for validation
         // But we won't persist this copy of the form
@@ -137,7 +136,7 @@ class App extends Component {
         const {value} = target;
 
         // Trim the field value if needed
-        const parsedValue = fieldContext.trim ? value.trim() : value;
+        const parsedValue = fieldContext.trim ? value.trim().replace(/\s+/g, ' ') : value;
 
         let formValues = this.state.form;
 
@@ -192,10 +191,7 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <h1><img alt="logo" aria-label="Strickland demo" className="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png" /></h1>
-                </header>
+            <div>
                 <div className="form">
                     <div className="formfield">
                         <input

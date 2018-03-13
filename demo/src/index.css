@@ -3,3 +3,111 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 80px;
+}
+
+.App-header {
+  background-color: #1F3244;
+  height: 120px;
+  padding: 10px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.form {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.formactions {
+  margin-top: 20px;
+}
+
+.formfield {
+  position: relative;
+  width: 300px;
+}
+
+.formfield input {
+  padding: 20px 4px;
+  margin: 2px;
+  width: 300px;
+  font-size: 18px;
+  border: 0;
+  border-bottom: 1px solid gray;
+}
+
+.formfield input:focus, .formfield input.validation-value {
+  border-bottom: 1px solid transparent;
+}
+
+.formfield input + label {
+  position: absolute;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  padding: 20px 4px 4px 4px;
+  margin: 4px;
+  text-align: left;
+  color: silver;
+  transition: 0.2s;
+}
+
+.formfield input:focus + label, .formfield input.validation-value + label {
+  top: 100%;
+  margin: -20px 0 2px 2px;
+  padding: 2px 4px 4px 4px;
+  font-size: 9px;
+  text-align: left;
+  color: black;
+  border-top: 1px solid gray;
+}
+
+.formfield input:focus + label[data-validation-message]:after, .formfield input.validation-value + label[data-validation-message]:after {
+  content: ": " attr(data-validation-message);
+}
+
+.formfield input.validation-valid + label {
+  color: #22AA00;
+}
+
+.formfield input.validation-async + label {
+  color: #FB7E00;
+}
+
+.formfield input.validation-invalid + label {
+  color: #FF2200;
+}
+
+#current-state {
+  background-color: #FB7E00;
+  text-align: left;
+  padding: 24px;
+  color: #1F3244;
+}
+
+nav {
+    text-align: left;
+}
+
+nav a {
+    color: #FB7E00;
+}
+
+nav a.active {
+    color: #1F3244;
+}
