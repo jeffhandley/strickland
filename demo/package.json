@@ -16,11 +16,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "lint": "eslint src/**/*.js",
-    "test:watch": "react-scripts test --end=jsdom",
-    "test": "react-scripts test --env=jsdom --coverage",
-    "eject": "react-scripts eject"
+    "lint": "eslint src/**/*.js"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.3",
