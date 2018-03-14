@@ -30,7 +30,7 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Form Validation
 
-1. **[Form Validation](/docs/Forms/README.md)** supports interactive form-level or field-level validation
+1. **[Form Validation](/docs/Forms/README.md)** supports interactive field-level or form-level validation
 
 ## Feedback
 

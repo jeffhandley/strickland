@@ -1,6 +1,6 @@
 # Built-In Validator: form
 
-The `form` validator performs validation on every field of a form for which validators are defined. The field validators are supplied as an object with the shape matching the form values object.
+The `form` validator performs both field-level and form-level validation. Field validators are supplied the same way `objectProps` validators are supplied as an object with the shape matching the form fields. The `form` validator also allows previous validation results to be provided on context so that results can be updated with the new results merged in.
 
 ## Parameters
 
@@ -8,7 +8,9 @@ The first parameter to the `form` validator factory is an object defining the pr
 
 ## Validation Context
 
-### Which Fields to Validate: `form.fields`
+The `form` validator utilizes validation context to perform field-level validation as well as to update previous validation results. Without any context provided, the entire form will be validated without using any previous validation results.
+
+### Field-Level Validation: `form.fields`
 
 The `form.fields` context prop indicates which field(s) to validate.
 
@@ -27,6 +29,10 @@ Validation results from earlier validation can be supplied using `form.validatio
 * `form.validationResults`: An object with properties matching those validated, with the values of the properties representing the validation results. If the `form.validationResults` and `form.fields` context props were used, then previous validation results that were not re-validated will be retained.
 * `form.validationErrors`: An array of validation results that are invalid, but excluding results where async validation remains to be completed.
 * `form.isComplete`: A boolean indicating whether the entire form has been validated. `true` when `form.validationResults` contains results for all field validators and none of those results has a `validateAsync` yet to be resolved.
+
+## Usage
+
+The sample code below demonstrates validating a form with field-level validation, incrementally building up validation results.
 
 ``` jsx
 import validate, {
@@ -182,24 +188,3 @@ result = validate(validatePerson, person, {
     }
  */
 ```
-
-## Async Validation
-
-Async validation works naturally with the `form` validator. Any validator within the form validation can use async validation. As is seen with `objectProps` and other composition validators, an async validator within a form will result in a `validateAsync` function on the validation result.
-
-### Executing `validateAsync` for Specific Fields
-
-By default, the `validateAsync` function returned on the validation result will resolve async validation for all fields that have remaining async validation. But, the `validateAsync` function also accepts a context parameter that allows specific fields to be resolved using the same `form.fields` behavior defined above.
-
-``` jsx
-// Execute async validation only for the username field
-result.validateAsync({
-    form: {
-        fields: ['username']
-    }
-});
-```
-
-### Two-Stage Validation
-
-[Two-Stage Validation](/../Async/TwoStageValidation.md) is commonly used with forms where standard validation occurs synchronously with results immediately rendered, but async validation that calls an API will be rendered when the response comes back.
