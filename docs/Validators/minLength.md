@@ -2,6 +2,9 @@
 
 The `minLength` validator checks that a string value has a length at least the minimum length provided.
 
+If the value being validated is `null` or an empty string, then the result will be valid. This respects the rule of thumb described in the notes for the [required](required.md) validator.
+
+
 ## Named Props
 
 * `minLength`: The minimum length compared against

@@ -2,6 +2,8 @@
 
 The `length` validator combines the `minLength` and `maxLength` validators to check that the length of a string value is within a range. Both the `minLength` and `maxLength` values are inclusive.
 
+If the value being validated is `null` or an empty string, then the result will be valid. This respects the rule of thumb described in the notes for the [required](required.md) validator.
+
 ## Named Props
 
 * `minLength`: The minimum value compared against

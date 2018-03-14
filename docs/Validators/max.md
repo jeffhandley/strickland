@@ -2,6 +2,8 @@
 
 The `max` validator checks that a numeric value is at most the maximum value provided.
 
+If the value being validated is `null`, `false`, an empty string, or another falsy value other than `0`, then the result will be valid. This respects the rule of thumb described in the notes for the [required](required.md) validator.
+
 ## Named Props
 
 * `max`: The maximum value compared against

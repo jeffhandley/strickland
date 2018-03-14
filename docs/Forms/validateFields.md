@@ -67,5 +67,10 @@ Once initial validation has occurred, `validateFields` can accept existing valid
 ``` jsx
 // The firstName field has already been validated
 // Validate the lastName field
-validationResult = validatePerson.validateFields(person, ['lastName'], validationResult);
+
+validationResult = validatePerson.validateFields(
+    person,
+    ['lastName'],
+    validationResult
+);
 ```
