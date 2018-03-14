@@ -114,7 +114,7 @@ const result = validate(letterA, 'B');
     * [Automatic Race Condition Handling](https://strickland.io/docs/Async/AutomaticRaceConditionHandling.html)
 * [Form Validation](https://strickland.io/docs/Forms/index.html)
     * [form](https://strickland.io/docs/Forms/form.html)
-    * [Async Form Validation](https://strickland.io/docs/Forms/AsyncFormValidation.md)
+    * [Async Form Validation](https://strickland.io/docs/Forms/AsyncFormValidation.html)
     * [validateFields](https://strickland.io/docs/Forms/validateFields.html)
     * [emptyResults](https://strickland.io/docs/Forms/emptyResults.html)
     * [updateFieldResults](https://strickland.io/docs/Forms/updateFieldResults.html)
