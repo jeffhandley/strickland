@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0-rc.1"></a>
+# [2.0.0-rc.1](https://github.com/jeffhandley/strickland/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2018-03-15)
+
+
+### Bug Fixes
+
+* field-level async validation was broken for initial results with async validation; docs were also outdated ([3ce1a8e](https://github.com/jeffhandley/strickland/commit/3ce1a8e))
+
+
+
+
 <a name="2.0.0-rc.0"></a>
 # [2.0.0-rc.0](https://github.com/jeffhandley/strickland/compare/v2.0.0-beta.4...v2.0.0-rc.0) (2018-03-13)
 
