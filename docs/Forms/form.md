@@ -187,4 +187,8 @@ result = validate(validatePerson, person, {
         }
     }
  */
+
+// Revalidate the entire form, passing
+// previous validation results in
+result = validate(validatePerson, person, result);
 ```

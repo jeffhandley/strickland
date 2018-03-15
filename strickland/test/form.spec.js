@@ -504,7 +504,7 @@ describe('form', () => {
             const validate = form({
                 firstName: required(),
                 lastName: required(),
-                username: required(),
+                username: [required(), () => Promise.resolve({isValid: true, usernameAvailable: true})],
                 password: [required(), minLength(8), () => () => ({isValid: true, passwordComplex: true})],
                 comparePassword: [required(), compare(({form: {values}}) => ({compare: values.password}))]
             });
@@ -585,7 +585,7 @@ describe('form', () => {
                 });
             });
 
-            it('validateAsync can resolve individual fields', () => {
+            it('validateAsync can resolve individual fields from previous results', () => {
                 return expect(result.validateAsync(() => formValues, {form: {fields: ['username']}})).resolves.toMatchObject({
                     isValid: false,
                     form: {
@@ -608,8 +608,8 @@ describe('form', () => {
                 });
             });
 
-            it('individual fields can be validated using the strickland validateAsync helper', () => {
-                return expect(validateAsync(validate, formValues, validationContext)).resolves.toMatchObject({
+            it('individual fields from previous results can be validated using the strickland validateAsync helper', () => {
+                return expect(validateAsync(validate, () => formValues, validationContext)).resolves.toMatchObject({
                     isValid: false,
                     form: {
                         isComplete: false,
@@ -626,6 +626,122 @@ describe('form', () => {
                                 validateAsync: expect.any(Function)
                             },
                             comparePassword: {isValid: true}
+                        }
+                    }
+                });
+            });
+
+            it('validateAsync can resolve individual fields from initial form-level results', () => {
+                const initialResult = validate(formValues);
+                const context = {
+                    form: {
+                        fields: ['username']
+                    }
+                };
+
+                return expect(initialResult.validateAsync(() => formValues, context)).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            firstName: {isValid: true},
+                            lastName: {isValid: true},
+                            username: {
+                                isValid: true,
+                                usernameAvailable: true
+                            },
+                            password: {
+                                isValid: false,
+                                validateAsync: expect.any(Function)
+                            },
+                            comparePassword: {isValid: true}
+                        }
+                    }
+                });
+            });
+
+            it('individual fields from initial form-level results can be validated using the strickland validateAsync helper', () => {
+                const initialResult = validate(formValues);
+                const context = {
+                    form: {
+                        ...initialResult.form,
+                        fields: ['username']
+                    }
+                };
+
+                return expect(validateAsync(validate, () => formValues, context)).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            firstName: {isValid: true},
+                            lastName: {isValid: true},
+                            username: {
+                                isValid: true,
+                                usernameAvailable: true
+                            },
+                            password: {
+                                isValid: false,
+                                validateAsync: expect.any(Function)
+                            },
+                            comparePassword: {isValid: true}
+                        }
+                    }
+                });
+            });
+
+            it('validateAsync can resolve individual fields from initial field-level results', () => {
+                const context = {
+                    form: {
+                        fields: ['username']
+                    }
+                };
+
+                const initialResult = validate(formValues, context);
+
+                return expect(initialResult.validateAsync(() => formValues, context)).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            username: {
+                                isValid: true,
+                                usernameAvailable: true
+                            }
+                        }
+                    }
+                });
+            });
+
+            it('individual fields from initial field-level results can be validated using the strickland validateAsync helper', () => {
+                const context = {
+                    form: {
+                        fields: ['username']
+                    }
+                };
+
+                const initialResult = validate(formValues, context);
+
+                const asyncContext = {
+                    form: {
+                        ...initialResult.form,
+                        fields: ['username']
+                    }
+                };
+
+                return expect(validateAsync(validate, () => formValues, asyncContext)).resolves.toMatchObject({
+                    isValid: false,
+                    form: {
+                        isComplete: false,
+                        validationErrors: [],
+                        validationResults: {
+                            username: {
+                                isValid: true,
+                                usernameAvailable: true
+                            }
                         }
                     }
                 });

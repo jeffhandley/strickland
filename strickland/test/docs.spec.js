@@ -1606,6 +1606,123 @@ describe('docs', () => {
                 });
             });
 
+            it('validates the entire form', () => {
+                result = validate(validatePerson, person, result);
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    value: {
+                        firstName: 'Stanford',
+                        lastName: 'Strickland'
+                    },
+                    form: {
+                        isComplete: true,
+                        validationResults: {
+                            firstName: {
+                                isValid: true,
+                                value: 'Stanford',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            },
+                            lastName: {
+                                isValid: true,
+                                value: 'Strickland',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 20
+                            },
+                            birthYear: {
+                                isValid: false,
+                                value: 2020,
+                                min: 1900,
+                                max: 2018
+                            }
+                        },
+                        validationErrors: [
+                            {
+                                fieldName: 'birthYear',
+                                isValid: false,
+                                value: 2020,
+                                min: 1900,
+                                max: 2018
+                            }
+                        ]
+                    }
+                });
+            });
+
+            describe('async form validation', () => {
+                function usernameIsAvailable(username) {
+                    return new Promise((resolve) => {
+                        if (username === 'marty') {
+                            // Resolve to an invalid validation result object
+                            resolve({
+                                isValid: false,
+                                message: `"${username}" is not available`
+                            });
+                        }
+
+                        // Resolve to a boolean
+                        resolve(true);
+                    });
+                }
+
+                const userValidator = form({
+                    username: usernameIsAvailable,
+                    domain: () => () => ({
+                        isValid: true,
+                        domainValidated: true
+                    })
+                });
+
+                const user = {
+                    username: 'mcfly',
+                    domain: 'strickland.io'
+                };
+
+                const formResult = validate(userValidator, user);
+
+                it('includes a validateAsync function', () => {
+                    expect(formResult.validateAsync).toBeInstanceOf(Function);
+                });
+
+                it('calls the function to get the current form values', () => {
+                    const getUser = jest.fn().mockReturnValue(user);
+
+                    return formResult.validateAsync(getUser).then(() => {
+                        expect(getUser).toHaveBeenCalled();
+                    });
+                });
+
+                it('field-level async validation', () => {
+                    const asyncContext = {
+                        form: {
+                            fields: ['username']
+                        }
+                    };
+
+                    return formResult.validateAsync(user, asyncContext).then((asyncResult) => {
+                        expect(asyncResult).toMatchObject({
+                            form: {
+                                isComplete: false,
+                                validationResults: {
+                                    username: {
+                                        isValid: true,
+                                        value: 'mcfly'
+                                    },
+                                    domain: {
+                                        isValid: false,
+                                        value: 'strickland.io',
+                                        validateAsync: expect.any(Function)
+                                    }
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+
             describe('validateFields', () => {
                 let validationResult;
 
