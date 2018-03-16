@@ -286,7 +286,7 @@ describe('docs', () => {
             };
 
             expect(result).toMatchObject({
-                personProps: {
+                personResult: {
                     firstName: {
                         isValid: true,
                         value: 'Stanford'
