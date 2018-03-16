@@ -22,7 +22,7 @@
 * [Composition](/docs/Composition/README.md)
     * [Arrays of Validators](/docs/Composition/ArraysOfValidators.md)
         * [every](/docs/Composition/every.md)
-        * [each](/docs/Composition/each.md)
+        * [all](/docs/Composition/all.md)
         * [some](/docs/Composition/some.md)
     * [Validating Objects](/docs/Composition/ValidatingObjects.md)
         * [objectProps](/docs/Composition/objectProps.md)

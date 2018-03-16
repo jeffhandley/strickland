@@ -1,6 +1,6 @@
 # Async Validator Arrays and Objects
 
-The `every`, `each`, `some`, and `objectProps` validators support async validators too. You can compose async validators together with any other validators. Here is an example showing sync and async validators mixed together with nested objects and arrays.
+The `every`, `all`, `some`, and `objectProps` validators support async validators too. You can compose async validators together with any other validators. Here is an example showing sync and async validators mixed together with nested objects and arrays.
 
 ``` jsx
 import {validateAsync, required, length} from 'strickland';
@@ -99,9 +99,9 @@ subsequent validators from getting called if earlier validators are already inva
 that multiple async validators in an array would then have their execution times added up before
 valid results can be returned.
 
-## each
+## all
 
-The `each` validator resolves all async prop validators in parallel. Because `each` will never short-circuit based on validation results, it uses `Promise.all()` to resolve the validators. Its async validators can therefore run in parallel, and it may sometimes be beneficial to use `each` explicitly when performing multiple async validations.
+The `all` validator resolves all async prop validators in parallel. Because `all` will never short-circuit based on validation results, it uses `Promise.all()` to resolve the validators. Its async validators can therefore run in parallel, and it may sometimes be beneficial to use `all` explicitly when performing multiple async validations.
 
 ## some
 

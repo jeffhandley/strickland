@@ -1,7 +1,7 @@
 export {default, validateAsync} from './validate';
 
 export {default as compare} from './compare';
-export {default as each} from './each';
+export {default as all} from './all';
 export {default as every} from './every';
 export {default as length} from './length';
 export {default as max} from './max';

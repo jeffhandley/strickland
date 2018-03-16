@@ -4,7 +4,7 @@ The examples we've seen so far only validate single values against single valida
 
 * [Arrays of Validators](ArraysOfValidators.md)
     * [every](every.md)
-    * [each](each.md)
+    * [all](all.md)
     * [some](some.md)
 * [Validating Objects](ValidatingObjects.md)
     * [With the objectProps Validator](objectProps.md)
