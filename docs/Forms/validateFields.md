@@ -9,7 +9,7 @@ import validate, {
     form, required, length, range
 } from 'strickland';
 
-const validatePerson = form({
+const personValidator = form({
     firstName: [
         required(),
         length({minLength: 2, maxLength: 20})
@@ -27,7 +27,7 @@ let person = {
 };
 
 // Validate the firstName field
-let result = validate(validatePerson, person, {
+let result = validate(personValidator, person, {
     form: {
         fields: ['firstName']
     }
@@ -41,7 +41,7 @@ import validate, {
     form, required, length, range
 } from 'strickland';
 
-const validatePerson = form({
+const personValidator = form({
     firstName: [
         required(),
         length({minLength: 2, maxLength: 20})
@@ -59,7 +59,7 @@ let person = {
 };
 
 // Validate the firstName field
-let validationResult = validatePerson.validateFields(person, ['firstName']);
+let validationResult = personValidator.validateFields(person, ['firstName']);
 ```
 
 Once initial validation has occurred, `validateFields` can accept existing validation results to be updated during field-level validation.
@@ -68,7 +68,7 @@ Once initial validation has occurred, `validateFields` can accept existing valid
 // The firstName field has already been validated
 // Validate the lastName field
 
-validationResult = validatePerson.validateFields(
+validationResult = personValidator.validateFields(
     person,
     ['lastName'],
     validationResult

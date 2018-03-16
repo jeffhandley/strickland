@@ -5,7 +5,7 @@ Applications that maintain validation state for interaction generally need to in
 ## Usage
 
 ``` jsx
-const validatePerson = form({
+const personValidator = form({
     firstName: [
         required(),
         length({minLength: 2, maxLength: 20})
@@ -17,7 +17,7 @@ const validatePerson = form({
     birthYear: range({min: 1900, max: 2018})
 });
 
-let validationResult = validatePerson.emptyResults();
+let validationResult = personValidator.emptyResults();
 
 /*
     validationResult = {

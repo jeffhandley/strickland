@@ -218,7 +218,7 @@ describe('docs', () => {
                 };
             }
 
-            const validateUser = {
+            const userValidator = {
                 name: [
                     required(),
                     length(2, 20)
@@ -235,7 +235,7 @@ describe('docs', () => {
                 username: 'marty'
             };
 
-            const result = validate(validateUser, user);
+            const result = validate(userValidator, user);
 
             it('first stage', () => {
                 expect(result).toMatchObject({
@@ -288,14 +288,14 @@ describe('docs', () => {
                     expect.assertions(1);
                     const resultUsed = jest.fn();
 
-                    const validateUsername = [
+                    const usernameValidator = [
                         required(),
                         length(2, 20),
                         usernameIsAvailableTwoStage
                     ];
 
                     let username = 'marty';
-                    let usernameResult = validate(validateUsername, username);
+                    let usernameResult = validate(usernameValidator, username);
 
                     username = 'mcfly';
 
@@ -316,14 +316,14 @@ describe('docs', () => {
                 it('automatic race condition handling', () => {
                     expect.assertions(2);
 
-                    const validateUsername = [
+                    const usernameValidator = [
                         required(),
                         length({minLength: 2, maxLength: 20}),
                         usernameIsAvailableTwoStage
                     ];
 
                     let username = 'marty';
-                    let usernameResult = validate(validateUsername, username);
+                    let usernameResult = validate(usernameValidator, username);
 
                     username = 'mcfly';
 
@@ -354,7 +354,7 @@ describe('docs', () => {
                 it('automatic race condition handling in validateAsync', () => {
                     expect.assertions(2);
 
-                    const validateUsername = [
+                    const usernameValidator = [
                         required(),
                         length({minLength: 2, maxLength: 20}),
                         usernameIsAvailableTwoStage
@@ -365,7 +365,7 @@ describe('docs', () => {
                     const accepted = jest.fn();
                     const rejected = jest.fn();
 
-                    const promise = validateAsync(validateUsername, () => username)
+                    const promise = validateAsync(usernameValidator, () => username)
                         .then((asyncResult) => {
                             // async validation completed
                             accepted(asyncResult);

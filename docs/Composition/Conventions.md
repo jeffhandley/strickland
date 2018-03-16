@@ -11,7 +11,7 @@ We can rewrite the example for validating a person's name and address more natur
 ``` jsx
 import validate, {required, length, range} from 'strickland';
 
-const validatePerson = [
+const personValidator = [
     required(),
     {
         name: [required(), length(5, 40)],
@@ -40,7 +40,7 @@ const person = {
     }
 };
 
-const result = validate(validatePerson, person);
+const result = validate(personValidator, person);
 
 // Result would be invalid because
 // address does not have a street

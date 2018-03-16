@@ -7,7 +7,7 @@ import validate, {
 
 describe('docs', () => {
     describe('form validation', () => {
-        const validatePerson = form({
+        const personValidator = form({
             firstName: [
                 required(),
                 length(2, 20)
@@ -25,7 +25,7 @@ describe('docs', () => {
         };
 
         // Validate the firstName field
-        let result = validate(validatePerson, person, {
+        let result = validate(personValidator, person, {
             form: {
                 fields: ['firstName']
             }
@@ -63,7 +63,7 @@ describe('docs', () => {
 
                 // Validate the lastName field, build on
                 // previous form validation results
-                result = validate(validatePerson, person, {
+                result = validate(personValidator, person, {
                     form: {
                         ...result.form,
                         fields: ['lastName']
@@ -107,7 +107,7 @@ describe('docs', () => {
                 };
 
                 // Validate the birthYear field
-                result = validate(validatePerson, person, {
+                result = validate(personValidator, person, {
                     form: {
                         ...result.form,
                         fields: ['birthYear']
@@ -158,7 +158,7 @@ describe('docs', () => {
             });
 
             it('validates the entire form', () => {
-                result = validate(validatePerson, person, result);
+                result = validate(personValidator, person, result);
 
                 expect(result).toMatchObject({
                     isValid: false,
@@ -279,7 +279,7 @@ describe('docs', () => {
 
                 it('first field', () => {
                     // Validate the firstName field
-                    validationResult = validatePerson.validateFields(person, ['firstName']);
+                    validationResult = personValidator.validateFields(person, ['firstName']);
 
                     expect(validationResult).toMatchObject({
                         form: {
@@ -291,7 +291,7 @@ describe('docs', () => {
                 });
 
                 it('additional fields', () => {
-                    validationResult = validatePerson.validateFields(person, ['lastName'], validationResult)
+                    validationResult = personValidator.validateFields(person, ['lastName'], validationResult)
 
                     expect(validationResult).toMatchObject({
                         form: {
@@ -305,7 +305,7 @@ describe('docs', () => {
             });
 
             it('emptyResults', () => {
-                let validationResult = validatePerson.emptyResults();
+                let validationResult = personValidator.emptyResults();
 
                 expect(validationResult).toEqual({
                     form: {
@@ -324,7 +324,7 @@ describe('docs', () => {
                     birthYear: 1925
                 };
 
-                let stanfordResult = validate(validatePerson, stanfordStrickland);
+                let stanfordResult = validate(personValidator, stanfordStrickland);
 
                 let firstNameResult = {
                     isValid: false,
@@ -333,7 +333,7 @@ describe('docs', () => {
                 };
 
                 it('updates field results', () => {
-                    stanfordResult = validatePerson.updateFieldResults(
+                    stanfordResult = personValidator.updateFieldResults(
                         stanfordResult,
                         {firstName: firstNameResult}
                     );
@@ -367,7 +367,7 @@ describe('docs', () => {
                 });
 
                 it('removes field results', () => {
-                    stanfordResult = validatePerson.updateFieldResults(
+                    stanfordResult = personValidator.updateFieldResults(
                         stanfordResult,
                         {firstName: null}
                     );

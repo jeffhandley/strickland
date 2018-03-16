@@ -39,7 +39,7 @@ import validate, {
     form, required, length, range
 } from 'strickland';
 
-const validatePerson = form({
+const personValidator = form({
     firstName: [
         required(),
         length(2, 20)
@@ -57,7 +57,7 @@ let person = {
 };
 
 // Validate the firstName field
-let result = validate(validatePerson, person, {
+let result = validate(personValidator, person, {
     form: {
         fields: ['firstName']
     }
@@ -93,7 +93,7 @@ person = {
 
 // Validate the lastName field, build on
 // previous form validation results
-result = validate(validatePerson, person, {
+result = validate(personValidator, person, {
     form: {
         ...result.form,
         fields: ['lastName']
@@ -137,7 +137,7 @@ person = {
 };
 
 // Validate the birthYear field
-result = validate(validatePerson, person, {
+result = validate(personValidator, person, {
     form: {
         ...result.form,
         fields: ['birthYear']
@@ -190,5 +190,5 @@ result = validate(validatePerson, person, {
 
 // Revalidate the entire form, passing
 // previous validation results in
-result = validate(validatePerson, person, result);
+result = validate(personValidator, person, result);
 ```

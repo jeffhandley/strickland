@@ -7,14 +7,14 @@ In the race condition handling example, we saw the application code check the cu
 This is done by passing a function to `validateAsync` that retrieves the current value. With that function, `validateAsync` will check the value when async validation completes. If the value is unchanged, the `Promise` will resolve normally; if the value _did change_ during async validation, the `Promise` will be rejected. The rejection will include the async result, but your application typically will not consume it.
 
 ``` jsx
-const validateUsername = [
+const usernameValidator = [
     required(),
     length({minLength: 2, maxLength: 20}),
     usernameIsAvailableTwoStage
 ];
 
 let username = 'marty';
-let usernameResult = validate(validateUsername, username);
+let usernameResult = validate(usernameValidator, username);
 
 username = 'mcfly';
 
@@ -39,7 +39,7 @@ import {
     validateAsync, required, length
 } from 'strickland';
 
-const validateUsername = [
+const usernameValidator = [
     required(),
     length({minLength: 2, maxLength: 20}),
     usernameIsAvailableTwoStage
@@ -47,7 +47,7 @@ const validateUsername = [
 
 let username = 'marty';
 
-validateAsync(validateUsername, () => username)
+validateAsync(usernameValidator, () => username)
     .then((asyncResult) => {
         // async validation completed
     })

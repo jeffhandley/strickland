@@ -54,7 +54,7 @@ In the following example, the application will render the partial, synchronous v
 ``` jsx
 import validate, {required, length} from 'strickland';
 
-const validateUser = {
+const userValidator = {
     name: [
         required(),
         length(2, 20)
@@ -71,7 +71,7 @@ const user = {
     username: 'marty'
 };
 
-const result = validate(validateUser, user);
+const result = validate(userValidator, user);
 
 /*
     result = {

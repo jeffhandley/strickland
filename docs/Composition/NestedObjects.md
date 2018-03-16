@@ -7,7 +7,7 @@ import validate, {
     objectProps, required, length, range, every
 } from 'strickland';
 
-const validatePerson = objectProps({
+const personValidator = objectProps({
     name: every([required(), length(5, 40)]),
     address: objectProps({
         street: objectProps({
@@ -31,7 +31,7 @@ const person = {
     }
 };
 
-const result = validate(validatePerson, person);
+const result = validate(personValidator, person);
 ```
 
 Objects can be nested without any limits on depth. And any type of validator can be used anywhere in the tree.
