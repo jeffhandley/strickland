@@ -98,7 +98,7 @@ const result = validate(letterA, 'B');
 * [Composition](https://strickland.io/docs/Composition/index.html)
     * [Arrays of Validators](https://strickland.io/docs/Composition/ArraysOfValidators.html)
         * [every](https://strickland.io/docs/Composition/every.html)
-        * [each](https://strickland.io/docs/Composition/each.html)
+        * [all](https://strickland.io/docs/Composition/all.html)
         * [some](https://strickland.io/docs/Composition/some.html)
     * [Validating Objects](https://strickland.io/docs/Composition/ValidatingObjects.html)
         * [objectProps](https://strickland.io/docs/Composition/objectProps.html)

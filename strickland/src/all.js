@@ -2,15 +2,15 @@ import validate from './validate';
 
 const initialResult = {
     isValid: true,
-    each: []
+    all: []
 };
 
-export default function eachValidator(validators, validatorProps) {
+export default function allValidator(validators, validatorProps) {
     if (!validators || !Array.isArray(validators)) {
-        throw 'Strickland: The `each` validator expects an array of validators';
+        throw 'Strickland: The `all` validator expects an array of validators';
     }
 
-    return function validateEach(value, context) {
+    return function validateAll(value, context) {
         let result = initialResult;
 
         const props = typeof validatorProps === 'function' ?
@@ -27,7 +27,7 @@ export default function eachValidator(validators, validatorProps) {
 
         if (hasAsyncResults) {
             result.validateAsync = function resolveAsync() {
-                const promises = result.each.map(
+                const promises = result.all.map(
                     (eachResult) => Promise.resolve(
                         eachResult.validateAsync ? eachResult.validateAsync() : eachResult
                     )
@@ -56,8 +56,8 @@ function applyNextResult(previousResult, nextResult) {
         ...previousResult,
         ...nextResult,
         isValid: previousResult.isValid && nextResult.isValid,
-        each: [
-            ...previousResult.each,
+        all: [
+            ...previousResult.all,
             nextResult
         ]
     };

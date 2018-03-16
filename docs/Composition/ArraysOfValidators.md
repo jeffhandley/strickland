@@ -65,5 +65,11 @@ const result = validate(mustExistWithLength5, '1234', {
 Strickland has a few built-in composition validators that operate over arrays of validators.
 
 * [every](every.md)
-* [each](each.md)
+    * Returns a valid result if all validators are valid
+    * Short-circuits upon the first invalid result
+* [all](all.md)
+    * Returns a valid result if all validators are valid
+    * Does not short-circuit, producing results for all validators
 * [some](some.md)
+    * Returns a valid result if any validator is valid
+    * Short-circuits upon the first valid result

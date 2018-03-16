@@ -8,7 +8,7 @@ import validate, {
     maxLength,
     length,
     every,
-    each,
+    all,
     some,
     objectProps
 } from '../../src/strickland';
@@ -135,9 +135,9 @@ describe('docs', () => {
             });
         });
 
-        describe('each', () => {
+        describe('all', () => {
             it('atLeast5Chars', () => {
-                const atLeast5Chars = each(
+                const atLeast5Chars = all(
                     [
                         required(),
                         minLength(5)
@@ -158,7 +158,7 @@ describe('docs', () => {
             });
 
             it('requiredWithMinLength', () => {
-                const requiredWithMinLength = each(
+                const requiredWithMinLength = all(
                     [
                         required(),
                         minLength((context) => ({minLength: context.minLength}))
@@ -179,7 +179,7 @@ describe('docs', () => {
             });
 
             it('mustExistWithLength5to10', () => {
-                const mustExistWithLength5to10 = each([
+                const mustExistWithLength5to10 = all([
                     required({message: 'Required'}),
                     minLength({minLength: 5, message: 'Must have at least 5 characters'}),
                     maxLength({maxLength: 10, message: 'Must have at most 10 characters'})
@@ -193,7 +193,7 @@ describe('docs', () => {
                     required: true,
                     minLength: 5,
                     message: 'Must have at most 10 characters',
-                    each: [
+                    all: [
                         {
                             isValid: true,
                             value: '1234',
