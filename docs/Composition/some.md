@@ -1,6 +1,6 @@
 # Built-In Validator: some
 
-Strickland provides a `some` validator. The `some` validator operates over an array of validators and it behaves similarly to `every`, except that it will exit as soon as it encounters a *valid* result. If any of the validators in the array are valid, then the overall result will be valid.
+Strickland provides a `some` validator. The `some` validator operates over an array of validators and it will exit as soon as it encounters a *valid* result. If any of the validators in the array are valid, then the overall result will be valid.
 
 ## Parameters
 

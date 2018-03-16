@@ -8,7 +8,7 @@ import validate, {
 } from 'strickland';
 
 // Define the rules for first name, last name, and birthYear
-const validatePersonProps = objectProps({
+const personPropsValidator = objectProps({
     firstName: every([
         required(),
         length(2, 20)
@@ -36,9 +36,9 @@ function stanfordStricklandBornIn1925(person) {
     return true;
 }
 
-const validatePerson = every([
+const personValidator = every([
     required(),
-    validatePersonProps,
+    personPropsValidator,
     stanfordStricklandBornIn1925
 ]);
 
@@ -49,7 +49,7 @@ const person = {
     birthYear: 1925
 };
 
-const result = validate(validatePerson, person);
+const result = validate(personValidator, person);
 ```
 
 In this example, the following will be validated (in this order):

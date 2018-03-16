@@ -9,7 +9,7 @@ The first parameter to the `objectProps` validator factory is an object defining
 ``` jsx
 import {objectProps} from 'strickland';
 
-const validateProps = objectProps({
+const personValidator = objectProps({
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
     birthYear: range(1900, 2018)
@@ -25,7 +25,7 @@ When validation context needs to be supplied to specific validators, an `objectP
 ``` jsx
 import {objectProps} from 'strickland';
 
-const validateProps = objectProps({
+const personValidator = objectProps({
     firstName: every([
         required(),
         length((context) => ({
@@ -55,7 +55,7 @@ const person = {
     birthYear: 1925
 };
 
-const result = validate(validateProps, person, {
+const result = validate(personValidator, person, {
     objectProps: {
         firstName: {
             minLength: 5,
@@ -86,7 +86,7 @@ import validate, {
 } from 'strickland';
 
 // Define the rules for first name, last name, and birthYear
-const validatePersonProps = objectProps({
+const personValidator = objectProps({
     firstName: every([required(), length(2, 20)]),
     lastName: every([required(), length(2, 20)]),
     birthYear: range(1900, 2018)
@@ -99,7 +99,7 @@ const person = {
     birthYear: 1925
 };
 
-const result = validate(validatePersonProps, person);
+const result = validate(personValidator, person);
 
 /*
     result = {

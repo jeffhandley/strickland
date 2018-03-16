@@ -7,7 +7,7 @@ To assist with such scenarios, Strickland's `form` validator offers an `updateFi
 ## Usage
 
 ```jsx
-const validatePerson = form({
+const personValidator = form({
     firstName: [
         required(),
         length({minLength: 2, maxLength: 20})
@@ -25,7 +25,7 @@ let stanfordStrickland = {
     birthYear: 1925
 };
 
-let stanfordResult = validate(validatePerson, stanfordStrickland);
+let stanfordResult = validate(personValidator, stanfordStrickland);
 
 let firstNameResult = {
     isValid: false,
@@ -33,7 +33,7 @@ let firstNameResult = {
     message: 'The service does not allow a first name of "Stanford"'
 };
 
-stanfordResult = validatePerson.updateFieldResults(
+stanfordResult = personValidator.updateFieldResults(
     stanfordResult,
     {firstName: firstNameResult}
 );
@@ -73,7 +73,7 @@ stanfordResult = validatePerson.updateFieldResults(
 To remove a field's results, provide `null` as the value of the field result.
 
 ``` jsx
-stanfordResult = validatePerson.updateFieldResults(
+stanfordResult = personValidator.updateFieldResults(
     stanfordResult,
     {firstName: null}
 );

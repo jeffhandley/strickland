@@ -248,7 +248,7 @@ describe('docs', () => {
 
         it('validating objects', () => {
             // Define the rules for first name, last name, and birthYear
-            const validateProps = {
+            const personValidator = {
                 firstName: every([
                     required(),
                     length(2, 20)
@@ -268,19 +268,19 @@ describe('docs', () => {
             };
 
             // Validate the person's properties
-            const personProps = {
-                firstName: validate(validateProps.firstName, person.firstName),
-                lastName: validate(validateProps.lastName, person.lastName),
-                birthYear: validate(validateProps.birthYear, person.birthYear)
+            const personResult = {
+                firstName: validate(personValidator.firstName, person.firstName),
+                lastName: validate(personValidator.lastName, person.lastName),
+                birthYear: validate(personValidator.birthYear, person.birthYear)
             };
 
-            // Create a top-level result including the results from personProps
+            // Create a top-level result including the results from personResult
             const result = {
-                personProps,
+                personResult,
                 isValid: (
-                    personProps.firstName.isValid &&
-                    personProps.lastName.isValid &&
-                    personProps.birthYear.isValid
+                    personResult.firstName.isValid &&
+                    personResult.lastName.isValid &&
+                    personResult.birthYear.isValid
                 ),
                 value: person
             };
@@ -305,7 +305,7 @@ describe('docs', () => {
 
         describe('objectProps', () => {
             it('parameters', () => {
-                const validateProps = objectProps({
+                const personValidator = objectProps({
                     firstName: every([required(), length(2, 20)]),
                     lastName: every([required(), length(2, 20)]),
                     birthYear: range(1900, 2018)
@@ -313,7 +313,7 @@ describe('docs', () => {
                     message: 'The person must be valid'
                 });
 
-                const result = validate(validateProps, {});
+                const result = validate(personValidator, {});
 
                 expect(result).toMatchObject({
                     isValid: false,
@@ -322,7 +322,7 @@ describe('docs', () => {
             });
 
             it('validation context', () => {
-                const validateProps = objectProps({
+                const personValidator = objectProps({
                     firstName: every([
                         required(),
                         length((context) => ({
@@ -352,7 +352,7 @@ describe('docs', () => {
                     birthYear: 1925
                 };
 
-                const result = validate(validateProps, person, {
+                const result = validate(personValidator, person, {
                     objectProps: {
                         firstName: {
                             minLength: 5,
@@ -389,7 +389,7 @@ describe('docs', () => {
 
             it('result properties', () => {
                 // Define the rules for first name, last name, and birthYear
-                const validatePersonProps = objectProps({
+                const personValidator = objectProps({
                     firstName: every([required(), length(2, 20)]),
                     lastName: every([required(), length(2, 20)]),
                     birthYear: range(1900, 2018)
@@ -402,7 +402,7 @@ describe('docs', () => {
                     birthYear: 1925
                 };
 
-                const result = validate(validatePersonProps, person);
+                const result = validate(personValidator, person);
 
                 expect(result).toMatchObject({
                     isValid: true,
@@ -461,7 +461,7 @@ describe('docs', () => {
 
         it('advanced object validation', () => {
             // Define the rules for first name, last name, and birthYear
-            const validatePersonProps = objectProps({
+            const personPropsValidator = objectProps({
                 firstName: every([
                     required(),
                     length(2, 20)
@@ -489,9 +489,9 @@ describe('docs', () => {
                 return true;
             }
 
-            const validatePerson = every([
+            const personValidator = every([
                 required(),
-                validatePersonProps,
+                personPropsValidator,
                 stanfordStricklandBornIn1925
             ]);
 
@@ -502,12 +502,12 @@ describe('docs', () => {
                 birthYear: 1925
             };
 
-            const result = validate(validatePerson, person);
+            const result = validate(personValidator, person);
             expect(result.isValid).toBe(true);
         });
 
         it('nested objects', () => {
-            const validatePerson = objectProps({
+            const personValidator = objectProps({
                 name: every([required(), length(5, 40)]),
                 address: objectProps({
                     street: objectProps({
@@ -531,12 +531,12 @@ describe('docs', () => {
                 }
             };
 
-            const result = validate(validatePerson, person);
+            const result = validate(personValidator, person);
             expect(result.isValid).toBe(true);
         });
 
         it('conventions', () => {
-            const validatePerson = [
+            const personValidator = [
                 required(),
                 {
                     name: [required(), length(5, 40)],
@@ -565,7 +565,7 @@ describe('docs', () => {
                 }
             };
 
-            const result = validate(validatePerson, person);
+            const result = validate(personValidator, person);
             expect(result.isValid).toBe(false);
         });
     });

@@ -10,7 +10,7 @@ import validate, {
 } from 'strickland';
 
 // Define the rules for first name, last name, and birthYear
-const validateProps = {
+const personValidator = {
     firstName: every([
         required(),
         length(2, 20)
@@ -30,30 +30,30 @@ const person = {
 };
 
 // Validate the person's properties
-const personProps = {
-    firstName: validate(validateProps.firstName, person.firstName),
-    lastName: validate(validateProps.lastName, person.lastName),
-    birthYear: validate(validateProps.birthYear, person.birthYear)
+const personResult = {
+    firstName: validate(personValidator.firstName, person.firstName),
+    lastName: validate(personValidator.lastName, person.lastName),
+    birthYear: validate(personValidator.birthYear, person.birthYear)
 };
 ```
 
-With this example, we have very primitive object property validation. The `personProps` output includes the validation results for each property, but there isn't anything providing a top-level `isValid` prop on the results. Let's add that in.
+With this example, we have very primitive object property validation. The `personResult` output includes the validation results for each property, but there isn't anything providing a top-level `isValid` prop on the results. Let's add that in.
 
 ``` jsx
 // Validate the person's properties
-const personProps = {
+const personResult = {
     firstName: validate(rules.firstName, person.firstName),
     lastName: validate(rules.lastName, person.lastName),
     birthYear: validate(rules.birthYear, person.birthYear)
 };
 
-// Create a top-level result including the results from personProps
+// Create a top-level result including the results from personResult
 const result = {
-    personProps,
+    personResult,
     isValid: (
-        personProps.firstName.isValid &&
-        personProps.lastName.isValid &&
-        personProps.birthYear.isValid
+        personResult.firstName.isValid &&
+        personResult.lastName.isValid &&
+        personResult.birthYear.isValid
     ),
     value: person
 };

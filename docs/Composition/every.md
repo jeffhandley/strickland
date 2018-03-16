@@ -1,6 +1,6 @@
 # Built-In Validator: every
 
-The `every` validator is built into Strickland. And it has a couple additional features not illustrated in the example implementation.
+Strickland provides an `every` validator. The `every` validator operates over an array and it will only return a valid result if all validators in the array are valid. The `every` validator will short-circuit (exit early) as soon as an invalid result is encountered. This allows chaining of validators where one validator's logic might depend on a previous validator already being valid.
 
 ## Parameters
 
