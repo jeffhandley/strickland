@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0-rc.2"></a>
+# [2.0.0-rc.2](https://github.com/jeffhandley/strickland/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2018-03-16)
+
+
+### Bug Fixes
+
+* fix broken unit test ([76754fa](https://github.com/jeffhandley/strickland/commit/76754fa))
+
+
+### Features
+
+* rename the each validator to "all" ([3f36147](https://github.com/jeffhandley/strickland/commit/3f36147))
+
+
+### BREAKING CHANGES
+
+* The name of the `each` validator was not as intuitive. It has been renamed to `all`.
+
+
+
+
 <a name="2.0.0-rc.1"></a>
 # [2.0.0-rc.1](https://github.com/jeffhandley/strickland/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2018-03-15)
 
