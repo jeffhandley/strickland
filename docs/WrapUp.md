@@ -13,13 +13,13 @@ Using Strickland's built-in validators, and its extensibility and composability,
 ## Extensibility Concepts
 
 1. **[Validator Factories](/docs/Extensibility/ValidatorFactories.md)** are functions that take parameters and return validator functions
-1. **[Validation Context](/docs/Extensibility/ValidationContext.md)** is provided to validators and returned on results
+1. **[Validation Context](/docs/Extensibility/ValidationContext.md)** is provided to validators allowing application state to influence validation logic
 1. **[Validation Result Props](/docs/Extensibility/ValidationResultProps.md)** allow applications to produce rich user experiences
 
 ## Composition Concepts
 
-1. **[Arrays of Validators](/docs/Composition/ArraysOfValidators.md)** can be composed together to validate a value against multiple validators
-1. **[Validating Objects](/docs/Composition/ValidatingObjects.md)** is done by building objects that define how object props should be validated
+1. **[Arrays of Validators](/docs/Composition/ArraysOfValidators.md)** can be used to validate a value against multiple validators
+1. **[Validating Objects](/docs/Composition/ValidatingObjects.md)** is accomplished by building objects that define how the props should be validated
 1. **[Array and Object Conventions](/docs/Composition/Conventions.md)** enable terse and natural definitions of complex compositions
 
 ## Async Validation
