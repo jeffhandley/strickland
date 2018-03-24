@@ -118,6 +118,8 @@ const result = validate(letterA, 'B');
     * [validateFields](https://strickland.io/docs/Forms/validateFields.html)
     * [emptyResults](https://strickland.io/docs/Forms/emptyResults.html)
     * [updateFieldResults](https://strickland.io/docs/Forms/updateFieldResults.html)
+* [Inspiration](https://strickland.io/docs/Inspiration/README.md)
+* [Design Goals](https://strickland.io/docs/Inspiration/DesignGoals.md)
 * [Wrap-Up](https://strickland.io/docs/WrapUp.html)
 * [Change Log](https://strickland.io/docs/CHANGELOG.html)
 

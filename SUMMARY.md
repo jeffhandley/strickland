@@ -42,5 +42,7 @@
     * [validateFields](/docs/Forms/validateFields.md)
     * [emptyResults](/docs/Forms/emptyResults.md)
     * [updateFieldResults](/docs/Forms/updateFieldResults.md)
+* [Inspiration](/docs/Inspiration.md)
+* [Design Goals](/docs/DesignGoals.md)
 * [Wrap-Up](/docs/WrapUp.md)
 * [Change Log](/docs/CHANGELOG.md)
