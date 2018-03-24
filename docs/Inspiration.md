@@ -38,6 +38,16 @@ If you've built validation into your client-side code, but you knew not to trust
 
 With two implementations of your validation rules, it is inevitable that the implementations will differ. Developers will forget to update both implementations when a bug is fixed or a new feature is implemented, and the rules will drift apart. Once they become inconsistent, unexpected data enters your system and you find yourself needing to modify your validation rules to accommodate corrupt data. Everything goes downhill from there.
 
+## Elegance
+
+With client-side and server-side validation implementations in place, there is still one remaining problem: our product owners and user experience designers want elegant user interactions. Subtle cues differentiating between valid and invalid states. Animations during async validation. Friendly messages that guide the user to correct validation errors while not slapping the user's wrist while they are still typing. And this all has to work for every validation rule defined on every type of form field.
+
+In order to pull off an elegant user experience, it is crucial to separate the responsibilities of validation triggers and validation logic. User interface code should crisply define _when_ validation occurs and at what scope. Validation code should then perform that validation and _merely return results_ to be consumed by the UI. The UI code must not be aware of what validation is actually occurring and the validation code must not be aware of how validation is affecting the UI.
+
+Your user experience designer will change their mind on what effects they expect to see in the UI. You must be able to change the validation triggers and rendering easily without worry of affecting the actual validation logic. Only through separation of responsibilities will you obtain the flexibility to safely change the interactions.
+
+Elegant validation experiences must scale nicely with the size and complexity of your forms. To accomplish this, the validation framework must be stateless and functional. The UI rendering code must simply render the validation results and trigger validation executions. A validation framework cannot prescribe specific user interactions or rendering.
+
 ## About the Author
 
 [Jeff Handley](https://twitter.com/jeffhandley) has spent years concentrating on what it takes to implement well-rounded validation experiences. Jeff has developed in-house validation frameworks across platforms including Classic ASP, Visual Basic, ASP.NET Web Forms, and WinForms. At Microsoft, Jeff was the lead developer of the validation features built into the .NET Framework's `System.ComponentModel.DataAnnotations` namespace. His work included `IValidatableObject`, `ValidationResult`, `ValidationContext`, and `Validator`, among other implementation details introduced in .NET 4.0. Those features delivered validation functionality into ASP.NET MVC, ASP.NET Web Forms, WCF RIA Services, Silverlight, and WPF.
