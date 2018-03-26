@@ -62,4 +62,4 @@ When React was introduced, Flux was presented as a complementary design pattern.
 
 Principal Strickland was the rule-monger of Hill Valley High School in the *Back to the Future* movies.
 
-A validation framework was needed that would integrate nicely with the React ecosystem. These ideas were combined and Strickland was born. While Strickland v1.0.0 was not released until December 2017, initial work began and the [strickland.io](https://strickland.io) domain was purchased in May 2015.
+A validation framework was needed that would integrate nicely with the React ecosystem. These ideas were combined and Strickland was born. Though v1.0.0 was not released until December 2017, initial work on Strickland began and the [strickland.io](https://strickland.io) domain was purchased in 2015, the same year that Marty visited in the future.
