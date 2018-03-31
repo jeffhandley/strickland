@@ -23,3 +23,17 @@ node_modules
 
 # Local editor files
 *.sublime-workspace
+
+# Visual Studio
+# User-specific files
+*.suo
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
