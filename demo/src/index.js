@@ -13,9 +13,11 @@ ReactDOM.render(
                 <header className="App-header">
                     <h1><img alt="logo" aria-label="Strickland demo" className="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png" /></h1>
                 </header>
-                <nav style={{'float': 'left'}}>
-                    <ul><NavLink activeClassName="active" to="/react-state">React State</NavLink></ul>
-                    <ul><NavLink activeClassName="active" to="/redux">Redux</NavLink></ul>
+                <nav>
+                    <ul>
+                        <li><NavLink activeClassName="active" to="/react-state">React State</NavLink></li>
+                        <li><NavLink activeClassName="active" to="/redux">Redux</NavLink></li>
+                    </ul>
                 </nav>
                 <Switch>
                     <Route exact path="/" render={() => <Redirect to="/react-state" />} />
