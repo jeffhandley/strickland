@@ -1,5 +1,17 @@
 import validate from 'strickland';
 
+const TAGNAME_SELECT = 'SELECT';
+const TAGNAME_INPUT = 'INPUT';
+const ATTRIBUTE_TYPE_CHECKBOX = 'checkbox';
+const ATTRIBUTE_TYPE_RADIO = 'radio';
+const ATTRIBUTE_MULTIPLE = 'multiple';
+
+const isSelectInput = (element) => element.tagName === TAGNAME_SELECT;
+const isCheckboxInput = (element) => element.tagName === TAGNAME_INPUT && element.type === ATTRIBUTE_TYPE_CHECKBOX;
+const isRadioInput = (element) => element.tagName === TAGNAME_INPUT && element.type === ATTRIBUTE_TYPE_RADIO;
+const shouldUseChangeEvent = (element) => isSelectInput(element) || isCheckboxInput(element) || isRadioInput(element);
+const shouldUseChangeEventOnDelay = (element) => isSelectInput(element) && element.attributes[ATTRIBUTE_MULTIPLE];
+
 export default (validator) => ({
   data: () => ({
     validator,
@@ -27,7 +39,32 @@ export default (validator) => ({
         ? Object.keys(validationResults).filter((field) => dependents.includes(field))
         : [];
     },
+    stricklandOnChange (event, sender) {
+      console.log('strickland:onChange has been called', event, sender);
+      if (shouldUseChangeEvent(event.target)) {
+        console.log('strickland:onChange, handling');
+        shouldUseChangeEventOnDelay(event.target)
+          ? this.handleChangeAfterDelay(event) // TODO: Test out with <select multiple>...</select>
+          : this.handleChangeImmediately(event);
+      }
+    },
     stricklandOnInput (event) {
+      if (!shouldUseChangeEvent(event)) {
+        console.log('strickland:onInput, rejecting');
+        return;
+      }
+
+      this.handleChangeAfterDelay(event);
+    },
+    stricklandOnFocusOut (event) {
+      if (shouldUseChangeEvent(event.target)) {
+        console.log('strickland:onFocusOut, rejecting');
+        return;
+      }
+
+      this.handleChangeImmediately(event);
+    },
+    handleChangeAfterDelay (event) {
       let fieldName = event.target.name;
       let value = this.form[fieldName];
       this.logValidation(`strickland:onInput method triggered by field: '${fieldName}' with value: '${value}'.`);
@@ -81,7 +118,7 @@ export default (validator) => ({
         }
       }, 1000); // TODO: Make this configurable via data.validationTimeoutInSeconds or similar
     },
-    stricklandOnFocusOut (event) {
+    handleChangeImmediately (event) {
       let fieldName = event.target.name;
       let value = this.form[fieldName];
       this.logValidation(`strickland:onFocusOut method triggered by field: '${fieldName}', with value: '${value}'.`);

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="form" @input="stricklandOnInput" @focusout="stricklandOnFocusOut">
+    <div class="form"
+         @input="stricklandOnInput"
+         @change="stricklandOnChange"
+         @focusout="stricklandOnFocusOut">
       <div class="formfield">
         <input id="firstName" name="firstName" type="text" aria-placeholder="First name"
                :class="firstNameState.validationClassName" v-model.trim="form.firstName">
@@ -51,11 +54,12 @@
                :data-validation-message="confirmPasswordState.validationMessage">Confirm password</label>
       </div>
       <div class="formfield-checkbox" :class="acceptsTermsState.validationClassName">
-        <input id="acceptsTerms" name="acceptsTerms" type="checkbox" v-model="form.acceptsTerms">
-        <label for="acceptsTerms">
-          Accept <a href="#">terms and conditions</a>
-        </label>
-        <br>
+        <div>
+          <input id="acceptsTerms" name="acceptsTerms" type="checkbox" v-model="form.acceptsTerms">
+          <label for="acceptsTerms">
+            Accept <a href="#">terms and conditions</a>
+          </label>
+        </div>
         <label>{{ acceptsTermsState.validationMessage }}</label>
       </div>
       <div class="formactions">
@@ -74,7 +78,7 @@
 <script>
 import formValidator from '../validators/formValidator.js';
 import stricklandMixinFactory from '../mixins/vueStricklandMixinFactory.js';
-import mapFormFieldValidationState from '../mappers/vueStricklandMappers.js';
+import mapFormFieldValidationStates from '../mappers/vueStricklandMappers.js';
 
 let form = {
   firstName: null,
@@ -100,11 +104,11 @@ export default {
     // TODO: Do we want this feature?
     // Idea is if you define this then you get some debug help
     validationHistory: [],
-    ages: [...Array(100).keys()],
+    ages: [...Array(100).keys()].slice(1),
     genders: ['Male', 'Female', 'Trans*']
   }),
   computed: {
-    ...mapFormFieldValidationState(form)
+    ...mapFormFieldValidationStates(form)
   },
   methods: {
     onSubmission (event) {
