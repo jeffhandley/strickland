@@ -16,7 +16,7 @@ function usernameIsAvailable(username) {
     };
 }
 
-export default form({
+export const formDefinition = {
     firstName: required({message: 'Required'}),
     lastName: [
         required({message: 'Required'}),
@@ -49,4 +49,6 @@ export default form({
         [required(), compare(({form: {values: {password}}}) => ({compare: password}))],
         {message: 'Must match password'}
     )
-});
+};
+
+export default form(formDefinition);
