@@ -36,7 +36,7 @@
           <button @click="stricklandOnSubmit">Submit</button>
         </div>
         <div>
-          {{ (validation && validation.isValid) ? 'Can Submit' : 'Cannot Submit Yet' }}
+          {{ isValid ? 'Can Submit' : 'Cannot Submit Yet' }}
         </div>
       </div>
     </div>

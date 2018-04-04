@@ -5,14 +5,24 @@ export const formValidationMixin = {
   data: () => ({
     validation: formValidator.emptyResults()
   }),
+  computed: {
+    isValid: () => this.validation && this.validation.isValid
+  },
   methods: {
-    handleAsyncFieldValidation (fieldName, asyncFieldResult) {
-      this.validation = formValidator.updateFieldResults(this.validation, { [fieldName]: asyncFieldResult });
+    validateAsync (fieldResult, fieldName) {
+      this.logValidation(`Performing async validation on field: '${fieldName}'.`);
+      fieldResult.validateAsync(() => this.form[fieldName])
+        .then((result) => {
+          // TODO: Do we need to check for change/race condition as per:
+          // https://strickland.io/docs/Async/RaceConditions.html
+          this.validation = formValidator.updateFieldResults(this.validation, { [fieldName]: result });
+        })
+        .catch((result) => {
+          console.error(`Error on async validation for field: ${fieldName}.`, result);
+        });
     },
-    getDependents (fieldName) {
-      return this.validationDependencies ? this.validationDependencies[fieldName] : null;
-    },
-    getDependentsNeedingRevalidation (dependents, validationResults) {
+    getDependentsNeedingRevalidation (fieldName, validationResults) {
+      let dependents = this.validationDependencies ? this.validationDependencies[fieldName] : null;
       return dependents
         ? Object.keys(validationResults).filter((field) => dependents.includes(field))
         : [];
@@ -25,7 +35,7 @@ export const formValidationMixin = {
       // Determine which dependent fields have already been validated
       // and therefore need to be revalidated
       const dependentsNeedingRevalidation = this.getDependentsNeedingRevalidation(
-        this.getDependents(fieldName),
+        fieldName,
         this.validation.form.validationResults
       );
 
@@ -66,9 +76,7 @@ export const formValidationMixin = {
 
           // Fire off async validation
           if (newFieldResult.validateAsync) {
-            newFieldResult.validateAsync(() => this.form[fieldName])
-              .then((result) => this.handleAsyncFieldValidation(fieldName, result))
-              .catch((result) => { console.error(`Error on async validation for field: ${fieldName}.`, result); });
+            this.validateAsync(newFieldResult, fieldName);
           }
         }
       }, 1000); // TODO: Make this configurable via data.validationTimeoutInSeconds or similar
@@ -83,7 +91,7 @@ export const formValidationMixin = {
         // Determine which dependent fields have already been validated
         // and therefore need to be revalidated
         const dependentsNeedingRevalidation = this.getDependentsNeedingRevalidation(
-          this.getDependents(fieldName),
+          fieldName,
           this.validation.form.validationResults
         );
 
@@ -101,9 +109,7 @@ export const formValidationMixin = {
 
       // If the field needs async validation, fire it off
       if (fieldResult.validateAsync) {
-        fieldResult.validateAsync(() => this.form[fieldName])
-          .then((result) => this.handleAsyncFieldValidation(fieldName, result))
-          .catch((result) => { console.error(`Error on async validation for field: ${fieldName}.`, result); });
+        this.validateAsync(fieldResult, fieldName);
       }
     },
     stricklandOnSubmit (event) {
@@ -126,9 +132,9 @@ export const formValidationMixin = {
       // Call user-defined methods to act
       this.validation.isValid ? this.onSubmission(event) : this.onSubmissionRejection(event);
     },
-    logValidation (desc) {
+    logValidation (msg) {
       if (Array.isArray(this.validationHistory)) {
-        this.validationHistory.push(desc);
+        this.validationHistory.push(msg);
       }
     }
   }
