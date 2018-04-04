@@ -1,4 +1,4 @@
-import { getValidationMessage, getValidationClassName } from '../../../demo/src/formValidator';
+import { getValidationMessage, getValidationClassName } from '../../../demo/src/helpers';
 
 export default function mapFormFieldValidationStates (form) {
   var fieldNames = Object.keys(form);

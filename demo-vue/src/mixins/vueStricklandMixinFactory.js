@@ -1,21 +1,21 @@
-import formValidator from '../../../demo/src/formValidator';
 import validate from 'strickland';
 
-export const formValidationMixin = {
+export default (validator) => ({
   data: () => ({
-    validation: formValidator.emptyResults()
+    validator,
+    validation: validator.emptyResults()
   }),
   computed: {
     isValid: () => this.validation && this.validation.isValid
   },
   methods: {
     validateAsync (fieldResult, fieldName) {
-      this.logValidation(`Performing async validation on field: '${fieldName}'.`);
+      this.logValidation(`strickland:validateAsync method triggered for field: '${fieldName}'.`);
       fieldResult.validateAsync(() => this.form[fieldName])
         .then((result) => {
           // TODO: Do we need to check for change/race condition as per:
           // https://strickland.io/docs/Async/RaceConditions.html
-          this.validation = formValidator.updateFieldResults(this.validation, { [fieldName]: result });
+          this.validation = this.validator.updateFieldResults(this.validation, { [fieldName]: result });
         })
         .catch((result) => {
           console.error(`Error on async validation for field: ${fieldName}.`, result);
@@ -41,7 +41,7 @@ export const formValidationMixin = {
 
       // Validate the form specifying the current field
       // as well as dependent fields that need re-validation
-      const result = formValidator.validateFields(
+      const result = this.validator.validateFields(
         this.form,
         [fieldName, ...dependentsNeedingRevalidation],
         this.validation
@@ -54,7 +54,7 @@ export const formValidationMixin = {
       const hasChanged = oldFieldResult && value !== oldFieldResult.value;
 
       if (hasAsync || hasChanged) {
-        this.validation = formValidator.updateFieldResults(this.validation, {[fieldName]: null});
+        this.validation = this.validator.updateFieldResults(this.validation, {[fieldName]: null});
       }
 
       // So long as there's no async validation, then if the new
@@ -72,7 +72,7 @@ export const formValidationMixin = {
         if (newFieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
           // Update the field's validation state to indicate that
           // async validation is underway
-          this.validation = formValidator.updateFieldResults(validationAfterTimeout, {[fieldName]: newFieldResult});
+          this.validation = this.validator.updateFieldResults(validationAfterTimeout, {[fieldName]: newFieldResult});
 
           // Fire off async validation
           if (newFieldResult.validateAsync) {
@@ -97,7 +97,7 @@ export const formValidationMixin = {
 
         // Validate the form specifying the current field
         // as well as dependent fields that need re-validated
-        this.validation = formValidator.validateFields(
+        this.validation = this.validator.validateFields(
           this.form,
           [fieldName, ...dependentsNeedingRevalidation],
           this.validation
@@ -115,7 +115,7 @@ export const formValidationMixin = {
     stricklandOnSubmit (event) {
       this.logValidation(`strickland:onSubmit triggered called by: '${event.target}'.`);
 
-      this.validation = validate(formValidator, this.form);
+      this.validation = validate(this.validator, this.form);
 
       if (this.validation.validateAsync) {
         this.validation.validateAsync(() => this.form)
@@ -138,6 +138,4 @@ export const formValidationMixin = {
       }
     }
   }
-};
-
-export default formValidationMixin;
+});

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import {connect, Provider} from 'react-redux';
-import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
+import formValidator from './formValidator';
+import { getValidationMessage, getValidationClassName } from './helpers';
 import validate from 'strickland';
 
 const fieldContext = {
