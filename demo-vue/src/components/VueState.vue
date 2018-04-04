@@ -2,106 +2,81 @@
   <div>
     <div class="form" @input="stricklandOnInput" @focusout="stricklandOnFocusOut">
       <div class="formfield">
-        <input id="firstName" name="firstName" type="text"
+        <input id="firstName" name="firstName" type="text" aria-placeholder="First name"
                :class="firstNameState.validationClassName" v-model.trim="form.firstName">
         <label for="firstName"
                :data-validation-message="firstNameState.validationMessage">First name</label>
       </div>
       <div class="formfield">
-        <input id="lastName" name="lastName" type="text"
+        <input id="lastName" name="lastName" type="text" aria-placeholder="Last name"
                :class="lastNameState.validationClassName" v-model.trim="form.lastName">
         <label for="lastName"
                :data-validation-message="lastNameState.validationMessage">Last name</label>
       </div>
       <div class="formfield">
-        <input id="username" name="username" type="text"
+        <input id="username" name="username" type="text" aria-placeholder="Username"
                :class="usernameState.validationClassName" v-model.trim="form.username">
         <label for="username"
                :data-validation-message="usernameState.validationMessage">Username</label>
       </div>
       <div class="formfield">
-        <input id="password" name="password" type="password"
+        <input id="password" name="password" type="password" aria-placeholder="Password"
                :class="passwordState.validationClassName" v-model="form.password">
         <label for="password"
                :data-validation-message="passwordState.validationMessage">Password</label>
       </div>
       <div class="formfield">
-        <input id="confirmPassword" name="confirmPassword" type="password"
+        <input id="confirmPassword" name="confirmPassword" type="password" aria-placeholder="Confirm password"
                :class="confirmPasswordState.validationClassName" v-model="form.confirmPassword">
         <label for="confirmPassword"
-               :data-validation-message="confirmPasswordState.validationMessage">Confirm</label>
+               :data-validation-message="confirmPasswordState.validationMessage">Confirm password</label>
       </div>
       <div class="formactions">
         <div>
-          <button @click="onSubmit">Submit</button>
+          <button @click="stricklandOnSubmit">Submit</button>
         </div>
         <div>
           {{ (validation && validation.isValid) ? 'Can Submit' : 'Cannot Submit Yet' }}
         </div>
       </div>
     </div>
-    <pre id="current-state">
-        {{ JSON.stringify({ form: this.form, validation: this.validation }, null, 2) }}
-    </pre>
+    <pre id="current-state">{{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}</pre>
   </div>
 </template>
 
 <script>
-import formValidator from '../../../demo/src/formValidator';
-import validate from 'strickland';
 import formValidationMixin from '../mixins/vueStricklandMixin.js';
 import mapFormFieldValidationState from '../mappers/vueStricklandMappers.js';
 
+let form = {
+  firstName: null,
+  lastName: null,
+  username: null,
+  password: null,
+  confirmPassword: null
+};
+
 export default {
   name: 'VueState',
-  mixins: [
-    formValidationMixin
-  ],
-  data () {
-    return {
-      form: {
-        firstName: null,
-        lastName: null,
-        username: null,
-        password: null,
-        confirmPassword: null
-      },
-      validationDependencies: {
-        password: ['confirmPassword']
-      },
-      validation: formValidator.emptyResults()
-    };
-  },
+  mixins: [formValidationMixin],
+  data: () => ({
+    form,
+    validationDependencies: {
+      password: ['confirmPassword']
+    },
+    // TODO: Do we want this feature?
+    // Idea is if you define this then you get some debug help
+    validationHistory: []
+  }),
   computed: {
-    ...mapFormFieldValidationState([
-      'firstName',
-      'lastName',
-      'username',
-      'password',
-      'confirmPassword'
-    ])
+    ...mapFormFieldValidationState(form)
   },
   methods: {
-    onSubmit (event) {
-      this.validation = validate(formValidator, this.form);
-
-      if (this.validation.validateAsync) {
-        this.validation.validateAsync(() => this.form)
-          .then((result) => {
-            this.validation = result;
-            this.onSubmitImpl();
-          })
-          .catch(() => console.log('Error validating async'));
-      } else {
-        this.onSubmitImpl();
-      }
+    onSubmission (event) {
+      alert('submission allowed');
     },
-    onSubmitImpl () {
-      if (this.validation.isValid) {
-        alert('submitted');
-      } else {
-        alert('submission denied');
-      }
+    onSubmissionRejection (event) {
+      alert('submission denied');
     }
   }
 };

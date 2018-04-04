@@ -1,6 +1,10 @@
 import formValidator from '../../../demo/src/formValidator';
+import validate from 'strickland';
 
 export const formValidationMixin = {
+  data: () => ({
+    validation: formValidator.emptyResults()
+  }),
   methods: {
     handleAsyncFieldValidation (fieldName, asyncFieldResult) {
       this.validation = formValidator.updateFieldResults(this.validation, { [fieldName]: asyncFieldResult });
@@ -15,6 +19,8 @@ export const formValidationMixin = {
     },
     stricklandOnInput (event) {
       let fieldName = event.target.name;
+      let value = this.form[fieldName];
+      this.logValidation(`strickland:onInput method triggered by field: '${fieldName}' with value: '${value}'.`);
 
       // Determine which dependent fields have already been validated
       // and therefore need to be revalidated
@@ -35,7 +41,6 @@ export const formValidationMixin = {
       const newFieldResult = result.form.validationResults[fieldName];
       const oldFieldResult = this.validation.form.validationResults[fieldName];
       const hasAsync = newFieldResult.validateAsync || (oldFieldResult && oldFieldResult.validateAsync);
-      let value = this.form[fieldName];
       const hasChanged = oldFieldResult && value !== oldFieldResult.value;
 
       if (hasAsync || hasChanged) {
@@ -71,6 +76,7 @@ export const formValidationMixin = {
     stricklandOnFocusOut (event) {
       let fieldName = event.target.name;
       let value = this.form[fieldName];
+      this.logValidation(`strickland:onFocusOut method triggered by field: '${fieldName}', with value: '${value}'.`);
 
       // Validate if the field has not been validated yet or the value has changed
       if (!this.validation.form.validationResults[fieldName] || this.validation.form.validationResults[fieldName].value !== value) {
@@ -98,6 +104,31 @@ export const formValidationMixin = {
         fieldResult.validateAsync(() => this.form[fieldName])
           .then((result) => this.handleAsyncFieldValidation(fieldName, result))
           .catch((result) => { console.error(`Error on async validation for field: ${fieldName}.`, result); });
+      }
+    },
+    stricklandOnSubmit (event) {
+      this.logValidation(`strickland:onSubmit triggered called by: '${event.target}'.`);
+
+      this.validation = validate(formValidator, this.form);
+
+      if (this.validation.validateAsync) {
+        this.validation.validateAsync(() => this.form)
+          .then((result) => {
+            this.validation = result;
+            this.stricklandOnSubmitValidated(event);
+          })
+          .catch(() => console.log('Error validating async'));
+      } else {
+        this.stricklandOnSubmitValidated(event);
+      }
+    },
+    stricklandOnSubmitValidated (event) {
+      // Call user-defined methods to act
+      this.validation.isValid ? this.onSubmission(event) : this.onSubmissionRejection(event);
+    },
+    logValidation (desc) {
+      if (Array.isArray(this.validationHistory)) {
+        this.validationHistory.push(desc);
       }
     }
   }

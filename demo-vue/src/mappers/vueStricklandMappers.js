@@ -1,6 +1,7 @@
 import { getValidationMessage, getValidationClassName } from '../../../demo/src/formValidator';
 
-export default function mapFormFieldValidationStates (fieldNames = []) {
+export default function mapFormFieldValidationStates (form) {
+  var fieldNames = Object.keys(form);
   return fieldNames.reduce((obj, fieldName) => {
     const computedPropName = fieldName + 'State';
     const computedProp = {
