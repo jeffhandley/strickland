@@ -11,7 +11,7 @@ export default function maxValidator(validatorProps) {
                 max: validatorProps
             };
         } else {
-            props = validatorProps
+            props = validatorProps;
         }
 
         const {max} = props;
@@ -36,5 +36,5 @@ export default function maxValidator(validatorProps) {
             ...props,
             isValid
         };
-    }
+    };
 }

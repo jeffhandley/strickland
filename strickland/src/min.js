@@ -11,7 +11,7 @@ export default function minValidator(validatorProps) {
                 min: validatorProps
             };
         } else {
-            props = validatorProps
+            props = validatorProps;
         }
 
         const {min} = props;
@@ -36,5 +36,5 @@ export default function minValidator(validatorProps) {
             ...props,
             isValid
         };
-    }
+    };
 }

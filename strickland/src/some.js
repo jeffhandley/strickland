@@ -73,7 +73,7 @@ export default function someValidator(validators, validatorProps) {
             ...props,
             ...result
         };
-    }
+    };
 }
 
 function applyNextResult(previousResult, nextResult) {

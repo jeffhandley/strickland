@@ -28,5 +28,5 @@ export default function rangeValidator(validatorProps, maxProp) {
             ...props,
             ...result
         };
-    }
+    };
 }

@@ -48,7 +48,7 @@ export default function allValidator(validators, validatorProps) {
             ...props,
             ...result
         };
-    }
+    };
 }
 
 function applyNextResult(previousResult, nextResult) {

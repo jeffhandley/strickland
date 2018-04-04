@@ -10,7 +10,7 @@ export default function maxLengthValidator(validatorProps) {
                 maxLength: validatorProps
             };
         } else {
-            props = validatorProps
+            props = validatorProps;
         }
 
         const {maxLength} = props;
@@ -33,5 +33,5 @@ export default function maxLengthValidator(validatorProps) {
             isValid,
             length
         };
-    }
+    };
 }
