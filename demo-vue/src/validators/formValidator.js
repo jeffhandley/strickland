@@ -1,6 +1,5 @@
-import { form, min, required, compare } from 'strickland';
+import { form, min, required, compare, every } from 'strickland';
 import { formDefinition } from '../../../demo/src/formValidator';
-import every from 'strickland/lib/every';
 
 const formDefinitionExtended = {
   ...formDefinition,
