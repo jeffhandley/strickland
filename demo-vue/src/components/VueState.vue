@@ -76,9 +76,9 @@
 </template>
 
 <script>
-import formValidator from '../validators/formValidator.js';
-import stricklandMixinFactory from '../mixins/vueStricklandMixinFactory.js';
-import mapFormFieldValidationStates from '../mappers/vueStricklandMappers.js';
+import formValidator from '../validators/formValidator';
+import mixinFactory from '../vueStrickland/mixinFactory';
+import mapFormFieldValidationStates from '../vueStrickland/mapFormFieldValidationStates';
 
 let form = {
   firstName: null,
@@ -94,7 +94,7 @@ let form = {
 export default {
   name: 'VueState',
   mixins: [
-    stricklandMixinFactory(formValidator)
+    mixinFactory(formValidator)
   ],
   data: () => ({
     form,

@@ -1,22 +1,7 @@
 import {form, every, required, minLength, compare} from 'strickland';
+import {isUsernameAvailable} from './isUsernameAvailable';
 
-function usernameIsAvailable(username) {
-    return {
-        isValid: false,
-        message: `Checking availability of "${username}"...`,
-        validateAsync: () => new Promise((resolve) => {
-            setTimeout(() => {
-                const isValid = (username !== 'marty')
-                resolve({
-                    isValid,
-                    message: isValid ? `"${username}" is available` : `Sorry, "${username}" is not available`
-                });
-            }, 2000);
-        })
-    };
-}
-
-export const formDefinition = {
+const formDefinition = {
     firstName: required({message: 'Required'}),
     lastName: [
         required({message: 'Required'}),
@@ -35,7 +20,7 @@ export const formDefinition = {
             return true;
         },
         minLength({minLength: 4, message: 'Must have at least 4 characters'}),
-        usernameIsAvailable,
+        isUsernameAvailable,
         (username) => ({
             isValid: true,
             successMessage: `"${username}" is available`
