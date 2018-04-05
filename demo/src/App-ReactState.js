@@ -34,7 +34,7 @@ class App extends Component {
         this.onFieldBlur = {
             firstName: this.onFieldBlur.bind(this, 'firstName', {trim}),
             lastName: this.onFieldBlur.bind(this, 'lastName', {trim}),
-            username: this.onFieldBlur.bind(this, 'username', null),
+            username: this.onFieldBlur.bind(this, 'username', {trim}),
             password: this.onFieldBlur.bind(this, 'password', null),
             confirmPassword: this.onFieldBlur.bind(this, 'confirmPassword', null)
         };
