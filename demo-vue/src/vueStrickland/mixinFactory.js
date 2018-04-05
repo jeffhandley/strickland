@@ -1,17 +1,6 @@
 import validate from 'strickland';
 import mapFormFieldValidationStates from './mapFormFieldValidationStates';
-
-const TAGNAME_SELECT = 'SELECT';
-const TAGNAME_INPUT = 'INPUT';
-const ATTRIBUTE_TYPE_CHECKBOX = 'checkbox';
-const ATTRIBUTE_TYPE_RADIO = 'radio';
-const ATTRIBUTE_MULTIPLE = 'multiple';
-
-const isSelectInput = (element) => element.tagName === TAGNAME_SELECT;
-const isCheckboxInput = (element) => element.tagName === TAGNAME_INPUT && element.type === ATTRIBUTE_TYPE_CHECKBOX;
-const isRadioInput = (element) => element.tagName === TAGNAME_INPUT && element.type === ATTRIBUTE_TYPE_RADIO;
-const shouldUseChangeEvent = (element) => isSelectInput(element) || isCheckboxInput(element) || isRadioInput(element);
-const shouldUseChangeEventOnDelay = (element) => isSelectInput(element) && element.attributes[ATTRIBUTE_MULTIPLE];
+import * as utils from './utils';
 
 export default (formDefinition) => {
   // TODO: Add checks on formDefinition structure
@@ -47,15 +36,15 @@ export default (formDefinition) => {
       },
       vueStricklandOnChange (event, sender) {
         console.log('vueStrickland:onChange has been called', event, sender);
-        if (shouldUseChangeEvent(event.target)) {
+        if (utils.shouldUseChangeEvent(event.target)) {
           console.log('vueStrickland:onChange, handling');
-          shouldUseChangeEventOnDelay(event.target)
+          utils.shouldUseChangeEventOnDelay(event.target)
             ? this.handleChangeAfterDelay(event) // TODO: Test out with <select multiple>...</select>
             : this.handleChangeImmediately(event);
         }
       },
       vueStricklandOnInput (event) {
-        if (shouldUseChangeEvent(event)) {
+        if (utils.shouldUseChangeEvent(event)) {
           console.log('vueStrickland:onInput, rejecting');
           return;
         }
@@ -63,8 +52,13 @@ export default (formDefinition) => {
         this.handleChangeAfterDelay(event);
       },
       vueStricklandOnFocusOut (event) {
-        if (shouldUseChangeEvent(event.target)) {
-          console.log('vueStrickland:onFocusOut, rejecting');
+        if (!utils.isFieldFocusOut(event.target)) {
+          console.log('vueStrickland:onFocusOut, rejecting as isn\'t field focusout');
+          return;
+        }
+
+        if (utils.shouldUseChangeEvent(event.target)) {
+          console.log('vueStrickland:onFocusOut, rejecting as should use change event');
           return;
         }
 
@@ -72,8 +66,11 @@ export default (formDefinition) => {
       },
       handleChangeAfterDelay (event) {
         let fieldName = event.target.name;
-        let value = this.form[fieldName];
-        this.logValidation(`vueStrickland:handleChangeafterDelay method triggered by field: '${fieldName}' with value: '${value}'.`);
+        if (!fieldName) {
+          return;
+        }
+
+        this.logValidation(`vueStrickland:handleChangeafterDelay method triggered by field: '${fieldName}'.`);
 
         // Determine which dependent fields have already been validated
         // and therefore need to be revalidated
@@ -94,7 +91,7 @@ export default (formDefinition) => {
         const newFieldResult = result.form.validationResults[fieldName];
         const oldFieldResult = this.validation.form.validationResults[fieldName];
         const hasAsync = newFieldResult.validateAsync || (oldFieldResult && oldFieldResult.validateAsync);
-        const hasChanged = oldFieldResult && value !== oldFieldResult.value;
+        const hasChanged = oldFieldResult && this.form[fieldName] !== oldFieldResult.value;
 
         if (hasAsync || hasChanged) {
           this.validation = this.validator.updateFieldResults(this.validation, {[fieldName]: null});
@@ -126,11 +123,14 @@ export default (formDefinition) => {
       },
       handleChangeImmediately (event) {
         let fieldName = event.target.name;
-        let value = this.form[fieldName];
-        this.logValidation(`vueStrickland:handleChangeImmediately method triggered by field: '${fieldName}', with value: '${value}'.`);
+        if (!fieldName) {
+          return;
+        }
+
+        this.logValidation(`vueStrickland:handleChangeImmediately method triggered by field: '${fieldName}'.`);
 
         // Validate if the field has not been validated yet or the value has changed
-        if (!this.validation.form.validationResults[fieldName] || this.validation.form.validationResults[fieldName].value !== value) {
+        if (!this.validation.form.validationResults[fieldName] || this.validation.form.validationResults[fieldName].value !== this.form[fieldName]) {
           // Determine which dependent fields have already been validated
           // and therefore need to be revalidated
           const dependentsNeedingRevalidation = this.getDependentsNeedingRevalidation(
