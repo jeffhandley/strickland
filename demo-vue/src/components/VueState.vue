@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="form"
-         @input="stricklandOnInput"
-         @change="stricklandOnChange"
-         @focusout="stricklandOnFocusOut">
+         @input="vueStricklandOnInput"
+         @change="vueStricklandOnChange"
+         @focusout="vueStricklandOnFocusOut">
       <div class="formfield">
         <input id="firstName" name="firstName" type="text" aria-placeholder="First name"
                :class="firstNameState.validationClassName" v-model.trim="form.firstName">
@@ -64,7 +64,7 @@
       </div>
       <div class="formactions">
         <div>
-          <button @click="stricklandOnSubmit">Submit</button>
+          <button @click="vueStricklandOnSubmit">Submit</button>
         </div>
         <div>
           {{ isValid ? 'Can Submit' : 'Cannot Submit Yet' }}
@@ -76,40 +76,21 @@
 </template>
 
 <script>
-import formValidator from '../validators/formValidator';
+import signUpForm from '../forms/signUpForm';
 import mixinFactory from '../vueStrickland/mixinFactory';
-import mapFormFieldValidationStates from '../vueStrickland/mapFormFieldValidationStates';
-
-let form = {
-  firstName: null,
-  lastName: null,
-  age: null,
-  gender: null,
-  username: null,
-  password: null,
-  confirmPassword: null,
-  acceptsTerms: false
-};
 
 export default {
   name: 'VueState',
   mixins: [
-    mixinFactory(formValidator)
+    // Hooks up everything you need
+    mixinFactory(signUpForm)
   ],
   data: () => ({
-    form,
-    validationDependencies: {
-      password: ['confirmPassword']
-    },
-    // TODO: Do we want this feature?
-    // Idea is if you define this then you get some debug help
+    // TODO: Remove soon
     validationHistory: [],
     ages: [...Array(100).keys()].slice(1),
     genders: ['Male', 'Female', 'Trans*']
   }),
-  computed: {
-    ...mapFormFieldValidationStates(form)
-  },
   methods: {
     onSubmission (event) {
       alert('submission allowed');
