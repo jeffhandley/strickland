@@ -46,7 +46,7 @@ export default function everyValidator(validators, validatorProps) {
                                     };
                                 })
                             );
-                        }
+                        };
 
                         // Break out of the loop to prevent subsequent validation from occurring
                         return false;
@@ -65,7 +65,7 @@ export default function everyValidator(validators, validatorProps) {
             ...props,
             ...result
         };
-    }
+    };
 }
 
 function applyNextResult(previousResult, nextResult) {

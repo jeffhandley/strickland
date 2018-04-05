@@ -165,7 +165,7 @@ function prepareResult(validators, props, existingResults, result) {
                     const validator = formValidator(validators, props);
                     return validator.updateFieldResults(preparedResult, resolvedValidationResults);
                 });
-        }
+        };
     }
 
     return {

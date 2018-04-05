@@ -291,7 +291,7 @@ describe('docs', () => {
                 });
 
                 it('additional fields', () => {
-                    validationResult = personValidator.validateFields(person, ['lastName'], validationResult)
+                    validationResult = personValidator.validateFields(person, ['lastName'], validationResult);
 
                     expect(validationResult).toMatchObject({
                         form: {

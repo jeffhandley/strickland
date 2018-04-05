@@ -41,6 +41,16 @@ describe('min', () => {
             const result = validate('A');
             expect(result.isValid).toBe(false);
         });
+
+        it('with a boolean false value, it is not valid', () => {
+            const result = validate(false);
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a boolean true value, it is not valid', () => {
+            const result = validate(true);
+            expect(result.isValid).toBe(false);
+        });
     });
 
     describe('with a numeric argument', () => {
