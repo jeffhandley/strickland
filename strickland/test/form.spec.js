@@ -374,7 +374,7 @@ describe('form', () => {
                         ...fieldErrors,
                         [fieldError.fieldName]: fieldError
                     };
-                })
+                });
 
                 expect(fieldErrors).toMatchObject({
                     firstName: {isValid: false},

@@ -30,5 +30,5 @@ export default function lengthValidator(validatorProps, maxLengthProp) {
             ...result,
             length
         };
-    }
+    };
 }

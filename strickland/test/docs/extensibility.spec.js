@@ -31,7 +31,7 @@ describe('docs', () => {
 
                     const {letter} = resolvedProps;
                     return (value === letter);
-                }
+                };
             }
 
             const validator = letterValidator((context) => ({letter: context.letter}));
@@ -62,7 +62,7 @@ describe('docs', () => {
                         isValid: (value === letter),
                         message: `Must match "${letter}"`
                     };
-                }
+                };
             }
 
             const validator = letterValidator({letter: 'B'});
@@ -95,7 +95,7 @@ describe('docs', () => {
                         ...resolvedProps,
                         isValid: (value === letter)
                     };
-                }
+                };
             }
 
             const termsAccepted = letterValidator({

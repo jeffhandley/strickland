@@ -100,7 +100,7 @@ class App extends Component {
         const hasExistingResult = validation.form.validationResults[fieldName];
         const existingResult = validation.form.validationResults[fieldName] || {};
 
-        const hasAsync = fieldResult.validateAsync || existingResult.validateAsync
+        const hasAsync = fieldResult.validateAsync || existingResult.validateAsync;
         const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
 
         // So long as there's no async validation, then if the new

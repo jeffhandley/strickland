@@ -10,7 +10,7 @@ export default function minLengthValidator(validatorProps) {
                 minLength: validatorProps
             };
         } else {
-            props = validatorProps
+            props = validatorProps;
         }
 
         const {minLength} = props;
@@ -33,5 +33,5 @@ export default function minLengthValidator(validatorProps) {
             isValid,
             length
         };
-    }
+    };
 }

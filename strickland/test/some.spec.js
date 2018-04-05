@@ -288,7 +288,7 @@ describe('some', () => {
             it('puts validator props on the resolved result', () => {
                 const validate = some([
                     () => Promise.resolve(true)
-                ], {validatorProp: 'Validator message'})
+                ], {validatorProp: 'Validator message'});
 
                 const result = validate('ABC');
                 return expect(result.validateAsync()).resolves.toMatchObject({validatorProp: 'Validator message'});

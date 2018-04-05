@@ -38,7 +38,7 @@ describe('docs', () => {
                     });
 
                     return result;
-                }
+                };
             }
 
             const mustExistWithLength5 = everyValidator([
