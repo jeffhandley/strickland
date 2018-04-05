@@ -54,7 +54,7 @@ export default function someValidator(validators, validatorProps) {
                                     };
                                 })
                             );
-                        }
+                        };
 
                         // Break out of the loop to prevent subsequent validation from occurring
                         return true;

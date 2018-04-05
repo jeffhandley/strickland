@@ -76,7 +76,7 @@ module.exports = {
         'valid-jsdoc': 2,
         'valid-typeof': 2,
         'no-underscore-dangle': 0,
-        'semi': 0,
+        'semi': [2, 'always'],
         'semi-spacing': 2,
         'dot-notation': 2,
         'space-infix-ops': 2,

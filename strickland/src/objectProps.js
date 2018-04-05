@@ -68,7 +68,7 @@ export default function objectPropsValidator(validators, validatorProps) {
                             ...resolvedResult
                         };
                     });
-                }
+                };
             }
         }
 

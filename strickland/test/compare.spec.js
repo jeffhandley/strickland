@@ -51,7 +51,7 @@ describe('compare', () => {
         });
 
         it('with a value of 0', () => {
-            const result = validate(0)
+            const result = validate(0);
 
             expect(result).toMatchObject({
                 isValid: false,

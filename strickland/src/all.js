@@ -41,7 +41,7 @@ export default function allValidator(validators, validatorProps) {
                         ...resolvedResult
                     };
                 });
-            }
+            };
         }
 
         return {
