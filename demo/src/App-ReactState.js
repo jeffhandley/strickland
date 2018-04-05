@@ -132,7 +132,7 @@ class App extends Component {
 
                 // Fire off async validation
                 if (fieldResult.validateAsync) {
-                    fieldResult.validateAsync(() => this.state.form[fieldName])
+                    fieldResult.validateAsync(() => this.parseValue(fieldContext, this.state.form[fieldName]))
                         .then(this.handleAsyncFieldValidation.bind(this, fieldName))
                         .catch(this.handleAsyncFieldValidationError.bind(this, fieldName));
                 }
