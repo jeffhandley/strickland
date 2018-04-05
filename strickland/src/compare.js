@@ -1,4 +1,4 @@
-import {isFalsyButNotZero} from './utils';
+import {isEmptyValue} from './utils';
 
 export default function compareValidator(validatorProps) {
     return function validateCompare(value, context) {
@@ -22,7 +22,7 @@ export default function compareValidator(validatorProps) {
 
         let isValid = true;
 
-        if (typeof compare !== 'boolean' && isFalsyButNotZero(value)) {
+        if (isEmptyValue(value)) {
             // Empty values are always valid except with the required validator
 
         } else if (value !== compare) {

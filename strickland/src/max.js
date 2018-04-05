@@ -1,4 +1,4 @@
-import {isFalsyButNotZero} from './utils';
+import {isEmptyValue} from './utils';
 
 export default function maxValidator(validatorProps) {
     return function validateMax(value, context) {
@@ -22,7 +22,7 @@ export default function maxValidator(validatorProps) {
 
         let isValid = true;
 
-        if (isFalsyButNotZero(value)) {
+        if (isEmptyValue(value)) {
             // Empty values are always valid except with the required validator
 
         } else if (typeof value !== 'number') {
