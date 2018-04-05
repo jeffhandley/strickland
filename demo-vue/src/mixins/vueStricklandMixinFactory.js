@@ -25,8 +25,6 @@ export default (validator) => ({
       this.logValidation(`strickland:validateAsync method triggered for field: '${fieldName}'.`);
       fieldResult.validateAsync(() => this.form[fieldName])
         .then((result) => {
-          // TODO: Do we need to check for change/race condition as per:
-          // https://strickland.io/docs/Async/RaceConditions.html
           this.validation = this.validator.updateFieldResults(this.validation, { [fieldName]: result });
         })
         .catch((result) => {

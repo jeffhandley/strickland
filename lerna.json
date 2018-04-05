@@ -2,6 +2,7 @@
   "lerna": "2.5.1",
   "packages": [
     "demo",
+    "demo-vue",
     "strickland"
   ],
   "version": "2.0.0-rc.2"
