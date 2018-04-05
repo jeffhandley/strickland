@@ -2,7 +2,7 @@
   <div class="App">
     <header class="App-header">
       <h1>
-        <img alt="logo" aria-label="Strickland demo" class="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png">
+        <img alt="logo" aria-label="Strickland demo - Vue" class="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png">
       </h1>
     </header>
     <nav>

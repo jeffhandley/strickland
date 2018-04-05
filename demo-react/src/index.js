@@ -11,7 +11,7 @@ ReactDOM.render(
         <Router>
             <div className="App">
                 <header className="App-header">
-                    <h1><img alt="logo" aria-label="Strickland demo" className="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png" /></h1>
+                    <h1><img alt="logo" aria-label="Strickland demo - React" className="App-logo" src="https://raw.githubusercontent.com/jeffhandley/strickland/master/logo/strickland-black.png" /></h1>
                 </header>
                 <nav>
                     <ul>

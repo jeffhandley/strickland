@@ -1,5 +1,5 @@
 import {form, every, required, minLength, compare} from 'strickland';
-import {isUsernameAvailable} from './isUsernameAvailable';
+import isUsernameAvailable from './isUsernameAvailable';
 
 const formDefinition = {
     firstName: required({message: 'Required'}),

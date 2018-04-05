@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import App from './App';
 import VueState from './components/VueState';
 import Vuex from './components/Vuex';
-import '../../demo/src/index.css';
+import '../../demo-react/src/index.css';
 
 Vue.config.productionTip = false;
 
