@@ -71,7 +71,7 @@ describe('docs', () => {
                             // Resolve to a boolean
                             resolve(true);
                         });
-                    }
+                    };
                 }
 
                 const result = validate(usernameIsAvailableDeferred, 'marty');

@@ -41,14 +41,14 @@ export default function allValidator(validators, validatorProps) {
                         ...resolvedResult
                     };
                 });
-            }
+            };
         }
 
         return {
             ...props,
             ...result
         };
-    }
+    };
 }
 
 function applyNextResult(previousResult, nextResult) {

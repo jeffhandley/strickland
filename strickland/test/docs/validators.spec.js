@@ -33,7 +33,7 @@ describe('docs', () => {
                     expect(validate(a, '')).toMatchObject({
                         required: true,
                         isValid: false
-                    })
+                    });
                 });
 
                 describe('the required param specified as a boolean', () => {
@@ -64,7 +64,7 @@ describe('docs', () => {
                         required: true,
                         message: '"Name" is required',
                         isValid: false
-                    })
+                    });
                 });
 
                 it('using a function to resolve the required prop along with validator props', () => {
@@ -79,7 +79,7 @@ describe('docs', () => {
                         required: true,
                         message: '"Name" is required',
                         isValid: false
-                    })
+                    });
                 });
             });
         });

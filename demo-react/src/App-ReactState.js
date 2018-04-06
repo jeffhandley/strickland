@@ -35,7 +35,7 @@ class App extends Component {
         this.onFieldBlur = {
             firstName: this.onFieldBlur.bind(this, 'firstName', {trim}),
             lastName: this.onFieldBlur.bind(this, 'lastName', {trim}),
-            username: this.onFieldBlur.bind(this, 'username', null),
+            username: this.onFieldBlur.bind(this, 'username', {trim}),
             password: this.onFieldBlur.bind(this, 'password', null),
             confirmPassword: this.onFieldBlur.bind(this, 'confirmPassword', null)
         };
@@ -94,7 +94,7 @@ class App extends Component {
         const hasExistingResult = validation.form.validationResults[fieldName];
         const existingResult = validation.form.validationResults[fieldName] || {};
 
-        const hasAsync = fieldResult.validateAsync || existingResult.validateAsync
+        const hasAsync = fieldResult.validateAsync || existingResult.validateAsync;
         const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
 
         if (hasAsync || valueChanged) {

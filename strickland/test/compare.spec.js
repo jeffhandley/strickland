@@ -51,12 +51,68 @@ describe('compare', () => {
         });
 
         it('with a value of 0', () => {
-            const result = validate(0)
+            const result = validate(0);
 
             expect(result).toMatchObject({
                 isValid: false,
                 compare: 3
             });
+        });
+    });
+
+    describe('validates boolean', () => {
+        const validateIs3 = compare(3);
+        const validateIsTrue = compare(true);
+        const validateIsFalse = compare(false);
+
+        it('with a boolean true value, compared to 3, it is invalid', () => {
+            const result = validateIs3(true);
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a boolean false value, compared to 3, it is invalid', () => {
+            const result = validateIs3(false);
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a boolean false value, compared to false, it is valid', () => {
+            const result = validateIsFalse(false);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with a boolean true value, compared to false, it is invalid', () => {
+            const result = validateIsFalse(true);
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a string "false" value, compared to false, it is invalid', () => {
+            const result = validateIsFalse('false');
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a string "true" value, compared to false, it is invalid', () => {
+            const result = validateIsFalse('true');
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a boolean false value, compared to true, it is invalid', () => {
+            const result = validateIsTrue(false);
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a boolean true value, compared to true, it is valid', () => {
+            const result = validateIsTrue(true);
+            expect(result.isValid).toBe(true);
+        });
+
+        it('with a string "false" value, compared to true, it is invalid', () => {
+            const result = validateIsTrue('false');
+            expect(result.isValid).toBe(false);
+        });
+
+        it('with a string "true" value, compared to true, it is invalid', () => {
+            const result = validateIsTrue('true');
+            expect(result.isValid).toBe(false);
         });
     });
 

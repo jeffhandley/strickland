@@ -34,5 +34,5 @@ export default function requiredValidator(validatorProps) {
             isValid,
             required
         };
-    }
+    };
 }

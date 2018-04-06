@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/jeffhandley/strickland/compare/v2.0.0...v2.0.1) (2018-04-05)
+
+
+### Bug Fixes
+
+* do not treat boolean values as empty values ([8840ee9](https://github.com/jeffhandley/strickland/commit/8840ee9))
+
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/jeffhandley/strickland/compare/v2.0.0-rc.2...v2.0.0) (2018-04-03)
 
