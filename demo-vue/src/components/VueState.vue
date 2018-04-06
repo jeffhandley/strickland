@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="form"
-         @input="vueStricklandOnInput"
-         @change="vueStricklandOnChange"
-         @focusout="vueStricklandOnFocusOut">
+    <form class="form"
+          @input="vueStricklandOnInput"
+          @change="vueStricklandOnChange"
+          @focusout="vueStricklandOnFocusOut"
+          @submit="vueStricklandOnSubmit">
       <div class="formfield">
         <input id="firstName" name="firstName" type="text" aria-placeholder="First name"
                :class="firstNameState.validationClassName" v-model.trim="form.firstName">
@@ -64,26 +65,25 @@
       </div>
       <div class="formactions">
         <div>
-          <button @click="vueStricklandOnSubmit">Submit</button>
+          <button type="submit">Submit</button>
         </div>
         <div>
           {{ isValid ? 'Can Submit' : 'Cannot Submit Yet' }}
         </div>
       </div>
-    </div>
+    </form>
     <pre id="current-state">{{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}</pre>
   </div>
 </template>
 
 <script>
 import signUpForm from '../forms/signUpForm';
-import mixinFactory from '../vueStrickland/mixinFactory';
+import formValidationMixinFactory from '../vue-strickland/formValidationMixinFactory';
 
 export default {
   name: 'VueState',
   mixins: [
-    // Hooks up everything you need
-    mixinFactory(signUpForm)
+    formValidationMixinFactory(signUpForm)
   ],
   data: () => ({
     // TODO: Remove soon

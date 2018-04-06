@@ -156,6 +156,7 @@ export default (formDefinition) => {
         }
       },
       vueStricklandOnSubmit (event) {
+        event.preventDefault();
         this.logValidation(`vueStrickland:onSubmit triggered called by: '${event.target}'.`);
 
         this.validation = validate(this.validator, this.form);
@@ -166,7 +167,7 @@ export default (formDefinition) => {
               this.validation = result;
               this.vueStricklandOnSubmitValidated(event);
             })
-            .catch(() => console.log('Error validating async'));
+            .catch(() => console.log('vueStrickland: onSubmit: async validation errored/aborted.'));
         } else {
           this.vueStricklandOnSubmitValidated(event);
         }
