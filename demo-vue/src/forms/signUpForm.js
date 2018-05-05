@@ -1,5 +1,5 @@
 import { form, min, minLength, required, compare, every } from 'strickland';
-import isUsernameAvailable from '../validators/isUsernameAvailable';
+import usernameValidator from '../validators/usernameValidator';
 
 // Define everything about your form in one place
 
@@ -35,10 +35,14 @@ const validationDefinition = {
       return true;
     },
     minLength({minLength: 4, message: 'Must have at least 4 characters'}),
-    isUsernameAvailable,
-    (username) => ({
-      isValid: true,
-      successMessage: `"${username}" is available`
+    usernameValidator(({isComplete, isValid, value}) => {
+      if (isComplete && isValid) {
+        return {message: `"${value} is available`, showValidMessage: true};
+      } else if (isComplete) {
+        return {message: `Sorry, "${value}" is not available`};
+      } else {
+        return {message: `Checking availability of "${value}"...`};
+      }
     })
   ],
   password: every(

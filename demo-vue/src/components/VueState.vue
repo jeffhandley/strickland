@@ -89,7 +89,7 @@ export default {
     // TODO: Remove soon
     validationHistory: [],
     ages: [...Array(100).keys()].slice(1),
-    genders: ['Male', 'Female', 'Trans*']
+    genders: ['Male', 'Female', 'Other']
   }),
   methods: {
     onSubmission (event) {

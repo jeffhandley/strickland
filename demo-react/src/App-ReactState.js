@@ -42,7 +42,6 @@ class App extends Component {
     }
 
     handleAsyncFieldValidation(fieldName, asyncFieldResult) {
-        console.log('async validation was fired');
         let {validation} = this.state;
 
         this.setState({
