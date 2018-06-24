@@ -78,12 +78,12 @@
 
 <script>
 import signUpForm from '../forms/signUpForm';
-import formValidationMixinFactory from '../vue-strickland/formValidationMixinFactory';
+import formMixinFactory from '../vue-strickland/formMixinFactory';
 
 export default {
   name: 'VueState',
   mixins: [
-    formValidationMixinFactory(signUpForm)
+    formMixinFactory(signUpForm)
   ],
   data: () => ({
     // TODO: Remove soon

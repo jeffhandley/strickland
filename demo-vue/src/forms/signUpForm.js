@@ -1,10 +1,10 @@
-import { form, min, minLength, required, compare, every } from 'strickland';
-import usernameValidator from '../validators/usernameValidator';
+import { min, minLength, required, compare, every } from 'strickland';
+import isUsernameAvailable from '../validators/isUsernameAvailable';
 
 // Define everything about your form in one place
 
-// Define your form fields (data model)
-const fieldsDefinitionFactory = () => ({
+// Define your form field state model
+const fieldStateFactory = () => ({
   firstName: null,
   lastName: null,
   age: null,
@@ -15,8 +15,8 @@ const fieldsDefinitionFactory = () => ({
   acceptsTerms: false
 });
 
-// Define your validation requirements
-const validationDefinition = {
+// Define your validation rules
+const validationRulesDefinitionFactory = () => ({
   firstName: required({message: 'Required'}),
   lastName: [
     required({message: 'Required'}),
@@ -59,20 +59,20 @@ const validationDefinition = {
   ],
   gender: required({ message: 'Required' }),
   acceptsTerms: required({ message: 'You must accept the terms and conditions.' })
-};
+});
 
 // Define your validation dependencies
-const validationDependenciesDefinition = {
+const validationDependenciesDefinitionFactory = () => ({
   password: ['confirmPassword']
-};
+});
 
-// Export as object with:
-//  - a factory to build a new data model
-//  - the Strickland validator
+// Export as standard object of this shape
 const signUpForm = {
-  formFactory: fieldsDefinitionFactory,
-  validator: form(validationDefinition),
-  validationDependencies: validationDependenciesDefinition
+  name: 'signUpForm',
+  useVuex: false,
+  fieldStateFactory,
+  validationRulesDefinitionFactory,
+  validationDependenciesDefinitionFactory
 };
 
 export default signUpForm;

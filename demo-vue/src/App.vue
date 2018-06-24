@@ -22,6 +22,11 @@ export default {
   name: 'App',
   components: {
     'vue-state': VueState
+  },
+  data () {
+    return {
+
+    };
   }
 };
 </script>

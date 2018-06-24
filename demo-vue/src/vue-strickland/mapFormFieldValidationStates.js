@@ -3,17 +3,18 @@ import classnames from 'classnames';
 export default function mapFormFieldValidationStates (form) {
   var fieldNames = Object.keys(form);
   return fieldNames.reduce((obj, fieldName) => {
-    const computedPropName = fieldName + 'State';
-    const computedProp = {
+    obj[fieldName + 'State'] = {
       get () {
         return {
+          // value: this[fieldName],
           validationClassName: getValidationClassName(this.form, this.validation, fieldName),
           validationMessage: getValidationMessage(this.validation, fieldName)
         };
       },
-      set () { }
+      set (value) {
+        // this.form[fieldName].value = value;
+      }
     };
-    obj[computedPropName] = computedProp;
     return obj;
   }, {});
 }
