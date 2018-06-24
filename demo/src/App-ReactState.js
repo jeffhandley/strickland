@@ -40,12 +40,20 @@ class App extends Component {
         };
     }
 
+    parseValue(fieldContext, value) {
+        return fieldContext.trim ? value.trim().replace(/\s+/g, ' ') : value;
+    }
+
     handleAsyncFieldValidation(fieldName, asyncFieldResult) {
         let {validation} = this.state;
 
         this.setState({
             validation: formValidator.updateFieldResults(validation, {[fieldName]: asyncFieldResult})
         });
+    }
+
+    handleAsyncFieldValidationError(fieldName, asyncFieldErrorResult) {
+        console.debug('async validation errored or aborted', asyncFieldErrorResult);
     }
 
     onFieldChange(fieldName, fieldContext, {target}) {
@@ -60,7 +68,7 @@ class App extends Component {
         };
 
         // Trim the field value if needed
-        const parsedValue = fieldContext.trim ? value.trim().replace(/\s+/g, ' ') : value;
+        const parsedValue = this.parseValue(fieldContext, value);
 
         // Capture the parsed form for validation
         // But we won't persist this copy of the form
@@ -95,14 +103,14 @@ class App extends Component {
         const hasAsync = fieldResult.validateAsync || existingResult.validateAsync;
         const valueChanged = (hasExistingResult && parsedValue !== existingResult.value);
 
-        if (hasAsync || valueChanged) {
-            validation = formValidator.updateFieldResults(validation, {[fieldName]: null});
-        }
-
         // So long as there's no async validation, then if the new
         // result is valid or the previous result was already invalid, set the result
         if (!hasAsync && (fieldResult.isValid || (hasExistingResult && !existingResult.isValid))) {
             validation = result;
+        } else if (valueChanged) {
+            // If we are not going to show the result, but the
+            // value has changed, then we need to clear the result
+            validation = formValidator.updateFieldResults(validation, {[fieldName]: null});
         }
 
         this.setState({form: formValues, validation});
@@ -112,7 +120,8 @@ class App extends Component {
 
             // If after our idle timeout, the field hasn't yet changed and the field
             // still hasn't been validated
-            if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
+            if (fieldResult.value === this.parseValue(fieldContext, formAfterTimeout[fieldName])
+                && !validationAfterTimeout.form.validationResults[fieldName]) {
                 // Update the field's validation state to indicate that
                 // async validation is underway
                 this.setState({
@@ -123,9 +132,9 @@ class App extends Component {
 
                 // Fire off async validation
                 if (fieldResult.validateAsync) {
-                    fieldResult.validateAsync(() => this.state.form[fieldName])
+                    fieldResult.validateAsync(() => this.parseValue(fieldContext, this.state.form[fieldName]))
                         .then(this.handleAsyncFieldValidation.bind(this, fieldName))
-                        .catch(() => {});
+                        .catch(this.handleAsyncFieldValidationError.bind(this, fieldName));
                 }
             }
         }, 1000);
@@ -179,7 +188,7 @@ class App extends Component {
         if (fieldResult.validateAsync) {
             fieldResult.validateAsync(() => this.state.form[fieldName])
                 .then(this.handleAsyncFieldValidation.bind(this, fieldName))
-                .catch(() => {});
+                .catch(this.handleAsyncFieldValidationError.bind(this, fieldName));
         }
     }
 
