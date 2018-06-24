@@ -33,8 +33,11 @@ function getValidationClassName (form, validation, fieldName) {
 
 function getValidationMessage (validation, fieldName) {
   const fieldValidation = validation && validation.form && validation.form.validationResults[fieldName];
+  const {isValid, message, validMessage} = fieldValidation || {};
 
-  if (fieldValidation && (fieldValidation.validateAsync || !fieldValidation.isValid || fieldValidation.showValidMessage)) {
-    return fieldValidation.message;
+  if (isValid) {
+    return validMessage;
   }
+
+  return message;
 }

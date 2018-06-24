@@ -1,27 +1,24 @@
 export default function usernameValidator(validatorProps) {
     return function isUsernameAvailable(username, context) {
-        let resolvedSyncProps = validatorProps;
+        let resolvedProps = validatorProps;
 
-        if (typeof resolvedSyncProps === 'function') {
-            resolvedSyncProps = resolvedSyncProps({...context, isComplete: false});
+        if (typeof resolvedProps === 'function') {
+            resolvedProps = resolvedProps({...context, isComplete: false});
         }
 
         return {
             isValid: false,
-            ...resolvedSyncProps,
+            ...resolvedProps,
+            message: resolvedProps.pendingMessage,
             validateAsync: () => new Promise((resolve) => {
                 setTimeout(() => {
+                    const {validMessage, invalidMessage} = resolvedProps;
                     const isValid = (username !== 'marty');
-
-                    let resolvedAsyncProps = validatorProps;
-
-                    if (typeof resolvedAsyncProps === 'function') {
-                        resolvedAsyncProps = resolvedAsyncProps({...context, isValid, isComplete: true});
-                    }
 
                     resolve({
                         isValid,
-                        ...resolvedAsyncProps
+                        ...resolvedProps,
+                        message: isValid ? validMessage : invalidMessage
                     });
                 }, 2000);
             })
