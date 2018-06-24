@@ -37,7 +37,6 @@ export default form({
         },
         minLength({minLength: 4, message: 'Must have at least 4 characters'}),
         usernameIsAvailable,
-        // TODO: Is this actually doing anything?
         (username) => ({
             isValid: true,
             successMessage: `"${username}" is available`
