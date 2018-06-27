@@ -6,7 +6,7 @@ import * as utils from './utils';
 
 const formMixinBase = {
   computed: {
-    isValid: () => this.validation && this.validation.isValid
+    vueStricklandIsValid: () => this.validation && this.validation.isValid
   },
   methods: {
     vueStricklandValidateAsync (fieldResult, fieldName) {

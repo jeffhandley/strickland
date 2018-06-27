@@ -18,23 +18,23 @@
                :data-validation-message="lastNameState.validationMessage">Last name</label>
       </div>
       <div class="formfield-select" :class="ageState.validationClassName">
-        <label for="age">Age</label><br>
+        <label for="age">Age</label>
         <select id="age" name="age" type="text" v-model.number="form.age">
           <option :value="null" selected>-- Please select --</option>
           <option :value="age" :key="age" v-for="age in ages">{{ age }}</option>
         </select>
         <br>
-        <label>{{ ageState.validationMessage }}</label>
+        <label class="formfield-error">{{ ageState.validationMessage }}</label>
       </div>
       <div class="formfield-radio" :class="genderState.validationClassName">
-        <label>Gender</label><br>
+        <label>Gender</label>
         <span v-for="gender in genders" :key="gender">
           <input :id="'gender-' + gender" name="gender" type="radio"
                  :value="gender" v-model="form.gender">
           <label :for="'gender-' + gender">{{ gender }}</label>
         </span>
         <br>
-        <label>{{ genderState.validationMessage }}</label>
+        <label class="formfield-error">{{ genderState.validationMessage }}</label>
       </div>
       <div class="formfield">
         <input id="username" name="username" type="text" aria-placeholder="Username"
@@ -61,18 +61,17 @@
             Accept <a href="#">terms and conditions</a>
           </label>
         </div>
-        <label>{{ acceptsTermsState.validationMessage }}</label>
+        <label class="formfield-error">{{ acceptsTermsState.validationMessage }}</label>
       </div>
       <div class="formactions">
         <div>
           <button type="submit">Submit</button>
         </div>
-        <div>
-          {{ isValid ? 'Can Submit' : 'Cannot Submit Yet' }}
-        </div>
       </div>
     </form>
-    <pre id="current-state">{{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}</pre>
+    <pre id="current-state">
+      {{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}
+    </pre>
   </div>
 </template>
 
@@ -93,24 +92,50 @@ export default {
   }),
   methods: {
     onSubmission (event) {
-      alert('submission allowed');
+      alert('Submission allowed');
     },
     onSubmissionRejection (event) {
-      alert('submission denied');
+      alert('Submission denied');
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
-  .formfield-checkbox, .formfield-select, .formfield-radio {
-    margin: 1em 0;
+<style lang="scss">
+  .formfield input, .formfield label {
+    box-sizing: border-box;
+    margin: 0;
+  }
 
-    &.validation-invalid {
-      > label {
-        color: red;
-      }
+  .formfield input + label {
+    padding: 25px 8px 8px 8px;
+  }
+
+  .formfield input:focus + label,
+  .formfield input.validation-value + label {
+    margin: -20px 0 0 0;
+    padding: 4px;
+  }
+
+  .formfield-checkbox, .formfield-select, .formfield-radio {
+    margin: 1.25rem 0 0 0;
+  }
+
+  .formfield-error {
+    display: block;
+    color: red;
+    margin-top: .25rem;
+  }
+
+  .formfield-radio, .formfield-select {
+    > label {
+      display: block;
+      margin-bottom: 5px;
     }
+  }
+
+  .formfield-select select {
+    width: 300px;
+    padding: 15px 5px;
   }
 </style>
