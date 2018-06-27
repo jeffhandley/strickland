@@ -69,9 +69,8 @@
         </div>
       </div>
     </form>
-    <pre id="current-state">
-      {{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}
-    </pre>
+    <pre>{{ vueStricklandIsValid ? 'Can Submit' : 'Cannot Submit Yet' }}</pre>
+    <pre id="current-state">{{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}</pre>
   </div>
 </template>
 
@@ -101,41 +100,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
-  .formfield input, .formfield label {
-    box-sizing: border-box;
-    margin: 0;
-  }
+<style lang="scss" scoped>
 
-  .formfield input + label {
-    padding: 25px 8px 8px 8px;
-  }
-
-  .formfield input:focus + label,
-  .formfield input.validation-value + label {
-    margin: -20px 0 0 0;
-    padding: 4px;
-  }
-
-  .formfield-checkbox, .formfield-select, .formfield-radio {
-    margin: 1.25rem 0 0 0;
-  }
-
-  .formfield-error {
-    display: block;
-    color: red;
-    margin-top: .25rem;
-  }
-
-  .formfield-radio, .formfield-select {
-    > label {
-      display: block;
-      margin-bottom: 5px;
-    }
-  }
-
-  .formfield-select select {
-    width: 300px;
-    padding: 15px 5px;
-  }
 </style>

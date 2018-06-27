@@ -23,8 +23,7 @@
           <option :value="null" selected>-- Please select --</option>
           <option :value="age" :key="age" v-for="age in ages">{{ age }}</option>
         </select>
-        <br>
-        <label>{{ ageState.validationMessage }}</label>
+        <label class="formfield-error">{{ ageState.validationMessage }}</label>
       </div>
       <div class="formfield-radio" :class="genderState.validationClassName">
         <label>Gender</label><br>
@@ -33,8 +32,7 @@
                  :value="gender" v-model="form.gender">
           <label :for="'gender-' + gender">{{ gender }}</label>
         </span>
-        <br>
-        <label>{{ genderState.validationMessage }}</label>
+        <label class="formfield-error">{{ genderState.validationMessage }}</label>
       </div>
       <div class="formfield">
         <input id="username" name="username" type="text" aria-placeholder="Username"
@@ -61,17 +59,15 @@
             Accept <a href="#">terms and conditions</a>
           </label>
         </div>
-        <label>{{ acceptsTermsState.validationMessage }}</label>
+        <label class="formfield-error">{{ acceptsTermsState.validationMessage }}</label>
       </div>
       <div class="formactions">
         <div>
           <button type="submit">Submit</button>
         </div>
-        <div>
-          {{ isValid ? 'Can Submit' : 'Cannot Submit Yet' }}
-        </div>
       </div>
     </form>
+    <p>{{ vueStricklandIsValid ? 'Can Submit' : 'Cannot Submit Yet' }}</p>
     <pre id="current-state">{{ JSON.stringify({ form, validation, validationHistory }, null, 2) }}</pre>
   </div>
 </template>
@@ -105,7 +101,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

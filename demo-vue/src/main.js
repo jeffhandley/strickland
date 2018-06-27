@@ -3,6 +3,7 @@ import store from './store';
 import router from './router';
 import App from './App';
 import '../../demo-react/src/index.css';
+import './assets/app.scss';
 
 Vue.config.productionTip = false;
 
