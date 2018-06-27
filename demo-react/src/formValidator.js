@@ -1,5 +1,5 @@
 import {form, every, required, minLength, compare} from 'strickland';
-import isUsernameAvailable from './isUsernameAvailable';
+import usernameValidator from './usernameValidator';
 
 const formDefinition = {
     firstName: required({message: 'Required'}),
@@ -20,11 +20,11 @@ const formDefinition = {
             return true;
         },
         minLength({minLength: 4, message: 'Must have at least 4 characters'}),
-        isUsernameAvailable,
-        (username) => ({
-            isValid: true,
-            successMessage: `"${username}" is available`
-        })
+        usernameValidator(({value}) => ({
+            validMessage: `"${value} is available`,
+            invalidMessage: `Sorry, "${value}" is not available`,
+            pendingMessage: `Checking availability of "${value}"...`
+        }))
     ],
     password: every(
         [required(), minLength(8)],

@@ -1,5 +1,5 @@
 import { min, minLength, required, compare, every } from 'strickland';
-import isUsernameAvailable from '../validators/isUsernameAvailable';
+import usernameValidator from '../validators/usernameValidator';
 
 // Define everything about your form in one place
 
@@ -35,11 +35,11 @@ const validationRulesDefinitionFactory = () => ({
       return true;
     },
     minLength({minLength: 4, message: 'Must have at least 4 characters'}),
-    isUsernameAvailable,
-    (username) => ({
-      isValid: true,
-      successMessage: `"${username}" is available`
-    })
+    usernameValidator(({value}) => ({
+      validMessage: `"${value} is available`,
+      invalidMessage: `Sorry, "${value}" is not available`,
+      pendingMessage: `Checking availability of "${value}"...`
+    }))
   ],
   password: every(
     [required(), minLength(8)],

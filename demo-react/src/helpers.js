@@ -13,10 +13,11 @@ export function getValidationClassName(formValues, validation, fieldName) {
 
 export function getValidationMessage(validation, fieldName) {
     const fieldValidation = validation && validation.form && validation.form.validationResults[fieldName];
+    const {isValid, message, validMessage} = fieldValidation || {};
 
-    if (fieldValidation && !fieldValidation.isValid) {
-        return fieldValidation.message;
-    } else if (fieldValidation) {
-        return fieldValidation.successMessage;
+    if (isValid) {
+        return validMessage;
     }
+
+    return message;
 }
