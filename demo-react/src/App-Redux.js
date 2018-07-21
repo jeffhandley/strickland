@@ -161,7 +161,7 @@ function onFieldChanged(fieldName, value) {
 
             // If after our idle timeout, the field hasn't yet changed and the field
             // still hasn't been validated
-            if (fieldResult.value === formAfterTimeout[fieldName] && !validationAfterTimeout.form.validationResults[fieldName]) {
+            if (fieldResult.value === parseValue(fieldName, formAfterTimeout[fieldName]) && !validationAfterTimeout.form.validationResults[fieldName]) {
                 // Update the field's validation state to indicate that
                 // async validation is underway
                 dispatch(onFieldResultUpdated(fieldName, fieldResult));
