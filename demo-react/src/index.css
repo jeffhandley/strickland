@@ -65,6 +65,7 @@ body {
   text-align: left;
   color: silver;
   transition: 0.2s;
+  cursor: text;
 }
 
 .formfield input:focus + label, .formfield input.validation-value + label {
@@ -104,6 +105,14 @@ nav {
     text-align: left;
 }
 
+nav ul {
+  list-style: none;
+}
+
+nav li {
+  margin-bottom: 10px;
+}
+
 nav a {
     color: #FB7E00;
 }
@@ -111,3 +120,4 @@ nav a {
 nav a.active {
     color: #1F3244;
 }
+

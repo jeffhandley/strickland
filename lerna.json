@@ -1,7 +1,8 @@
 {
   "lerna": "2.5.1",
   "packages": [
-    "demo",
+    "demo-react",
+    "demo-vue",
     "strickland"
   ],
   "version": "2.0.1"

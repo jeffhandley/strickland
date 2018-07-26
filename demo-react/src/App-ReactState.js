@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import formValidator, {getValidationMessage, getValidationClassName} from './formValidator';
+import formValidator from './formValidator';
+import { getValidationMessage, getValidationClassName } from './helpers';
 import validate from 'strickland';
 
 class App extends Component {
