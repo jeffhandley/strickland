@@ -19,8 +19,8 @@
     "lint": "eslint src/**/*.js"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.6",
-    "eslint": "^4.19.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
     "eslint-plugin-react": "^7.11.1"
   }
 }
