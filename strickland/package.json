@@ -1,6 +1,6 @@
 {
   "name": "strickland",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Strickland is a JavaScript validation framework with a focus on extensibility and composition",
   "main": "./lib/strickland.js",
   "files": [
@@ -44,7 +44,7 @@
     "deep-freeze": "0.0.1",
     "eslint": "^5.10.0",
     "eslint-plugin-react": "^7.11.1",
-    "lodash": "^4.17.5",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "lodash": "^4.17.5"
   }
 }
