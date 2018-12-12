@@ -3,15 +3,15 @@
   "version": "2.0.1",
   "private": true,
   "dependencies": {
-    "classnames": "^2.2.5",
-    "prop-types": "^15.6.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-redux": "^5.0.7",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "^1.1.4",
+    "classnames": "^2.2.6",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-redux": "^5.1.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^1.1.5",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
+    "redux-thunk": "^2.3.0",
     "strickland": "^2.0.1"
   },
   "scripts": {
@@ -19,8 +19,8 @@
     "lint": "eslint src/**/*.js"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.3",
-    "eslint": "^4.13.1",
-    "eslint-plugin-react": "^7.5.1"
+    "babel-eslint": "^8.2.6",
+    "eslint": "^4.19.1",
+    "eslint-plugin-react": "^7.11.1"
   }
 }
