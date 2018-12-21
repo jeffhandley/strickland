@@ -14,7 +14,23 @@ Strickland focuses not on being a bloated collection of validators, but instead 
 
 ## Core Concepts
 
-There are three core concepts you need to know with Strickland:
+Validation implementations require understanding a few core concepts, regardless of what libraries are used.
+
+1. **Validation Rules** are the logic of how data is validated
+2. **Validation Triggers** are the events that trigger validation to occur at the field or form level
+3. **Validation Results** are presented to the user as the output of your validation rules
+
+The most robust, flexible, and maintainable validation implementations keep these three concerns separated. Validation rules should not be coupled to the validation triggers or how the results will be presented. Validation triggers should not be coupled in any way to the validation rules or how the results will be presented. And the presentation of validation results should not be coupled to how validation was triggered or what the rules were.
+
+With this separation of concerns in mind, Strickland strives to:
+
+1. **Provide a flexible framework for authoring validation rules** so that many different types of validation rules can be authored while remaining decoupled from validation triggers and how validation results are displayed
+2. **Be completely uninvolved in validation triggers** so that consuming applications can be built with any UI frameworks and without imposing any opinions on user interactions
+3. **Provide a consistent structure for exposing validation results** so that they can be consumed by applications consistently regardless of how many or what types of validation rules are present
+
+## API Concepts
+
+To address the core concepts above, there are three API concepts you need to know with Strickland:
 
 1. **Validators** are implementations of your validation rules
 2. **Validation** is the act of executing a validator against a value
