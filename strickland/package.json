@@ -45,6 +45,6 @@
     "eslint": "^5.10.0",
     "eslint-plugin-react": "^7.11.1",
     "jest": "^23.6.0",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.15"
   }
 }
