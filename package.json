@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "lerna": "^3.6.0",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.15"
   }
 }
