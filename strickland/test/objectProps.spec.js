@@ -110,6 +110,14 @@ describe('objectProps', () => {
         it('returns empty objectProps', () => {
             expect(result.objectProps).toEqual({});
         });
+
+        it('returns empty validationResults', () => {
+            expect(result.validationResults).toEqual([]);
+        });
+
+        it('returns empty validationErrors', () => {
+            expect(result.validationErrors).toEqual([]);
+        });
     });
 
     describe('with nested rules objects', () => {
@@ -121,10 +129,10 @@ describe('objectProps', () => {
                 state: [required(), length(2, 2)]
             },
             workAddress: {
-                street: {
+                street: [required(), {
                     number: required(),
                     name: required()
-                },
+                }],
                 city: required(),
                 state: [required(), length(2, 2)]
             }
@@ -200,14 +208,52 @@ describe('objectProps', () => {
             expect(result).toMatchObject({
                 isValid: true,
                 objectProps: {
-                    homeAddress: {isValid: true},
+                    name: {isValid: true},
+                    homeAddress: {
+                        isValid: true,
+                        objectProps: {
+                            street: {isValid: true},
+                            city: {isValid: true},
+                            state: {isValid: true}
+                        }
+                    },
                     workAddress: {
                         isValid: true,
                         objectProps: {
-                            street: {isValid: true}
+                            street: {
+                                isValid: true,
+                                objectProps: {
+                                    number: {isValid: true},
+                                    name: {isValid: true}
+                                }
+                            },
+                            city: {isValid: true},
+                            state: {isValid: true}
                         }
                     }
-                }
+                },
+                validationResults: [
+                    {fieldName: 'name', isValid: true},
+                    {
+                        fieldName: 'homeAddress',
+                        isValid: true,
+                        validationResults: [
+                            {fieldName: 'street', isValid: true, required: true},
+                            {fieldName: 'city', isValid: true, required: true},
+                            {fieldName: 'state', isValid: true, required: true, minLength: 2, maxLength: 2}
+                        ]
+                    },
+                    {
+                        fieldName: 'workAddress',
+                        isValid: true,
+                        validationResults: [
+                            {fieldName: 'street', isValid: true, required: true},
+                            {fieldName: 'city', isValid: true, required: true},
+                            {fieldName: 'state', isValid: true, required: true, minLength: 2, maxLength: 2}
+                        ]
+                    }
+                ],
+                validationErrors: []
             });
         });
 
@@ -248,7 +294,50 @@ describe('objectProps', () => {
                             }
                         }
                     }
-                }
+                },
+                validationResults: [
+                    {fieldName: 'name', isValid: false, required: true},
+                    {
+                        fieldName: 'homeAddress',
+                        isValid: false,
+                        validationResults: [
+                            {fieldName: 'street', isValid: true, required: true},
+                            {fieldName: 'city', isValid: true, required: true},
+                            {fieldName: 'state', isValid: false, required: true}
+                        ]
+                    },
+                    {
+                        fieldName: 'workAddress',
+                        isValid: false,
+                        validationResults: [
+                            {fieldName: 'street', isValid: false, required: true},
+                            {fieldName: 'city', isValid: false, required: true},
+                            {fieldName: 'state', isValid: true, required: true}
+                        ]
+                    }
+                ],
+                validationErrors: [
+                    {fieldName: 'name', required: true},
+                    {
+                        fieldName: 'homeAddress',
+                        validationErrors: [
+                            {fieldName: 'state', required: true}
+                        ]
+                    },
+                    {
+                        fieldName: 'workAddress',
+                        validationErrors: [
+                            {
+                                fieldName: 'street',
+                                validationErrors: [
+                                    {fieldName: 'number'},
+                                    {fieldName: 'name'}
+                                ]
+                            },
+                            {fieldName: 'city'}
+                        ]
+                    }
+                ],
             });
         });
     });

@@ -2,7 +2,8 @@ import validate from './validate';
 
 const initialResult = {
     isValid: true,
-    objectProps: {}
+    objectProps: {},
+    validationResults: []
 };
 
 export default function objectPropsValidator(validators, validatorProps) {
@@ -16,46 +17,43 @@ export default function objectPropsValidator(validators, validatorProps) {
             validatorProps;
 
         if (!validators || !Object.keys(validators).length) {
-            return {
-                ...props,
-                ...initialResult
-            };
+            return prepareResult(props, initialResult);
         }
 
         let hasAsyncResults = false;
         let result = initialResult;
 
         if (value && validators && typeof validators === 'object') {
-            result = Object.keys(validators).map((propName) => {
+            result = Object.keys(validators).map((fieldName) => {
                 const childContext = {
                     ...context,
-                    ...((context && context.objectProps && context.objectProps[propName]) || {})
+                    ...((context && context.objectProps && context.objectProps[fieldName]) || {})
                 };
 
-                const validatorResult = validate(validators[propName], value[propName], childContext);
+                const validatorResult = validate(validators[fieldName], value[fieldName], childContext);
                 hasAsyncResults = hasAsyncResults || validatorResult.validateAsync;
 
                 return {
                     isValid: validatorResult.isValid,
                     objectProps: {
-                        [propName]: validatorResult
+                        [fieldName]: validatorResult
                     }
                 };
             }).reduce(applyNextResult, initialResult);
 
-            const propNames = Object.keys(result.objectProps);
+            const fieldNames = Object.keys(result.objectProps);
 
             if (hasAsyncResults) {
                 result.validateAsync = function resolveAsync() {
-                    const promises = propNames.map(
-                        (propName) => Promise.resolve(
-                            result.objectProps[propName].validateAsync ?
-                                result.objectProps[propName].validateAsync() :
-                                result.objectProps[propName]
+                    const promises = fieldNames.map(
+                        (fieldName) => Promise.resolve(
+                            result.objectProps[fieldName].validateAsync ?
+                                result.objectProps[fieldName].validateAsync() :
+                                result.objectProps[fieldName]
                         ).then((eachResult) => ({
                             isValid: eachResult.isValid,
                             objectProps: {
-                                [propName]: eachResult
+                                [fieldName]: eachResult
                             }
                         }))
                     );
@@ -63,19 +61,32 @@ export default function objectPropsValidator(validators, validatorProps) {
                     return Promise.all(promises).then((results) => {
                         const resolvedResult = results.reduce(applyNextResult, initialResult);
 
-                        return {
-                            ...props,
-                            ...resolvedResult
-                        };
+                        return prepareResult(props, resolvedResult);
                     });
                 };
             }
         }
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(props, result);
+    };
+}
+
+function prepareResult(props, result) {
+    const validationResults = Object.keys(result.objectProps)
+        .map((fieldName) => {
+            const {all, every, objectProps, ...aggregatedResultProps} = result.objectProps[fieldName];
+
+            return {
+                fieldName,
+                ...aggregatedResultProps
+            };
+        });
+
+    return {
+        ...props,
+        ...result,
+        validationResults,
+        validationErrors: validationResults.filter(({isValid}) => !isValid)
     };
 }
 

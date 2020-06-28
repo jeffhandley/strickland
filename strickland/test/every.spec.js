@@ -40,11 +40,36 @@ describe('every', () => {
             expect(result.every).toBeInstanceOf(Array);
         });
 
-        it('returning results for all valid validators and the first invalid validator', () => {
+        it('returning all evaluated results in the every array', () => {
             expect(result).toMatchObject({
                 every: [
                     {isValid: true, message: 'Required'},
-                    {isValid: false, minLength: 2}
+                    {isValid: false, minLength: 2, length: 1}
+                ]
+            });
+        });
+
+        it('returning a validationResults array on the result', () => {
+            expect(result.validationResults).toBeInstanceOf(Array);
+        });
+
+        it('returning all evaluated results in the validationResults array', () => {
+            expect(result).toMatchObject({
+                validationResults: [
+                    {isValid: true, message: 'Required'},
+                    {isValid: false, minLength: 2, length: 1}
+                ]
+            });
+        });
+
+        it('returning a validationErrors array on the result', () => {
+            expect(result.validationErrors).toBeInstanceOf(Array);
+        });
+
+        it('returning the invalid result in the validationErrors array', () => {
+            expect(result).toMatchObject({
+                validationErrors: [
+                    {isValid: false, minLength: 2, length: 1}
                 ]
             });
         });
@@ -59,9 +84,15 @@ describe('every', () => {
                 isValid: true,
                 every: [
                     {isValid: true, message: 'Required'},
-                    {isValid: true, minLength: 2},
-                    {isValid: true, maxLength: 4}
-                ]
+                    {isValid: true, minLength: 2, length: 3},
+                    {isValid: true, maxLength: 4, length: 3}
+                ],
+                validationResults: [
+                    {isValid: true, message: 'Required'},
+                    {isValid: true, minLength: 2, length: 3},
+                    {isValid: true, maxLength: 4, length: 3}
+                ],
+                validationErrors: []
             });
         });
 

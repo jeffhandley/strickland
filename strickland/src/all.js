@@ -2,7 +2,8 @@ import validate from './validate';
 
 const initialResult = {
     isValid: true,
-    all: []
+    all: [],
+    validationResults: []
 };
 
 export default function allValidator(validators, validatorProps) {
@@ -36,22 +37,26 @@ export default function allValidator(validators, validatorProps) {
                 return Promise.all(promises).then((results) => {
                     const resolvedResult = results.reduce(applyNextResult, initialResult);
 
-                    return {
-                        ...props,
-                        ...resolvedResult
-                    };
+                    return prepareResult(props, resolvedResult);
                 });
             };
         }
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(props, result);
+    };
+}
+
+function prepareResult(props, result) {
+    return {
+        ...props,
+        ...result,
+        validationErrors: result.validationResults.filter((result) => !result.isValid)
     };
 }
 
 function applyNextResult(previousResult, nextResult) {
+    const {all, every, objectProps, ...aggregatedResultProps} = nextResult;
+
     return {
         ...previousResult,
         ...nextResult,
@@ -59,6 +64,12 @@ function applyNextResult(previousResult, nextResult) {
         all: [
             ...previousResult.all,
             nextResult
+        ],
+        validationResults: [
+            ...previousResult.validationResults,
+            ...(Array.isArray(nextResult.validationResults) ?
+                    nextResult.validationResults :
+                    [aggregatedResultProps])
         ]
     };
 }

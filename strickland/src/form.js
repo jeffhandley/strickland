@@ -112,13 +112,14 @@ function prepareResult(validators, props, existingResults, result) {
     const hasAsyncResults = resultFields
         .some((fieldName) => validationResults[fieldName].validateAsync);
 
-    const validationErrors = Object.keys(validationResults)
-        .filter((fieldName) => !validationResults[fieldName].isValid)
-        .filter((fieldName) => !validationResults[fieldName].validateAsync)
+    const validationResultsArray = Object.keys(validationResults)
         .map((fieldName) => ({
             fieldName,
             ...validationResults[fieldName]
         }));
+
+    const validationErrors = validationResultsArray
+        .filter(({isValid, validateAsync}) => !isValid && !validateAsync);
 
     const isComplete = !hasAsyncResults &&
         arraysEqual(Object.keys(validators).sort(), Object.keys(validationResults).sort());
@@ -135,7 +136,9 @@ function prepareResult(validators, props, existingResults, result) {
             isComplete,
             validationResults,
             validationErrors
-        }
+        },
+        validationResults: validationResultsArray,
+        validationErrors
     };
 
     if (hasAsyncResults) {

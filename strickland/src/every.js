@@ -2,7 +2,8 @@ import validate from './validate';
 
 const initialResult = {
     isValid: true,
-    every: []
+    every: [],
+    validationResults: []
 };
 
 export default function everyValidator(validators, validatorProps) {
@@ -40,10 +41,7 @@ export default function everyValidator(validators, validatorProps) {
                                         }
                                     }
 
-                                    return {
-                                        ...props,
-                                        ...finalResult
-                                    };
+                                    return prepareResult(props, finalResult);
                                 })
                             );
                         };
@@ -61,14 +59,21 @@ export default function everyValidator(validators, validatorProps) {
 
         const result = executeValidators(initialResult, validators);
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(props, result);
+    };
+}
+
+function prepareResult(props, result) {
+    return {
+        ...props,
+        ...result,
+        validationErrors: result.validationResults.filter((result) => !result.isValid)
     };
 }
 
 function applyNextResult(previousResult, nextResult) {
+    const {all, every, objectProps, ...aggregatedResultProps} = nextResult;
+
     return {
         ...previousResult,
         ...nextResult,
@@ -76,6 +81,12 @@ function applyNextResult(previousResult, nextResult) {
         every: [
             ...previousResult.every,
             nextResult
+        ],
+        validationResults: [
+            ...previousResult.validationResults,
+            ...(Array.isArray(nextResult.validationResults) ?
+                    nextResult.validationResults :
+                    [aggregatedResultProps])
         ]
     };
 }

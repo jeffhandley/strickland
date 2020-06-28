@@ -1024,7 +1024,14 @@ describe('form', () => {
                         isComplete: true
                     },
                     value,
-                    isValid: false
+                    isValid: false,
+                    validationResults: [
+                        {fieldName: 'firstName', isValid: true, value: 'Stanford'},
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'}
+                    ],
+                    validationErrors: [
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'}
+                    ]
                 });
             });
 
@@ -1052,7 +1059,13 @@ describe('form', () => {
                         isComplete: false
                     },
                     value,
-                    isValid: false
+                    isValid: false,
+                    validationResults: [
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'}
+                    ],
+                    validationErrors: [
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'}
+                    ]
                 });
             });
         });
@@ -1119,7 +1132,14 @@ describe('form', () => {
                         isComplete: true
                     },
                     value,
-                    isValid: false
+                    isValid: false,
+                    validationResults: [
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'},
+                        {fieldName: 'firstName', isValid: true, value: 'Stanford'}
+                    ],
+                    validationErrors: [
+                        {fieldName: 'lastName', isValid: false, value: 'Strickland'}
+                    ]
                 });
             });
 
@@ -1152,7 +1172,23 @@ describe('form', () => {
                         isComplete: false
                     },
                     value,
-                    isValid: false
+                    isValid: false,
+                    validationResults: [
+                        {
+                            fieldName: 'lastName',
+                            isValid: false,
+                            value: 'Strickland',
+                            updatedResult: true
+                        }
+                    ],
+                    validationErrors: [
+                        {
+                            fieldName: 'lastName',
+                            isValid: false,
+                            value: 'Strickland',
+                            updatedResult: true
+                        }
+                    ]
                 });
             });
 
@@ -1166,7 +1202,9 @@ describe('form', () => {
                         isComplete: false
                     },
                     value,
-                    isValid: false
+                    isValid: false,
+                    validationResults: [],
+                    validationErrors: []
                 });
             });
         });

@@ -26,7 +26,8 @@ describe('all', () => {
         const validate = all([
             required({message: 'Required'}),
             minLength(2),
-            maxLength(4)
+            maxLength(4),
+            minLength(3)
         ], {validatorProp: 'Validator message'});
 
         const value = 'A';
@@ -40,12 +41,41 @@ describe('all', () => {
             expect(result.all).toBeInstanceOf(Array);
         });
 
-        it('returning results for all validators (including after invalid results)', () => {
+        it('returning results for all validators (including after invalid results) in the all array', () => {
             expect(result).toMatchObject({
                 all: [
                     {isValid: true, message: 'Required'},
-                    {isValid: false, minLength: 2},
-                    {isValid: true, maxLength: 4}
+                    {isValid: false, minLength: 2, length: 1},
+                    {isValid: true, maxLength: 4},
+                    {isValid: false, minLength: 3, length: 1}
+                ]
+            });
+        });
+
+        it('returning a validationResults array on the result', () => {
+            expect(result.validationResults).toBeInstanceOf(Array);
+        });
+
+        it('returning results for all validators (including after invalid results) in the validationResults array', () => {
+            expect(result).toMatchObject({
+                validationResults: [
+                    {isValid: true, message: 'Required'},
+                    {isValid: false, minLength: 2, length: 1},
+                    {isValid: true, maxLength: 4},
+                    {isValid: false, minLength: 3, length: 1}
+                ]
+            });
+        });
+
+        it('returning a validationErrors array on the result', () => {
+            expect(result.validationErrors).toBeInstanceOf(Array);
+        });
+
+        it('returning all invalid results in the validationErrors array', () => {
+            expect(result).toMatchObject({
+                validationErrors: [
+                    {isValid: false, minLength: 2, length: 1},
+                    {isValid: false, minLength: 3, length: 1}
                 ]
             });
         });
@@ -60,9 +90,17 @@ describe('all', () => {
                 isValid: true,
                 all: [
                     {isValid: true, message: 'Required'},
-                    {isValid: true, minLength: 2},
-                    {isValid: true, maxLength: 4}
-                ]
+                    {isValid: true, minLength: 2, length: 3},
+                    {isValid: true, maxLength: 4, length: 3},
+                    {isValid: true, minLength: 3, length: 3}
+                ],
+                validationResults: [
+                    {isValid: true, message: 'Required'},
+                    {isValid: true, minLength: 2, length: 3},
+                    {isValid: true, maxLength: 4, length: 3},
+                    {isValid: true, minLength: 3, length: 3}
+                ],
+                validationErrors: []
             });
         });
 
