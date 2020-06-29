@@ -179,11 +179,13 @@ describe('form', () => {
                 expect(result.form).toMatchObject({
                     validationErrors: [
                         {
+                            fieldName: 'username',
                             isValid: false,
                             required: true,
                             value: ''
                         },
                         {
+                            fieldName: 'comparePassword',
                             isValid: false,
                             required: true,
                             compare: 'marty88',
