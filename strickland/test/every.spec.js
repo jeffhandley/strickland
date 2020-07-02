@@ -362,4 +362,363 @@ describe('every', () => {
             });
         });
     });
+
+    describe('supports middleware from validator props', () => {
+        it('omitting the middleware validator prop from the result', () => {
+            const middleware = {};
+
+            const validate = every([], {middleware});
+            const result = validate('ABC');
+
+            expect(result).not.toHaveProperty('middleware');
+        });
+
+        describe('for prepareResult', () => {
+            it('calling the middleware function with the expected args', () => {
+                const middleware = {
+                    prepareResult: jest.fn()
+                };
+
+                const props = {
+                    middleware,
+                    testProp: 'propValue'
+                };
+
+                const context = {
+                    contextProp: 'contextValue'
+                };
+
+                const validate = every([], props);
+                validate('ABC', context);
+
+                expect(middleware.prepareResult).toHaveBeenCalledWith(
+                    // core prepareResult function
+                    expect.any(Function),
+
+                    // result
+                    expect.objectContaining({
+                        isValid: true,
+                        every: []
+                    }),
+                    {
+                        value: 'ABC',
+                        props: expect.objectContaining({
+                            testProp: 'propValue'
+                        }),
+                        context
+                    }
+                );
+            });
+
+            it('allowing the core prepareResult function to be bypassed, omitting the every result prop', () => {
+                const middleware = {
+                    prepareResult: () => ({})
+                };
+
+                const validate = every([], {middleware});
+                const result = validate('ABC');
+
+                expect(result).not.toHaveProperty('every');
+            });
+
+            it('allowing the core prepareResult function to be called before returning the result', () => {
+                const middleware = {
+                    prepareResult(prepareResultCore, result) {
+                        const coreResult = prepareResultCore(result);
+
+                        return {
+                            ...coreResult,
+                            repeatedEvery: coreResult.every
+                        };
+                    }
+                };
+
+                const validate = every([required()], {middleware});
+                const result = validate('ABC');
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    every: [
+                        expect.objectContaining({
+                            isValid: true,
+                            required: true,
+                            value: 'ABC'
+                        })
+                    ],
+                    repeatedEvery: [
+                        expect.objectContaining({
+                            isValid: true,
+                            required: true,
+                            value: 'ABC'
+                        })
+                    ]
+                });
+            });
+
+            describe('allowing the core prepareResult function to be called with a different result object', () => {
+                const middleware = {
+                    prepareResult(prepareResultCore, result) {
+                        return prepareResultCore({different: 'result object'});
+                    }
+                };
+
+                const validate = every([required()], {middleware, validatorProp: 'validator prop'});
+                const result = validate('ABC');
+
+                it('while still merging that result and the validator props onto the final result', () => {
+                    expect(result).toMatchObject({
+                        different: 'result object',
+                        validatorProp: 'validator prop'
+                    });
+                });
+
+                it('but omitting original result props (every)', () => {
+                    expect(result).not.toHaveProperty('every');
+                });
+            });
+
+            describe('allowing the isValid result prop to be overridden', () => {
+                it('forcing it to false', () => {
+                    const middleware = {
+                        prepareResult: () => ({isValid: false})
+                    };
+
+                    const validate = every([], {middleware});
+                    const result = validate();
+
+                    expect(result.isValid).toBe(false);
+                });
+
+                it('forcing it to be true', () => {
+                    const middleware = {
+                        prepareResult: () => ({isValid: true})
+                    };
+
+                    const validate = every([required()], {middleware});
+                    const result = validate();
+
+                    expect(result.isValid).toBe(true);
+                });
+            });
+        });
+
+        describe('for reduceResults', () => {
+            it('calling the middleware function with the expected args', () => {
+                const middleware = {
+                    reduceResults: jest.fn()
+                };
+
+                const props = {
+                    middleware,
+                    testProp: 'propValue'
+                };
+
+                const context = {
+                    contextProp: 'contextValue'
+                };
+
+                const validate = every([required()], props);
+                validate('ABC', context);
+
+                expect(middleware.reduceResults).toHaveBeenCalledWith(
+                    // next reduceResult function
+                    expect.any(Function),
+
+                    // previous result
+                    expect.objectContaining({
+                        isValid: true,
+                        every: []
+                    }),
+
+                    // next result
+                    expect.objectContaining({
+                        isValid: true,
+                        required: true
+                    }),
+
+                    {
+                        value: 'ABC',
+                        props: expect.objectContaining({
+                            testProp: 'propValue'
+                        }),
+                        context
+                    }
+                );
+            });
+
+            it('allowing the core reduceResults function to be bypassed, therefore not populating the every result prop', () => {
+                const middleware = {
+                    reduceResults(nextReducer, previousResult, nextResult) {
+                        return {
+                            ...previousResult,
+                            ...nextResult
+                        };
+                    }
+                };
+
+                const validate = every([required()], {middleware});
+                const result = validate('ABC');
+
+                expect(result.every).toHaveLength(0);
+            });
+
+            it('allowing the core reduceResults function to be called before returning the result', () => {
+                const middleware = {
+                    reduceResults(nextReducer, previousResult, nextResult) {
+                        const coreResult = nextReducer(previousResult, nextResult);
+
+                        return {
+                            ...coreResult,
+                            every: [
+                                ...coreResult.every,
+                                {
+                                    extraResult: true
+                                }
+                            ]
+                        };
+                    }
+                };
+
+                const validate = every([required()], {middleware});
+                const result = validate('ABC');
+
+                expect(result).toMatchObject({
+                    isValid: true,
+                    every: [
+                        expect.objectContaining({
+                            isValid: true,
+                            required: true,
+                            value: 'ABC'
+                        }),
+                        expect.objectContaining({
+                            extraResult: true
+                        })
+                    ]
+                });
+            });
+
+            describe('allowing the core reduceResults function to be called with different result objects', () => {
+                const middleware = {
+                    reduceResults(nextReducer, previousResult, nextResult) {
+                        return nextReducer(
+                            {
+                                ...previousResult,
+                                previousResult: 'replaced previous'
+                            },
+                            {
+                                ...nextResult,
+                                nextResult: 'replaced next'
+                            }
+                        );
+                    }
+                };
+
+                const validate = every([required()], {middleware});
+                const result = validate('ABC');
+
+                it('while still merging that the supplied result objects', () => {
+                    expect(result).toMatchObject({
+                        isValid: true,
+                        previousResult: 'replaced previous',
+                        nextResult: 'replaced next'
+                    });
+                });
+
+                it('and still adding the next result to the `every` result prop array', () => {
+                    expect(result.every).toEqual([
+                        expect.objectContaining({
+                            isValid: true,
+                            nextResult: 'replaced next'
+                        })
+                    ]);
+                });
+
+                it('guarding against the failure to include the `every` prop on the previous result', () => {
+                    const badMiddleware = {
+                        reduceResults(nextReducer, previousResult, nextResult) {
+                            return nextReducer(
+                                {
+                                    previousResult: 'replaced previous'
+                                },
+                                {
+                                    nextResult: 'replaced next'
+                                }
+                            );
+                        }
+                    };
+
+                    const validate = every([required(), minLength(1)], {middleware: badMiddleware});
+                    const result = validate('ABC');
+
+                    expect(result).toMatchObject({
+                        previousResult: 'replaced previous',
+                        nextResult: 'replaced next',
+                        every: [
+                            expect.objectContaining({
+                                nextResult: 'replaced next'
+                            })
+                        ]
+                    });
+                });
+
+                it('guarding against the failure to include the `isValid` result props (defaulting to false)', () => {
+                    const badMiddleware = {
+                        reduceResults(nextReducer, previousResult, nextResult) {
+                            return nextReducer(
+                                {
+                                    previousResult: 'replaced previous'
+                                },
+                                {
+                                    nextResult: 'replaced next'
+                                }
+                            );
+                        }
+                    };
+
+                    const validate = every([required(), minLength(1)], {middleware: badMiddleware});
+                    const result = validate('ABC');
+
+                    expect(result).toMatchObject({
+                        previousResult: 'replaced previous',
+                        nextResult: 'replaced next',
+                        isValid: false
+                    });
+                });
+            });
+
+            describe('allowing the isValid result prop to be overridden', () => {
+                it('forcing it to false', () => {
+                    const middleware = {
+                        reduceResults(nextReducer, previousResult, nextResult) {
+                            return {
+                                ...nextReducer(previousResult, nextResult),
+                                isValid: false
+                            };
+                        }
+                    };
+
+                    const validate = every([required()], {middleware});
+                    const result = validate('ABC');
+
+                    expect(result.isValid).toBe(false);
+                });
+
+                it('forcing it to be true', () => {
+                    const middleware = {
+                        reduceResults(nextReducer, previousResult, nextResult) {
+                            return {
+                                ...nextReducer(previousResult, nextResult),
+                                isValid: true
+                            };
+                        }
+                    };
+
+                    const validate = every([required()], {middleware});
+                    const result = validate();
+
+                    expect(result.isValid).toBe(true);
+                });
+            });
+        });
+    });
 });
