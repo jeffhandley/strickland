@@ -5,35 +5,44 @@ const initialResult = {
     every: []
 };
 
-const defaultMiddleware = {
-    reduceResults: (nextReducer, previousResult, nextResult, {value, props, context}) => nextReducer(previousResult, nextResult),
-    prepareResult: (innerPrepareResult, result, {value, props, context}) => innerPrepareResult(result)
-};
-
 export default function everyValidator(validators, validatorProps) {
     if (!validators || !Array.isArray(validators)) {
         throw 'Strickland: The `every` validator expects an array of validators';
     }
 
-    return function validateEvery(value, context) {
+    return function validateEvery(value, validationContext) {
         const resolvedProps = typeof validatorProps === 'function' ?
-            validatorProps(context) :
+            validatorProps(validationContext) :
             validatorProps;
 
-        const {middleware = {}, ...props} = resolvedProps || {};
-        const {reduceResults = defaultMiddleware.reduceResults} = middleware;
-        const {prepareResult = defaultMiddleware.prepareResult} = middleware;
+        const {middleware: middlewareFromProps, ...props} = resolvedProps || {};
+        const {middleware: middlewareFromContext, ...context} = validationContext || {};
 
-        const middlewareProps = {
+        const middlewares = [
+            ...(middlewareFromProps ? (Array.isArray(middlewareFromProps) ? middlewareFromProps : [middlewareFromProps]) : []),
+            ...(middlewareFromContext ? (Array.isArray(middlewareFromContext) ? middlewareFromContext : [middlewareFromContext]) : [])
+        ];
+
+        const reduceResultsMiddlewares = middlewares.map(({reduceResults}) => reduceResults).filter((reduceResults) => reduceResults);
+        const prepareResultMiddlewares = middlewares.map(({prepareResult}) => prepareResult).filter((prepareResult) => prepareResult);
+
+        const middlewareContext = {
             value,
             props,
             context
         };
 
-        const middlewareCore = {
-            reduceResults: reduceResultsCore,
-            prepareResult: prepareResultCore.bind(null, {props})
-        };
+        const reduceResults = reduceResultsMiddlewares.reduce((inner, outer) => {
+            return typeof outer === 'function' ?
+                ((previousResult, nextResult) => outer(inner, previousResult, nextResult, middlewareContext)) :
+                inner;
+        }, reduceResultsCore);
+
+        const prepareResult = prepareResultMiddlewares.reduce((inner, outer) => {
+            return typeof outer === 'function' ?
+                ((result) => outer(inner, result, middlewareContext)) :
+                inner;
+        }, prepareResultCore.bind(null, middlewareContext));
 
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
@@ -41,16 +50,7 @@ export default function everyValidator(validators, validatorProps) {
                     const previousResult = currentResult;
                     const nextResult = validate(validator, value, context);
 
-                    currentResult = reduceResults(
-                        middlewareCore.reduceResults,
-                        currentResult,
-                        nextResult,
-                        {
-                            value,
-                            props,
-                            context
-                        }
-                    ) || {};
+                    currentResult = reduceResults(currentResult, nextResult) || {};
 
                     if (nextResult.validateAsync) {
                         const previousAsync = previousResult.validateAsync || (() => Promise.resolve(previousResult));
@@ -58,16 +58,7 @@ export default function everyValidator(validators, validatorProps) {
                         currentResult.validateAsync = function resolveAsync() {
                             return previousAsync().then((resolvedPreviousResult) =>
                                 nextResult.validateAsync().then((resolvedNextResult) => {
-                                    let finalResult = reduceResults(
-                                        middlewareCore.reduceResults,
-                                        resolvedPreviousResult,
-                                        resolvedNextResult,
-                                        {
-                                            value,
-                                            props,
-                                            context
-                                        }
-                                    ) || {};
+                                    let finalResult = reduceResults(resolvedPreviousResult, resolvedNextResult) || {};
 
                                     if (finalResult.isValid) {
                                         const remainingValidators = validatorsToExecute.slice(index + 1);
@@ -78,15 +69,7 @@ export default function everyValidator(validators, validatorProps) {
                                         }
                                     }
 
-                                    return prepareResult(
-                                        middlewareCore.prepareResult,
-                                        finalResult,
-                                        {
-                                            value,
-                                            props,
-                                            context
-                                        }
-                                    );
+                                    return prepareResult(finalResult);
                                 })
                             );
                         };
@@ -104,15 +87,7 @@ export default function everyValidator(validators, validatorProps) {
 
         const result = executeValidators(initialResult, validators);
 
-        return prepareResult(
-            middlewareCore.prepareResult,
-            result,
-            {
-                value,
-                props,
-                context
-            }
-        );
+        return prepareResult(result);
     };
 }
 
