@@ -32,16 +32,35 @@ export default function everyValidator(validators, validatorProps) {
             context
         };
 
-        const reduceResults = reduceResultsMiddlewares.reduce((inner, outer) => {
-            return typeof outer === 'function' ?
-                ((previousResult, nextResult) => outer(inner, previousResult, nextResult, middlewareContext)) :
-                inner;
+        const reduceResults = reduceResultsMiddlewares.reduce((accumulatedReducer, nextReducer) => {
+            return typeof nextReducer === 'function' ?
+                ((previousResult, currentResult) => {
+                    const accumulatedResult = accumulatedReducer(previousResult, currentResult);
+
+                    return nextReducer(
+                        accumulatedResult,
+                        currentResult,
+                        {
+                            ...middlewareContext,
+                            previousResult
+                        }
+                    );
+                }) : accumulatedReducer;
         }, reduceResultsCore);
 
-        const prepareResult = prepareResultMiddlewares.reduce((inner, outer) => {
-            return typeof outer === 'function' ?
-                ((result) => outer(inner, result, middlewareContext)) :
-                inner;
+        const prepareResult = prepareResultMiddlewares.reduce((accumulatedPreparer, nextPreparer) => {
+            return typeof nextPreparer === 'function' ?
+                ((result) => {
+                    const preparedResult = accumulatedPreparer(result);
+
+                    return nextPreparer(
+                        preparedResult,
+                        {
+                            ...middlewareContext,
+                            validatorResult: result
+                        }
+                    );
+                }) : accumulatedPreparer;
         }, prepareResultCore.bind(null, middlewareContext));
 
         function executeValidators(currentResult, validatorsToExecute) {
