@@ -10,6 +10,7 @@ import validate, {
     every,
     all,
     some,
+    arrayOf,
     objectProps
 } from '../../src/strickland';
 
@@ -241,6 +242,61 @@ describe('docs', () => {
                         isValid: true,
                         value: 12,
                         min: 10
+                    }
+                ]
+            });
+        });
+
+        it('validating arrays', () => {
+            const allValuesRequired = arrayOf(
+                required(),
+                {message: 'Must have at least 5 characters'}
+            );
+
+            const result = validate(allValuesRequired, ['First', '', 'Third']);
+
+            const allValuesHaveMinLength = arrayOf(
+                minLength((context) => ({minLength: context.minLength})),
+                (context) => ({message: `All values must have at least ${context.minLength} characters`})
+            );
+
+            expect(result).toMatchObject({
+                isValid: false,
+                arrayOf: [
+                    expect.objectContaining({isValid: true}),
+                    expect.objectContaining({isValid: false}),
+                    expect.objectContaining({isValid: true})
+                ]
+            });
+
+            expect(validate(allValuesHaveMinLength, ['1', '12', '123', '1234'], {minLength: 3})).toMatchObject({
+                isValid: false,
+                value: ['1', '12', '123', '1234'],
+                message: 'All values must have at least 3 characters',
+                arrayOf: [
+                    {
+                        isValid: false,
+                        value: '1',
+                        minLength: 3,
+                        length: 1
+                    },
+                    {
+                        isValid: false,
+                        value: '12',
+                        minLength: 3,
+                        length: 2
+                    },
+                    {
+                        isValid: true,
+                        value: '123',
+                        minLength: 3,
+                        length: 3
+                    },
+                    {
+                        isValid: true,
+                        value: '1234',
+                        minLength: 3,
+                        length: 4
                     }
                 ]
             });
@@ -510,10 +566,10 @@ describe('docs', () => {
             const personValidator = objectProps({
                 name: every([required(), length(5, 40)]),
                 address: objectProps({
-                    street: objectProps({
+                    street: every([required(), objectProps({
                         number: every([required(), range(1, 99999)]),
                         name: every([required(), length(2, 40)])
-                    }),
+                    })]),
                     city: required(),
                     state: every([required(), length(2, 2)])
                 })
@@ -535,12 +591,82 @@ describe('docs', () => {
             expect(result.isValid).toBe(true);
         });
 
+        it('arrays of objects', () => {
+            const personValidator = objectProps({
+                name: every([required(), length(5, 40)]),
+                addresses: arrayOf(
+                    every([
+                        required(),
+                        objectProps({
+                            street: every([required(), objectProps({
+                                number: every([required(), range(1, 99999)]),
+                                name: every([required(), length(2, 40)])
+                            })]),
+                            city: required(),
+                            state: every([required(), length(2, 2)])
+                        })
+                    ])
+                )
+            });
+
+            const person = {
+                name: 'Marty McFly',
+                addresses: [
+                    {
+                        street: {
+                            number: 9303,
+                            name: 'Lyon Drive'
+                        },
+                        city: 'Hill Valley',
+                        state: 'CA'
+                    },
+                    null,
+                    {
+                        street: null,
+                        city: 'Hill Valley',
+                        state: 'CA'
+                    }
+                ]
+            };
+
+            const result = validate(personValidator, person);
+
+            expect(result).toMatchObject({
+                isValid: false,
+                objectProps: expect.objectContaining({
+                    addresses: expect.objectContaining({
+                        isValid: false,
+                        arrayOf: [
+                            expect.objectContaining({
+                                isValid: true,
+                                value: expect.objectContaining({
+                                    street: expect.objectContaining({
+                                        number: 9303
+                                    })
+                                })
+                            }),
+                            expect.objectContaining({
+                                isValid: false,
+                                value: null
+                            }),
+                            expect.objectContaining({
+                                isValid: false,
+                                value: expect.objectContaining({
+                                    street: null
+                                })
+                            })
+                        ]
+                    })
+                })
+            });
+        });
+
         it('conventions', () => {
             const personValidator = [
                 required(),
                 {
                     name: [required(), length(5, 40)],
-                    address: [
+                    addresses: [required(), arrayOf([
                         required(),
                         {
                             street: [
@@ -553,7 +679,7 @@ describe('docs', () => {
                             city: required(),
                             state: [required(), length(2, 2)]
                         }
-                    ]
+                    ])]
                 }
             ];
 
