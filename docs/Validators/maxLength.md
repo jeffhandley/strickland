@@ -1,4 +1,4 @@
-# Built-In Validator: maxLength
+# maxLength
 
 The `maxLength` validator checks that a string value has a length at most the maximum length provided.
 
@@ -13,12 +13,12 @@ If the value being validated is `null` or an empty string, then the result will 
 The `maxLength` validator supports three parameter signatures:
 
 1. `maxLength(value)` where the value is used as the `maxLength` named prop
-1. `maxLength(propsObject)` where the props object contains a `maxLength` named prop
-1. `maxLength(propsFunction)` where the props function returns a props object with a `maxLength` named prop
+2. `maxLength(propsObject)` where the props object contains a `maxLength` named prop
+3. `maxLength(propsFunction)` where the props function returns a props object with a `maxLength` named prop
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {maxLength} from 'strickland';
 
 // As a value parameter
@@ -36,3 +36,4 @@ const maxLengthValidator = maxLength((context) => ({
     message: `Must have a length of at most ${context.maxLength}`
 }));
 ```
+

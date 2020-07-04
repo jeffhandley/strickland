@@ -1,4 +1,4 @@
-# Built-In Validator: range
+# range
 
 The `range` validator combines the `min` and `max` validators to check that a value is within a range. Both the `min` and `max` values are inclusive.
 
@@ -14,12 +14,12 @@ If the value being validated is `null`, `false`, an empty string, or another fal
 The `range` validator supports three parameter signatures:
 
 1. `range(min, max)` where the `min` and `max` named props are specified as values
-1. `range(propsObject)` where the props object contains `min` and `max` named props
-1. `range(propsFunction)` where the props function returns a props object with `min` and `max` named props
+2. `range(propsObject)` where the props object contains `min` and `max` named props
+3. `range(propsFunction)` where the props function returns a props object with `min` and `max` named props
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {range} from 'strickland';
 
 // As value parameters
@@ -39,3 +39,4 @@ const rangeValidator = range((context) => ({
     message: `Must be between ${context.min} and ${context.max}`
 }));
 ```
+

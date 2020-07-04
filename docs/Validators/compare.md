@@ -1,4 +1,4 @@
-# Built-In Validator: compare
+# compare
 
 The `compare` validator is quite similar to the letter validator we've built in our examples.
 
@@ -13,12 +13,12 @@ If the value being validated is `null`, `false`, an empty string, or another fal
 The `compare` validator supports three parameter signatures:
 
 1. `compare(value)` where the value is used as the `compare` named prop
-1. `compare(propsObject)` where the props object contains a `compare` named prop
-1. `compare(propsFunction)` where the props function returns a props object with a `compare` named prop
+2. `compare(propsObject)` where the props object contains a `compare` named prop
+3. `compare(propsFunction)` where the props function returns a props object with a `compare` named prop
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {compare} from 'strickland';
 
 // As a value parameter
@@ -36,3 +36,4 @@ const letterValidator = compare((context) => ({
     message: `Must match "${context.compare}"`
 }));
 ```
+

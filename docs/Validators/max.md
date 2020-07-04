@@ -1,4 +1,4 @@
-# Built-In Validator: max
+# max
 
 The `max` validator checks that a numeric value is at most the maximum value provided.
 
@@ -13,12 +13,12 @@ If the value being validated is `null`, `false`, an empty string, or another fal
 The `max` validator supports three parameter signatures:
 
 1. `max(value)` where the value is used as the `max` named prop
-1. `max(propsObject)` where the props object contains a `max` named prop
-1. `max(propsFunction)` where the props function returns a props object with a `max` named prop
+2. `max(propsObject)` where the props object contains a `max` named prop
+3. `max(propsFunction)` where the props function returns a props object with a `max` named prop
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {max} from 'strickland';
 
 // As a value parameter
@@ -36,3 +36,4 @@ const maxValidator = max((context) => ({
     message: `Must be at most ${context.max}`
 }));
 ```
+

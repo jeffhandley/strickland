@@ -1,4 +1,4 @@
-# Built-In Validator: form
+# form
 
 The `form` validator performs both field-level and form-level validation. Field validators are supplied the same way `objectProps` validators are supplied as an object with the shape matching the form fields. The `form` validator also allows previous validation results to be provided on context so that results can be updated with the new results merged in.
 
@@ -12,7 +12,7 @@ The `form` validator utilizes validation context to perform field-level validati
 
 ### Field-Level Validation: `form.fields`
 
-The `form.fields` context prop indicates which field(s) to validate.
+The `form.fields` context prop indicates which field\(s\) to validate.
 
 * If `form.fields` is an array of strings, all items are treated as field names
 * If `form.fields` is not supplied, all fields are validated
@@ -34,7 +34,7 @@ Validation results from earlier validation can be supplied using `form.validatio
 
 The sample code below demonstrates validating a form with field-level validation, incrementally building up validation results.
 
-``` jsx
+```jsx
 import validate, {
     form, required, length, range
 } from 'strickland';
@@ -192,3 +192,4 @@ result = validate(personValidator, person, {
 // previous validation results in
 result = validate(personValidator, person, result);
 ```
+

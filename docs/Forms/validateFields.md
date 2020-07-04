@@ -1,10 +1,10 @@
-# Form Validation Helper: `validateFields`
+# validateFields
 
 We saw that the `form` validator supports the ability to perform field-level validation in addition to form-level validation. To validate one or some fields, an array of field names can be supplied in the validation context. While straightforward, this code is verbose. For that reason, Strickland's `form` validator provides a `validateFields` helper function.
 
 Here is some application code that performs field-level validation without the `validateFields` helper.
 
-``` jsx
+```jsx
 import validate, {
     form, required, length, range
 } from 'strickland';
@@ -36,7 +36,7 @@ let result = validate(personValidator, person, {
 
 The `validateFields` helper is available from the validator created using the `form` validator factory.
 
-``` jsx
+```jsx
 import validate, {
     form, required, length, range
 } from 'strickland';
@@ -64,7 +64,7 @@ let validationResult = personValidator.validateFields(person, ['firstName']);
 
 Once initial validation has occurred, `validateFields` can accept existing validation results to be updated during field-level validation.
 
-``` jsx
+```jsx
 // The firstName field has already been validated
 // Validate the lastName field
 
@@ -74,3 +74,4 @@ validationResult = personValidator.validateFields(
     validationResult
 );
 ```
+

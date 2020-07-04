@@ -1,4 +1,4 @@
-# Form Validation Helper: `updateFieldResults`
+# updateFieldResults
 
 In some scenarios, validation results need to be produced outside the flow of calling into Strickland to perform validation. For example, an API call might perform server-side validation and return validation results that need to be populated into your application's validation result state.
 
@@ -72,9 +72,10 @@ stanfordResult = personValidator.updateFieldResults(
 
 To remove a field's results, provide `null` as the value of the field result.
 
-``` jsx
+```jsx
 stanfordResult = personValidator.updateFieldResults(
     stanfordResult,
     {firstName: null}
 );
 ```
+

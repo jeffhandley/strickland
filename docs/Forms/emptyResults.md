@@ -1,10 +1,10 @@
-# Form Validation Helper: `emptyResults`
+# emptyResults
 
 Applications that maintain validation state for interaction generally need to initialize the state with an empty validation result. Strickland's `form` validator provides an `emptyResults()` helper function to simplify that need.
 
 ## Usage
 
-``` jsx
+```jsx
 const personValidator = form({
     firstName: [
         required(),
@@ -29,3 +29,4 @@ let validationResult = personValidator.emptyResults();
     }
  */
 ```
+

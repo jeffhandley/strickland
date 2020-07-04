@@ -1,10 +1,10 @@
 # Extensibility Pattern
 
-While some validators require specific props to function, it has become common for validators to accept and return *arbitrary* props on validation results. This provides opportunities for applications to have very rich user experiences.
+While some validators require specific props to function, it has become common for validators to accept and return _arbitrary_ props on validation results. This provides opportunities for applications to have very rich user experiences.
 
 Consider the following implementation of our letter validator.
 
-``` jsx
+```jsx
 function letterValidator(validatorProps) {
     return function validateLetter(value, context) {
         // Be sure not to overwrite the original
@@ -30,11 +30,11 @@ function letterValidator(validatorProps) {
 
 With this approach, the validator can define a default message but allow the message to be overridden by validator props supplied to the factory. The resolved letter prop is also echoed in the validation result. Plus, arbitrary properties flow through the factory to the validation result. This approach can unlock many scenarios where applications need to enrich the validation results.
 
-*Note that the `isValid` result property should be applied after spreading the validator props. This guards against an application inadvertently passing `isValid` and overriding the actual validation results.*
+_Note that the `isValid` result property should be applied after spreading the validator props. This guards against an application inadvertently passing `isValid` and overriding the actual validation results._
 
 Let's see how an application could pass more context through to the letter validator to get rich validation results.
 
-``` jsx
+```jsx
 import validate from 'strickland';
 
 const termsAccepted = letterValidator({
@@ -57,3 +57,4 @@ const result = validate(termsAccepted, termsEntered);
     }
  */
 ```
+

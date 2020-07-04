@@ -5,7 +5,7 @@ While validators can be executed asynchronously using `validateAsync`, there are
 We learned early on that validators can return either a boolean or a result object with the boolean as an `isValid` property. Async validators work similarly: to opt into async validation, validators can return any of the following:
 
 * A `Promise` that resolves to a validation result
-* A `function` that returns a validation result (including a `Promise` that resolves to a validation result)
+* A `function` that returns a validation result \(including a `Promise` that resolves to a validation result\)
 * A result object with a `Promise` on the `validateAsync` property
 * A result object with a `validateAsync` function
 
@@ -13,7 +13,7 @@ We also know that validators can include additional properties on their validati
 
 Let's modify the `usernameIsAvailable` validator to make it return both a synchronous result and an asynchronous result.
 
-``` jsx
+```jsx
 function usernameIsAvailableTwoStage(username) {
     if (!username) {
         // Do not check availability of an empty username
@@ -51,7 +51,7 @@ This pattern makes it possible to perform two-stage validation where the first s
 
 In the following example, the application will render the partial, synchronous validation results; resolve the asynchronous validation; and render the final result once complete.
 
-``` jsx
+```jsx
 import validate, {required, length} from 'strickland';
 
 const userValidator = {
@@ -117,3 +117,4 @@ result.validateAsync().then((asyncResult) => {
  */
 });
 ```
+

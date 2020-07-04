@@ -4,7 +4,7 @@ When a validator returns a `Promise`, the `Promise` will begin resolution immedi
 
 To defer async validation until `validateAsync()` is called, validators can return a `function` that returns the async validation result `Promise`. Let's modify the `usernameIsAvailable` validator to defer async validation in this way.
 
-``` jsx
+```jsx
 import validate from 'strickland';
 
 function usernameIsAvailableDeferred(username) {
@@ -38,3 +38,4 @@ result.validateAsync().then((asyncResult) => {
 ```
 
 Aside from the validator returning a `function`, the rest of the workflow is exactly the same, and this was completely transparent to the application.
+

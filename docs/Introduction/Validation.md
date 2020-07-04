@@ -2,7 +2,7 @@
 
 Strickland's default export is a `validate` function that accepts a validator function and the value to validate against the validator; it returns the validation result.
 
-``` jsx
+```jsx
 import validate from 'strickland';
 
 function letterA(value) {
@@ -11,3 +11,4 @@ function letterA(value) {
 
 const result = validate(letterA, 'B');
 ```
+

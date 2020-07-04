@@ -6,7 +6,7 @@ Similar to how `validate` normalizes a boolean into validation result with an `i
 
 Let's take a look at a `usernameIsAvailable` validator. Just like synchronous validators, async validators can resolve to either boolean results or validation results with `isValid` properties.
 
-``` jsx
+```jsx
 import validate from 'strickland';
 
 function usernameIsAvailable(username) {
@@ -37,4 +37,5 @@ result.validateAsync().then((asyncResult) => {
 });
 ```
 
-When a validator returns a `Promise`, the normalized validation result will include `isValid: false` to indicate that the result is not (yet) valid.
+When a validator returns a `Promise`, the normalized validation result will include `isValid: false` to indicate that the result is not \(yet\) valid.
+

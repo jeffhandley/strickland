@@ -1,4 +1,4 @@
-# Built-In Validator: length
+# length
 
 The `length` validator combines the `minLength` and `maxLength` validators to check that the length of a string value is within a range. Both the `minLength` and `maxLength` values are inclusive.
 
@@ -14,12 +14,12 @@ If the value being validated is `null` or an empty string, then the result will 
 The `length` validator supports three parameter signatures:
 
 1. `length(minLength, maxLength)` where the `minLength` and `maxLength` named props are specified as values
-1. `length(propsObject)` where the props object contains `minLength` and `maxLength` named props
-1. `length(propsFunction)` where the props function returns a props object with `minLength` and `maxLength` named props
+2. `length(propsObject)` where the props object contains `minLength` and `maxLength` named props
+3. `length(propsFunction)` where the props function returns a props object with `minLength` and `maxLength` named props
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {length} from 'strickland';
 
 // As value parameters
@@ -39,3 +39,4 @@ const lengthValidator = length((context) => ({
     message: `Must have a length between ${context.minLength} and ${context.maxLength}`
 }));
 ```
+

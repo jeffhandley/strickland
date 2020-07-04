@@ -1,4 +1,4 @@
-# Built-In Validator: min
+# min
 
 The `min` validator checks that a numeric value is at least the minimum value provided.
 
@@ -13,12 +13,12 @@ If the value being validated is `null`, `false`, an empty string, or another fal
 The `min` validator supports three parameter signatures:
 
 1. `min(value)` where the value is used as the `min` named prop
-1. `min(propsObject)` where the props object contains a `min` named prop
-1. `min(propsFunction)` where the props function returns a props object with a `min` named prop
+2. `min(propsObject)` where the props object contains a `min` named prop
+3. `min(propsFunction)` where the props function returns a props object with a `min` named prop
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {min} from 'strickland';
 
 // As a value parameter
@@ -36,3 +36,4 @@ const minValidator = min((context) => ({
     message: `Must be at least ${context.min}`
 }));
 ```
+

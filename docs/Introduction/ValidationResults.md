@@ -6,7 +6,7 @@ If the validator returns a falsy value, then `isValid` will be `false`. If the v
 
 The `value` on the validation result will always be the value that was validated.
 
-``` jsx
+```jsx
 import validate from 'strickland';
 
 function letterA(value) {
@@ -28,3 +28,4 @@ const result = validate(letterA, 'B');
 //     value: 'B'
 // }
 ```
+

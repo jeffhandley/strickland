@@ -1,9 +1,8 @@
-# Built-In Validator: minLength
+# minLength
 
 The `minLength` validator checks that a string value has a length at least the minimum length provided.
 
 If the value being validated is `null` or an empty string, then the result will be valid. This respects the rule of thumb described in the notes for the [required](required.md) validator.
-
 
 ## Named Props
 
@@ -14,12 +13,12 @@ If the value being validated is `null` or an empty string, then the result will 
 The `minLength` validator supports three parameter signatures:
 
 1. `minLength(value)` where the value is used as the `minLength` named prop
-1. `minLength(propsObject)` where the props object contains a `minLength` named prop
-1. `minLength(propsFunction)` where the props function returns a props object with a `minLength` named prop
+2. `minLength(propsObject)` where the props object contains a `minLength` named prop
+3. `minLength(propsFunction)` where the props function returns a props object with a `minLength` named prop
 
 ## Usage
 
-``` jsx
+```jsx
 import validate, {minLength} from 'strickland';
 
 // As a value parameter
@@ -37,3 +36,4 @@ const minLengthValidator = minLength((context) => ({
     message: `Must have a length of at least ${context.minLength}`
 }));
 ```
+
