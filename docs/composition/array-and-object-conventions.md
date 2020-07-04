@@ -27,7 +27,7 @@ const personValidator = [
                 city: required(),
                 state: [required(), length(2, 2)]
             }
-        ]
+        ])]
     }
 ];
 
