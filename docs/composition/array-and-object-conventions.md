@@ -1,6 +1,6 @@
-# Array and Object Conventions
+# Composition Conventions
 
-We defined early on that all validators must be functions in Strickland. This is technically true, but because `every` and `objectProps` are used so frequently to validate arrays of validators and object properties, conventions are built into Strickland's `validate` function to automatically use `every` and `objectProps`.
+We defined early on that all validators must be functions in Strickland. This is technically true, but because `every` and `objectProps` are used so frequently to validate arrays of validators and object properties, composition conventions are built into Strickland's `validate` function to automatically use `every` and `objectProps`.
 
 If a validator is not a function, but it is instead an array, it is assumed to be an array of validator functions. This array will be wrapped with `every`.
 
