@@ -47,3 +47,4 @@
 * [Wrap-Up](wrap-up.md)
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [GitHub](https://github.com/jeffhandley/strickland)
+

@@ -12,4 +12,5 @@ We learned that Strickland is made up of three core concepts: Validators, Valida
 
 ## Extensibility Pattern
 
-With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](extensibility/extensibility-pattern.md) emerges.
+With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](extensibility-pattern.md) emerges.
+
