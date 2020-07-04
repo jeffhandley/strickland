@@ -45,6 +45,5 @@
 * [Inspiration](inspiration.md)
 * [Design Goals](design-goals.md)
 * [Wrap-Up](wrap-up.md)
-* [Change Log](change-log.md)
+* [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [GitHub](https://github.com/jeffhandley/strickland)
-
