@@ -1,7 +1,7 @@
 # Table of contents
 
-* [Introduction](README.md)
-* [Core Concepts](introduction/README.md)
+* [Readme](README.md)
+* [Introduction](introduction/README.md)
   * [Validators](introduction/validators.md)
   * [Validation](introduction/validation.md)
   * [Validation Results](introduction/validation-results.md)
@@ -47,4 +47,3 @@
 * [Wrap-Up](wrap-up.md)
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [GitHub](https://github.com/jeffhandley/strickland)
-
