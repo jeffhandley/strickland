@@ -6,31 +6,31 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Core Concepts
 
-1. [**Validators**](introduction/validators.md) are implementations of your validation rules
-2. [**Validation**](introduction/validation.md) is the act of executing a validator against a value
-3. [**Validation Results**](introduction/validationresults.md) are the output of validation for the given validator and value
+1. [**Validators**](introduction/creating-validators.md) are implementations of your validation rules
+2. [**Validation**](introduction/performing-validation.md) is the act of executing a validator against a value
+3. [**Validation Results**](introduction/validation-results.md) are the output of validation for the given validator and value
 
 ## Extensibility Concepts
 
-1. [**Validator Factories**](extensibility/validatorfactories.md) are functions that take parameters and return validator functions
-2. [**Validation Context**](extensibility/validationcontext.md) is provided to validators allowing application state to influence validation logic
-3. [**Validation Result Props**](extensibility/validationresultprops.md) allow applications to produce rich user experiences
+1. [**Validator Factories**](extensibility/validator-factories.md) are functions that take parameters and return validator functions
+2. [**Validation Context**](extensibility/validation-context.md) is provided to validators allowing application state to influence validation logic
+3. [**Validation Result Props**](extensibility/validation-result-props.md) allow applications to produce rich user experiences
 
 ## Composition Concepts
 
-1. [**Arrays of Validators**](composition/arraysofvalidators/) can be used to validate a value against multiple validators
-2. [**Validating Objects**](composition/validatingobjects/) is accomplished by building objects that define how the props should be validated
-3. [**Array and Object Conventions**](composition/conventions.md) enable terse and natural definitions of complex compositions
+1. [**Arrays of Validators**](composition/arrays-of-validators) can be used to validate a value against multiple validators
+2. [**Validating Objects**](composition/validating-objects) is accomplished by building objects that define how the props should be validated
+3. [**Array and Object Conventions**](composition/array-and-object-conventions.md) enable terse and natural definitions of complex compositions
 
 ## Async Validation
 
-1. [**Validators Can Use Promises**](async/) to provide async validation capabilities
-2. [**Composition Supports Promises**](async/validatorarraysandobjects.md) within arrays of validators or object validation
-3. [**Two-Stage Sync/Async Validation**](async/twostagevalidation.md) is conducted using the `validateAsync` function
+1. [**Validators Can Use Promises**](async-validation/) to provide async validation capabilities
+2. [**Composition Supports Promises**](async-validation/validator-arrays-and-objects.md) within arrays of validators or object validation
+3. [**Two-Stage Sync/Async Validation**](async-validation/two-stage-validation.md) is conducted using the `validateAsync` function
 
 ## Form Validation
 
-1. [**Form Validation**](forms/) supports interactive field-level or form-level validation
+1. [**Form Validation**](form-validation/) supports interactive field-level or form-level validation
 
 ## Feedback
 
