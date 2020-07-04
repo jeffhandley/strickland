@@ -45,3 +45,4 @@ const result = validate(validator, 'A');
 Validation results can include any additional properties that are needed for your application regardless of whether the result is valid. Your application can then decide how and when to consume those properties. As an example, some user interfaces show successful validation messages to give positive feedback to the user.
 
 Strickland will ensure that all validation results have an `isValid` property that is a boolean, and Strickland will always add a `value` property that reflects the validated value, but the rest is up to you. Validation messages are perhaps the most common property added, but validators can include any details needed on the results.
+

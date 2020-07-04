@@ -60,3 +60,4 @@ There are a few notable characteristics of this result:
    * The props from the `compare` validator are not included on the result
    * The `some` array in the result does not include an item for the `compare` validator
 4. The top-level `isValid` prop on the result reflects the overall validation result
+

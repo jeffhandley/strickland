@@ -38,3 +38,4 @@ result.validateAsync().then((asyncResult) => {
 ```
 
 When a validator returns a `Promise`, the normalized validation result will include `isValid: false` to indicate that the result is not \(yet\) valid.
+

@@ -192,3 +192,4 @@ result = validate(personValidator, person, {
 // previous validation results in
 result = validate(personValidator, person, result);
 ```
+

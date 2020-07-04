@@ -11,3 +11,4 @@ function letterA(value) {
 
 const result = validate(letterA, 'B');
 ```
+

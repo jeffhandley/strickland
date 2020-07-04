@@ -21,3 +21,4 @@ const result = validate(validator, 'B');
 ```
 
 Validator factories merely take advantage of JavaScript's functional nature--in fact, Strickland has no awareness of them. Strickland only requires that validators are functions that accept a value and return a validation result. You can produce those functions however you'd like, but the validator factory approach is a convenient way to extend the functionality of your validators.
+

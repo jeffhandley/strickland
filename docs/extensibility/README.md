@@ -1,6 +1,6 @@
 # Extensibility
 
-Strickland is *not* a bloated collection of validators. Instead, Strickland is an *extensible framework* on which you can build your application's validation. To achieve the extensibility goal, Strickland keeps its core concepts at a minimum and provides you with the power to extend the concepts as needed in your application.
+Strickland is _not_ a bloated collection of validators. Instead, Strickland is an _extensible framework_ on which you can build your application's validation. To achieve the extensibility goal, Strickland keeps its core concepts at a minimum and provides you with the power to extend the concepts as needed in your application.
 
 ## Areas of Extensibility
 
@@ -12,4 +12,5 @@ We learned that Strickland is made up of three core concepts: Validators, Valida
 
 ## Extensibility Pattern
 
-With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](array-and-object-conventions.md) emerges.
+With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](https://github.com/jeffhandley/strickland/tree/540c7d48fdf33ad2fd2081ce7d2ad87049a54322/docs/extensibility/array-and-object-conventions.md) emerges.
+

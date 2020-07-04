@@ -67,3 +67,4 @@ Validators can receive props using objects or functions that return objects. Tho
 Validators can return booleans, objects, Promises that resolve to booleans or objects, or functions that return Promises that resolve to booleans or objects. Strickland normalizes all of these into consistent and predictable validation results.
 
 Your application is responsible for providing all of the validation result properties, even validation messages. This approach ensures that your application can extend Strickland to meet any functional requirements. Localized messages, warning-level validation results, async progress indicators, UI rendering hints, or any other functionality specific to your platform or application can be applied as a first-class feature.
+

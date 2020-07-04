@@ -88,3 +88,4 @@ There are a few notable characteristics of this result:
    * This behavior is consistent and predictable with Strickland, but limits how top-level result properties can be used with the `all` validator
 3. All validators are executed, even after the result is known to be invalid
 4. The top-level `isValid` prop on the result reflects the overall validation result
+

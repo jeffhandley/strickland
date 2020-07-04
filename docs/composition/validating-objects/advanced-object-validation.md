@@ -69,3 +69,4 @@ Here are some notes should anything have been invalid:
 2. If the `firstName` prop was empty, its length would not be validated
 3. If the `lastName` prop was empty, its length would not be validated
 4. If the `firstName`, `lastName`, or `birthYear` props were invalid, `stanfordStricklandBornIn1925` would not be validated
+

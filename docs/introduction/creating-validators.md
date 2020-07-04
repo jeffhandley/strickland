@@ -11,3 +11,4 @@ function letterA(value) {
     return (value === 'A');
 }
 ```
+

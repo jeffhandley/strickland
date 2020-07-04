@@ -1,4 +1,4 @@
-# Readme
+# Introduction
 
 Strickland is a JavaScript validation _framework_ with a focus on extensibility and composability. It is built with pure, universal JavaScript and while it works well with React, Redux, and other UI libraries, Strickland is not coupled to any other library or application type.
 
@@ -94,3 +94,4 @@ const result = validate(letterA, 'B');
 ## License
 
 MIT
+

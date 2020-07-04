@@ -28,3 +28,4 @@ const result = validate(letterA, 'B');
 //     value: 'B'
 // }
 ```
+

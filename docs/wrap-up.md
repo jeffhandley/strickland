@@ -18,8 +18,8 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Composition Concepts
 
-1. [**Arrays of Validators**](composition/arrays-of-validators) can be used to validate a value against multiple validators
-2. [**Validating Objects**](composition/validating-objects) is accomplished by building objects that define how the props should be validated
+1. [**Arrays of Validators**](composition/arrays-of-validators/) can be used to validate a value against multiple validators
+2. [**Validating Objects**](composition/validating-objects/) is accomplished by building objects that define how the props should be validated
 3. [**Array and Object Conventions**](composition/array-and-object-conventions.md) enable terse and natural definitions of complex compositions
 
 ## Async Validation
@@ -38,3 +38,4 @@ If you're interested in Strickland and have any feedback, please reach out in on
 
 1. Submit issues on [GitHub](https://github.com/jeffhandley/strickland/issues)
 2. Tweet to [@JeffHandley](https://twitter.com/JeffHandley)
+

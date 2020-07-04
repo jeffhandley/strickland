@@ -35,3 +35,4 @@ const result = validate(personValidator, person);
 ```
 
 Objects can be nested without any limits on depth. And any type of validator can be used anywhere in the tree.
+

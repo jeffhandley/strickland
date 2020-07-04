@@ -105,3 +105,4 @@ The `some` validator is similar to `every`; it short-circuits and therefore cann
 ## objectProps
 
 The `objectProps` validator resolves all async prop validators in parallel. This is possible because one prop being invalid does not prevent other props from being validated. The `objectProps` validator result will not be resolved until all props have been validated, but the async validators will be executed in parallel using `Promise.all()`. In the example above, `usernameIsAvailable` and `validateCity` run in parallel.
+

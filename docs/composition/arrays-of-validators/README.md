@@ -73,3 +73,4 @@ Strickland has a few built-in composition validators that operate over arrays of
 * [some](some.md)
   * Returns a valid result if any validator is valid
   * Short-circuits upon the first valid result
+

@@ -80,3 +80,4 @@ There are a few notable characteristics of this result:
    * The props from the `maxLength` validator are not included on the result
    * The `every` array in the result does not include an item for the `maxLength` validator
 4. The top-level `isValid` prop on the result reflects the overall validation result
+

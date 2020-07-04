@@ -62,3 +62,4 @@ const result = {
 The top-level result also includes the `value` to be consistent with the output of other validators.
 
 At this point, we can see a pattern where we would want a validator to iterate over the properties that have validators, validate each of those properties, and compose a final validation result for all props. Indeed, Strickland has such a validator built-in called `objectProps`.
+

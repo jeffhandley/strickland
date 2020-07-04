@@ -25,3 +25,4 @@ import {validateAsync} from 'strickland';
 const result = validateAsync(usernameIsAvailable, 'marty');
 result.then((asyncResult) => handleValidationResult(asyncResult));
 ```
+

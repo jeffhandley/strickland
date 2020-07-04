@@ -20,3 +20,4 @@ result.validateAsync(formValues, asyncContext);
 ## Two-Stage Validation
 
 [Two-Stage Validation](../async-validation/two-stage-sync-async-validation.md) is commonly used with forms where standard validation occurs synchronously with results immediately rendered, but async validation that calls an API will be rendered when the response comes back.
+

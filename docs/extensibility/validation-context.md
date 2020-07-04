@@ -36,3 +36,4 @@ const result = validate(validator, 'B', {letter: 'B'});
 ```
 
 Strickland's `validate` function _always_ passes a validation context object to the validator so that validators do not need to defend against undefined or null validation context. The value being validated will always be provided on the validation context as a `value` context prop.
+
