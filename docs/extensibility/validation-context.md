@@ -1,6 +1,6 @@
 # Validation Context
 
-Validators sometimes need additional context at the time of validation. We've seen our letter validator can accept a letter prop through a [validator factory](validatorfactories.md), but what if the comparison value isn't known until the time of validation? To support this, Strickland's `validate` function accepts a context argument after the value to be validated, and the context is passed to the validator. Validators can then utilize context to determine validator prop values.
+Validators sometimes need additional context at the time of validation. We've seen our letter validator can accept a letter prop through a [validator factory](validator-factories.md), but what if the comparison value isn't known until the time of validation? To support this, Strickland's `validate` function accepts a context argument after the value to be validated, and the context is passed to the validator. Validators can then utilize context to determine validator prop values.
 
 Let's extend our letter validator to support the validator props being supplied as a function. That function will be called at the time of validation, supplying the context. This is added while retaining the ability to accept the letter prop directly in the factory.
 

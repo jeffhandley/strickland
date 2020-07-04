@@ -25,8 +25,8 @@ Using Strickland's built-in validators, and its extensibility and composability,
 ## Async Validation
 
 1. [**Validators Can Use Promises**](async-validation/) to provide async validation capabilities
-2. [**Composition Supports Promises**](async-validation/validator-arrays-and-objects.md) within arrays of validators or object validation
-3. [**Two-Stage Sync/Async Validation**](async-validation/two-stage-validation.md) is conducted using the `validateAsync` function
+2. [**Composition Supports Promises**](async-validation/async-validator-arrays-and-objects.md) within arrays of validators or object validation
+3. [**Two-Stage Sync/Async Validation**](async-validation/two-stage-sync-async-validation.md) is conducted using the `validateAsync` function
 
 ## Form Validation
 

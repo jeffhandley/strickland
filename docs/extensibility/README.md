@@ -6,10 +6,10 @@ Strickland is *not* a bloated collection of validators. Instead, Strickland is a
 
 We learned that Strickland is made up of three core concepts: Validators, Validation, and Validation Results. All three of these concepts are extensible.
 
-* [Validator Factories](ValidatorFactories.md)
-* [Validation Context](ValidationContext.md)
-* [Validation Result Props](ValidationResultProps.md)
+* [Validator Factories](validator-factories.md)
+* [Validation Context](validation-context.md)
+* [Validation Result Props](validation-result-props.md)
 
 ## Extensibility Pattern
 
-With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](Pattern.md) emerges.
+With validator factories, validation context, and validation result props, even the simplest validators can become extremely extensible. When combining these features, [an extensibility pattern](array-and-object-conventions.md) emerges.

@@ -1,6 +1,6 @@
 # Automatic Race Condition Handling
 
-Value change [race conditions](raceconditions.md) are a common pitfall with async validation to introduce boilerplate. To reduce this boilerplate code, Strickland can automatically handle these race conditions.
+Value change [race conditions](race-conditions.md) are a common pitfall with async validation to introduce boilerplate. To reduce this boilerplate code, Strickland can automatically handle these race conditions.
 
 In the race condition handling example, we saw the application code check the current value against the value that async validation was performed against to determine if the value had changed. By providing Strickland with a way to get the current value during the async validation workflow, the async result can be automatically rejected if the value has changed.
 
