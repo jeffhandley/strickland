@@ -19,8 +19,8 @@ export default function objectPropsValidator(validators, validatorProps) {
             reduceResultsCore
         });
 
-        let hasAsyncResults = false;
         let result = initialResult;
+        let hasAsyncResults = false;
 
         if (value && validators && typeof validators === 'object') {
             result = Object.keys(validators).map((propName) => {

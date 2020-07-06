@@ -8,7 +8,7 @@ const initialResult = {
 
 export default function someValidator(validators, validatorProps) {
     if (!validators || !Array.isArray(validators)) {
-        throw 'Strickland: some expects an array of validators';
+        throw 'Strickland: The `some` validator expects an array of validators';
     }
 
     return function validateSome(value, validationContext) {
