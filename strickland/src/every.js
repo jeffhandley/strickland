@@ -46,7 +46,7 @@ export default function everyValidator(validators, validatorProps) {
                         }
                     );
                 }) : accumulatedReducer;
-        }, reduceResultsCore);
+        }, (accumulator, currentResult) => reduceResultsCore(accumulator, currentResult, middlewareContext));
 
         const prepareResult = prepareResultMiddlewares.reduce((accumulatedPreparer, nextPreparer) => {
             return typeof nextPreparer === 'function' ?
@@ -61,7 +61,7 @@ export default function everyValidator(validators, validatorProps) {
                         }
                     );
                 }) : accumulatedPreparer;
-        }, prepareResultCore.bind(null, middlewareContext));
+        }, (result) => prepareResultCore(result, middlewareContext));
 
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
@@ -110,20 +110,20 @@ export default function everyValidator(validators, validatorProps) {
     };
 }
 
-function reduceResultsCore(previousResult, nextResult) {
-    // be sure to guard against middleware failing to provide isValid and every
+function reduceResultsCore(accumulator, currentResult) {
+    // be sure to guard against middleware failing to provide `isValid` and `every`
     return {
-        ...previousResult,
-        ...nextResult,
-        isValid: !!previousResult.isValid && !!nextResult.isValid,
+        ...accumulator,
+        ...currentResult,
+        isValid: !!accumulator.isValid && !!currentResult.isValid,
         every: [
-            ...(previousResult.every || []),
-            nextResult
+            ...(accumulator.every || []),
+            currentResult
         ]
     };
 }
 
-function prepareResultCore({props}, result) {
+function prepareResultCore(result, {props}) {
     return {
         ...props,
         ...result

@@ -10,19 +10,67 @@ export default function allValidator(validators, validatorProps) {
         throw 'Strickland: The `all` validator expects an array of validators';
     }
 
-    return function validateAll(value, context) {
-        let result = initialResult;
-
-        const props = typeof validatorProps === 'function' ?
-            validatorProps(context) :
+    return function validateAll(value, validationContext) {
+        const resolvedProps = typeof validatorProps === 'function' ?
+            validatorProps(validationContext) :
             validatorProps;
 
+        const {middleware: middlewareFromProps, ...props} = resolvedProps || {};
+        const {middleware: middlewareFromContext, ...context} = validationContext || {};
+
+        const middlewares = [
+            ...(middlewareFromProps ? (Array.isArray(middlewareFromProps) ? middlewareFromProps : [middlewareFromProps]) : []),
+            ...(middlewareFromContext ? (Array.isArray(middlewareFromContext) ? middlewareFromContext : [middlewareFromContext]) : [])
+        ];
+
+        const reduceResultsMiddlewares = middlewares.map(({reduceResults}) => reduceResults).filter((reduceResults) => reduceResults);
+        const prepareResultMiddlewares = middlewares.map(({prepareResult}) => prepareResult).filter((prepareResult) => prepareResult);
+
+        const middlewareContext = {
+            value,
+            props,
+            context
+        };
+
+        const reduceResults = reduceResultsMiddlewares.reduce((accumulatedReducer, nextReducer) => {
+            return typeof nextReducer === 'function' ?
+                ((previousResult, currentResult) => {
+                    const accumulatedResult = accumulatedReducer(previousResult, currentResult);
+
+                    return nextReducer(
+                        accumulatedResult,
+                        currentResult,
+                        {
+                            ...middlewareContext,
+                            previousResult
+                        }
+                    );
+                }) : accumulatedReducer;
+        }, (accumulator, currentResult) => reduceResultsCore(accumulator, currentResult, middlewareContext));
+
+        const prepareResult = prepareResultMiddlewares.reduce((accumulatedPreparer, nextPreparer) => {
+            return typeof nextPreparer === 'function' ?
+                ((result) => {
+                    const preparedResult = accumulatedPreparer(result);
+
+                    return nextPreparer(
+                        preparedResult,
+                        {
+                            ...middlewareContext,
+                            validatorResult: result
+                        }
+                    );
+                }) : accumulatedPreparer;
+        }, (result) => prepareResultCore(result, middlewareContext));
+
+        let result = initialResult;
         let hasAsyncResults = false;
+
         validators.forEach((validator) => {
             const nextResult = validate(validator, value, context);
             hasAsyncResults = hasAsyncResults || nextResult.validateAsync;
 
-            result = applyNextResult(result, nextResult);
+            result = reduceResults(result, nextResult);
         });
 
         if (hasAsyncResults) {
@@ -34,31 +82,33 @@ export default function allValidator(validators, validatorProps) {
                 );
 
                 return Promise.all(promises).then((results) => {
-                    const resolvedResult = results.reduce(applyNextResult, initialResult);
+                    const resolvedResult = results.reduce(reduceResults, initialResult);
 
-                    return {
-                        ...props,
-                        ...resolvedResult
-                    };
+                    return prepareResult(resolvedResult, middlewareContext);
                 });
             };
         }
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(result, middlewareContext);
     };
 }
 
-function applyNextResult(previousResult, nextResult) {
+function reduceResultsCore(accumulator, currentResult) {
+    // be sure to guard against middleware failing to provide `isValid` and `all`
     return {
-        ...previousResult,
-        ...nextResult,
-        isValid: previousResult.isValid && nextResult.isValid,
+        ...accumulator,
+        ...currentResult,
+        isValid: !!accumulator.isValid && !!currentResult.isValid,
         all: [
-            ...previousResult.all,
-            nextResult
+            ...(accumulator.all || []),
+            currentResult
         ]
+    };
+}
+
+function prepareResultCore(result, {props}) {
+    return {
+        ...props,
+        ...result
     };
 }
