@@ -1,4 +1,5 @@
 import validate from './validate';
+import getMiddleware from './utils/middleware';
 
 const initialResult = {
     isValid: true,
@@ -11,57 +12,12 @@ export default function allValidator(validators, validatorProps) {
     }
 
     return function validateAll(value, validationContext) {
-        const resolvedProps = typeof validatorProps === 'function' ?
-            validatorProps(validationContext) :
-            validatorProps;
-
-        const {middleware: middlewareFromProps, ...props} = resolvedProps || {};
-        const {middleware: middlewareFromContext, ...context} = validationContext || {};
-
-        const middlewares = [
-            ...(middlewareFromProps ? (Array.isArray(middlewareFromProps) ? middlewareFromProps : [middlewareFromProps]) : []),
-            ...(middlewareFromContext ? (Array.isArray(middlewareFromContext) ? middlewareFromContext : [middlewareFromContext]) : [])
-        ];
-
-        const reduceResultsMiddlewares = middlewares.map(({reduceResults}) => reduceResults).filter((reduceResults) => reduceResults);
-        const prepareResultMiddlewares = middlewares.map(({prepareResult}) => prepareResult).filter((prepareResult) => prepareResult);
-
-        const middlewareContext = {
+        const {context, reduceResults, prepareResult} = getMiddleware({
             value,
-            props,
-            context
-        };
-
-        const reduceResults = reduceResultsMiddlewares.reduce((accumulatedReducer, nextReducer) => {
-            return typeof nextReducer === 'function' ?
-                ((previousResult, currentResult) => {
-                    const accumulatedResult = accumulatedReducer(previousResult, currentResult);
-
-                    return nextReducer(
-                        accumulatedResult,
-                        currentResult,
-                        {
-                            ...middlewareContext,
-                            previousResult
-                        }
-                    );
-                }) : accumulatedReducer;
-        }, (accumulator, currentResult) => reduceResultsCore(accumulator, currentResult, middlewareContext));
-
-        const prepareResult = prepareResultMiddlewares.reduce((accumulatedPreparer, nextPreparer) => {
-            return typeof nextPreparer === 'function' ?
-                ((result) => {
-                    const preparedResult = accumulatedPreparer(result);
-
-                    return nextPreparer(
-                        preparedResult,
-                        {
-                            ...middlewareContext,
-                            validatorResult: result
-                        }
-                    );
-                }) : accumulatedPreparer;
-        }, (result) => prepareResultCore(result, middlewareContext));
+            validatorProps,
+            validationContext,
+            reduceResultsCore
+        });
 
         let result = initialResult;
         let hasAsyncResults = false;
@@ -104,12 +60,5 @@ function reduceResultsCore(accumulator, currentResult) {
             ...(accumulator.all || []),
             currentResult
         ]
-    };
-}
-
-function prepareResultCore(result, {props}) {
-    return {
-        ...props,
-        ...result
     };
 }
