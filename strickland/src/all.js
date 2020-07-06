@@ -70,7 +70,8 @@ export default function allValidator(validators, validatorProps) {
             const nextResult = validate(validator, value, context);
             hasAsyncResults = hasAsyncResults || nextResult.validateAsync;
 
-            result = reduceResults(result, nextResult);
+            // guard against middleware failing to return a result
+            result = reduceResults(result, nextResult) || {};
         });
 
         if (hasAsyncResults) {
@@ -84,17 +85,17 @@ export default function allValidator(validators, validatorProps) {
                 return Promise.all(promises).then((results) => {
                     const resolvedResult = results.reduce(reduceResults, initialResult);
 
-                    return prepareResult(resolvedResult, middlewareContext);
+                    return prepareResult(resolvedResult);
                 });
             };
         }
 
-        return prepareResult(result, middlewareContext);
+        return prepareResult(result);
     };
 }
 
 function reduceResultsCore(accumulator, currentResult) {
-    // be sure to guard against middleware failing to provide `isValid` and `all`
+    // Be sure to guard against middleware failing to provide `isValid` and `all`
     return {
         ...accumulator,
         ...currentResult,

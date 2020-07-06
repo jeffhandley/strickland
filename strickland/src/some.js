@@ -1,7 +1,7 @@
 import validate from './validate';
 
 const initialResult = {
-    isValid: false,
+    isValid: true,
     some: []
 };
 
@@ -10,17 +10,64 @@ export default function someValidator(validators, validatorProps) {
         throw 'Strickland: some expects an array of validators';
     }
 
-    return function validateSome(value, context) {
-        const props = typeof validatorProps === 'function' ?
-            validatorProps(context) :
+    return function validateSome(value, validationContext) {
+        const resolvedProps = typeof validatorProps === 'function' ?
+            validatorProps(validationContext) :
             validatorProps;
 
+        const {middleware: middlewareFromProps, ...props} = resolvedProps || {};
+        const {middleware: middlewareFromContext, ...context} = validationContext || {};
+
+        const middlewares = [
+            ...(middlewareFromProps ? (Array.isArray(middlewareFromProps) ? middlewareFromProps : [middlewareFromProps]) : []),
+            ...(middlewareFromContext ? (Array.isArray(middlewareFromContext) ? middlewareFromContext : [middlewareFromContext]) : [])
+        ];
+
+        const reduceResultsMiddlewares = middlewares.map(({reduceResults}) => reduceResults).filter((reduceResults) => reduceResults);
+        const prepareResultMiddlewares = middlewares.map(({prepareResult}) => prepareResult).filter((prepareResult) => prepareResult);
+
+        const middlewareContext = {
+            value,
+            props,
+            context
+        };
+
+        const reduceResults = reduceResultsMiddlewares.reduce((accumulatedReducer, nextReducer) => {
+            return typeof nextReducer === 'function' ?
+                ((previousResult, currentResult) => {
+                    const accumulatedResult = accumulatedReducer(previousResult, currentResult);
+
+                    return nextReducer(
+                        accumulatedResult,
+                        currentResult,
+                        {
+                            ...middlewareContext,
+                            previousResult
+                        }
+                    );
+                }) : accumulatedReducer;
+        }, (accumulator, currentResult) => reduceResultsCore(accumulator, currentResult, middlewareContext));
+
+        const prepareResult = prepareResultMiddlewares.reduce((accumulatedPreparer, nextPreparer) => {
+            return typeof nextPreparer === 'function' ?
+                ((result) => {
+                    const preparedResult = accumulatedPreparer(result);
+
+                    return nextPreparer(
+                        preparedResult,
+                        {
+                            ...middlewareContext,
+                            validatorResult: result
+                        }
+                    );
+                }) : accumulatedPreparer;
+        }, (result) => prepareResultCore(result, middlewareContext));
+
         if (!validators || !validators.length) {
-            return {
-                ...props,
+            return prepareResult({
                 ...initialResult,
                 isValid: true
-            };
+            });
         }
 
         function executeValidators(currentResult, validatorsToExecute) {
@@ -29,7 +76,8 @@ export default function someValidator(validators, validatorProps) {
                     const previousResult = currentResult;
                     const nextResult = validate(validator, value, context);
 
-                    currentResult = applyNextResult(currentResult, nextResult);
+                    // guard against middleware failing to return a result
+                    currentResult = reduceResults(currentResult, nextResult) || {};
 
                     if (nextResult.validateAsync) {
                         const previousAsync = previousResult.validateAsync || (() => Promise.resolve(previousResult));
@@ -37,7 +85,7 @@ export default function someValidator(validators, validatorProps) {
                         currentResult.validateAsync = function resolveAsync() {
                             return previousAsync().then((asyncResult) =>
                                 nextResult.validateAsync().then((resolvedResult) => {
-                                    let finalResult = applyNextResult(asyncResult, resolvedResult);
+                                    let finalResult = reduceResults(asyncResult, resolvedResult);
 
                                     if (!finalResult.isValid) {
                                         const remainingValidators = validatorsToExecute.slice(index + 1);
@@ -48,10 +96,7 @@ export default function someValidator(validators, validatorProps) {
                                         }
                                     }
 
-                                    return {
-                                        ...props,
-                                        ...finalResult
-                                    };
+                                    return prepareResult(finalResult);
                                 })
                             );
                         };
@@ -69,21 +114,32 @@ export default function someValidator(validators, validatorProps) {
 
         const result = executeValidators(initialResult, validators);
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(result);
     };
 }
 
-function applyNextResult(previousResult, nextResult) {
+function reduceResultsCore(accumulator, currentResult) {
+    // Since the initial result has `isValid` as `true`, then we must verify
+    // that there are already some results; otherwise, the || logic would
+    // always result in valid results.
+    const accumulatedSome = accumulator.some || [];
+    const accumulatedIsValid = accumulatedSome.length && accumulator.isValid;
+
+    // Be sure to guard against middleware failing to provide `isValid` and `some`
     return {
-        ...previousResult,
-        ...nextResult,
-        isValid: previousResult.isValid || nextResult.isValid,
+        ...accumulator,
+        ...currentResult,
+        isValid: !!accumulatedIsValid || !!currentResult.isValid,
         some: [
-            ...previousResult.some,
-            nextResult
+            ...accumulatedSome,
+            currentResult
         ]
+    };
+}
+
+function prepareResultCore(result, {props}) {
+    return {
+        ...props,
+        ...result
     };
 }

@@ -69,6 +69,7 @@ export default function everyValidator(validators, validatorProps) {
                     const previousResult = currentResult;
                     const nextResult = validate(validator, value, context);
 
+                    // guard against middleware failing to return a result
                     currentResult = reduceResults(currentResult, nextResult) || {};
 
                     if (nextResult.validateAsync) {
@@ -111,7 +112,7 @@ export default function everyValidator(validators, validatorProps) {
 }
 
 function reduceResultsCore(accumulator, currentResult) {
-    // be sure to guard against middleware failing to provide `isValid` and `every`
+    // Be sure to guard against middleware failing to provide `isValid` and `every`
     return {
         ...accumulator,
         ...currentResult,
