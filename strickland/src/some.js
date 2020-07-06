@@ -19,13 +19,6 @@ export default function someValidator(validators, validatorProps) {
             reduceResultsCore
         });
 
-        if (!validators || !validators.length) {
-            return prepareResult({
-                ...initialResult,
-                isValid: true
-            });
-        }
-
         function executeValidators(currentResult, validatorsToExecute) {
             if (Array.isArray(validatorsToExecute) && validatorsToExecute.length) {
                 validatorsToExecute.some((validator, index) => {

@@ -1,4 +1,4 @@
-import {objectProps, required, minLength, length} from '../src/strickland';
+import {objectProps, required, minLength, maxLength, length} from '../src/strickland';
 
 describe('objectProps', () => {
     describe('throws', () => {
@@ -705,6 +705,444 @@ describe('objectProps', () => {
                     isValid: true,
                     fourth: 'Fourth'
                 });
+            });
+        });
+    });
+
+    describe('supports middleware', () => {
+        describe('from validator props', () => {
+            it('omitting the middleware validator prop from the result', () => {
+                const middleware = {};
+
+                const validate = objectProps({}, {middleware});
+                const result = validate({name: 'ABC'});
+
+                expect(result).not.toHaveProperty('middleware');
+            });
+
+            describe('for prepareResult', () => {
+                it('calling the middleware function with the expected args', () => {
+                    const middleware = {
+                        prepareResult: jest.fn()
+                    };
+
+                    const props = {
+                        middleware,
+                        testProp: 'propValue'
+                    };
+
+                    const context = {
+                        contextProp: 'contextValue'
+                    };
+
+                    const validate = objectProps({name: required()}, props);
+                    validate({name: 'ABC'}, context);
+
+                    expect(middleware.prepareResult).toHaveBeenCalledWith(
+                        // result
+                        expect.objectContaining({
+                            isValid: true,
+                            objectProps: expect.objectContaining({}),
+                            testProp: 'propValue'
+                        }),
+
+                        // middleware context
+                        {
+                            value: expect.objectContaining({name: 'ABC'}),
+                            props: expect.objectContaining({
+                                testProp: 'propValue'
+                            }),
+                            context,
+                            validatorResult: expect.objectContaining({
+                                objectProps: expect.objectContaining({
+                                    name: expect.objectContaining({
+                                        isValid: true,
+                                        required: true
+                                    })
+                                })
+                            })
+                        }
+                    );
+                });
+
+                it('allowing the prepared result to be overridden, omitting the `objectProps` result prop', () => {
+                    const middleware = {
+                        prepareResult: () => ({})
+                    };
+
+                    const validate = objectProps({}, {middleware});
+                    const result = validate({name: 'ABC'});
+
+                    expect(result).not.toHaveProperty('objectProps');
+                });
+
+                it('allowing the result to be augmented', () => {
+                    const middleware = {
+                        prepareResult: (result) => ({
+                            ...result,
+                            repeatedObjectProps: result.objectProps
+                        })
+                    };
+
+                    const validate = objectProps({name: required()}, {middleware});
+                    const result = validate({name: 'ABC'});
+
+                    expect(result).toMatchObject({
+                        isValid: true,
+                        objectProps: expect.objectContaining({
+                            name: expect.objectContaining({
+                                isValid: true,
+                                required: true,
+                                value: 'ABC'
+                            })
+                        }),
+                        repeatedObjectProps: expect.objectContaining({
+                            name: expect.objectContaining({
+                                isValid: true,
+                                required: true,
+                                value: 'ABC'
+                            })
+                        })
+                    });
+                });
+
+                describe('allowing the `validatorResult` to be used instead of the core prepared result', () => {
+                    const middleware = {
+                        prepareResult: (result, { validatorResult }) => ({
+                            ...validatorResult,
+                            different: 'result object'
+                        })
+                    };
+
+                    const validate = objectProps({name: required()}, {middleware, validatorProp: 'validator prop'});
+                    const result = validate({name: 'ABC'});
+
+                    it('while still merging that result and the validator props onto the final result', () => {
+                        expect(result).toMatchObject({
+                            different: 'result object'
+                        });
+                    });
+
+                    it('but omitting the validator props', () => {
+                        expect(result).not.toHaveProperty('validatorProp');
+                    });
+                });
+
+                describe('allowing the isValid result prop to be overridden', () => {
+                    it('forcing it to false', () => {
+                        const middleware = {
+                            prepareResult: () => ({isValid: false})
+                        };
+
+                        const validate = objectProps({}, {middleware});
+                        const result = validate();
+
+                        expect(result.isValid).toBe(false);
+                    });
+
+                    it('forcing it to be true', () => {
+                        const middleware = {
+                            prepareResult: () => ({isValid: true})
+                        };
+
+                        const validate = objectProps({name: required()}, {middleware});
+                        const result = validate({name: null});
+
+                        expect(result.isValid).toBe(true);
+                    });
+                });
+
+                it('supporting the scenario of adding a `validationErrors` result prop', () => {
+                    const middleware = {
+                        prepareResult: (result) => ({
+                            ...result,
+                            validationErrors: Object.keys(result.objectProps)
+                                .map((propName) => result.objectProps[propName])
+                                .filter(({isValid}) => !isValid)
+                        })
+                    };
+
+                    const validate = objectProps({
+                        a: [maxLength(2), minLength(1), required()],
+                        ab: [maxLength(2), minLength(1)],
+                        abc: [maxLength(2), minLength(1)]
+                    }, {middleware});
+
+                    const result = validate({
+                        a: 'A',
+                        ab: 'AB',
+                        abc: 'ABC'
+                    });
+
+                    expect(result).toMatchObject({
+                        isValid: false,
+                        validationErrors: [
+                            expect.objectContaining({
+                                maxLength: 2,
+                                length: 3
+                            })
+                        ]
+                    });
+                });
+            });
+
+            describe('for reduceResults', () => {
+                it('calling the middleware function with the expected args', () => {
+                    const middleware = {
+                        reduceResults: jest.fn()
+                    };
+
+                    const props = {
+                        middleware,
+                        testProp: 'propValue'
+                    };
+
+                    const context = {
+                        contextProp: 'contextValue'
+                    };
+
+                    const validate = objectProps({name: required()}, props);
+                    validate({name: 'ABC'}, context);
+
+                    expect(middleware.reduceResults).toHaveBeenCalledWith(
+                        // accumulator
+                        expect.objectContaining({
+                            isValid: true,
+                            objectProps: expect.objectContaining({
+                                name: expect.objectContaining({
+                                    isValid: true,
+                                    required: true
+                                })
+                            })
+                        }),
+
+                        // current result
+                        expect.objectContaining({
+                            isValid: true
+                        }),
+
+                        // middleware context
+                        {
+                            value: {name: 'ABC'},
+                            props: expect.objectContaining({
+                                testProp: 'propValue'
+                            }),
+                            context,
+                            previousResult: expect.objectContaining({
+                                isValid: true,
+                                objectProps: expect.objectContaining({})
+                            })
+                        }
+                    );
+                });
+
+                it('allowing the previousResult to be used, bypassing previous reduceResults middleware, therefore not populating the `objectProps` result prop', () => {
+                    const middleware = {
+                        reduceResults(accumulator, currentResult, { previousResult }) {
+                            return previousResult;
+                        }
+                    };
+
+                    const validate = objectProps({name: required()}, {middleware});
+                    const result = validate({name: 'ABC'});
+
+                    expect(Object.keys(result.objectProps)).toHaveLength(0);
+                });
+
+                it('allowing the reduced result to be augmented', () => {
+                    const middleware = {
+                        reduceResults: (accumulator, currentResult) => ({
+                            ...accumulator,
+                            objectProps: {
+                                ...accumulator.objectProps,
+                                extraResult: true
+                            }
+                        })
+                    };
+
+                    const validate = objectProps({name: required()}, {middleware});
+                    const result = validate({name: 'ABC'});
+
+                    expect(result).toMatchObject({
+                        isValid: true,
+                        objectProps: expect.objectContaining({
+                            name: expect.objectContaining({
+                                isValid: true,
+                                required: true,
+                                value: 'ABC'
+                            }),
+                            extraResult: true
+                        })
+                    });
+                });
+
+                it('allowing the reduced result to be completely overridden', () => {
+                    const middleware = {
+                        reduceResults: (accumulator, currentResult) => ({
+                            replaced: true
+                        })
+                    };
+
+                    const validate = objectProps({name: required()}, {middleware});
+                    const result = validate({name: 'ABC'});
+
+                    expect(result).toMatchObject({
+                        replaced: true
+                    });
+                });
+
+                it('guarding against the `objectProps` prop getting dropped between validators', () => {
+                    const middleware = {
+                        reduceResults: (accumulator, currentResult) => ({
+                            replaced: true
+                        })
+                    };
+
+                    const validate = objectProps({
+                        first: required(),
+                        second: minLength(1)
+                    }, {middleware});
+
+                    expect(() => validate({first: 'ABC', second: 'ABC'})).not.toThrow();
+                });
+
+                describe('allowing the `isValid` result prop to be overridden', () => {
+                    it('forcing it to false', () => {
+                        const middleware = {
+                            reduceResults: (accumulator, currentResult) => ({
+                                ...accumulator,
+                                isValid: false
+                            })
+                        };
+
+                        const validate = objectProps({name: required()}, {middleware});
+                        const result = validate({name: 'ABC'});
+
+                        expect(result.isValid).toBe(false);
+                    });
+
+                    it('forcing it to be true', () => {
+                        const middleware = {
+                            reduceResults: (accumulator, currentResult) => ({
+                                ...accumulator,
+                                isValid: true
+                            })
+                        };
+
+                        const validate = objectProps({name: required()}, {middleware});
+                        const result = validate({name: null});
+
+                        expect(result.isValid).toBe(true);
+                    });
+                });
+            });
+        });
+
+        describe('from validation context', () => {
+            it('for prepareResult', () => {
+                const middleware = {
+                    prepareResult: () => ({
+                        fromContextMiddleware: true
+                    })
+                };
+
+                const validate = objectProps({});
+                const result = validate({}, {middleware});
+
+                expect(result).toMatchObject({
+                    fromContextMiddleware: true
+                });
+            });
+
+            it('for reduceResults', () => {
+                const middleware = {
+                    reduceResults: () => ({
+                        fromContextMiddleware: true
+                    })
+                };
+
+                const validate = objectProps({name: required()});
+                const result = validate({}, {middleware});
+
+                expect(result).toMatchObject({
+                    fromContextMiddleware: true
+                });
+            });
+        });
+
+        describe('from validator props and validation context together', () => {
+            it('for prepareResult', () => {
+                const propsMiddleware = {
+                    prepareResult: (result) => ({
+                        ...result,
+                        fromPropsMiddleware: 1
+                    })
+                };
+
+                const contextMiddleware = {
+                    prepareResult: (result) => ({
+                        ...result,
+                        fromContextMiddleware: result.fromPropsMiddleware + 2
+                    })
+                };
+
+                const validate = objectProps({name: required()}, {middleware: propsMiddleware});
+                const result = validate({}, {middleware: contextMiddleware});
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    fromPropsMiddleware: 1,
+                    fromContextMiddleware: 3
+                });
+            });
+
+            it('for reduceResults', () => {
+                const propsMiddleware = {
+                    reduceResults: (accumulator, currentResult) => ({
+                        ...accumulator,
+                        fromPropsMiddleware: 1
+                    })
+                };
+
+                const contextMiddleware = {
+                    reduceResults: (accumulator, currentResult) => ({
+                        ...accumulator,
+                        fromContextMiddleware: accumulator.fromPropsMiddleware + 2
+                    })
+                };
+
+                const validate = objectProps({name: required()}, {middleware: propsMiddleware});
+                const result = validate({}, {middleware: contextMiddleware});
+
+                expect(result).toMatchObject({
+                    isValid: false,
+                    fromPropsMiddleware: 1,
+                    fromContextMiddleware: 3
+                });
+            });
+        });
+
+        it('using arrays of middleware', () => {
+            const addFromPrepareResult = (result) => ({
+                ...result,
+                fromPrepareResult: (result.fromPrepareResult || 0) + 1
+            });
+
+            const addFromReduceResults = (accumulator, currentResult) => ({
+                fromReduceResults: (accumulator.fromReduceResults || 0) + 2
+            });
+
+            const middleware = {
+                prepareResult: addFromPrepareResult,
+                reduceResults: addFromReduceResults
+            };
+
+            const validate = objectProps({name: required()}, {middleware: [middleware, middleware]});
+            const result = validate({}, {middleware: [middleware, middleware, middleware]});
+
+            expect(result).toMatchObject({
+                fromPrepareResult: 5,
+                fromReduceResults: 10
             });
         });
     });

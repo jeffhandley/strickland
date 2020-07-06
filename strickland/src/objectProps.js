@@ -1,4 +1,5 @@
 import validate from './validate';
+import getMiddleware from './utils/middleware';
 
 const initialResult = {
     isValid: true,
@@ -10,17 +11,13 @@ export default function objectPropsValidator(validators, validatorProps) {
         throw 'Strickland: The `objectProps` validator expects an object';
     }
 
-    return function validateObjectProps(value, context) {
-        const props = typeof validatorProps === 'function' ?
-            validatorProps(context) :
-            validatorProps;
-
-        if (!validators || !Object.keys(validators).length) {
-            return {
-                ...props,
-                ...initialResult
-            };
-        }
+    return function validateObjectProps(value, validationContext) {
+        const {context, reduceResults, prepareResult} = getMiddleware({
+            value,
+            validatorProps,
+            validationContext,
+            reduceResultsCore
+        });
 
         let hasAsyncResults = false;
         let result = initialResult;
@@ -41,9 +38,11 @@ export default function objectPropsValidator(validators, validatorProps) {
                         [propName]: validatorResult
                     }
                 };
-            }).reduce(applyNextResult, initialResult);
+            }).reduce(reduceResults, initialResult) || {};
+            // guard against middleware failing to return a result
 
-            const propNames = Object.keys(result.objectProps);
+            // or omitting the `objectProps` result prop
+            const propNames = Object.keys(result.objectProps || {});
 
             if (hasAsyncResults) {
                 result.validateAsync = function resolveAsync() {
@@ -61,25 +60,19 @@ export default function objectPropsValidator(validators, validatorProps) {
                     );
 
                     return Promise.all(promises).then((results) => {
-                        const resolvedResult = results.reduce(applyNextResult, initialResult);
+                        const resolvedResult = results.reduce(reduceResults, initialResult);
 
-                        return {
-                            ...props,
-                            ...resolvedResult
-                        };
+                        return prepareResult(resolvedResult);
                     });
                 };
             }
         }
 
-        return {
-            ...props,
-            ...result
-        };
+        return prepareResult(result);
     };
 }
 
-function applyNextResult(previousResult, nextResult) {
+function reduceResultsCore(previousResult, nextResult) {
     return {
         isValid: previousResult.isValid && nextResult.isValid,
         objectProps: {
