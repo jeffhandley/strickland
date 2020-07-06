@@ -1,4 +1,4 @@
-import {every, required, minLength, maxLength} from '../src/strickland';
+import {every, required, minLength, maxLength, withMiddleware} from '../src/strickland';
 
 describe('every', () => {
     describe('throws', () => {
@@ -790,6 +790,34 @@ describe('every', () => {
             expect(result).toMatchObject({
                 fromPrepareResult: 5,
                 fromReduceResults: 10
+            });
+        });
+
+        it('using a withMiddleware wrapper', () => {
+            const addFromPrepareResult = (result) => ({
+                ...result,
+                fromPrepareResult: (result.fromPrepareResult || 0) + 1
+            });
+
+            const addFromReduceResults = (accumulator, currentResult) => ({
+                fromReduceResults: (accumulator.fromReduceResults || 0) + 1
+            });
+
+            const middleware = {
+                prepareResult: addFromPrepareResult,
+                reduceResults: addFromReduceResults
+            };
+
+            const validate = every([required()], {prop: 'propValue'});
+
+            // Wrap in middleware twice for nested levels of middleware
+            const validateWithMiddleware = withMiddleware(withMiddleware(validate, middleware), middleware);
+
+            const result = validateWithMiddleware(null);
+
+            expect(result).toMatchObject({
+                fromPrepareResult: 2,
+                fromReduceResults: 2
             });
         });
     });
