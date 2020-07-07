@@ -176,57 +176,57 @@ describe('formatResult', () => {
         });
 
         it('adding a flattened array of validationErrors for nested objects', () => {
-            const withValidationErrors = (result) => ({
-                ...result,
-                validationErrors: Object.keys(result.objectProps)
-                    .filter((propName) => !result.objectProps[propName].isValid && !result.objectProps[propName].validateAsync)
-                    .map((propName) => ({
-                        propName,
-                        ...result.objectProps[propName],
-                    }))
-                    .reduce((accumulator, {objectProps, every, validationErrors, ...propError}) => {
-                        accumulator.push(propError);
+            const withValidationErrors = (result) => {
+                const validationErrors = [];
 
-                        function addNestedValidationErrors(parentProp, nestedValidationErrors) {
-                            if (nestedValidationErrors) {
-                                nestedValidationErrors.forEach(({objectProps, validationErrors, propName, ...errorResult}) => {
-                                    const nestedPropName = `${parentProp}:${propName}`;
+                function addValidationErrors(parentObjectProps, parentProp) {
+                    Object.keys(parentObjectProps)
+                        .filter((propName) => !parentObjectProps[propName].isValid && !parentObjectProps[propName].validateAsync)
+                        .map((propName) => ({
+                            propName,
+                            ...parentObjectProps[propName]
+                        }))
+                        .forEach(({objectProps, propName, ...propError}) => {
+                            const errorPropName = parentProp ? `${parentProp}:${propName}` : propName;
 
-                                    accumulator.push({
-                                        propName: nestedPropName,
-                                        ...errorResult
-                                    });
+                            validationErrors.push({
+                                propName: errorPropName,
+                                ...propError
+                            });
 
-                                    addNestedValidationErrors(nestedPropName, validationErrors);
-                                });
+                            if (objectProps) {
+                                addValidationErrors(objectProps, errorPropName);
                             }
-                        }
+                        });
+                }
 
-                        addNestedValidationErrors(propError.propName, validationErrors);
+                addValidationErrors(result.objectProps);
 
-                        return accumulator;
-                    }, [])
-            });
+                return {
+                    ...result,
+                    validationErrors
+                };
+            };
 
             const validateObject = formatResult(withValidationErrors, {
                 name: [required(), minLength(1), maxLength(3)],
-                address: [required(), formatResult(withValidationErrors, {
+                address: [required(), {
                     street1: [required(), minLength(1), maxLength(3)],
                     street2: [minLength(1), maxLength(3)],
                     city: [required(), minLength(1), maxLength(3)],
                     state: [required(), minLength(2), maxLength(2)],
                     postal: [required(), minLength(1), maxLength(3)]
-                })],
-                employer: formatResult(withValidationErrors, {
+                }],
+                employer: {
                     name: [required(), minLength(1), maxLength(3)],
-                    address: [required(), formatResult(withValidationErrors, {
+                    address: [required(), {
                         street1: [required(), minLength(1), maxLength(3)],
                         street2: [minLength(1), maxLength(3)],
                         city: [required(), minLength(1), maxLength(3)],
                         state: [required(), minLength(2), maxLength(2)],
                         postal: [required(), minLength(1), maxLength(3)]
-                    })]
-                })
+                    }]
+                }
             });
 
             const data = {
