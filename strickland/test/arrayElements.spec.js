@@ -1,4 +1,4 @@
-import {arrayElements, required, minLength, maxLength} from '../src/strickland';
+import {arrayElements, required, minLength} from '../src/strickland';
 
 describe('arrayElements', () => {
     it('returns a validate function', () => {
@@ -67,7 +67,7 @@ describe('arrayElements', () => {
                     expect.objectContaining({isValid: true}),
                     expect.objectContaining({isValid: false}),
                     expect.objectContaining({isValid: false}),
-                    expect.objectContaining({isValid: true}),
+                    expect.objectContaining({isValid: true})
                 ]
             });
         });
@@ -142,6 +142,22 @@ describe('arrayElements', () => {
                         expect.objectContaining({isValid: false, value: 1}),
                         expect.objectContaining({isValid: false, value: 2}),
                         expect.objectContaining({isValid: false, value: 3})
+                    ]
+                });
+            });
+
+            it('resolves arrayElements result, handling when some results are async and others are not', () => {
+                const validate = arrayElements((value) => value ?
+                    Promise.resolve({asyncResult: true}) :
+                    {asyncResult: false}
+                );
+
+                const result = validate([true, false]);
+
+                return expect(result.validateAsync()).resolves.toMatchObject({
+                    arrayElements: [
+                        expect.objectContaining({asyncResult: true}),
+                        expect.objectContaining({asyncResult: false})
                     ]
                 });
             });

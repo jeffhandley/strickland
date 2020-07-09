@@ -53,7 +53,7 @@ export default function arrayElementsValidator(validator, validatorProps) {
                             ...resolvedResult
                         };
                     });
-                }
+                };
             }
         }
 
