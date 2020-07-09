@@ -33,3 +33,14 @@ This repository is set up as a Lerna mono-repo, containing the following folders
     * Feel free to use these logos when linking to Strickland.io or to this GitHub repository
 * strickland
     * The `strickland` npm package
+
+## Publishing
+
+To publish a new version of Strickland to NPM:
+
+1. Ensure `npm whoami` shows that you are logged in
+2. Use a `release/` branch to perform the release steps
+3. Push the branch to `origin` using `--set-upstream`
+4. Run `npm run publish:release` or `npm run:prerelease`
+5. Commit the `CHANGELOG.md` file and push the branch to `origin`
+6. Merge the PR
