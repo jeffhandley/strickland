@@ -1,4 +1,4 @@
-# objectProps
+# With the objectProps Validator
 
 The `objectProps` validator performs validation on every object property for which validators are defined. The validators are supplied as an object with the shape matching the object.
 

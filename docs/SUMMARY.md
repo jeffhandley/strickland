@@ -25,7 +25,7 @@
     * [all](composition/arrays-of-validators/all.md)
     * [some](composition/arrays-of-validators/some.md)
   * [Validating Array Elements](composition/validating-array-elements/README.md)
-    * [arrayElements](composition/validating-array-elements/arrayElements.md)
+    * [arrayElements](composition/validating-array-elements/arrayelements.md)
   * [Validating Objects](composition/validating-objects/README.md)
     * [With the objectProps Validator](composition/validating-objects/objectprops.md)
     * [Advanced Object Validation](composition/validating-objects/advanced-object-validation.md)
@@ -50,3 +50,4 @@
 * [Wrap-Up](wrap-up.md)
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [GitHub](https://github.com/jeffhandley/strickland)
+

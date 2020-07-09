@@ -2,7 +2,7 @@
 
 With the combination of Strickland's `objectProps` and `arrayElements` validators, it's easy to validate arrays of objects.
 
-``` jsx
+```jsx
 import validate, {
     objectProps, arrayElements, required, length, range, every
 } from 'strickland';
@@ -48,3 +48,4 @@ const result = validate(personValidator, person);
 ```
 
 Objects can be nested without any limits on depth. And any type of validator can be used anywhere in the tree.
+

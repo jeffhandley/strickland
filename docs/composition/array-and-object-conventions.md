@@ -1,4 +1,4 @@
-# Composition Conventions
+# Array and Object Conventions
 
 We defined early on that all validators must be functions in Strickland. This is technically true, but because `every` and `objectProps` are used so frequently to validate arrays of validators and object properties, composition conventions are built into Strickland's `validate` function to automatically use `every` and `objectProps`.
 
@@ -47,3 +47,4 @@ const result = validate(personValidator, person);
 ```
 
 There may be times when you do need to explicitly use `every` and `objectProps` though. With the object and array conventions, there is no way to pass validator props in that would apply at the object-level or to all validators within the array. But it is quite easy to reintroduce the `objectProps` or `every` wrapper and pass props in after the object or array as seen previously.
+
