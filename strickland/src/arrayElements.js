@@ -3,10 +3,10 @@ import {isEmptyValue} from './utils';
 
 const initialResult = {
     isValid: true,
-    arrayOf: []
+    arrayElements: []
 };
 
-export default function arrayOfValidator(validator, validatorProps) {
+export default function arrayElementsValidator(validator, validatorProps) {
     return function validateArray(valueArray, context) {
         const props = typeof validatorProps === 'function' ?
             validatorProps(context) :
@@ -26,7 +26,7 @@ export default function arrayOfValidator(validator, validatorProps) {
             result = valueArray.map((value, key) => {
                 const childContext = {
                     ...context,
-                    ...((context && context.arrayOf && context.arrayOf[key]) || ({}))
+                    ...((context && context.arrayElements && context.arrayElements[key]) || ({}))
                 };
 
                 const validatorResult = validate(validator, value, childContext);
@@ -37,11 +37,11 @@ export default function arrayOfValidator(validator, validatorProps) {
 
             if (hasAsyncResults) {
                 result.validateAsync = function resolveAsync() {
-                    const promises = result.arrayOf.map(
+                    const promises = result.arrayElements.map(
                         (value, key) => Promise.resolve(
-                            result.arrayOf[key].validateAsync ?
-                                result.arrayOf[key].validateAsync() :
-                                result.arrayOf[key]
+                            result.arrayElements[key].validateAsync ?
+                                result.arrayElements[key].validateAsync() :
+                                result.arrayElements[key]
                         )
                     );
 
@@ -67,8 +67,8 @@ export default function arrayOfValidator(validator, validatorProps) {
 function applyNextResult(previousResult, nextResult) {
     return {
         isValid: previousResult.isValid && nextResult.isValid,
-        arrayOf: [
-            ...previousResult.arrayOf,
+        arrayElements: [
+            ...previousResult.arrayElements,
             nextResult
         ]
     };

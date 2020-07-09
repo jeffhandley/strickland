@@ -1,53 +1,53 @@
-import {arrayOf, required, minLength, maxLength} from '../src/strickland';
+import {arrayElements, required, minLength, maxLength} from '../src/strickland';
 
-describe('arrayOf', () => {
+describe('arrayElements', () => {
     it('returns a validate function', () => {
-        const validate = arrayOf(() => true);
+        const validate = arrayElements(() => true);
         expect(validate).toBeInstanceOf(Function);
     });
 
     describe('validates', () => {
         describe('null values', () => {
-            const validate = arrayOf(() => true);
+            const validate = arrayElements(() => true);
             const result = validate(null);
 
             it('as valid', () => {
                 expect(result.isValid).toBe(true);
             });
 
-            it('with an empty `arrayOf` result prop', () => {
-                expect(result.arrayOf).toEqual([]);
+            it('with an empty `arrayElements` result prop', () => {
+                expect(result.arrayElements).toEqual([]);
             });
         });
 
         describe('with a validator that always returns true', () => {
-            const validate = arrayOf(() => true);
+            const validate = arrayElements(() => true);
             const result = validate([]);
 
             it('returns valid results', () => {
                 expect(result.isValid).toBe(true);
             });
 
-            it('returns an empty `arrayOf` result prop', () => {
-                expect(result.arrayOf).toEqual([]);
+            it('returns an empty `arrayElements` result prop', () => {
+                expect(result.arrayElements).toEqual([]);
             });
         });
 
         describe('that the value is an array', () => {
-            const validate = arrayOf(() => true);
+            const validate = arrayElements(() => true);
             const result = validate('ABC');
 
             it('returns an invalid result', () => {
                 expect(result.isValid).toBe(false);
             });
 
-            it('returns an empty `arrayOf` result prop', () => {
-                expect(result.arrayOf).toEqual([]);
+            it('returns an empty `arrayElements` result prop', () => {
+                expect(result.arrayElements).toEqual([]);
             });
         });
 
         describe('all elements of the array', () => {
-            const validate = arrayOf(required());
+            const validate = arrayElements(required());
             const result = validate([
                 0,
                 1,
@@ -60,7 +60,7 @@ describe('arrayOf', () => {
 
             expect(result).toMatchObject({
                 isValid: false,
-                arrayOf: [
+                arrayElements: [
                     expect.objectContaining({isValid: true}),
                     expect.objectContaining({isValid: true}),
                     expect.objectContaining({isValid: false}),
@@ -73,12 +73,12 @@ describe('arrayOf', () => {
         });
 
         it('with an array for rules', () => {
-            const validate = arrayOf([required(), minLength(1)]);
+            const validate = arrayElements([required(), minLength(1)]);
             const result = validate(['ABC']);
 
             expect(result).toMatchObject({
                 isValid: true,
-                arrayOf: [
+                arrayElements: [
                     {
                         isValid: true,
                         required: true,
@@ -93,7 +93,7 @@ describe('arrayOf', () => {
     describe('passes context to the validators', () => {
         const validator = jest.fn();
 
-        const validate = arrayOf(validator);
+        const validate = arrayElements(validator);
         validate([true], {contextProp: 'Context prop'});
 
         it('from the validation context', () => {
@@ -105,11 +105,11 @@ describe('arrayOf', () => {
 
     describe('allows context to be specified for individual elements', () => {
         const validator = jest.fn();
-        const validate = arrayOf(validator);
+        const validate = arrayElements(validator);
 
         const context = {
             contextProp: 'Context prop',
-            arrayOf: [{element: 'specific context'}]
+            arrayElements: [{element: 'specific context'}]
         };
 
         validate([true], context);
@@ -125,7 +125,7 @@ describe('arrayOf', () => {
     describe('given async validators', () => {
         describe('returns a validateAsync function', () => {
             it('that returns a Promise', () => {
-                const validate = arrayOf(() => Promise.resolve(true));
+                const validate = arrayElements(() => Promise.resolve(true));
                 const result = validate([true]);
 
                 expect(result.validateAsync()).toBeInstanceOf(Promise);
@@ -133,12 +133,12 @@ describe('arrayOf', () => {
         });
 
         describe('resolves results', () => {
-            it('resolves arrayOf result, without stopping at on invalid results', () => {
-                const validate = arrayOf(() => Promise.resolve(false));
+            it('resolves arrayElements result, without stopping at on invalid results', () => {
+                const validate = arrayElements(() => Promise.resolve(false));
                 const result = validate([1, 2, 3]);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
-                    arrayOf: [
+                    arrayElements: [
                         expect.objectContaining({isValid: false, value: 1}),
                         expect.objectContaining({isValid: false, value: 2}),
                         expect.objectContaining({isValid: false, value: 3})
@@ -147,12 +147,12 @@ describe('arrayOf', () => {
             });
 
             it('that resolve as true', () => {
-                const validate = arrayOf(() => Promise.resolve(true));
+                const validate = arrayElements(() => Promise.resolve(true));
                 const result = validate([true]);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
-                    arrayOf: [
+                    arrayElements: [
                         expect.objectContaining({
                             isValid: true,
                             value: true
@@ -162,19 +162,19 @@ describe('arrayOf', () => {
             });
 
             it('that resolve as a valid result object', () => {
-                const validate = arrayOf(() => Promise.resolve({isValid: true}));
+                const validate = arrayElements(() => Promise.resolve({isValid: true}));
                 const result = validate([true]);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({isValid: true});
             });
 
             it('that resolve as false', () => {
-                const validate = arrayOf(() => Promise.resolve(false));
+                const validate = arrayElements(() => Promise.resolve(false));
                 const result = validate([true]);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: false,
-                    arrayOf: [
+                    arrayElements: [
                         expect.objectContaining({
                             isValid: false,
                             value: true
@@ -184,14 +184,14 @@ describe('arrayOf', () => {
             });
 
             it('that resolve as an invalid result object', () => {
-                const validate = arrayOf(() => Promise.resolve({isValid: false}));
+                const validate = arrayElements(() => Promise.resolve({isValid: false}));
                 const result = validate([true]);
 
                 return expect(result.validateAsync()).resolves.toMatchObject({isValid: false});
             });
 
             it('recursively', () => {
-                const validate = arrayOf([
+                const validate = arrayElements([
                     () => Promise.resolve(
                         Promise.resolve(
                             Promise.resolve({
@@ -200,11 +200,11 @@ describe('arrayOf', () => {
                             })
                         )
                     ),
-                    arrayOf([
+                    arrayElements([
                         () => Promise.resolve(
                             Promise.resolve(true)
                         ),
-                        arrayOf(
+                        arrayElements(
                             () => Promise.resolve(
                                 Promise.resolve({
                                     isValid: true,
@@ -227,14 +227,14 @@ describe('arrayOf', () => {
 
                 return expect(result.validateAsync()).resolves.toMatchObject({
                     isValid: true,
-                    arrayOf: [
+                    arrayElements: [
                         expect.objectContaining({
                             isValid: true,
                             recursively: 'Yes!',
-                            arrayOf: [
+                            arrayElements: [
                                 expect.objectContaining({
                                     isValid: true,
-                                    arrayOf: [
+                                    arrayElements: [
                                         expect.objectContaining({
                                             isValid: true,
                                             inNestedValidators: 'Yep'
@@ -248,7 +248,7 @@ describe('arrayOf', () => {
             });
 
             it('puts validator props on the resolved result', () => {
-                const validate = arrayOf(
+                const validate = arrayElements(
                     () => Promise.resolve(true),
                     {validatorProp: 'Validator message'}
                 );
@@ -261,7 +261,7 @@ describe('arrayOf', () => {
             });
 
             it('does not put context props on the resolved result', () => {
-                const validate = arrayOf(() => Promise.resolve(true));
+                const validate = arrayElements(() => Promise.resolve(true));
                 const result = validate([true], {message: 'Message'});
 
                 return expect(result.validateAsync()).resolves.not.toHaveProperty('message');
@@ -269,7 +269,7 @@ describe('arrayOf', () => {
         });
 
         describe('returns a partial result object', () => {
-            const validate = arrayOf((value) => {
+            const validate = arrayElements((value) => {
                 if (!value) {
                     return {isValid: true, async: false};
                 }
@@ -285,7 +285,7 @@ describe('arrayOf', () => {
 
             it('with sync results in place and Promise results where expected', () => {
                 expect(result).toMatchObject({
-                    arrayOf: [
+                    arrayElements: [
                         expect.objectContaining({
                             isValid: true,
                             async: false
@@ -298,7 +298,7 @@ describe('arrayOf', () => {
             });
 
             it('with individual validator promises that will finish their results', () => {
-                return expect(result.arrayOf[1].validateAsync()).resolves.toMatchObject({
+                return expect(result.arrayElements[1].validateAsync()).resolves.toMatchObject({
                     isValid: true,
                     async: true,
                     value: true

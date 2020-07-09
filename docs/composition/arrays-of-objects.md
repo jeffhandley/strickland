@@ -1,15 +1,15 @@
 # Arrays of Objects
 
-With the combination of Strickland's `objectProps` and `arrayOf` validators, it's easy to validate arrays of objects.
+With the combination of Strickland's `objectProps` and `arrayElements` validators, it's easy to validate arrays of objects.
 
 ``` jsx
 import validate, {
-    objectProps, arrayOf, required, length, range, every
+    objectProps, arrayElements, required, length, range, every
 } from 'strickland';
 
 const personValidator = objectProps({
     name: every([required(), length(5, 40)]),
-    addresses: arrayOf(
+    addresses: arrayElements(
         every([
             required(),
             objectProps({

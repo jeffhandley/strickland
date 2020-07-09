@@ -8,13 +8,13 @@ If a validator is an object, it is assumed to be an object defining validators f
 
 We can rewrite the example for validating a person's name and address more naturally.
 
-import validate, {arrayOf, required, length, range} from 'strickland';
+import validate, {arrayElements, required, length, range} from 'strickland';
 
 const personValidator = [
     required(),
     {
         name: [required(), length(5, 40)],
-        addresses: [required(), arrayOf([
+        addresses: [required(), arrayElements([
             required(),
             {
                 street: [

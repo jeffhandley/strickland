@@ -1,7 +1,7 @@
 export {default, validateAsync} from './validate';
 
 export {default as all} from './all';
-export {default as arrayOf} from './arrayOf';
+export {default as arrayElements} from './arrayElements';
 export {default as compare} from './compare';
 export {default as every} from './every';
 export {default as form} from './form';

@@ -10,7 +10,7 @@ import validate, {
     every,
     all,
     some,
-    arrayOf,
+    arrayElements,
     objectProps
 } from '../../src/strickland';
 
@@ -248,21 +248,21 @@ describe('docs', () => {
         });
 
         it('validating arrays', () => {
-            const allValuesRequired = arrayOf(
+            const allValuesRequired = arrayElements(
                 required(),
                 {message: 'Must have at least 5 characters'}
             );
 
             const result = validate(allValuesRequired, ['First', '', 'Third']);
 
-            const allValuesHaveMinLength = arrayOf(
+            const allValuesHaveMinLength = arrayElements(
                 minLength((context) => ({minLength: context.minLength})),
                 (context) => ({message: `All values must have at least ${context.minLength} characters`})
             );
 
             expect(result).toMatchObject({
                 isValid: false,
-                arrayOf: [
+                arrayElements: [
                     expect.objectContaining({isValid: true}),
                     expect.objectContaining({isValid: false}),
                     expect.objectContaining({isValid: true})
@@ -273,7 +273,7 @@ describe('docs', () => {
                 isValid: false,
                 value: ['1', '12', '123', '1234'],
                 message: 'All values must have at least 3 characters',
-                arrayOf: [
+                arrayElements: [
                     {
                         isValid: false,
                         value: '1',
@@ -594,7 +594,7 @@ describe('docs', () => {
         it('arrays of objects', () => {
             const personValidator = objectProps({
                 name: every([required(), length(5, 40)]),
-                addresses: arrayOf(
+                addresses: arrayElements(
                     every([
                         required(),
                         objectProps({
@@ -636,7 +636,7 @@ describe('docs', () => {
                 objectProps: expect.objectContaining({
                     addresses: expect.objectContaining({
                         isValid: false,
-                        arrayOf: [
+                        arrayElements: [
                             expect.objectContaining({
                                 isValid: true,
                                 value: expect.objectContaining({
@@ -666,7 +666,7 @@ describe('docs', () => {
                 required(),
                 {
                     name: [required(), length(5, 40)],
-                    addresses: [required(), arrayOf([
+                    addresses: [required(), arrayElements([
                         required(),
                         {
                             street: [
