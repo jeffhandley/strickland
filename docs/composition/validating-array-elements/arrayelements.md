@@ -1,8 +1,8 @@
 # arrayElements
 
-Strickland provides an `arrayElements` validator to apply a validator against all elements within an array. The `arrayElements` validator first validates that the value is an `Array` (using `Array.isArray`), and then it validates all elements of that array using the supplied validator.
+Strickland provides an `arrayElements` validator to apply a validator against all elements within an array. The `arrayElements` validator first validates that the value is an `Array` \(using `Array.isArray`\), and then it validates all elements of that array using the supplied validator.
 
-## Parameters
+### Parameters
 
 The first parameter to the `arrayElements` validator factory is validator that will be used to validate each element of the value array. Validator props can also be supplied either as an object or as a function that accepts context and returns a validator props object.
 
@@ -20,13 +20,13 @@ const allValuesHaveMinLength = arrayElements(
 );
 ```
 
-## Result Properties
+### Result Properties
 
 * `arrayElements`: The array of validation results produced during validation
 
-The `arrayElements` validator adds an `arrayElements` property to the validation result with the validation results of every array element that was validated. The validation result property is named `arrayElements` to match the name of the validator (this is a common pattern in Strickland).
+The `arrayElements` validator adds an `arrayElements` property to the validation result with the validation results of every array element that was validated. The validation result property is named `arrayElements` to match the name of the validator \(this is a common pattern in Strickland\).
 
-``` jsx
+```jsx
 import validate, {every, required, minLength, maxLength} from 'strickland';
 
 const allValuesHaveMinLength = arrayElements(
@@ -74,3 +74,4 @@ const result = validate(
     }
  */
 ```
+

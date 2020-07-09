@@ -47,3 +47,4 @@ const result = validate(personValidator, person);
 ```
 
 There may be times when you do need to explicitly use `every` and `objectProps` though. With the object and array conventions, there is no way to pass validator props in that would apply at the object-level or to all validators within the array. But it is quite easy to reintroduce the `objectProps` or `every` wrapper and pass props in after the object or array as seen previously.
+
