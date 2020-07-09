@@ -6,9 +6,10 @@ The examples we've seen so far only validate single values against single valida
   * [every](arrays-of-validators/every.md)
   * [all](arrays-of-validators/all.md)
   * [some](arrays-of-validators/some.md)
+* [Validating Array Elements](arrayelements.md)
 * [Validating Objects](validating-objects/)
   * [With the objectProps Validator](validating-objects/objectprops.md)
   * [Advanced Object Validation](validating-objects/advanced-object-validation.md)
   * [Nested Objects](validating-objects/nested-objects.md)
+  * [Arrays of Objects](validating-objects/arrays-of-objects.md)
 * [Array and Object Conventions](array-and-object-conventions.md)
-
