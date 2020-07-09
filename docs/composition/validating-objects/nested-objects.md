@@ -10,10 +10,10 @@ import validate, {
 const personValidator = objectProps({
     name: every([required(), length(5, 40)]),
     address: objectProps({
-        street: objectProps({
+        street: every([required(), objectProps({
             number: every([required(), range(1, 99999)]),
             name: every([required(), length(2, 40)])
-        }),
+        })]),
         city: required(),
         state: every([required(), length(2, 2)])
     })
