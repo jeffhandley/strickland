@@ -1,6 +1,6 @@
 {
   "name": "demo-react",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "dependencies": {
     "classnames": "^2.2.6",
@@ -12,7 +12,7 @@
     "react-scripts": "^1.1.5",
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
-    "strickland": "^2.1.0"
+    "strickland": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

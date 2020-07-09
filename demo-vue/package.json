@@ -1,6 +1,6 @@
 {
   "name": "demo-vue",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A Vue.js project demostrating the Strickland validation framework",
   "author": "benmccallum",
   "private": true,
@@ -14,7 +14,7 @@
     "classnames": "^2.2.6",
     "node-sass": "^4.11.0",
     "sass-loader": "^6.0.7",
-    "strickland": "^2.1.0",
+    "strickland": "^2.1.1",
     "vue": "^2.5.21",
     "vue-router": "^3.0.2",
     "vuex": "^3.0.1"
