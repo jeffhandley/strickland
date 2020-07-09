@@ -1,6 +1,6 @@
 {
   "name": "strickland",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Strickland is a JavaScript validation framework with a focus on extensibility and composition",
   "main": "./lib/strickland.js",
   "files": [

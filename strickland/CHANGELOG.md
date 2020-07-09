@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/jeffhandley/strickland/compare/v2.0.2...v2.1.0) (2020-07-09)
+
+
+### Features
+
+* Introduce an arrayElements validator ([53a923d](https://github.com/jeffhandley/strickland/commit/53a923d8dd224786235825b26004a3998b1e1832)), closes [#36](https://github.com/jeffhandley/strickland/issues/36)
+
+
+
+
+
 ## [2.0.2](https://github.com/jeffhandley/strickland/compare/v2.0.0...v2.0.2) (2018-12-12)
 
 
