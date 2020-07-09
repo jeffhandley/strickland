@@ -1,7 +1,10 @@
 import validate, {
     validateAsync,
     required,
-    length
+    length,
+    every,
+    minLength,
+    arrayElements
 } from '../../src/strickland';
 
 describe('docs', () => {
@@ -138,24 +141,29 @@ describe('docs', () => {
                     usernameIsAvailable
                 ],
                 address: [
-                    required({message: 'Address is required'}),
-                    {
-                        street: [required(), length(2, 40)],
-                        city: [required(), length(2, 40)],
-                        state: [required(), length(2, 2)]
-                    },
-                    validateCity
+                    every([required(), minLength(1)], {message: 'At least 1 address is required'}),
+                    arrayElements([
+                        required({message: 'Address is required'}),
+                        {
+                            street: [required(), length(2, 40)],
+                            city: [required(), length(2, 40)],
+                            state: [required(), length(2, 2)]
+                        },
+                        validateCity
+                    ])
                 ]
             };
 
             const person = {
                 name: 'Marty McFly',
                 username: 'marty',
-                address: {
-                    street: '9303 Lyon Dr.',
-                    city: 'Hill Valley',
-                    state: 'WA'
-                }
+                address: [
+                    {
+                        street: '9303 Lyon Dr.',
+                        city: 'Hill Valley',
+                        state: 'WA'
+                    }
+                ]
             };
 
             return validateAsync(validatePerson, person).then((result) => {
@@ -173,12 +181,17 @@ describe('docs', () => {
                         },
                         address: {
                             isValid: false,
-                            message: 'Hill Valley is in California',
-                            objectProps: {
-                                street: {isValid: true},
-                                city: {isValid: true},
-                                state: {isValid: true}
-                            }
+                            arrayElements: [
+                                {
+                                    isValid: false,
+                                    message: 'Hill Valley is in California',
+                                    objectProps: {
+                                        street: {isValid: true},
+                                        city: {isValid: true},
+                                        state: {isValid: true}
+                                    }
+                                }
+                            ]
                         }
                     }
                 });
