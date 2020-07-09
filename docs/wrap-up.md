@@ -19,13 +19,14 @@ Using Strickland's built-in validators, and its extensibility and composability,
 ## Composition Concepts
 
 1. [**Arrays of Validators**](composition/arrays-of-validators/) can be used to validate a value against multiple validators
-2. [**Validating Objects**](composition/validating-objects/) is accomplished by building objects that define how the props should be validated
-3. [**Array and Object Conventions**](composition/array-and-object-conventions.md) enable terse and natural definitions of complex compositions
+2. \*\*\*\*[**Validating Array Elements**](composition/validating-array-elements/) is easily done using the arrayElements validator
+3. [**Validating Objects**](composition/validating-objects/) is accomplished by building objects that define how the props should be validated
+4. [**Composition Conventions**](composition/array-and-object-conventions.md) enable terse and natural definitions of complex compositions
 
 ## Async Validation
 
 1. [**Validators Can Use Promises**](async-validation/) to provide async validation capabilities
-2. [**Composition Supports Promises**](async-validation/async-validator-arrays-and-objects.md) within arrays of validators or object validation
+2. [**Composition Supports Promises**](async-validation/async-validator-arrays-and-objects.md) within arrays of validators, array elements, and object validation
 3. [**Two-Stage Sync/Async Validation**](async-validation/two-stage-sync-async-validation.md) is conducted using the `validateAsync` function
 
 ## Form Validation

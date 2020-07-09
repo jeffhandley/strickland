@@ -49,5 +49,6 @@
 * [Design Goals](design-goals.md)
 * [Wrap-Up](wrap-up.md)
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
+* [NPM](https://www.npmjs.com/package/strickland)
 * [GitHub](https://github.com/jeffhandley/strickland)
 
