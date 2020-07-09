@@ -6,7 +6,7 @@ Strickland provides an `arrayElements` validator to apply a validator against al
 
 The first parameter to the `arrayElements` validator factory is validator that will be used to validate each element of the value array. Validator props can also be supplied either as an object or as a function that accepts context and returns a validator props object.
 
-``` jsx
+```jsx
 const allValuesRequired = arrayElements(
     required(),
     {message: 'Must have at least 5 characters'}
