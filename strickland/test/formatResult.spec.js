@@ -190,11 +190,11 @@ describe('formatResult', () => {
             });
         });
 
-        it('adding a flattened array of validationErrors for nested objects', () => {
+        it('adding a flattened array of validationErrors for nested objects, with objectProps replaced with a parent prop names array', () => {
             const withValidationErrors = (result) => {
                 const validationErrors = [];
 
-                function addValidationErrors(parentObjectProps, parentProp) {
+                function addValidationErrors(parentObjectProps, parentProps = []) {
                     Object.keys(parentObjectProps)
                         .filter((propName) => !parentObjectProps[propName].isValid && !parentObjectProps[propName].validateAsync)
                         .map((propName) => ({
@@ -202,15 +202,15 @@ describe('formatResult', () => {
                             ...parentObjectProps[propName]
                         }))
                         .forEach(({objectProps, propName, ...propError}) => {
-                            const errorPropName = parentProp ? `${parentProp}:${propName}` : propName;
+                            const errorPropNames = [...parentProps, propName];
 
                             validationErrors.push({
-                                propName: errorPropName,
+                                objectProps: errorPropNames,
                                 ...propError
                             });
 
                             if (objectProps) {
-                                addValidationErrors(objectProps, errorPropName);
+                                addValidationErrors(objectProps, errorPropNames);
                             }
                         });
                 }
@@ -264,54 +264,57 @@ describe('formatResult', () => {
                 isValid: false,
                 validationErrors: [
                     expect.objectContaining({
-                        propName: 'name',
+                        objectProps: ['name'],
                         isValid: false,
                         maxLength: 3
                     }),
                     expect.objectContaining({
-                        propName: 'address',
-                        isValid: false
+                        objectProps: ['address'],
+                        isValid: false,
+                        objectProps: expect.any(Object)
                     }),
                     expect.objectContaining({
-                        propName: 'address:street1',
+                        objectProps: ['address', 'street1'],
                         isValid: false,
                         required: true
                     }),
                     expect.objectContaining({
-                        propName: 'address:city',
+                        objectProps: ['address', 'city'],
                         isValid: false,
                         maxLength: 3
                     }),
                     expect.objectContaining({
-                        propName: 'address:postal',
+                        objectProps: ['address', 'postal'],
                         isValid: false,
                         required: true
                     }),
                     expect.objectContaining({
-                        propName: 'employer',
-                        isValid: false
+                        objectProps: ['employer'],
+                        isValid: false,
+                        objectProps: expect.any(Object)
                     }),
                     expect.objectContaining({
-                        propName: 'employer:name',
+                        objectProps: ['employer', 'name'],
                         isValid: false,
                         required: true
                     }),
                     expect.objectContaining({
-                        propName: 'employer:address',
-                        isValid: false
+                        objectProps: ['employer', 'address'],
+                        isValid: false,
+                        objectProps: expect.any(Object)
                     }),
                     expect.objectContaining({
-                        propName: 'employer:address:street1',
+                        objectProps: ['employer', 'address', 'street1'],
                         isValid: false,
                         required: true
                     }),
                     expect.objectContaining({
-                        propName: 'employer:address:city',
+                        objectProps: ['employer', 'address', 'city'],
                         isValid: false,
                         maxLength: 3
                     }),
                     expect.objectContaining({
-                        propName: 'employer:address:postal',
+                        objectProps: ['employer', 'address', 'postal'],
                         isValid: false,
                         required: true
                     })
