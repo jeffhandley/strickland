@@ -22,7 +22,7 @@ describe('formatResult', () => {
 
     describe('does not throw', () => {
         it('if the formatter is a function and the validator is a function', () => {
-            expect(() => formatResult((result) => result, (value) => true)).not.toThrow();
+            expect(() => formatResult((result) => result, () => true)).not.toThrow();
         });
 
         it('if the formatter is a function and the validator is an object', () => {
@@ -37,7 +37,7 @@ describe('formatResult', () => {
     describe('returns a function', () => {
         it('for performing validation', () => {
             const formatter = (result) => result;
-            const validator = (value) => true;
+            const validator = () => true;
 
             expect(formatResult(formatter, validator)).toBeInstanceOf(Function);
         });
@@ -69,20 +69,20 @@ describe('formatResult', () => {
     });
 
     describe('can be used for the objectProps validator (using the object convention)', () => {
-        const validateName = jest.fn(() => false);
-
-        const formatter = jest.fn((result) => ({
-            ...result,
-            formatted: true
-        }));
-
-        const validate = formatResult(formatter, {
-            name: validateName
-        });
-
-        const result = validate({name: 'ABC'});
-
         it('calling the formatter', () => {
+            const validateName = jest.fn(() => false);
+
+            const formatter = jest.fn((result) => ({
+                ...result,
+                formatted: true
+            }));
+
+            const validate = formatResult(formatter, {
+                name: validateName
+            });
+
+            validate({name: 'ABC'});
+
             expect(formatter).toHaveBeenCalledWith(
                 // result
                 expect.objectContaining({
@@ -104,6 +104,19 @@ describe('formatResult', () => {
 
         describe('applying the formatter', () => {
             it('to sync results', () => {
+                const validateName = jest.fn(() => false);
+
+                const formatter = jest.fn((result) => ({
+                    ...result,
+                    formatted: true
+                }));
+
+                const validate = formatResult(formatter, {
+                    name: validateName
+                });
+
+                const result = validate({name: 'ABC'});
+
                 expect(result).toMatchObject({
                     isValid: false,
                     value: expect.objectContaining({name: 'ABC'}),
@@ -157,6 +170,8 @@ describe('formatResult', () => {
                         ...result.objectProps[propName]
                     }))
             });
+
+            const validateName = jest.fn(() => false);
 
             const validateWithValidationErrors = formatResult(withValidationErrors, {
                 name: validateName
@@ -255,7 +270,7 @@ describe('formatResult', () => {
                     }),
                     expect.objectContaining({
                         propName: 'address',
-                        isValid: false,
+                        isValid: false
                     }),
                     expect.objectContaining({
                         propName: 'address:street1',
@@ -306,18 +321,18 @@ describe('formatResult', () => {
     });
 
     describe('can be used for the every validator (using the array convention)', () => {
-        const validateValue = jest.fn(() => false);
-
-        const formatter = jest.fn((result) => ({
-            ...result,
-            formatted: true
-        }));
-
-        const validate = formatResult(formatter, [validateValue]);
-
-        const result = validate('ABC');
-
         it('calling the formatter', () => {
+            const validateValue = jest.fn(() => false);
+
+            const formatter = jest.fn((result) => ({
+                ...result,
+                formatted: true
+            }));
+
+            const validate = formatResult(formatter, [validateValue]);
+
+            validate('ABC');
+
             expect(formatter).toHaveBeenCalledWith(
                 // result
                 expect.objectContaining({
@@ -334,6 +349,17 @@ describe('formatResult', () => {
 
         describe('applying the formatter', () => {
             it('to sync results', () => {
+                const validateValue = jest.fn(() => false);
+
+                const formatter = jest.fn((result) => ({
+                    ...result,
+                    formatted: true
+                }));
+
+                const validate = formatResult(formatter, [validateValue]);
+
+                const result = validate('ABC');
+
                 expect(result).toMatchObject({
                     isValid: false,
                     value: 'ABC',
@@ -381,6 +407,8 @@ describe('formatResult', () => {
                 validationErrors: result.every
                     .filter((everyResult) => !everyResult.isValid && !everyResult.validateAsync)
             });
+
+            const validateValue = jest.fn(() => false);
 
             const validateWithValidationErrors = formatResult(withValidationErrors, [validateValue]);
 

@@ -17,5 +17,5 @@ export default function formatResult(formatter, validator) {
             value,
             context
         });
-    }
+    };
 }
