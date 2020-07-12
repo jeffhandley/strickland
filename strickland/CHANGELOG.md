@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/jeffhandley/strickland/compare/v2.1.1...v2.2.0) (2020-07-12)
+
+
+### Features
+
+* add a formatResult function to wrap sync and async results with a formatter ([797ee7e](https://github.com/jeffhandley/strickland/commit/797ee7e3dcc5f258895b26c59573d2864030c2d6))
+
+
+
+
+
 # [2.1.0](https://github.com/jeffhandley/strickland/compare/v2.0.2...v2.1.0) (2020-07-09)
 
 
