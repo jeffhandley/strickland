@@ -1,6 +1,6 @@
 # Extensibility Pattern
 
-While some validators require specific props to function, it has become common for validators to accept and return _arbitrary_ props on validation results. This provides opportunities for applications to have very rich user experiences.
+While some validators require specific props to function, it is common for validators to accept _arbitrary_ validator props on return them on validation results. This provides opportunities for applications to have very rich user experiences.
 
 Consider the following implementation of our letter validator.
 
@@ -8,7 +8,8 @@ Consider the following implementation of our letter validator.
 function letterValidator(validatorProps) {
     return function validateLetter(value, context) {
         // Be sure not to overwrite the original
-        // validatorProps variable
+        // validatorProps variable (which would affect
+        // repeated validation calls)
         let resolvedProps = validatorProps;
 
         if (typeof resolvedProps === 'function') {
@@ -57,4 +58,3 @@ const result = validate(termsAccepted, termsEntered);
     }
  */
 ```
-

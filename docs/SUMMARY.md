@@ -10,6 +10,7 @@
   * [Validation Context](extensibility/validation-context.md)
   * [Validation Result Props](extensibility/validation-result-props.md)
   * [Extensibility Pattern](extensibility/extensibility-pattern.md)
+  * [formatResult](extensibility/formatresult.md)
 * [Built-In Validators](built-in-validators/README.md)
   * [required](built-in-validators/required.md)
   * [compare](built-in-validators/compare.md)
@@ -32,6 +33,7 @@
     * [Nested Objects](composition/validating-objects/nested-objects.md)
     * [Arrays of Objects](composition/validating-objects/arrays-of-objects.md)
   * [Composition Conventions](composition/array-and-object-conventions.md)
+  * [Composition and formatResult](composition/composition-and-formatresult.md)
 * [Async Validation](async-validation/README.md)
   * [Resolving Async Validation](async-validation/resolving-async-validation.md)
   * [Deferred Async Validation](async-validation/deferred-async-validation.md)
@@ -51,4 +53,3 @@
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [NPM](https://www.npmjs.com/package/strickland)
 * [GitHub](https://github.com/jeffhandley/strickland)
-

@@ -11,7 +11,8 @@ import validate, {
     all,
     some,
     arrayElements,
-    objectProps
+    objectProps,
+    formatResult
 } from '../../src/strickland';
 
 describe('docs', () => {
@@ -693,6 +694,145 @@ describe('docs', () => {
 
             const result = validate(personValidator, person);
             expect(result.isValid).toBe(false);
+        });
+
+        it('composition and formatResult', () => {
+            const withValidationErrors = (result) => {
+                const validationErrors = [];
+
+                function addErrorsFromObjectProps(resultObjectProps, parentPath) {
+                    if (resultObjectProps) {
+                        Object.keys(resultObjectProps)
+                            // for each invalid prop, get that prop's result
+                            .map((propName) => ({
+                                ...resultObjectProps[propName],
+                                propName
+                            }))
+
+                            // recursively add errors
+                            .forEach(({propName, ...nestedResult}) => {
+                                const propPath = [...parentPath, propName];
+
+                                addErrorsFromResult({
+                                    ...nestedResult,
+                                    propPath
+                                });
+                            });
+                    }
+                }
+
+                function addErrorsFromArrayElements(resultArrayElements, parentPath) {
+                    if (resultArrayElements) {
+                        // recursively add errors
+                        resultArrayElements.forEach((nestedResult, arrayElement) => {
+                            const propPath = [...parentPath, arrayElement];
+
+                            addErrorsFromResult({
+                                ...nestedResult,
+                                propPath
+                            });
+                        });
+                    }
+                }
+
+                function addErrorsFromResult({objectProps: nestedProps, arrayElements: nestedElements, propPath = [], ...nestedResult}) {
+                    if (!nestedResult.isValid) {
+                        // omit the `objectProps` and `arrayElements`
+                        // result props but include `propPath`
+                        validationErrors.push({propPath, ...nestedResult});
+
+                        addErrorsFromObjectProps(nestedProps, propPath);
+                        addErrorsFromArrayElements(nestedElements, propPath);
+                    }
+                }
+
+                addErrorsFromResult(result);
+
+                return {
+                    ...result,
+                    validationErrors
+                };
+            };
+
+            const validateWithErrors = formatResult(withValidationErrors, {
+                name: required(),
+                addresses: [required(), minLength(1), arrayElements({
+                    addressType: required(),
+                    street: [required(), {
+                        number: required(),
+                        name: required()
+                    }],
+                    city: [required()],
+                    state: [required(), length(2, 2)],
+                    postal: [required(), length(5, 5)]
+                })]
+            });
+
+            const data = {
+                name: 'Marty',
+                addresses: [
+                    {
+                        addressType: 'Home',
+                        street: {
+                            number: 9303,
+                            name: 'Lyon Drive'
+                        },
+                        city: 'Hill Valley',
+                        state: 'CA'
+                    },
+                    {
+                        addressType: 'Work'
+                    }
+                ]
+            };
+
+            const result = validate(validateWithErrors, data);
+
+            expect(result).toMatchObject({
+                validationErrors: [
+                    expect.objectContaining({
+                        value: expect.objectContaining({
+                            name: 'Marty',
+                            addresses: expect.any(Array)
+                        })
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses']
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 0],
+                        value: expect.objectContaining({
+                            addressType: 'Home'
+                        })
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 0, 'postal'],
+                        required: true
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 1],
+                        value: expect.objectContaining({
+                            addressType: 'Work'
+                        })
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 1, 'street'],
+                        required: true
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 1, 'city'],
+                        required: true
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 1, 'state'],
+                        required: true
+                    }),
+                    expect.objectContaining({
+                        propPath: ['addresses', 1, 'postal'],
+                        required: true
+                    })
+                ]
+            });
         });
     });
 });
