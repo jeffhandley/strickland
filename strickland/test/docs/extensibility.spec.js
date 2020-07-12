@@ -1,4 +1,4 @@
-import validate from '../../src/strickland';
+import validate, {formatResult} from '../../src/strickland';
 
 describe('docs', () => {
     describe('extensibility', () => {
@@ -114,6 +114,29 @@ describe('docs', () => {
                 message: 'Enter the letter "Y" to accept the terms',
                 isValid: false,
                 value: 'N'
+            });
+        });
+
+        it('formatResult', () => {
+            function letterA(value) {
+                return (value === 'A');
+            }
+
+            function withMessage(result, {value}) {
+                return {
+                    ...result,
+                    message: `The letter "A" was expected, but the value "${value}" was supplied`
+                };
+            }
+
+            const validator = formatResult(withMessage, letterA);
+
+            const result = validate(validator, 'B');
+
+            expect(result).toMatchObject({
+                isValid: false,
+                value: 'B',
+                message: 'The letter "A" was expected, but the value "B" was supplied'
             });
         });
     });

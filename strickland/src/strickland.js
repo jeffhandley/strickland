@@ -5,6 +5,7 @@ export {default as arrayElements} from './arrayElements';
 export {default as compare} from './compare';
 export {default as every} from './every';
 export {default as form} from './form';
+export {default as formatResult} from './formatResult';
 export {default as length} from './length';
 export {default as max} from './max';
 export {default as maxLength} from './maxLength';
