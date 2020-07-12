@@ -54,3 +54,4 @@
 * [Change Log](https://github.com/jeffhandley/strickland/blob/main/CHANGELOG.md)
 * [NPM](https://www.npmjs.com/package/strickland)
 * [GitHub](https://github.com/jeffhandley/strickland)
+

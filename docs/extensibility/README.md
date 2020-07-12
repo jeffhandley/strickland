@@ -38,3 +38,4 @@ Applications can gain rich experiences when validators employ these extensibilit
 2. If any validation result props need to be calculated based on other result props
 
 Strickland provides a [`formatResult`](formatresult.md) validator wrapper that can be used to extend validation results from outside the validator itself. Result formatters have access to the validator's result and can augment or transform validation results.
+

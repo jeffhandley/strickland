@@ -1,6 +1,6 @@
 # formatResult
 
-When applications consume validation results, they often need to augment or transform the validation results from the validators. Not all of those scenarios can be accomplished through [Validator Result Props](validator-result-props.md), and a different mechanism is needed. Strickland's `formatResult` function can help. `formatResult` wraps a supplied validator and uses a specified result formatter function to augment or transform the result from the validator.
+When applications consume validation results, they often need to augment or transform the validation results from the validators. Not all of those scenarios can be accomplished through [Validator Result Props](https://github.com/jeffhandley/strickland/tree/8a3b29a7273e6ee6f0d3945a170af06068918227/docs/extensibility/validator-result-props.md), and a different mechanism is needed. Strickland's `formatResult` function can help. `formatResult` wraps a supplied validator and uses a specified result formatter function to augment or transform the result from the validator.
 
 ## Parameters
 
@@ -30,7 +30,7 @@ function letterA(value) {
 function withMessage(result, {value}) {
     return {
         ...result,
-        message: `The letter "A" was expected, but the value "${value}" was supplied`
+        message: `The letter "A" was expected, but "${value}" was supplied`
     };
 }
 
@@ -46,3 +46,6 @@ const result = validate(validator, 'B');
     }
 */
 ```
+
+
+

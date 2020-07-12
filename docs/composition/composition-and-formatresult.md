@@ -1,6 +1,6 @@
-# Composition and `formatResult`
+# Composition and formatResult
 
-We learned about [`formatResult`](../../extensibility/formatresult.md) earlier. That validator wrapper provides an easy way to augment or transform the `objectProps` and `arrayElements` validation results to match the shape your application needs.
+We learned about [`formatResult`](https://github.com/jeffhandley/strickland/tree/8a3b29a7273e6ee6f0d3945a170af06068918227/extensibility/formatresult.md) earlier. That validator wrapper provides an easy way to augment or transform the `objectProps` and `arrayElements` validation results to match the shape your application needs.
 
 In the following example, `formatResult` is used to create a `validationErrors` validation result prop. The `validationErrors` value is flattened array of all validation errors existing in an object or array graph.
 
@@ -45,11 +45,18 @@ const withValidationErrors = (result) => {
         }
     }
 
-    function addErrorsFromResult({objectProps, arrayElements, propPath = [], ...nestedResult}) {
+    function addErrorsFromResult(nestedResult) {
         if (!nestedResult.isValid) {
+            const {
+                objectProps,
+                arrayElements,
+                propPath = [],
+                ...errorResult
+            } = nestedResult;
+            
             // omit the `objectProps` and `arrayElements`
             // result props but include `propPath`
-            validationErrors.push({propPath, ...nestedResult});
+            validationErrors.push({propPath, ...errorResult});
 
             addErrorsFromObjectProps(objectProps, propPath);
             addErrorsFromArrayElements(arrayElements, propPath);
@@ -197,3 +204,4 @@ expect(result).toMatchObject({
     }
 */
 ```
+

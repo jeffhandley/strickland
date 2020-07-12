@@ -58,3 +58,4 @@ const result = validate(termsAccepted, termsEntered);
     }
  */
 ```
+
