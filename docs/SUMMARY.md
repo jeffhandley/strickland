@@ -41,6 +41,7 @@
   * [Two-Stage Sync/Async Validation](async-validation/two-stage-sync-async-validation.md)
   * [Race Conditions](async-validation/race-conditions.md)
   * [Automatic Race Condition Handling](async-validation/automatic-race-condition-handling.md)
+  * [Async Validation and formatResult](async-validation/async-validation-and-formatresult.md)
 * [Form Validation](form-validation/README.md)
   * [form](form-validation/form.md)
   * [Async Form Validation](form-validation/async-form-validation.md)
