@@ -13,7 +13,7 @@ const withValidationErrors = (result) => {
     function addErrorsFromObjectProps(resultObjectProps, parentPath) {
         if (resultObjectProps) {
             Object.keys(resultObjectProps)
-                // for each invalid prop, get that prop's result
+                // for each prop, get that prop's result
                 .map((propName) => ({
                     ...resultObjectProps[propName],
                     propName
