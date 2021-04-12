@@ -16,7 +16,7 @@ Validators that accept validator props through validation factories should inclu
 
 ### Validation Context
 
-Sometimes validator prop values will not be known when declaring a validator, and instead will only be known at the time of performing validation. Validator functions can accept a [Validation Context](validation-context.md) argument and use the it to extend the validator props passed into Validator Factories.
+Sometimes validator prop values will not be known when declaring a validator, and instead will only be known at the time of performing validation. Validator functions can accept a [Validation Context](validation-context.md) argument and use it to extend the validator props passed into Validator Factories.
 
 Strickland's `validate` function accepts this validation context and passes it to the validator function.
 
