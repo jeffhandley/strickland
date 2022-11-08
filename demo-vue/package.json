@@ -46,7 +46,7 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "hawk": "^9.0.1",
-    "html-webpack-plugin": "^2.30.1",
+    "html-webpack-plugin": "^5.5.0",
     "lodash": "^4.17.21",
     "macaddress": "0.2.9",
     "node-notifier": "^8.0.1",
