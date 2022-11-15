@@ -23,8 +23,6 @@ This repository is set up as a Lerna mono-repo, containing the following folders
 
 * demo-react
     * A demo application using React
-* demo-vue
-    * A demo application using Vue
 * docs
     * The markdown-based documentation
     * Managed through GitBook, with the subfolder structure being dictated by GitBook

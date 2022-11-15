@@ -2,7 +2,6 @@
   "lerna": "2.5.1",
   "packages": [
     "demo-react",
-    "demo-vue",
     "strickland"
   ],
   "version": "2.2.0"
