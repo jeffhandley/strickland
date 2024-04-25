@@ -5,6 +5,7 @@ on:
       - opened
       - edited
       - reopened
+      - labeled
 
 jobs:
   label-bot-pr:
