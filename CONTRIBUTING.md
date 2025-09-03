@@ -31,6 +31,8 @@ This repository is set up as a Lerna mono-repo, containing the following folders
     * Feel free to use these logos when linking to Strickland.io or to this GitHub repository
 * strickland
     * The `strickland` npm package
+* Strickland.NuGet
+    * A .NET project that creates a NuGet package containing the built strickland npm package
 
 ## Publishing
 

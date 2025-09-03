@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Strickland</PackageId>
+    <PackageVersion>2.2.0</PackageVersion>
+    <Authors>Jeff Handley</Authors>
+    <Description>Strickland is a JavaScript validation framework with a focus on extensibility and composition</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>http://strickland.io</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jeffhandley/strickland.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>validation;universal;framework;validator;validate;react;redux;flux;node;javascript</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoBuild>true</NoBuild>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <Content Include="../strickland/lib/**/*" PackagePath="content/lib/" />
+    <Content Include="../strickland/package.json" PackagePath="content/" />
+    <Content Include="../strickland/README.md" PackagePath="content/" />
+    <Content Include="../strickland/CHANGELOG.md" PackagePath="content/" />
+  </ItemGroup>
+
+</Project>
