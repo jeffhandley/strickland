@@ -35,8 +35,4 @@ Using Strickland's built-in validators, and its extensibility and composability,
 
 ## Feedback
 
-If you're interested in Strickland and have any feedback, please reach out in one of the following ways:
-
-1. Submit issues on [GitHub](https://github.com/jeffhandley/strickland/issues)
-2. Tweet to [@JeffHandley](https://twitter.com/JeffHandley)
-
+If you're interested in Strickland and have any feedback, please submit issues or pull requests on [GitHub](https://github.com/jeffhandley/strickland/issues).
