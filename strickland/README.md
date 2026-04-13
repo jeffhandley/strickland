@@ -93,7 +93,7 @@ const result = validate(letterA, 'B');
 
 ## Documentation
 
-Detailed documentation is available at [strickland.io](https://strickland.io).
+Detailed documentation is available at [strickland.io](https://www.strickland.io).
 
 ## License
 
