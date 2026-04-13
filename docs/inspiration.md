@@ -50,7 +50,7 @@ Elegant validation experiences must scale nicely with the size and complexity of
 
 ## About the Author
 
-[Jeff Handley](https://twitter.com/jeffhandley) has spent years concentrating on what it takes to implement well-rounded validation experiences. Jeff has developed in-house validation frameworks across platforms including Classic ASP, Visual Basic, ASP.NET Web Forms, and WinForms. At Microsoft, Jeff was the lead developer of the validation features built into the .NET Framework's `System.ComponentModel.DataAnnotations` namespace. His work included `IValidatableObject`, `ValidationResult`, `ValidationContext`, and `Validator`, among other implementation details introduced in .NET 4.0. Those features delivered validation functionality into ASP.NET MVC, ASP.NET Web Forms, WCF RIA Services, Silverlight, and WPF.
+[Jeff Handley](https://jeffhandley.com) has spent years concentrating on what it takes to implement well-rounded validation experiences. Jeff has developed in-house validation frameworks across platforms including Classic ASP, Visual Basic, ASP.NET Web Forms, and WinForms. At Microsoft, Jeff was the lead developer of the validation features built into the .NET Framework's `System.ComponentModel.DataAnnotations` namespace. His work included `IValidatableObject`, `ValidationResult`, `ValidationContext`, and `Validator`, among other implementation details introduced in .NET 4.0. Those features delivered validation functionality into ASP.NET MVC, ASP.NET Web Forms, WCF RIA Services, Silverlight, and WPF.
 
 During the development of the .NET Framework validation framework, Jeff [wrote extensively](http://jeffhandley.com/tags#RiaServicesValidation) about how the framework could be used in WCF RIA Services for client-side and server-side validation. His blog also includes posts about some of his other work in the [validation](http://jeffhandley.com/tags#Validation) problem space as well as work in [WPF](http://jeffhandley.com/tags#WPF), [ASP.NET](http://jeffhandley.com/tags#ASP.NET), the [Model-View-ViewModel pattern](http://jeffhandley.com/tags#Model-View-ViewModel) and more.
 
@@ -60,7 +60,7 @@ Jeff created Strickland while working on the Node/React/Redux/GraphQL platform a
 
 When React was introduced, Flux was presented as a complementary design pattern. Many _Back to the Future_ themed libraries emerged as implementations of Flux.
 
-Principal Strickland was the rule-monger of Hill Valley High School in the _Back to the Future_ movies.
+Principal Strickland was the rule-monger of Hill Valley High School in the _Back to the Future_ movies. _RIP, [James Tolkan](https://en.wikipedia.org/wiki/James_Tolkan)_.
 
-A validation framework was needed that would integrate nicely with the React ecosystem. These ideas were combined and Strickland was born. Though v1.0.0 was not released until December 2017, initial work on Strickland began and the [strickland.io](https://strickland.io) domain was purchased in 2015, the same year that Marty visited in the future.
+A validation framework was needed that would integrate nicely with the React ecosystem. These ideas were combined and Strickland was born. Though v1.0.0 was not released until December 2017, initial work on Strickland began and the [strickland.io](https://www.strickland.io) domain was purchased in 2015, the same year that Marty visited in the future.
 
